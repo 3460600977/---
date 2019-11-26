@@ -1,0 +1,89 @@
+/*
+ * @Description: scss变量=>颜色变量 class变量=>字体颜色
+ * @Author: 何彬
+ * @Date: 2019-07-12 09:19:08
+ * @LastEditTime: 2019-10-09 17:48:49
+ * @LastEditors: Please set LastEditors
+ */
+
+/**
+ * 基础颜色
+ */
+
+$color-red:          #b81c22; //  主题红色
+$color-red-darken:   #91161B;
+$color-red-lighten:  #CD373D;
+
+
+$color-black:        #222222; // 主题黑色
+$color-black-darken:   darken($color-black, 10%);
+$color-black-lighten:  lighten($color-black, 10%);
+
+$color-gray:        #999999; // 灰色字体
+$color-gray-darken:   darken($color-gray, 10%);
+$color-gray-lighten:  #f3f4f8; // 按钮灰色背景
+
+$color-main:           $color-red;
+$color-main-darken:    $color-red-darken;
+$color-main-lighten:   $color-red-lighten;
+
+$border-color: #eaeaea;
+$color-bg: #f3f3f3;
+/**
+ * 字体颜色
+ */
+.color-red{
+    color: $color-red;
+}
+.color-lighten{
+    color: $color-red-lighten;
+}
+.color-black{
+    color: $color-black;
+}
+.color-darken{
+    color: $color-red-darken;
+}
+
+.color-gray{
+    color: $color-gray;
+} // 灰色字体
+.color-white {
+    color: #fff;
+}
+.color-main {
+    color: $color-main;
+}
+.color333 {
+  color: #333333;
+}
+/**#FFB81C22
+ * 背景颜色
+ */
+.bg-color{
+  background-color: $color-bg;
+}
+.bg-red{
+    background-color: $color-red;
+}
+.bg-lighten{
+    background-color: $color-red-lighten;
+}
+.bg-darken{
+    background-color: $color-red-darken;
+}
+.bg-gray{
+    background-color: #f3f3f3;
+}// 缝隙背景颜色
+.bg-gray-lighten{
+    background-color: $color-gray-lighten;
+}
+.bg-white {
+    background-color: #fff;
+}
+.bg-main {
+    background-color: $color-main;
+}
+.button-gray {
+    background-color: #f3f4f8;
+}

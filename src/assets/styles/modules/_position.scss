@@ -1,0 +1,72 @@
+/*
+ * @Description: 居中 浮动等
+ * @Author: 何彬
+ * @Date: 2019-07-12 09:19:08
+ * @LastEditTime: 2019-09-25 10:49:47
+ * @LastEditors: 何彬
+ */
+.mid{
+    display: flex;
+    display:-webkit-box;
+    display:-webkit-flex; 
+    align-items: center;
+    -webkit-box-align: center;
+}
+.center{
+    display: flex;
+    display:-webkit-box;
+    display:-webkit-flex;
+    justify-content: center;
+    -webkit-justify-content: center;
+}
+.mid-center{
+    display: flex;
+    display:-webkit-box;
+    display:-webkit-flex;
+    align-items: center;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    justify-content: center;
+    -webkit-justify-content: center;
+}
+.mid-between{
+    display: flex;
+    display:-webkit-box;
+    display:-webkit-flex;
+    align-items: center;
+    -webkit-box-align: center;
+    justify-content: space-between;
+    -webkit-justify-content: space-between;
+}
+.flex1{
+  flex: 1;
+  -webkit-box-flex:1 
+}
+.flex-shrink {
+  flex-shrink: 0
+}
+.float-left{
+  float: left;
+}
+.float-right{
+  float: right;
+}
+
+.text-left{
+  text-align: left;
+}
+.text-right{
+  text-align: right;
+}
+.text-center{
+  text-align: center;
+}
+.relative{
+  position: relative;
+}
+.absolute{
+  position: absolute;
+}
+.fixed{
+  position: fixed;
+}
