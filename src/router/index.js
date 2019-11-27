@@ -14,11 +14,15 @@ export default new Router({
       children: [
         {
           path: '/',
-          name: 'homeBody',
           component: () => import ('@/views/home/modules/homeBody'),
         },
         ...putManageRouter,
-      ]
+      ],
     },
+    {
+      path: '/404',
+      component: () => import('@/views/errorPage/404')
+    },
+    { path: '*', redirect: '/404', hidden: true }
   ]
 })
