@@ -5,7 +5,7 @@ import {putManageRouter} from './modules/putManage' // 投放管理
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  // mode: 'history',
   routes: [
     {
       path: '/',
@@ -14,11 +14,15 @@ export default new Router({
       children: [
         {
           path: '/',
-          name: 'homeBody',
           component: () => import ('@/views/home/modules/homeBody'),
         },
         ...putManageRouter,
-      ]
+      ],
     },
+    {
+      path: '/404',
+      component: () => import('@/views/errorPage/404')
+    },
+    { path: '*', redirect: '/404', hidden: true }
   ]
 })

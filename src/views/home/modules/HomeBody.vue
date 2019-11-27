@@ -39,10 +39,7 @@
 export default {
   name: 'HomeBody',
   mounted() {
-    console.log(this.$api.test())
+    this.$api.test()
   }
 }
 </script>
-
-<style lang="scss" scoped>
-</style>
