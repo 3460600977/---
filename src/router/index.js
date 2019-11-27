@@ -5,7 +5,7 @@ import {putManageRouter} from './modules/putManage' // 投放管理
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  // mode: 'history',
   routes: [
     {
       path: '/',
