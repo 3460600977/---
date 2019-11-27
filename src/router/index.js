@@ -8,8 +8,7 @@ export default new Router({
   // mode: 'history',
   routes: [
     {
-      path: '/',
-      name: 'home',
+      path: '/home',
       component: () => import ('@/views/home/Home'),
       children: [
         {
@@ -20,9 +19,14 @@ export default new Router({
       ],
     },
     {
+      path: '/login',
+      component: () => import('@/views/login/login')
+    },
+    {
       path: '/404',
       component: () => import('@/views/errorPage/404')
     },
+    { path: '/', redirect: '/home', hidden: true },
     { path: '*', redirect: '/404', hidden: true }
   ]
 })
