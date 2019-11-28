@@ -37,7 +37,7 @@
 <script>
 export default {
   mounted() {
-    this.$api.test()
+    // this.$api.test()
   }
 }
 </script>
