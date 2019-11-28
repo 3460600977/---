@@ -5,10 +5,10 @@
     </div>
     <el-menu 
       :default-active="activeIndex"
-      background-color="#545c64"
+      background-color="#2A2F4D"
       text-color="#fff"
-      active-text-color="#ffd04b" 
-      class="header-menu" 
+      active-text-color="#fff" 
+      class="header-menu font-16" 
       mode="horizontal" 
       @select="handleSelect">
       <el-menu-item index="1">处理中心</el-menu-item>
@@ -51,6 +51,7 @@ export default {
   .top-header{
     width: 100%;
     flex-shrink: 0;
+    height: 76px;
     background-color: #545c64;
     .logo{
       float: left;
