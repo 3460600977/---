@@ -273,8 +273,8 @@
     .el-color-predefine__color-selector:nth-child(10n + 1) {
       margin-left: 0; }
     .el-color-predefine__color-selector.selected {
-      -webkit-box-shadow: 0 0 3px 2px red;
-      box-shadow: 0 0 3px 2px red; }
+      -webkit-box-shadow: 0 0 3px 2px #2D5AFF;
+      box-shadow: 0 0 3px 2px #2D5AFF; }
     .el-color-predefine__color-selector > div {
       display: -webkit-box;
       display: -ms-flexbox;
@@ -407,7 +407,7 @@
     float: left;
     line-height: 26px;
     font-size: 12px;
-    color: #000000;
+    color: #181819;
     width: 160px; }
   .el-color-dropdown__btn {
     border: 1px solid #dcdcdc;
@@ -423,16 +423,16 @@
       color: #cccccc;
       cursor: not-allowed; }
     .el-color-dropdown__btn:hover {
-      color: red;
-      border-color: red; }
+      color: #2D5AFF;
+      border-color: #2D5AFF; }
   .el-color-dropdown__link-btn {
     cursor: pointer;
-    color: red;
+    color: #2D5AFF;
     text-decoration: none;
     padding: 15px;
     font-size: 12px; }
     .el-color-dropdown__link-btn:hover {
-      color: tint(red, 20%); }
+      color: tint(#2D5AFF, 0%); }
 
 .el-color-picker {
   display: inline-block;
@@ -539,7 +539,7 @@
     -webkit-box-sizing: content-box;
     box-sizing: content-box;
     background-color: #FFFFFF;
-    border: 1px solid #EBEEF5;
+    border: 1px solid #E5E7E9;
     border-radius: 4px;
     -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); }

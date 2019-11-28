@@ -257,7 +257,7 @@
   border-radius: 8px;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  border: 1px solid #EBEEF5;
+  border: 1px solid #E5E7E9;
   position: fixed;
   background-color: #FFFFFF;
   -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
@@ -301,11 +301,11 @@
     .el-notification__closeBtn:hover {
       color: #606266; }
   .el-notification .el-icon-success {
-    color: #67C23A; }
+    color: #2D5AFF; }
   .el-notification .el-icon-error {
-    color: #F56C6C; }
+    color: #F44A4A; }
   .el-notification .el-icon-info {
-    color: #909399; }
+    color: #999999; }
   .el-notification .el-icon-warning {
     color: #E6A23C; }
 

@@ -4,13 +4,13 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 
-import '@/assets/styles/index.scss';
-
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
 // element主题重置生成文件,勿手动修改,在element-variables中修改
 import '../theme/index.css';
+
+import '@/assets/styles/index.scss';
 
 import { api } from '@/api/index'
 Vue.prototype.$api = api;

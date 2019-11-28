@@ -1,0 +1,16 @@
+// elementUI 主题编辑中无法修改的内容在此处覆盖
+.el-button{
+  width: 136px;
+  &.is-circle{
+    width: auto;
+  }
+  &.is-plain{
+    background: transparent !important;
+  }
+}
+.el-card__header{
+  padding: 32px 30px;
+}
+.el-card{
+  box-shadow:0px 4px 16px 0px rgba(139,139,139,0.16) !important;
+} 

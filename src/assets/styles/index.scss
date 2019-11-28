@@ -5,7 +5,9 @@
 @import './modules/color';
 @import './modules/display';
 @import './modules/position';
-@import './modules/others'; //杂项写这里面
+@import './modules/font';
+@import './modules/others'; // 杂项写这里面
+@import './modules/elementCoverOthers.scss'; // elementUI 主题编辑中无法修改的内容在此处覆盖
 
 
 /***

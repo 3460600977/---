@@ -123,16 +123,16 @@ body {
   font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   font-weight: 400;
   font-size: 14px;
-  color: #000000;
+  color: #181819;
   -webkit-font-smoothing: antialiased; }
 
 a {
-  color: red;
+  color: #2D5AFF;
   text-decoration: none; }
   a:hover, a:focus {
-    color: #ff3333; }
+    color: #2d5aff; }
   a:active {
-    color: #e60000; }
+    color: #2b53e8; }
 
 h1, h2, h3, h4, h5, h6 {
   color: #606266;

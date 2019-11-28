@@ -680,9 +680,9 @@
   line-height: 1; }
 
 .el-range-editor.is-active {
-  border-color: red; }
+  border-color: #2D5AFF; }
   .el-range-editor.is-active:hover {
-    border-color: red; }
+    border-color: #2D5AFF; }
 
 .el-range-editor--medium.el-input__inner {
   height: 36px; }
@@ -727,14 +727,14 @@
   line-height: 20px; }
 
 .el-range-editor.is-disabled {
-  background-color: #F5F7FA;
-  border-color: #E4E7ED;
+  background-color: #C5C8CE;
+  border-color: #E5E7E9;
   color: #C0C4CC;
   cursor: not-allowed; }
   .el-range-editor.is-disabled:hover, .el-range-editor.is-disabled:focus {
-    border-color: #E4E7ED; }
+    border-color: #E5E7E9; }
   .el-range-editor.is-disabled input {
-    background-color: #F5F7FA;
+    background-color: #C5C8CE;
     color: #C0C4CC;
     cursor: not-allowed; }
     .el-range-editor.is-disabled input::-webkit-input-placeholder {
@@ -1120,7 +1120,7 @@
 --------------------------*/
 .el-picker-panel {
   color: #606266;
-  border: 1px solid #E4E7ED;
+  border: 1px solid #E5E7E9;
   -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   background: #FFFFFF;
@@ -1154,10 +1154,10 @@
     outline: none;
     cursor: pointer; }
     .el-picker-panel__shortcut:hover {
-      color: red; }
+      color: #2D5AFF; }
     .el-picker-panel__shortcut.active {
       background-color: #e6f1fe;
-      color: red; }
+      color: #2D5AFF; }
   .el-picker-panel__btn {
     border: 1px solid #dcdcdc;
     color: #333;
@@ -1180,7 +1180,7 @@
     outline: none;
     margin-top: 8px; }
     .el-picker-panel__icon-btn:hover {
-      color: red; }
+      color: #2D5AFF; }
     .el-picker-panel__icon-btn.is-disabled {
       color: #bbb; }
       .el-picker-panel__icon-btn.is-disabled:hover {
@@ -1237,7 +1237,7 @@
     .el-date-picker__header--bordered {
       margin-bottom: 0;
       padding-bottom: 12px;
-      border-bottom: solid 1px #EBEEF5; }
+      border-bottom: solid 1px #E5E7E9; }
       .el-date-picker__header--bordered + .el-picker-panel__content {
         margin-top: 0; }
   .el-date-picker__header-label {
@@ -1249,9 +1249,9 @@
     cursor: pointer;
     color: #606266; }
     .el-date-picker__header-label:hover {
-      color: red; }
+      color: #2D5AFF; }
     .el-date-picker__header-label.active {
-      color: red; }
+      color: #2D5AFF; }
   .el-date-picker__prev-btn {
     float: left; }
   .el-date-picker__next-btn {
@@ -1525,9 +1525,11 @@
   .el-scrollbar__wrap {
     overflow: scroll;
     height: 100%; }
-    .el-scrollbar__wrap--hidden-default::-webkit-scrollbar {
-      width: 0;
-      height: 0; }
+    .el-scrollbar__wrap--hidden-default {
+      scrollbar-width: none; }
+      .el-scrollbar__wrap--hidden-default::-webkit-scrollbar {
+        width: 0;
+        height: 0; }
   .el-scrollbar__thumb {
     position: relative;
     display: block;
@@ -1835,7 +1837,7 @@
   bottom: -6px;
   left: 50%;
   margin-right: 3px;
-  border-top-color: #EBEEF5;
+  border-top-color: #E5E7E9;
   border-bottom-width: 0; }
   .el-popper[x-placement^="top"] .popper__arrow::after {
     bottom: 1px;
@@ -1851,7 +1853,7 @@
   left: 50%;
   margin-right: 3px;
   border-top-width: 0;
-  border-bottom-color: #EBEEF5; }
+  border-bottom-color: #E5E7E9; }
   .el-popper[x-placement^="bottom"] .popper__arrow::after {
     top: 1px;
     margin-left: -6px;
@@ -1865,7 +1867,7 @@
   top: 50%;
   left: -6px;
   margin-bottom: 3px;
-  border-right-color: #EBEEF5;
+  border-right-color: #E5E7E9;
   border-left-width: 0; }
   .el-popper[x-placement^="right"] .popper__arrow::after {
     bottom: -6px;
@@ -1881,7 +1883,7 @@
   right: -6px;
   margin-bottom: 3px;
   border-right-width: 0;
-  border-left-color: #EBEEF5; }
+  border-left-color: #E5E7E9; }
   .el-popper[x-placement^="left"] .popper__arrow::after {
     right: 1px;
     bottom: -6px;
@@ -1903,14 +1905,14 @@
   line-height: 20px; }
 
 .time-select-item.selected:not(.disabled) {
-  color: red;
+  color: #2D5AFF;
   font-weight: bold; }
 
 .time-select-item.disabled {
-  color: #E4E7ED;
+  color: #E5E7E9;
   cursor: not-allowed; }
 
 .time-select-item:hover {
-  background-color: #F5F7FA;
+  background-color: #F6F6F6;
   font-weight: bold;
   cursor: pointer; }

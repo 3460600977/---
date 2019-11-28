@@ -18,11 +18,11 @@ $--color-transition-base: color .2s cubic-bezier(.645,.045,.355,1) !default;
 /* Color
 -------------------------- */
 /// color|1|Brand Color|0
-$--color-primary: red !default;
+$--color-primary: #2D5AFF !default;
 /// color|1|Background Color|4
 $--color-white: #FFFFFF !default;
 /// color|1|Background Color|4
-$--color-black: #000000 !default;
+$--color-black: #181819 !default;
 $--color-primary-light-1: mix($--color-white, $--color-primary, 10%) !default; /* 53a8ff */
 $--color-primary-light-2: mix($--color-white, $--color-primary, 20%) !default; /* 66b1ff */
 $--color-primary-light-3: mix($--color-white, $--color-primary, 30%) !default; /* 79bbff */
@@ -33,13 +33,13 @@ $--color-primary-light-7: mix($--color-white, $--color-primary, 70%) !default; /
 $--color-primary-light-8: mix($--color-white, $--color-primary, 80%) !default; /* d9ecff */
 $--color-primary-light-9: mix($--color-white, $--color-primary, 90%) !default; /* ecf5ff */
 /// color|1|Functional Color|1
-$--color-success: #67C23A !default;
+$--color-success: #2D5AFF !default;
 /// color|1|Functional Color|1
 $--color-warning: #E6A23C !default;
 /// color|1|Functional Color|1
-$--color-danger: #F56C6C !default;
+$--color-danger: #F44A4A !default;
 /// color|1|Functional Color|1
-$--color-info: #909399 !default;
+$--color-info: #999999 !default;
 
 $--color-success-light: mix($--color-white, $--color-success, 80%) !default;
 $--color-warning-light: mix($--color-white, $--color-warning, 80%) !default;
@@ -59,17 +59,17 @@ $--color-text-secondary: #909399 !default;
 /// color|1|Font Color|2
 $--color-text-placeholder: #C0C4CC !default;
 /// color|1|Border Color|3
-$--border-color-base: #DCDFE6 !default;
+$--border-color-base: #E5E7E9 !default;
 /// color|1|Border Color|3
-$--border-color-light: #E4E7ED !default;
+$--border-color-light: #E5E7E9 !default;
 /// color|1|Border Color|3
-$--border-color-lighter: #EBEEF5 !default;
+$--border-color-lighter: #E5E7E9 !default;
 /// color|1|Border Color|3
-$--border-color-extra-light: #F2F6FC !default;
+$--border-color-extra-light: #E5E7E9 !default;
 
 // Background
 /// color|1|Background Color|4
-$--background-color-base: #F5F7FA !default;
+$--background-color-base: #F6F6F6 !default;
 
 /* Link
 -------------------------- */
@@ -93,7 +93,7 @@ $--border-radius-zero: 0 !default;
 
 // Box-shadow
 /// boxShadow|1|Shadow|1
-$--box-shadow-base: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04) !default;
+$--box-shadow-base: 0px 4px 16px 0px rgba(139,139,139,0.16) !default;
 // boxShadow|1|Shadow|1
 $--box-shadow-dark: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .12) !default;
 /// boxShadow|1|Shadow|1
@@ -140,7 +140,7 @@ $--index-popper: 2000 !default;
 
 /* Disable base
 -------------------------- */
-$--disabled-fill-base: $--background-color-base !default;
+$--disabled-fill-base: #C5C8CE !default;
 $--disabled-color-base: $--color-text-placeholder !default;
 $--disabled-border-base: $--border-color-light !default;
 
@@ -511,20 +511,20 @@ $--tab-vertical-header-count-fill: $--color-text-secondary !default;
 /* Button
 -------------------------- */
 /// fontSize||Font|1
-$--button-font-size: $--font-size-base !default;
+$--button-font-size: 12px !default;
 /// fontWeight||Font|1
-$--button-font-weight: $--font-weight-primary !default;
+$--button-font-weight: 400 !default;
 /// borderRadius||Border|2
-$--button-border-radius: $--border-radius-base !default;
+$--button-border-radius: 2px !default;
 /// padding||Spacing|3
-$--button-padding-vertical: 12px !default;
+$--button-padding-vertical: 10px !default;
 /// padding||Spacing|3
 $--button-padding-horizontal: 20px !default;
 
 /// fontSize||Font|1
 $--button-medium-font-size: $--font-size-base !default;
 /// borderRadius||Border|2
-$--button-medium-border-radius: $--border-radius-base !default;
+$--button-medium-border-radius: 2 !default;
 /// padding||Spacing|3
 $--button-medium-padding-vertical: 10px !default;
 /// padding||Spacing|3
@@ -532,14 +532,14 @@ $--button-medium-padding-horizontal: 20px !default;
 
 /// fontSize||Font|1
 $--button-small-font-size: 12px !default;
-$--button-small-border-radius: #{$--border-radius-base - 1} !default;
+$--button-small-border-radius: 2 !default;
 /// padding||Spacing|3
 $--button-small-padding-vertical: 9px !default;
 /// padding||Spacing|3
 $--button-small-padding-horizontal: 15px !default;
 /// fontSize||Font|1
 $--button-mini-font-size: 12px !default;
-$--button-mini-border-radius: #{$--border-radius-base - 1} !default;
+$--button-mini-border-radius: 2 !default;
 /// padding||Spacing|3
 $--button-mini-padding-vertical: 7px !default;
 /// padding||Spacing|3
@@ -590,7 +590,7 @@ $--button-info-font-color: $--color-white !default;
 /// color||Color|0
 $--button-info-background-color: $--color-info !default;
 
-$--button-hover-tint-percent: 20% !default;
+$--button-hover-tint-percent: 0% !default;
 $--button-active-shade-percent: 10% !default;
 
 
@@ -750,10 +750,10 @@ $--badge-size: 18px !default;
 /* Card
 --------------------------*/
 /// color||Color|0
-$--card-border-color: $--border-color-lighter !default;
-$--card-border-radius: 4px !default;
+$--card-border-color: #fff !default;
+$--card-border-radius: 8px !default;
 /// padding||Spacing|3
-$--card-padding: 20px !default;
+$--card-padding: 32px 30px 36px !default;
 
 /* Slider
 --------------------------*/
