@@ -1,0 +1,29 @@
+/*
+ * @Description: 字体规范
+ * @Author: 何彬
+ */
+.font-12 {
+  font-size: 12px;
+}
+
+.font-14 {
+  font-size: 14px;
+}
+
+.font-16 {
+  font-size: 16px;
+}
+
+.font-18 {
+  font-size: 16px;
+}
+
+/* 数字字体 */
+@font-face {
+  font-family: DINMittelschrift;
+  src: url('../../fonts/DINMittelschrift.otf');
+}
+.font-number{
+  font-family: DINMittelschrift;
+}
+

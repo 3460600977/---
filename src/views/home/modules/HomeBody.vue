@@ -7,19 +7,19 @@
       </div>
       <!--  -->
       <div :style="`background-image:url('${images.moneyBg}')`" class="account-money-box color-white">
-        <div class="accouint-title font-14">现金账户</div>
-        <div class="account-val">100000000</div>
+        <div class="accouint-title">现金账户</div>
+        <div class="account-val font-number">{{$tools.toThousands(10000.01)}}</div>
       </div>
       <div :style="`background-image:url('${images.moneyBg}')`" class="account-money-box color-white">
-        <div class="accouint-title font-14">信用账户</div>
-        <div class="account-val">100000000</div>
+        <div class="accouint-title">信用账户</div>
+        <div class="account-val font-number">{{$tools.toThousands(1000)}}</div>
       </div>
       <el-button class="create-put" type="primary" icon="el-icon-plus">创建投放方案</el-button>
     </el-card>
     <el-card class="box-card no-data mid-center">
       <div>
         <img :src="images.noData" alt="无数据">
-        <div class="description text-center color-text-2">
+        <div class="description text-center">
           <p>更多功能即将上线</p>
           <p>敬请期待</p>
         </div>
@@ -41,7 +41,6 @@ export default {
     }
   },
   mounted() {
-    // this.$api.test()
   }
 }
 </script>
@@ -61,6 +60,11 @@ export default {
         font-size:14px;
         color:rgba(24,24,25,1);
       }
+    }
+    .accouint-title{
+      height: 14px;
+      font-size: 14px;
+      line-height: 14px;
     }
     .account-money-box{
       float: left;
@@ -90,6 +94,7 @@ export default {
       height: calc(100vh - 305px);
       .description{
         font-size: 18px;
+        color: #979EBA;
       }
     }
   }
