@@ -2,7 +2,7 @@
   <div class="home-body">
     <el-card class="box-card mid">
       <div class="company-msg mid">
-        <img width="48px" :src="images.userHead" alt="">
+        <img width="48px" :src="images.grayHead" alt="头像">
         <span class="company-name">成都新潮传媒集团有限公司 媒集团有限公司</span>
       </div>
       <!--  -->
@@ -31,6 +31,7 @@ export default {
     return {
       images: {
         userHead: require('../../../assets/images/icons/icon_tx.png'),
+        grayHead: require('../../../assets/images/icons/icon_head portrait.png'),
         moneyBg: require('../../../assets/images/icon_money_bg.png'),
         noData: require('../../../assets/images/icon_no_data.png')
       }

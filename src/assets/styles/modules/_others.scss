@@ -1,4 +1,17 @@
 // 杂项写在这里
+
+// nprogress 加载中全局遮罩
+.nprogress-busy::after{
+  position: fixed;
+  top:0;
+  left:0;
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  opacity: 0.1;
+}
 /***                                                                          
  *          .,:,,,                                        .::,,,::.          
  *        .::::,,;;,                                  .,;;:,,....:i:         

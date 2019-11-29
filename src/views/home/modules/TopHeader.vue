@@ -1,5 +1,5 @@
 <template>
-  <header class="top-header clearfix">
+  <header id="top-header" class="top-header clearfix">
     <!-- logo -->
     <div class="logo mid">
       <img class="logo-xinchao" :src="images.logo" alt="新潮传媒">
@@ -10,19 +10,26 @@
     <!-- menu -->
     <ul class="my-menu font-14 relative">
       <li class="item" 
+        :class="{'active': index === menu.activeIndex}"
+        @mouseenter="hoverMenu(menu.content, index)"
+        @mouseleave="leaveMenu"
         @click="menu.activeIndex = index;"
         v-for="(mitem, index) in menu.content" :key="index">
         <div class="menu-text" :class="{'active': index === menu.activeIndex}">
           {{mitem.name}}
         </div>
       </li>
+
+      <!-- {{menu.moveBlock}} -->
+      <!-- 覆盖效果 -->
+      <div class="hover-move-block" :style="{...menu.moveBlock}"></div>
     </ul>
 
     <!-- user msg -->
     <div class="user-msg color-white mid">
       <div class="item mid"><img width="20px" :src="images.money" alt=""></div>
       <div class="item mid">
-        <el-badge :value="200">
+        <el-badge :value="20">
           <img width="20px" :src="images.notification" alt="">
         </el-badge>
       </div>
@@ -31,7 +38,7 @@
           <img class="head" width="47px" :src="images.userHead" alt="头像">
           <div class="operation-box mid relative">
             <div class="user-name font-14">admin</div>
-            <i>▲</i>
+            <img class="up-icon" width="10px" :src="images.up" alt="" srcset="">
 
             <div class="drop-box absolute font-14">
               <ul>
@@ -57,9 +64,15 @@ export default {
         money: require('../../../assets/images/icons/icon_money.png'),
         notification: require('../../../assets/images/icons/icon_notification.png'),
         userHead: require('../../../assets/images/icons/icon_tx.png'),
+        up: require('../../../assets/images/icons/icon_up.png'),
       },
       menu: {
         activeIndex: 0,
+        moveBlock: {
+          width: '78px',
+          transform: 'translateX(0px)',
+          opacity: 0
+        },
         content: [
           { name: '首页'},
           { name: '城市洞察'},
@@ -71,6 +84,36 @@ export default {
       },
     }
   },
+
+  methods: {
+    /**
+     * 顶部菜单覆盖样式 宽度,位移
+     * @param: menuArr 菜单数组
+     * @param: index 覆盖的index
+     */
+    hoverMenu(menuArr, index) {
+      let blockWidth = menuArr[index].name.length * 14 + 50;
+      let left = 0;
+      for (let i = 0; i<index; i++) {
+        left += menuArr[i].name.length * 14 + 50;
+      }
+      this.menu.moveBlock = {
+        width: blockWidth + 'px',
+        transform: `translateX(${left}px)`,
+        opacity: 1
+      }
+    },
+
+    /**
+     * 鼠标离开菜单
+     */
+    leaveMenu() {
+      this.menu.moveBlock.opacity = 0;
+    }
+  },
+
+  computed: {
+  }
 }
 </script>
 
@@ -103,6 +146,8 @@ export default {
       float: left;
       color: #fff;
       .item{
+        position: relative;
+        z-index: 2;
         float: left;
         line-height: $headerHeight;
         padding: 0 25px;
@@ -110,8 +155,11 @@ export default {
         letter-spacing: 0;
         cursor: pointer;
         transition: .3s;
-        &:hover{
-          background: #000;
+        // &:hover{
+        //   background: #333A61;
+        // }
+        &.active{
+          background: #242945;
         }
         .menu-text{
           height: $headerHeight - 4px;
@@ -120,6 +168,14 @@ export default {
             border-bottom: 4px solid rgba(45,90,255,1);
           }
         }
+      }
+      .hover-move-block{
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        transition: 0.3s;
+        height: $headerHeight;
+        background: #333A61;
       }
     }
     .user-msg{
@@ -133,7 +189,7 @@ export default {
         cursor: pointer;
         transition: .3s;
         &:hover{
-          background: #000;
+          background: #333A61;
         }
         .user-head{
           height: 100%;
@@ -147,9 +203,15 @@ export default {
               margin: 0 10px;
               color: #979EBA;
             }
+            .up-icon,.drop-box{
+              transition: 0.3s;
+            }
             &:hover{
               .drop-box{
                 display: block;
+              }
+              .up-icon{
+                transform: rotate(180deg);
               }
             }
             .drop-box{
