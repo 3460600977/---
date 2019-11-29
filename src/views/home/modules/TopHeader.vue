@@ -36,8 +36,8 @@
             <div class="drop-box absolute font-14">
               <ul>
                 <li class="o-item center">账号管理</li>
-                <li class="o-item center">账号管理</li>
-                <li class="o-item center">账号管理</li>
+                <li class="o-item center">修改密码</li>
+                <li class="o-item center color-red">退出登录</li>
               </ul>
             </div>
           </div>

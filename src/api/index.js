@@ -1,5 +1,7 @@
 import { test } from './modules/test'
 
-export const api = {
-  test
+const api = {
+  test,
 }
+
+export default api;
