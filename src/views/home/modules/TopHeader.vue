@@ -83,7 +83,7 @@ export default {
     background-color: #2A2F4D;
     .logo{
       float: left;
-      height: 100%;
+      height: $headerHeight;
       margin-left: 30px;
       .logo-xinchao{
         width: 124px;
@@ -170,6 +170,11 @@ export default {
           }
         }
       }
+    }
+  }
+  @media screen and (max-width: 1280px) {
+    .logo-split,.company-name{
+      display: none;
     }
   }
 </style>

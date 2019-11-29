@@ -10,10 +10,6 @@
         <div class="accouint-title">现金账户</div>
         <div class="account-val font-number">{{$tools.toThousands(10000.01)}}</div>
       </div>
-      <div :style="`background-image:url('${images.moneyBg}')`" class="account-money-box color-white">
-        <div class="accouint-title">信用账户</div>
-        <div class="account-val font-number">{{$tools.toThousands(1000)}}</div>
-      </div>
       <el-button class="create-put" type="primary" icon="el-icon-plus">创建投放方案</el-button>
     </el-card>
     <el-card class="box-card no-data mid-center">
@@ -55,7 +51,7 @@ export default {
       float: left;
       height: 100px;
       .company-name{
-        margin: 0 14px;
+        margin: 0 33px 0 14px;
         width:168px;
         font-size:14px;
         color:rgba(24,24,25,1);
@@ -68,12 +64,9 @@ export default {
     }
     .account-money-box{
       float: left;
-      padding: 18px 18px 30px;
-      margin-left: 30px;
-      width:258px;
-      height:100px;
-      // background:linear-gradient(-56deg,rgba(106,118,255,1) 0%,rgba(97,80,255,1) 100%);
-      box-shadow:3px 4px 14px 0px rgba(45,90,255,0.3);
+      padding: 28px 24px;
+      width:282px;
+      height:124px;
       border-radius:2px;
       background-size: cover;
       .account-val{

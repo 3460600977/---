@@ -263,9 +263,9 @@
     -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); }
   .el-card__header {
-    padding: 32px 30px 36px-2 32px 30px 36px;
+    padding: 18px 20px;
     border-bottom: 1px solid #fff;
     -webkit-box-sizing: border-box;
     box-sizing: border-box; }
   .el-card__body {
-    padding: 32px 30px 36px; }
+    padding: 20px; }
