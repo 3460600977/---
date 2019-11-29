@@ -254,7 +254,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  color: red;
+  color: #2D5AFF;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -270,4 +270,4 @@
   cursor: pointer;
   z-index: 5; }
   .el-backtop:hover {
-    background-color: #F2F6FC; }
+    background-color: #E5E7E9; }

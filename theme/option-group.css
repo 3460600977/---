@@ -266,11 +266,11 @@
         right: 20px;
         bottom: 12px;
         height: 1px;
-        background: #E4E7ED; }
+        background: #E5E7E9; }
   .el-select-group__title {
     padding-left: 20px;
     font-size: 12px;
-    color: #909399;
+    color: #999999;
     line-height: 30px; }
   .el-select-group .el-select-dropdown__item {
     padding-left: 20px; }

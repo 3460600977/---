@@ -1,5 +1,5 @@
 /*
- * @Description: scss变量=>颜色变量 class变量=>字体颜色
+ * @Description:
  * @Author: 何彬
  * @Date: 2019-07-12 09:19:08
  * @LastEditTime: 2019-10-09 17:48:49
@@ -7,83 +7,45 @@
  */
 
 /**
- * 基础颜色
+ * 颜色规范, 对应UI设计规范
  */
 
-$color-red:          #b81c22; //  主题红色
-$color-red-darken:   #91161B;
-$color-red-lighten:  #CD373D;
+$color-blue:       #2D5AFF; // 主色
+$color-main:       $color-blue; // 主色
+$color-red:        #F44A4A; // 点缀
+$color-split-line: #575E87; // 分割线
+$color-text:       #181819; // 文字主色
+$color-text-1:     #999999; // 文字辅色
+$color-text-2:     #969CBE; // 文字辅助
+$color-bg:         #F6F6F6; // 背景
+$color-border:     #E5E7E9; // 边框
+$color-disabled:   #C5C8CE; // 失效
 
 
-$color-black:        #222222; // 主题黑色
-$color-black-darken:   darken($color-black, 10%);
-$color-black-lighten:  lighten($color-black, 10%);
-
-$color-gray:        #999999; // 灰色字体
-$color-gray-darken:   darken($color-gray, 10%);
-$color-gray-lighten:  #f3f4f8; // 按钮灰色背景
-
-$color-main:           $color-red;
-$color-main-darken:    $color-red-darken;
-$color-main-lighten:   $color-red-lighten;
-
-$border-color: #eaeaea;
-$color-bg: #f3f3f3;
 /**
  * 字体颜色
  */
-.color-red{
-    color: $color-red;
-}
-.color-lighten{
-    color: $color-red-lighten;
-}
-.color-black{
-    color: $color-black;
-}
-.color-darken{
-    color: $color-red-darken;
-}
-
-.color-gray{
-    color: $color-gray;
-} // 灰色字体
-.color-white {
-    color: #fff;
-}
-.color-main {
+.color-main, .color-blue{
     color: $color-main;
 }
-.color333 {
-  color: #333333;
+.color-text{
+    color: $color-text;
 }
-/**#FFB81C22
- * 背景颜色
- */
-.bg-color{
-  background-color: $color-bg;
+.color-text-1{
+    color: $color-text-1;
 }
-.bg-red{
-    background-color: $color-red;
+.color-text-2{
+    color: $color-text-2;
 }
-.bg-lighten{
-    background-color: $color-red-lighten;
+.color-bg {
+    color: $color-bg;
 }
-.bg-darken{
-    background-color: $color-red-darken;
+.color-border {
+    color: $color-border;
 }
-.bg-gray{
-    background-color: #f3f3f3;
-}// 缝隙背景颜色
-.bg-gray-lighten{
-    background-color: $color-gray-lighten;
+.color-disabled {
+    color: $color-disabled;
 }
-.bg-white {
-    background-color: #fff;
-}
-.bg-main {
-    background-color: $color-main;
-}
-.button-gray {
-    background-color: #f3f4f8;
+.color-white{
+  color: #ffffff;
 }

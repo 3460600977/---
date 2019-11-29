@@ -28,6 +28,10 @@ export default new Router({
       path: '/404',
       component: () => import('@/views/errorPage/404')
     },
+    {
+      path: '/themePreview',
+      component: () => import('@/views/themePreview/themePreview')
+    },
     { path: '/', redirect: '/home', hidden: true },
     { path: '*', redirect: '/404', hidden: true }
   ]
