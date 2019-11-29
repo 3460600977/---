@@ -26,26 +26,32 @@ $color-disabled:   #C5C8CE; // 失效
  * 字体颜色
  */
 .color-main, .color-blue{
-    color: $color-main;
+    color: $color-main !important;
+}
+.color-red{
+  color: $color-red !important;
+}
+.color-split-line{
+  color: $color-split-line !important;
 }
 .color-text{
-    color: $color-text;
+    color: $color-text !important;
 }
 .color-text-1{
-    color: $color-text-1;
+    color: $color-text-1 !important;
 }
 .color-text-2{
-    color: $color-text-2;
+    color: $color-text-2 !important;
 }
 .color-bg {
-    color: $color-bg;
+    color: $color-bg !important;
 }
 .color-border {
-    color: $color-border;
+    color: $color-border !important;
 }
 .color-disabled {
-    color: $color-disabled;
+    color: $color-disabled !important;
 }
 .color-white{
-  color: #ffffff;
+  color: #ffffff !important;
 }

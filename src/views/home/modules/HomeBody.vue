@@ -8,11 +8,11 @@
       <!--  -->
       <div :style="`background-image:url('${images.moneyBg}')`" class="account-money-box color-white">
         <div class="accouint-title font-14">现金账户</div>
-        <div class="account-val">100000000</div>
+        <div class="account-val font-number">{{$tools.toThousands(10000.01)}}</div>
       </div>
       <div :style="`background-image:url('${images.moneyBg}')`" class="account-money-box color-white">
         <div class="accouint-title font-14">信用账户</div>
-        <div class="account-val">100000000</div>
+        <div class="account-val font-number">100000000</div>
       </div>
       <el-button class="create-put" type="primary" icon="el-icon-plus">创建投放方案</el-button>
     </el-card>
@@ -41,7 +41,6 @@ export default {
     }
   },
   mounted() {
-    // this.$api.test()
   }
 }
 </script>
