@@ -1,6 +1,6 @@
 <template>
-    <div>
-      <div class="container" ref="container"></div>
+    <div class="container">
+      <div ref="container" class="container"></div>
     </div>
 </template>
 
