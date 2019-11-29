@@ -4,11 +4,11 @@
     <div class="logo mid">
       <img class="logo-xinchao" :src="images.logo" alt="新潮传媒">
       <div class="logo-split"></div>
-      <label class="company-name font-16 color-white">数字化刊播平台</label>
+      <label class="company-name font-14 color-white">数字化刊播平台</label>
     </div>
 
     <!-- menu -->
-    <ul class="my-menu font-16 relative">
+    <ul class="my-menu font-14 relative">
       <li class="item" 
         @click="menu.activeIndex = index;"
         v-for="(mitem, index) in menu.content" :key="index">
@@ -30,7 +30,7 @@
         <div class="user-head mid clearfix">
           <img class="head" width="47px" :src="images.userHead" alt="头像">
           <div class="operation-box mid relative">
-            <div class="user-name">admin</div>
+            <div class="user-name font-14">admin</div>
             <i>▲</i>
 
             <div class="drop-box absolute font-14">
@@ -156,6 +156,7 @@ export default {
               display: none;
               top: $headerHeight;
               left: 0;
+              z-index: 10000;
               width:100px;
               background:rgba(255,255,255,1);
               border:1px solid rgba(233,233,233,1);

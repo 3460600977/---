@@ -33,16 +33,19 @@ let tools = {
 
   /**
    * @description: 数字转千位计数
+   * @param: num: 数字
    */
   toThousands: num => {
-    num = (num || 0).toString()
+    num = (num || 0).toString();
+    let prefixInt = num.split('.')[0];
+    let suffixDecimal = num.split('.')[1] || '00';
     let result = '';
-    while (num.length > 3) {
-      result = ',' + num.slice(-3) + result;
-      num = num.slice(0, num.length - 3);
+    while (prefixInt.length > 3) {
+      result = ',' + prefixInt.slice(-3) + result;
+      prefixInt = num.slice(0, prefixInt.length - 3);
     }
-    if (num) { result = num + result; }
-    return result;
+    if (prefixInt) { result = prefixInt + result; }
+    return result + '.' + suffixDecimal;
   }
 }
 
