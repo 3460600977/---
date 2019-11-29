@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-      <div ref="container" class="container"></div>
+
     </div>
 </template>
 
@@ -94,8 +94,5 @@
 </script>
 
 <style scoped lang='scss'>
-.container {
-  height: 100%;
-  width: 100%;
-}
+
 </style>
