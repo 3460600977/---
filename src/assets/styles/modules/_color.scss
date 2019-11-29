@@ -10,7 +10,8 @@
  * 颜色规范, 对应UI设计规范
  */
 
-$color-main:       #2D5AFF; // 主色
+$color-blue:       #2D5AFF; // 主色
+$color-main:       $color-blue; // 主色
 $color-red:        #F44A4A; // 点缀
 $color-split-line: #575E87; // 分割线
 $color-text:       #181819; // 文字主色
@@ -24,38 +25,27 @@ $color-disabled:   #C5C8CE; // 失效
 /**
  * 字体颜色
  */
-.color-red{
-    color: $color-red;
+.color-main, .color-blue{
+    color: $color-main;
 }
-.color-black{
-    color: #181819;
+.color-text{
+    color: $color-text;
 }
-.color-gray{
-    color: #999999;
+.color-text-1{
+    color: $color-text-1;
 }
-.color-white {
-    color: #fff;
+.color-text-2{
+    color: $color-text-2;
 }
-.color-main {
-    color: #181819;
+.color-bg {
+    color: $color-bg;
 }
-
-/**
- * 背景颜色
- */
-
-.bg-red{
-    background-color: $color-red;
+.color-border {
+    color: $color-border;
 }
-.bg-lighten{
-    background-color: $color-red;
+.color-disabled {
+    color: $color-disabled;
 }
-.bg-darken{
-    background-color: $color-red;
-}
-.bg-gray{
-    background-color: #f3f3f3;
-}
-.bg-white {
-    background-color: #fff;
+.color-white{
+  color: #ffffff;
 }

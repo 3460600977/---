@@ -15,5 +15,6 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  background: #F6F6F6;
 }
 </style>
