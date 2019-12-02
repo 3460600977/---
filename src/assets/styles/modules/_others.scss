@@ -12,6 +12,14 @@
   background: #000;
   opacity: 0.1;
 }
+.container {
+  height: 100%;
+  width: 100%;
+}
+.border-bottom {
+  border-bottom: 1px solid $color-border;
+}
+
 /***                                                                          
  *          .,:,,,                                        .::,,,::.          
  *        .::::,,;;,                                  .,;;:,,....:i:         

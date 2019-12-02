@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import {putManageRouter} from './modules/putManage' // 投放管理
+import {cityInsightRouter} from './modules/cityInsight'
 
 Vue.use(Router)
 
@@ -18,6 +19,7 @@ const router =  new Router({
           component: () => import ('@/views/home/modules/homeBody'),
         },
         ...putManageRouter,
+        ...cityInsightRouter
       ],
     },
     {
