@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import {putManageRouter} from './modules/putManage' // 投放管理
+import {cityInsightRouter} from './modules/cityInsight'
 
 Vue.use(Router)
 
@@ -16,6 +17,7 @@ export default new Router({
           component: () => import ('@/views/home/modules/homeBody'),
         },
         ...putManageRouter,
+        ...cityInsightRouter
       ],
     },
     {
