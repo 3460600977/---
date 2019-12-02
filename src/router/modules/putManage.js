@@ -15,5 +15,15 @@ export const putManageRouter = [
   {
     path: '/flow/createcreative',
     component: () => import ('@/views/putManage/flow/CreateCreative'),
+  },
+  {
+    path: '/putManage',
+    component: () => import ('@/views/putManage/Index'),
+    children: [
+      {
+        path: '/putManage/createCreative',
+        component: () => import ('@/views/putManage/creative/createCreative'),
+      }
+    ]
   }
 ]

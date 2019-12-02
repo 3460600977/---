@@ -1,9 +1,9 @@
 <template>
   <div class="home-body">
-    <el-card class="box-card mid">
+    <el-card class="box-card mid shadow">
       <div class="company-msg mid">
         <img width="48px" :src="images.grayHead" alt="头像">
-        <span class="company-name">成都新潮传媒集团有限公司 媒集团有限公司</span>
+        <span class="company-name">成都新潮传媒集团有限公司媒集团有限公司</span>
       </div>
       <!--  -->
       <div :style="`background-image:url('${images.moneyBg}')`" class="account-money-box color-white">
@@ -12,7 +12,7 @@
       </div>
       <el-button class="create-put" type="primary" icon="el-icon-plus">创建投放方案</el-button>
     </el-card>
-    <el-card class="box-card no-data mid-center">
+    <el-card class="box-card no-data mid-center shadow">
       <div>
         <img :src="images.noData" alt="无数据">
         <div class="description text-center">

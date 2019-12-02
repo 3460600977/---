@@ -7,7 +7,7 @@ import {putManageRouter} from './modules/putManage' // 投放管理
 Vue.use(Router)
 
 const router =  new Router({
-  // mode: 'history',
+  mode: 'history',
   routes: [
     {
       path: '/home',
