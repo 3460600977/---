@@ -15,8 +15,8 @@ Vue.use(ElementUI);
 Vue.config.productionTip = false
 
 //解决IE Failed to resolve async component default: ReferenceError: “Promise”未定义
-require('es6-promise').polyfill();
-require('es6-promise/auto');
+// require('es6-promise').polyfill();
+// require('es6-promise/auto');
 
 Vue.prototype.$api = api;
 Vue.prototype.$tools = tools;
