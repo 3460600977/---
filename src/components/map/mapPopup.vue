@@ -58,7 +58,6 @@ btn
 </script>
 
 <style scoped lang='scss'>
-  @import "@/assets/styles/modules/_color.scss";
   .wrapper {
     padding: 0 14px;
   }
