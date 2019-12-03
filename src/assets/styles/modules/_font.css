@@ -20,8 +20,12 @@
 
 /* 数字字体 */
 @font-face {
-  font-family: DINMittelschrift;
-  src: url('../../fonts/DINMittelschrift.otf');
+  font-family: 'DINMittelschrift';
+	src: url('../../fonts/DINMittelschrift.eot');
+  src: local('☺'), 
+    url('../../fonts/DINMittelschrift.woff') format('woff'), 
+    url('../../fonts/DINMittelschrift.ttf') format('truetype'), 
+    url('../../fonts/DINMittelschrift.svg') format('svg');
 }
 .font-number{
   font-family: DINMittelschrift;

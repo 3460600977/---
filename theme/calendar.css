@@ -854,43 +854,43 @@
         background-color: #feeded;
         border-color: #fddbdb; }
   .el-button--info {
-    color: #FFFFFF;
-    background-color: #999999;
-    border-color: #999999; }
+    color: #181819;
+    background-color: #E5E7E9;
+    border-color: #E5E7E9; }
     .el-button--info:hover, .el-button--info:focus {
-      background: #999999;
-      border-color: #999999;
-      color: #FFFFFF; }
+      background: #e5e7e9;
+      border-color: #e5e7e9;
+      color: #181819; }
     .el-button--info:active {
-      background: #8c8c8c;
-      border-color: #8c8c8c;
-      color: #FFFFFF;
+      background: #d1d2d4;
+      border-color: #d1d2d4;
+      color: #181819;
       outline: none; }
     .el-button--info.is-active {
-      background: #8c8c8c;
-      border-color: #8c8c8c;
-      color: #FFFFFF; }
+      background: #d1d2d4;
+      border-color: #d1d2d4;
+      color: #181819; }
     .el-button--info.is-disabled, .el-button--info.is-disabled:hover, .el-button--info.is-disabled:focus, .el-button--info.is-disabled:active {
       color: #FFFFFF;
-      background-color: #cccccc;
-      border-color: #cccccc; }
+      background-color: #f2f3f4;
+      border-color: #f2f3f4; }
     .el-button--info.is-plain {
-      color: #999999;
-      background: whitesmoke;
-      border-color: #d6d6d6; }
+      color: #E5E7E9;
+      background: #fcfdfd;
+      border-color: #f5f5f6; }
       .el-button--info.is-plain:hover, .el-button--info.is-plain:focus {
-        background: #999999;
-        border-color: #999999;
+        background: #E5E7E9;
+        border-color: #E5E7E9;
         color: #FFFFFF; }
       .el-button--info.is-plain:active {
-        background: #8c8c8c;
-        border-color: #8c8c8c;
+        background: #d1d2d4;
+        border-color: #d1d2d4;
         color: #FFFFFF;
         outline: none; }
       .el-button--info.is-plain.is-disabled, .el-button--info.is-plain.is-disabled:hover, .el-button--info.is-plain.is-disabled:focus, .el-button--info.is-plain.is-disabled:active {
-        color: #c2c2c2;
-        background-color: whitesmoke;
-        border-color: #ebebeb; }
+        color: #eff1f2;
+        background-color: #fcfdfd;
+        border-color: #fafafb; }
   .el-button--medium {
     padding: 10px 20px;
     font-size: 14px;

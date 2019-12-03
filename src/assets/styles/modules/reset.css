@@ -14,7 +14,6 @@ th, td { /* table elements 表格元素 */
 body,
 button, input, select, textarea { /* for ie */
   font-family: "Microsoft YaHei","微软雅黑","Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB",Arial,sans-serif;
-  /* font-family: PingFang SC, Droid Sans; */
 }
 
 h1 { font-size: 18px; /* 18px / 12px = 1.5 */ }
