@@ -1,14 +1,16 @@
 <template>
     <div class="container cityInsight">
-      <div class="tools">
-        <tools @click="click"></tools>
-      </div>
       <div class="mapPopup">
         <map-popup @change="sliderChange"></map-popup>
       </div>
+      <div class="left-select">
+        <left-select></left-select>
+      </div>
+      <div class="info">
+<!--        <right-info></right-info>-->
+      </div>
       <div class="map container">
         <db-map
-          :pathType="pathType"
           :sliderVal="sliderVal"
         ></db-map>
       </div>
@@ -19,16 +21,20 @@
   import dbMap from '../../../components/map/map.vue'
   import tools from "../../../components/map/tools";
   import mapPopup from "../../../components/map/mapPopup";
+  import rightInfo from "./rightInfo";
+  import leftSelect from "./leftSelect";
+
   export default {
     name: "index",
     components: {
       dbMap,
       tools,
-      mapPopup
+      mapPopup,
+      leftSelect,
+      rightInfo
     },
     data() {
       return {
-        pathType: '',
         sliderVal: 5
       }
     },
@@ -59,6 +65,19 @@
     z-index: 3;
     top: 40px;
     left: 20px;
+  }
+  .info {
+    position: absolute;
+    z-index: 3;
+    top: 29px;
+    background: #fff;
+    right: 40px;
+  }
+  .left-select {
+    position: absolute;
+    z-index: 3;
+    top: 29px;
+    left: 30px;
   }
   .map {
     z-index: 1;
