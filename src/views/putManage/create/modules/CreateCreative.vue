@@ -1,6 +1,6 @@
 <template>
   <div class="create-creative">
-      <el-tabs class="creative-box" type="border-card">
+      <el-tabs class="my-tabs creative-box" type="border-card">
         <el-tab-pane label="创建新广告创意">
           <UploadCreativeMaterial/>
         </el-tab-pane>
