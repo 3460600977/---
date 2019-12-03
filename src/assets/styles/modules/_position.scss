@@ -6,21 +6,21 @@
  * @LastEditors: 何彬
  */
 .mid{
-    display: flex;
+    display: flex !important;
     display:-webkit-box;
     display:-webkit-flex; 
     align-items: center;
     -webkit-box-align: center;
 }
 .center{
-    display: flex;
+    display: flex !important;
     display:-webkit-box;
     display:-webkit-flex;
     justify-content: center;
     -webkit-justify-content: center;
 }
 .mid-center{
-    display: flex;
+    display: flex !important;
     display:-webkit-box;
     display:-webkit-flex;
     align-items: center;
@@ -30,7 +30,7 @@
     -webkit-justify-content: center;
 }
 .mid-between{
-    display: flex;
+    display: flex !important;
     display:-webkit-box;
     display:-webkit-flex;
     align-items: center;

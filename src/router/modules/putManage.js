@@ -18,14 +18,18 @@ export const putManageRouter = [
     component: () => import ('@/views/putManage/list/modules/creative/List'),
   },
   // 创建流程
+  // {
+  //   path: '/putManage',
+  //   component: () => import ('@/views/putManage/Index'),
+  // },
   {
-    path: '/putManage',
-    component: () => import ('@/views/putManage/Index'),
+    path: '/putManage/create',
+    component: () => import ('@/views/putManage/create/index'),
     children: [
       {
-        path: '/putManage/createCreative',
-        component: () => import ('@/views/putManage/create/modules/createCreative'),
+        path: '/putManage/create/createCreative',
+        component: () => import ('@/views/putManage/create/modules/createCreative/CreateCreative'),
       }
     ]
-  },
+  }
 ]

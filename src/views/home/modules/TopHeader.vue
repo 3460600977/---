@@ -93,7 +93,7 @@ export default {
         content: [
           { name: '首页', path: '/'},
           { name: '城市洞察', path: '/'},
-          { name: '投放管理', path: '/putManage'},
+          { name: '投放管理', path: '/putManage/create'},
           { name: '报表中心', path: '/'},
           { name: '工具箱', path: '/'},
           { name: '审核管理', path: '/'},
