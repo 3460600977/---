@@ -1,20 +1,19 @@
 // 投放管理
 export const putManageRouter = [
+  // 投放管理-投放计划
   {
-    path: '/flow/createplan',
-    component: () => import ('@/views/putManage/flow/CreatePlan'),
+    path: '/plan/list',
+    component: () => import ('@/views/putManage/list/modules/plan/List'),
   },
+  // 投放管理-投放方案
   {
-    path: '/flow/createproject',
-    component: () => import ('@/views/putManage/flow/CreateProject'),
+    path: '/project/list',
+    component: () => import ('@/views/putManage/list/modules/project/List'),
   },
+  // 投放管理-广告创意
   {
-    path: '/flow/confirmproject',
-    component: () => import ('@/views/putManage/flow/ConfirmProject'),
-  },
-  {
-    path: '/flow/createcreative',
-    component: () => import ('@/views/putManage/flow/CreateCreative'),
+    path: '/creative/list',
+    component: () => import ('@/views/putManage/list/modules/creative/List'),
   },
   {
     path: '/putManage',
@@ -22,8 +21,8 @@ export const putManageRouter = [
     children: [
       {
         path: '/putManage/createCreative',
-        component: () => import ('@/views/putManage/creative/createCreative'),
+        component: () => import ('@/views/putManage/create/modules/createCreative'),
       }
     ]
-  }
+  },
 ]
