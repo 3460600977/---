@@ -1,43 +1,31 @@
-// 投放管理
+/**
+ * 投放管理
+ */ 
 export const putManageRouter = [
-  // 创建投放方案流程
-  {
-    path: '/flow/createplan',
-    component: () => import ('@/views/putManage/flow/CreatePlan'),
-  },
-  {
-    path: '/flow/createproject',
-    component: () => import ('@/views/putManage/flow/CreateProject'),
-  },
-  {
-    path: '/flow/confirmproject',
-    component: () => import ('@/views/putManage/flow/ConfirmProject'),
-  },
-  {
-    path: '/flow/createcreative',
-    component: () => import ('@/views/putManage/flow/CreateCreative'),
-  },
-  // 投放管理-投放计划
+  // 投放计划列表
   {
     path: '/plan/list',
-    component: () => import ('@/views/putManage/plan/List'),
+    component: () => import ('@/views/putManage/list/modules/plan/List'),
   },
-  // 投放管理-投放方案
+  // 投放方案列表
   {
     path: '/project/list',
-    component: () => import ('@/views/putManage/project/List'),
+    component: () => import ('@/views/putManage/list/modules/project/List'),
   },
-  // 投放管理-广告创意
+  // 广告创意列表
   {
     path: '/creative/list',
-    component: () => import ('@/views/putManage/creative/List'),
+    component: () => import ('@/views/putManage/list/modules/creative/List'),
   },
+  // 创建流程
   {
-    path: '/creative/edit',
-    component: () => import ('@/views/putManage/creative/Edit'),
+    path: '/putManage',
+    component: () => import ('@/views/putManage/Index'),
+    children: [
+      {
+        path: '/putManage/createCreative',
+        component: () => import ('@/views/putManage/create/modules/createCreative'),
+      }
+    ]
   },
-  {
-    path: '/creative/singlecreative',
-    component: () => import ('@/views/putManage/creative/SingleCreative'),
-  }
 ]

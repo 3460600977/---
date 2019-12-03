@@ -1,12 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 import {putManageRouter} from './modules/putManage' // 投放管理
 import {cityInsightRouter} from './modules/cityInsight'
 
 Vue.use(Router)
 
-export default new Router({
-  // mode: 'history',
+const router =  new Router({
+  mode: 'history',
   routes: [
     {
       path: '/home',
@@ -36,3 +38,19 @@ export default new Router({
     { path: '*', redirect: '/404', hidden: true }
   ]
 })
+
+
+NProgress.inc(0.8)
+NProgress.configure({ easing: 'ease', speed: 1500, showSpinner: false })
+router.beforeEach((to, from, next) => {
+  NProgress.start()
+  next();
+})
+
+router.afterEach(() => {
+  NProgress.done()
+  NProgress.remove();
+})
+
+
+export default router;

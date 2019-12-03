@@ -430,11 +430,11 @@ $--input-font-color: $--color-text-regular !default;
 /// height||Other|4
 $--input-width: 140px !default;
 /// height||Other|4
-$--input-height: 40px !default;
+$--input-height: 36px !default;
 $--input-border: $--border-base !default;
-$--input-border-color: $--border-color-base !default;
+$--input-border-color: #E5E7E9 !default;
 /// borderRadius||Border|2
-$--input-border-radius: $--border-radius-base !default;
+$--input-border-radius: 2px !default;
 $--input-border-color-hover: $--border-color-hover !default;
 /// color||Color|0
 $--input-background-color: $--color-white !default;
@@ -584,11 +584,11 @@ $--button-danger-font-color: $--color-white !default;
 /// color||Color|0
 $--button-danger-background-color: $--color-danger !default;
 /// color||Color|0
-$--button-info-border-color: $--color-info !default;
+$--button-info-border-color: #E5E7E9 !default;
 /// color||Color|0
-$--button-info-font-color: $--color-white !default;
+$--button-info-font-color: #181819 !default;
 /// color||Color|0
-$--button-info-background-color: $--color-info !default;
+$--button-info-background-color: #E5E7E9 !default;
 
 $--button-hover-tint-percent: 0% !default;
 $--button-active-shade-percent: 10% !default;
@@ -753,7 +753,7 @@ $--badge-size: 18px !default;
 $--card-border-color: #fff !default;
 $--card-border-radius: 8px !default;
 /// padding||Spacing|3
-$--card-padding: 32px 30px 36px !default;
+$--card-padding: 20px !default;
 
 /* Slider
 --------------------------*/

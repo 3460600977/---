@@ -17,13 +17,13 @@
 
 * 测试环境
 
-  + 访问域名:
+  + 访问域名: qa-ads.xinchao.com
   + 接口地址: 
   + 编译命令: `npm run build:prod`
 
 * 生产环境
 
-  + 访问域名:
+  + 访问域名: ads.xinchao.com
   + 接口地址: 
   + 编译命令: `npm run build:dev`
 

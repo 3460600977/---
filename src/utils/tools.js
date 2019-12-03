@@ -8,27 +8,70 @@ let tools = {
    * @param limitHeight:
    */
   checkVideoTimeAndSize: (file, limitTime, timeRange = 0, limitWidth, limitHeight) => {
-    let url = URL.createObjectURL(file);
-    let video = document.createElement('video');
-  
-    video.src = url;
-    video.style="position: relative; z-index: -1; opacity: 0;"
-    document.getElementById('app').appendChild(video)
-  
-    video.addEventListener('canplay', (e) => {
-      let videoTime = e.target.duration;
-      let videoWidth = e.target.videoWidth;
-      let videoHeight = e.target.videoHeight;
-      if (limitTime - timeRange > videoTime || limitTime + timeRange < videoTime) {
-        return alert('时间不符合要求')
+    return new Promise( (resolve, reject) => {
+      if (!file) {
+        return reject({msg: '未选择任何文件'});
       }
-      if (videoWidth != limitWidth) {
-        return alert('宽度不符合')
+      let url = URL.createObjectURL(file);
+      let video = document.createElement('video');
+    
+      video.src = url;
+      video.style="position: relative; z-index: -1; opacity: 0;"
+      document.getElementById('app').appendChild(video)
+    
+      video.addEventListener('canplay', (e) => {
+        let videoTime   = e.target.duration * 1000;
+        let videoWidth  = e.target.videoWidth;
+        let videoHeight = e.target.videoHeight;
+        video.remove()
+        if (limitTime - timeRange > videoTime || limitTime + timeRange < videoTime) {
+          return reject({msg: '视频时间长度不符合要求！'});
+        }
+        if (videoWidth != limitWidth) {
+          return reject({msg: '视频宽度不符合要求！'});
+        }
+        if (videoHeight != limitHeight) {
+          return reject({msg: '视频高度不符合要求！'});
+        }
+        return resolve({
+          name: file.name,
+          msg: '视频高度不符合要求！', 
+          base64: url
+        });
+      })
+    } )
+  },
+
+  /**
+   * @description: 验证图片宽高
+   * @param file: input->file
+   * @param limitWidth:
+   * @param limitHeight:
+   */
+  checkImageSize: (file, limitWidth, limitHeight) => {
+    return new Promise( (resolve, reject) => {
+      if (!file) {
+        return reject({msg: '未选择任何文件'});
       }
-      if (videoHeight != limitHeight) {
-        return alert('高度不符合')
+      let img = new Image();
+      img.src = URL.createObjectURL(file);
+      img.onload = () => {
+        let imgWidth = img.width;
+        let imgHeight = img.height;
+        if (limitWidth !== imgWidth) {
+          return reject({msg: '图片宽度不符合要求'});
+        }
+        if (limitHeight !== imgHeight) {
+          return reject({msg: '图片高度不符合要求'});
+        }
+        return resolve({
+          name: file.name,
+          msg: '添加图片成功！', 
+          base64: img.src
+        });
       }
-    })
+
+    } )
   },
 
   /**
