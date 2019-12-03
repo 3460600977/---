@@ -56,7 +56,11 @@
 </template>
 
 <script>
+    import manageList from '../../../../../components/ManageList'
     export default {
+        components: {
+            manageList
+        },
         data() {
             return {
                 activeName: 'second',

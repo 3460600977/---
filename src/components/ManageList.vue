@@ -40,7 +40,7 @@
       </el-form-item>
     </el-form>
     <el-table :data="tableData" :header-cell-class-name="handleHeaderClass"
-               style="width: 100%;text-align:center">
+               style="text-align:center">
       <el-table-column prop="date"  fit="true"
                        v-bind:label="col.col_name"
                        v-for="col in tableCol"
