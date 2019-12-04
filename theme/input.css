@@ -291,7 +291,7 @@
     bottom: 5px;
     right: 10px; }
   .el-textarea.is-disabled .el-textarea__inner {
-    background-color: #C5C8CE;
+    background-color: rgba(197, 200, 206, 0.24);
     border-color: #E5E7E9;
     color: #C0C4CC;
     cursor: not-allowed; }
@@ -423,7 +423,7 @@
     outline: none;
     border-color: #2D5AFF; }
   .el-input.is-disabled .el-input__inner {
-    background-color: #C5C8CE;
+    background-color: rgba(197, 200, 206, 0.24);
     border-color: #E5E7E9;
     color: #C0C4CC;
     cursor: not-allowed; }

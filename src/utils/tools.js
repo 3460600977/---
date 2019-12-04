@@ -23,6 +23,9 @@ let tools = {
         let videoTime   = e.target.duration * 1000;
         let videoWidth  = e.target.videoWidth;
         let videoHeight = e.target.videoHeight;
+        let durationToSecondes = (videoTime / 1000).toFixed(0);
+        let durationType = durationToSecondes == 15 ? 2 
+          : durationToSecondes == 10 ? 1 : 0; // 0 => 5s 1 => 10s 2=> 15s
         video.remove()
         if (limitTime - timeRange > videoTime || limitTime + timeRange < videoTime) {
           return reject({msg: '视频时间长度不符合要求！'});
@@ -36,7 +39,8 @@ let tools = {
         return resolve({
           name: file.name,
           msg: '添加视频成功', 
-          base64: url
+          base64: url,
+          durationType: durationType
         });
       })
     } )

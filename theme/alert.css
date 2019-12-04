@@ -294,12 +294,12 @@
   .el-alert--info .el-alert__description {
     color: #999999; }
   .el-alert--warning.is-light {
-    background-color: #fdf6ec;
-    color: #E6A23C; }
+    background-color: #fffae6;
+    color: #FFCC00; }
     .el-alert--warning.is-light .el-alert__description {
-      color: #E6A23C; }
+      color: #FFCC00; }
   .el-alert--warning.is-dark {
-    background-color: #E6A23C;
+    background-color: #FFCC00;
     color: #FFFFFF; }
   .el-alert--error.is-light {
     background-color: #feeded;
