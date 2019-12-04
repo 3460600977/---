@@ -4,7 +4,7 @@
     <!-- 上传素材 -->
     <PutMangeCard class="form-box creative" :title="'制作创意'">
       <el-form 
-        ref="creativeForm"
+        ref="creativeFormMaterialTop"
         :model="formData"
         :rules="formDataRules"
         :label-position="'left'" 
@@ -25,13 +25,13 @@
           <!-- 视频 -->
           <div v-if="mediaType.values[mediaType.activeIndex].value === 'video'">
             <div class="mt-12 my-input-upload">
-              <!-- <input 
+              <input 
                 ref="topVideo"
                 @change="uploadMedia($event, 'video')" 
                 suffix-icon="el-icon-upload2"
                 type="file" 
                 accept=".avi, .mp4"
-                class="input-real"/> -->
+                class="input-real"/>
               <el-input
                 suffix-icon="el-icon-upload2"
                 placeholder="请上传"
@@ -43,13 +43,13 @@
           <!-- 图片 -->
           <div v-if="mediaType.values[mediaType.activeIndex].value === 'image'">
             <div class="mt-12 my-input-upload">
-              <!-- <input 
+              <input 
                 ref="topImage"
                 @change="uploadMedia($event, 'topImage')"
                 suffix-icon="el-icon-upload2"
                 type="file" 
                 accept=".jpg"
-                class="input-real"/> -->
+                class="input-real"/>
               <el-input
                 suffix-icon="el-icon-upload2"
                 placeholder="请上传"
@@ -59,42 +59,60 @@
           </div>
 
         </el-form-item>
-
-        <!-- 下屏 图片 -->
-        <el-form-item prop="bottom720Image.name" v-if="materialType === 'both' || materialType === 'bottom'" label="下屏内容">
-          <!--1080 880 -->
-          <div class="my-input-upload">
-            <!-- <input 
-              ref="bottom880"
-              @change="uploadMedia($event, 'bottom880Image')"
-              suffix-icon="el-icon-upload2"
-              type="file" 
-              accept=".jpg"
-              class="input-real"/> -->
-            <el-input
-              suffix-icon="el-icon-upload2"
-              placeholder="请上传"
-              v-model="formData.bottom880Image.name" class="input-fake"></el-input>
-          </div>
-          <p class="decription color-text-1 font-12 mt-12"><span class="color-red">*</span>上传1080x880的图片，仅支持jpg格式</p>
-          
-          <!--1280 720 -->
-          <div class="my-input-upload mt-12">
-            <!-- <input 
-              ref="bottom720"
-              @change="uploadMedia($event, 'bottom720Image')"
-              suffix-icon="el-icon-upload2"
-              type="file" 
-              accept=".jpg"
-              class="input-real"/> -->
-            <el-input
-              suffix-icon="el-icon-upload2"
-              placeholder="请上传"
-              v-model="formData.bottom720Image.name" class="input-fake"></el-input>
-          </div>
-          <p class="decription color-text-1 font-12 mt-12"><span class="color-red">*</span>上传1280x720的图片，仅支持jpg格式</p>
-        </el-form-item>
       </el-form>
+
+      <!--下屏 -->
+      <div v-if="materialType === 'both' || materialType === 'bottom'">
+        <!-- 1080 880 -->
+        <el-form
+          ref="creativeFormMaterialBottom880"
+          :model="formData"
+          :rules="formDataRules"
+          :label-position="'left'" 
+          label-width="112px" class="put-form">
+          <el-form-item prop="bottom880Image.name" label="下屏内容">
+            <div class="my-input-upload">
+              <input 
+                ref="bottom880"
+                @change="uploadMedia($event, 'bottom880Image')"
+                suffix-icon="el-icon-upload2"
+                type="file" 
+                accept=".jpg"
+                class="input-real"/>
+              <el-input
+                suffix-icon="el-icon-upload2"
+                placeholder="请上传"
+                v-model="formData.bottom880Image.name" class="input-fake"></el-input>
+            </div>
+            <p class="decription color-text-1 font-12 mt-12"><span class="color-red">*</span>上传1080x880的图片，仅支持jpg格式</p>
+          </el-form-item>
+        </el-form>
+
+        <!--1280 720 -->
+        <el-form
+          ref="creativeFormMaterialBottom720"
+          :model="formData"
+          :rules="formDataRules"
+          :label-position="'left'" 
+          label-width="112px" class="put-form">
+          <el-form-item prop="bottom720Image.name">
+            <div class="my-input-upload">
+              <input 
+                ref="bottom720"
+                @change="uploadMedia($event, 'bottom720Image')"
+                suffix-icon="el-icon-upload2"
+                type="file" 
+                accept=".jpg"
+                class="input-real"/>
+              <el-input
+                suffix-icon="el-icon-upload2"
+                placeholder="请上传"
+                v-model="formData.bottom720Image.name" class="input-fake"></el-input>
+            </div>
+            <p class="decription color-text-1 font-12 mt-12"><span class="color-red">*</span>上传1280x720的图片，仅支持jpg格式</p>
+          </el-form-item>
+        </el-form>
+      </div>
 
       <!-- 预览 -->
       <div class="material-preview-box">
@@ -144,14 +162,19 @@
         
         <el-form-item class="mt-12" label="广告创意资质">
           <div style="width: 1108px">
-            <el-image
+            <div class="aptitude-img" 
               v-for="(item, index)  in formData.aptitude.images"
-              :key="index"
-              class="aptitude-img"
-              style="width: 100px; height: 160px"
-              :src="item.base64"
-              fit="cover">
-            </el-image>
+              :key="index">
+              <el-image
+                style="width: 100px; height: 160px"
+                :src="item.base64"
+                fit="cover">
+              </el-image>
+              <!-- 删除 -->
+              <div class="del-third-monitor mid-center" @click="delAptitude(index)">
+                <i class="el-icon-error color-main"></i>
+              </div>
+            </div>
 
             <div class="aptitude-img upload mid-center">
               <input ref="uploadAptitude" class="real-upload" type="file" @change="addIndustry($event)" accept="image/*">
@@ -221,7 +244,7 @@
     <!-- 广告创意名称 -->
     <PutMangeCard :title="'广告创意名称'" class="form-box aptitude">
       <el-form
-        ref="creativeForm"
+        ref="creativeFormName"
         :model="formData"
         :rules="formDataRules"
         :label-position="'left'" 
@@ -243,12 +266,16 @@
 </template>
 
 <script>
-import PutMangeCard from './PutMangeCard' 
+import PutMangeCard from '../../../../templates/PutMangeCard' 
 export default {
   props:{
     materialType: {
       type: String,
-      default: 'both', // both top bottom
+      default: 'both' // both top bottom
+    },
+    createType: {
+      type: String,
+      default: 'single' // single => 单独创建 step => 按步骤创建 edit => 编辑
     }
   },
   components: {
@@ -301,13 +328,16 @@ export default {
       
       formDataRules: {
         name: [
-          { required: true, message: '请输入广告创意名称', trigger: 'blur' },
+          { required: true, message: '请输入广告创意名称!', trigger: 'blur' },
         ],
         'top.name': [
-          { required: true, message: '请上传创意', trigger: 'blur' },
+          { required: true, message: '请上传创意!', trigger: 'blur' },
         ],
         'bottom720Image.name': [
-          { required: true, message: '请上传创意', trigger: 'blur' },
+          { required: true, message: '请上传创意!', trigger: 'blur' },
+        ],
+        'bottom880Image.name': [
+          { required: true, message: '请上传创意!', trigger: 'blur' },
         ],
       },
 
@@ -429,14 +459,17 @@ export default {
       }
     },
 
-    /**
-     * 添加资质
-     */
+    // 添加资质
     addIndustry(event) {
       let file = event.target.files[0];
       let base64 = URL.createObjectURL(file);
       this.formData.aptitude.images.push({file, base64})
       this.$refs.uploadAptitude.value = '';
+    },
+
+    // 删除资质
+    delAptitude(index) {
+      this.formData.aptitude.images.splice(index, 1)
     },
 
     // 添加第三方监测
@@ -455,14 +488,21 @@ export default {
 
     // 保存
     saveCreative() {
-      this.$refs['creativeForm'].validate((valid) => {
-        if (valid) {
-          alert('submit!');
-        } else {
-          console.log('error submit!!');
-          return false;
+      let isPassEnptyCheck = true;
+      let validateForms = ['creativeFormMaterialTop', 'creativeFormMaterialBottom880', 'creativeFormMaterialBottom720', 'creativeFormName'];
+      
+      validateForms.forEach((item, index) => {
+        if(this.$refs[item]) {
+          this.$refs[item].validate((valid) => {
+            if (!valid) { isPassEnptyCheck = false; } 
+          });
         }
-      });
+      })
+      if (!isPassEnptyCheck) {
+        return this.$message.warning('还有必填字段未填写!')
+      }
+
+      alert('上传成功')
     },
 
   },
@@ -488,7 +528,7 @@ export default {
 .upload-creative{
   position: relative;
   .mt-12{
-    margin-top: 12px;
+    margin-top: 12px !important;
   }
   .mt-10{
     margin-top: 10px;
@@ -550,6 +590,13 @@ export default {
           background: red;
           opacity: 0;
         }
+        .del-third-monitor{
+          position: absolute;
+          cursor: pointer;
+          font-size: 18px;
+          top: -5px;
+          right: -5px;
+        }
         float: left;
         width:100px;
         height:160px;
@@ -570,6 +617,7 @@ export default {
         .del-third-monitor{
           position: absolute;
           cursor: pointer;
+          font-size: 18px;
           top: 8px;
           margin-left: 360px;
         }

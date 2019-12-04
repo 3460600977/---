@@ -6,6 +6,16 @@
   }
   &.is-plain{
     background: transparent !important;
+    &.el-button--primary{
+      border-color: $color-main;
+      color: $color-main;
+      &:hover{
+        color: $color-main;
+      }
+      &:active{
+        color: $color-main;
+      }
+    }
   }
 }
 .el-card__header{
@@ -63,4 +73,11 @@
 // form-label
 .el-form-item__label{
   color: #999999;
+}
+
+.el-input__inner{
+  &::placeholder{
+    color: $color-text;
+  }
+  border:1px solid rgba(229,231,233,1);
 }

@@ -929,13 +929,13 @@
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-  padding: 10px 20px;
+  padding: 11px 20px;
   font-size: 12px;
   border-radius: 2px; }
   .el-button + .el-button {
     margin-left: 10px; }
   .el-button.is-round {
-    padding: 10px 20px; }
+    padding: 11px 20px; }
   .el-button:hover, .el-button:focus {
     color: #2D5AFF;
     border-color: #c0ceff;
@@ -990,7 +990,7 @@
     padding: 12px 23px; }
   .el-button.is-circle {
     border-radius: 50%;
-    padding: 10px; }
+    padding: 11px; }
   .el-button--primary {
     color: #FFFFFF;
     background-color: #2D5AFF;
