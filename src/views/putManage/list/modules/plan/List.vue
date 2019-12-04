@@ -65,18 +65,30 @@
         <el-table-column prop="industry" label="创意行业"></el-table-column>
         <el-table-column prop="action" label="操作">
           <template slot-scope="scope">
-            <span v-if="scope.row.status === '待审核'">
-              <span class="el-icon-s-unfold icon-space icon-color">详情</span>
-              <span class="el-icon-error icon-color">删除</span>
-            </span>
-            <span v-else-if="scope.row.status === '审核通过'">
-              <span class="el-icon-s-unfold icon-color">详情</span>
-            </span>
-            <span v-else-if="scope.row.status === '审核拒绝'">
-              <span class="el-icon-s-unfold icon-space icon-color">详情</span>
-              <span class="el-icon-edit icon-space icon-color">编辑</span>
-              <span class="el-icon-error icon-color">删除</span>
-            </span>
+            <div v-if="scope.row.status === '待审核'">
+              <span class="icon-space">
+                <i class="el-icon-s-unfold icon-color"></i>详情
+              </span>
+              <span class="icon-space">
+                <i class="el-icon-error icon-color"></i>删除
+              </span>
+            </div>
+            <div v-else-if="scope.row.status === '审核通过'">
+              <span class="icon-space">
+                <i class="el-icon-s-unfold icon-color"></i>详情
+              </span>
+            </div>
+            <div v-else-if="scope.row.status === '审核拒绝'">
+              <span class="icon-space">
+                <i class="el-icon-s-unfold  icon-color"></i>详情
+              </span>
+              <span class="icon-space">
+                <i class="el-icon-edit  icon-color"></i>编辑
+              </span>
+              <span class="icon-space">
+                <i class="el-icon-error icon-color"></i>删除
+              </span>
+            </div>
             <span v-else>
               NA
             </span>
@@ -234,21 +246,17 @@
       .list_table {
         .pending_status {
           background-color: $color-bg-2;
-          width: 70px;
-          height: 24px;
           background: $color-bg-2;
           box-shadow: 0px 2px 4px 0px $color-shadow-1;
           border-radius: 4px;
-          padding: 6px 6px;
+          padding: 6px 14px;
         }
 
         .pass_status {
-          width: 70px;
-          height: 24px;
           background: $color-blue;
           box-shadow: 0px 2px 4px 0px $color-shadow-2;
           border-radius: 4px;
-          padding: 6px 6px;
+          padding: 6px 14px;
           color: $color-bg-3;
         }
 
@@ -258,12 +266,17 @@
           background: $color-red;
           box-shadow: 0px 2px 4px 0px $color-shadow-3;
           border-radius: 4px;
-          padding: 6px 6px;
+          padding: 6px 14px;
           color: $color-bg-3;
         }
 
-        span.icon-color {
+        div.cell {
+          overflow: unset !important;
+        }
+
+        span i.icon-color {
           color: $color-blue;
+          margin-right: 8px;
         }
 
         span.icon-space {
@@ -316,6 +329,10 @@
     .list_table {
       background-color: $color-bg;
 
+      .el-table__header, .el-table__body, .el-table__footer {
+        border-collapse: collapse;
+      }
+
       table {
         width: 100%;
         text-align: center;
@@ -348,6 +365,7 @@
       th {
         background-color: $color-bg;
         color: $color-table-title;
+        border-bottom: 0;
       }
     }
 
