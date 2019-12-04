@@ -1,6 +1,6 @@
 <template>
   <div class="list">
-    <el-form :inline="true" :model="creativeFormInline" class="list-form-inline" inline>
+    <el-form :inline="true" :model="creativeFormInline" class="list-form-inline">
       <el-form-item class="line-space" label="投放计划名称">
         <div slot="label">投放计划名称</div>
         <el-select v-model="creativeFormInline.project_status" placeholder="不限" clearable>
