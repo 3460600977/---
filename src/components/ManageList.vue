@@ -1,6 +1,5 @@
 <template>
-  <div id="creative-list">
-    <top-tabs></top-tabs>
+  <div class="list">
     <el-form :inline="true" :model="creativeFormInline" class="demo-form-inline">
       <el-form-item label="投放计划名称">
         <el-select v-model="creativeFormInline.project_status" placeholder="不限" clearable>
@@ -41,24 +40,24 @@
       </el-form-item>
     </el-form>
     <el-table :data="tableData" :header-cell-class-name="handleHeaderClass"
-              border style="width: 100%;text-align:center">
-      <el-table-column prop="date" width="180"
+               style="text-align:center">
+      <el-table-column prop="date"  fit="true"
                        v-bind:label="col.col_name"
                        v-for="col in tableCol"
                        v-bind:key="col.id">
       </el-table-column>
     </el-table>
+    <el-pagination
+      background
+      layout="prev, pager, next"
+      :total="1000">
+    </el-pagination>
   </div>
 </template>
 
 <script>
-    import manageList from '../../../../../components/ManageList'
-
     export default {
-        name:'creativeList',
-        components: {
-            manageList,
-        },
+        name: "manageList",
         data() {
             return {
                 activeName: 'second',
@@ -131,16 +130,6 @@
     }
 </script>
 
-<style lang="scss">
-  #creative-list {
-    .header-group {
-      background: #F2F2F2;
-      color: #303133;
-      text-align: center;
-    }
+<style scoped>
 
-    td {
-      text-align: center;
-    }
-  }
 </style>
