@@ -1,33 +1,29 @@
-<!-- 投放管理首页 -->
 <template>
-  <div class="put-manage clearfix">
-    <div class="left-step">
-      step
-    </div>
-
-    <div class="right-content">
-      <!-- 投放管理 每一步内容 -->
-      <router-view></router-view>
-    </div>
+  <div class="container">
+    <el-tabs class="my-tabs creative-box" type="border-card">
+      <el-tab-pane label="创建新广告创意">
+        <plan-list></plan-list>
+      </el-tab-pane>
+      <el-tab-pane label="选择已有广告创意">选择已有广告创意</el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
-<style lang="scss">
-.put-manage{
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-  background-color: $color-bg;
-  .left-step{
-    width: 220px;
-    height: calc(100vh - 76px);
-    flex-shrink: 0;
-    background: #fff;
-  }
-  .right-content{
-    padding: 20px 20px 0;
+<script>
+    import planList from './list/modules/plan/List'
+
+    export default {
+        components: {
+            planList,
+        }
+    }
+</script>
+
+<style scoped lang='scss'>
+  .container {
     height: 100%;
-    flex-grow: 1;
+    width: 100%;
+    padding: 20px;
+    background-color: $color-bg !important;
   }
-}
 </style>

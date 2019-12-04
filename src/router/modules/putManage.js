@@ -1,11 +1,11 @@
 /**
  * 投放管理
- */ 
+ */
 export const putManageRouter = [
   // 投放计划列表
   {
     path: '/plan/list',
-    component: () => import ('@/views/putManage/list/modules/plan/List'),
+    component: () => import ('@/views/putManage/index'),
   },
   // 投放方案列表
   {

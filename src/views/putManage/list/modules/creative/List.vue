@@ -1,10 +1,6 @@
 <template>
   <div id="creative-list">
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="投放计划" name="plan">投放计划</el-tab-pane>
-      <el-tab-pane label="投放方案" name="project">投放方案</el-tab-pane>
-      <el-tab-pane label="广告创意" name="creative">广告创意</el-tab-pane>
-    </el-tabs>
+    <top-tabs></top-tabs>
     <el-form :inline="true" :model="creativeFormInline" class="demo-form-inline">
       <el-form-item label="投放计划名称">
         <el-select v-model="creativeFormInline.project_status" placeholder="不限" clearable>
@@ -57,9 +53,11 @@
 
 <script>
     import manageList from '../../../../../components/ManageList'
+
     export default {
+        name:'creativeList',
         components: {
-            manageList
+            manageList,
         },
         data() {
             return {
