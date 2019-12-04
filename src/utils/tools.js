@@ -27,15 +27,15 @@ let tools = {
         if (limitTime - timeRange > videoTime || limitTime + timeRange < videoTime) {
           return reject({msg: '视频时间长度不符合要求！'});
         }
-        if (videoWidth != limitWidth) {
+        if (limitWidth - 5 > videoWidth || limitWidth + 5 < videoWidth) {
           return reject({msg: '视频宽度不符合要求！'});
         }
-        if (videoHeight != limitHeight) {
+        if (limitHeight - 5 > videoHeight || limitHeight + 5 < videoHeight) {
           return reject({msg: '视频高度不符合要求！'});
         }
         return resolve({
           name: file.name,
-          msg: '视频高度不符合要求！', 
+          msg: '添加视频成功', 
           base64: url
         });
       })
@@ -58,10 +58,10 @@ let tools = {
       img.onload = () => {
         let imgWidth = img.width;
         let imgHeight = img.height;
-        if (limitWidth !== imgWidth) {
+        if (limitWidth - 5 > imgWidth || limitWidth + 5 < imgWidth) {
           return reject({msg: '图片宽度不符合要求'});
         }
-        if (limitHeight !== imgHeight) {
+        if (limitHeight - 5 > imgHeight || limitHeight + 5 < imgHeight) {
           return reject({msg: '图片高度不符合要求'});
         }
         return resolve({

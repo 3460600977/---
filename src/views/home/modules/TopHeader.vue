@@ -160,10 +160,23 @@ export default {
      */
     handleTo(path) {
       this.$router.push(path)
+    },
+
+    /**
+     * 初始化时设置激活的菜单
+     */
+    setActiveTopMenu() {
+      let currentBasePath = this.$route.path.split('/')[1];
+      this.menu.content.forEach((item, index) => {
+        if (item.path.indexOf(currentBasePath) !== -1) {
+          this.menu.activeIndex = index;
+        }
+      })
     }
   },
 
-  computed: {
+  beforeMount() {
+    this.setActiveTopMenu()
   }
 }
 </script>

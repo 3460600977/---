@@ -6,6 +6,16 @@
   }
   &.is-plain{
     background: transparent !important;
+    &.el-button--primary{
+      border-color: $color-main;
+      color: $color-main;
+      &:hover{
+        color: $color-main;
+      }
+      &:active{
+        color: $color-main;
+      }
+    }
   }
 }
 .el-card__header{
@@ -28,14 +38,19 @@
   border: none;
   border-radius: 4px;
   overflow: hidden;
+  background: transparent;
+  .el-tabs--border-card > .el-tabs__header{
+    border: none;
+  }
   .el-tabs__header{
     background-color: #fff;
     .el-tabs__item{
       background-color: #EEEEEE;
       color: #181819;
+      width: 160px;
       height: 60px;
       line-height: 60px;
-      padding: 0 24px;
+      text-align: center;
       font-size: 14px;
       &.is-active{
         background-color: #fff;
@@ -52,11 +67,18 @@
     }
   }
   .el-tabs__content{
-    padding: 10px 0;
+    padding: 0;
   }
 }
 
 // form-label
 .el-form-item__label{
   color: #999999;
+}
+
+.el-input__inner{
+  &::placeholder{
+    color: $color-text;
+  }
+  border:1px solid rgba(229,231,233,1);
 }

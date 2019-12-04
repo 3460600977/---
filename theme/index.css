@@ -4333,7 +4333,7 @@
   .el-pagination span:not([class*=suffix]),
   .el-pagination button {
     display: inline-block;
-    font-size: 13px;
+    font-size: 14px;
     min-width: 35.5px;
     height: 28px;
     line-height: 28px;
@@ -4353,7 +4353,7 @@
     margin: 0 5px; }
     .el-pagination .el-select .el-input .el-input__inner {
       padding-right: 25px;
-      border-radius: 3px; }
+      border-radius: 2px; }
   .el-pagination button {
     border: none;
     padding: 0 6px;
@@ -4364,7 +4364,7 @@
       color: #2D5AFF; }
     .el-pagination button:disabled {
       color: #C0C4CC;
-      background-color: #FFFFFF;
+      background-color: transparent;
       cursor: not-allowed; }
   .el-pagination .btn-prev,
   .el-pagination .btn-next {
@@ -4415,7 +4415,7 @@
     font-weight: normal;
     color: #606266; }
     .el-pagination__sizes .el-input .el-input__inner {
-      font-size: 13px;
+      font-size: 14px;
       padding-left: 8px; }
       .el-pagination__sizes .el-input .el-input__inner:hover {
         border-color: #2D5AFF; }
@@ -4439,7 +4439,7 @@
     margin: 0 2px;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    border-radius: 3px; }
+    border-radius: 2px; }
     .el-pagination__editor.el-input {
       width: 50px; }
     .el-pagination__editor.el-input .el-input__inner {
@@ -4493,7 +4493,7 @@
     background: #FFFFFF;
     vertical-align: top;
     display: inline-block;
-    font-size: 13px;
+    font-size: 14px;
     min-width: 35.5px;
     height: 28px;
     line-height: 28px;
@@ -7280,13 +7280,13 @@
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-  padding: 10px 20px;
+  padding: 11px 20px;
   font-size: 12px;
   border-radius: 2px; }
   .el-button + .el-button {
     margin-left: 10px; }
   .el-button.is-round {
-    padding: 10px 20px; }
+    padding: 11px 20px; }
   .el-button:hover, .el-button:focus {
     color: #2D5AFF;
     border-color: #c0ceff;
@@ -7341,7 +7341,7 @@
     padding: 12px 23px; }
   .el-button.is-circle {
     border-radius: 50%;
-    padding: 10px; }
+    padding: 11px; }
   .el-button--primary {
     color: #FFFFFF;
     background-color: #2D5AFF;
@@ -11397,11 +11397,11 @@
     cursor: pointer;
     -webkit-transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
     transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-    padding: 10px 20px;
+    padding: 11px 20px;
     font-size: 12px;
     border-radius: 0; }
     .el-radio-button__inner.is-round {
-      padding: 10px 20px; }
+      padding: 11px 20px; }
     .el-radio-button__inner:hover {
       color: #2D5AFF; }
     .el-radio-button__inner [class*="el-icon-"] {
@@ -12031,11 +12031,11 @@
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    padding: 10px 20px;
+    padding: 11px 20px;
     font-size: 12px;
     border-radius: 0; }
     .el-checkbox-button__inner.is-round {
-      padding: 10px 20px; }
+      padding: 11px 20px; }
     .el-checkbox-button__inner:hover {
       color: #2D5AFF; }
     .el-checkbox-button__inner [class*="el-icon-"] {
@@ -15647,13 +15647,13 @@
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-  padding: 10px 20px;
+  padding: 11px 20px;
   font-size: 12px;
   border-radius: 2px; }
   .el-button + .el-button {
     margin-left: 10px; }
   .el-button.is-round {
-    padding: 10px 20px; }
+    padding: 11px 20px; }
   .el-button:hover, .el-button:focus {
     color: #2D5AFF;
     border-color: #c0ceff;
@@ -15708,7 +15708,7 @@
     padding: 12px 23px; }
   .el-button.is-circle {
     border-radius: 50%;
-    padding: 10px; }
+    padding: 11px; }
   .el-button--primary {
     color: #FFFFFF;
     background-color: #2D5AFF;
@@ -16719,11 +16719,11 @@
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    padding: 10px 20px;
+    padding: 11px 20px;
     font-size: 12px;
     border-radius: 0; }
     .el-checkbox-button__inner.is-round {
-      padding: 10px 20px; }
+      padding: 11px 20px; }
     .el-checkbox-button__inner:hover {
       color: #2D5AFF; }
     .el-checkbox-button__inner [class*="el-icon-"] {
@@ -18766,11 +18766,11 @@
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    padding: 10px 20px;
+    padding: 11px 20px;
     font-size: 12px;
     border-radius: 0; }
     .el-checkbox-button__inner.is-round {
-      padding: 10px 20px; }
+      padding: 11px 20px; }
     .el-checkbox-button__inner:hover {
       color: #2D5AFF; }
     .el-checkbox-button__inner [class*="el-icon-"] {
@@ -29488,13 +29488,13 @@
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-  padding: 10px 20px;
+  padding: 11px 20px;
   font-size: 12px;
   border-radius: 2px; }
   .el-button + .el-button {
     margin-left: 10px; }
   .el-button.is-round {
-    padding: 10px 20px; }
+    padding: 11px 20px; }
   .el-button:hover, .el-button:focus {
     color: #2D5AFF;
     border-color: #c0ceff;
@@ -29549,7 +29549,7 @@
     padding: 12px 23px; }
   .el-button.is-circle {
     border-radius: 50%;
-    padding: 10px; }
+    padding: 11px; }
   .el-button--primary {
     color: #FFFFFF;
     background-color: #2D5AFF;
@@ -33580,11 +33580,11 @@
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    padding: 10px 20px;
+    padding: 11px 20px;
     font-size: 12px;
     border-radius: 0; }
     .el-checkbox-button__inner.is-round {
-      padding: 10px 20px; }
+      padding: 11px 20px; }
     .el-checkbox-button__inner:hover {
       color: #2D5AFF; }
     .el-checkbox-button__inner [class*="el-icon-"] {
@@ -45871,11 +45871,11 @@
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    padding: 10px 20px;
+    padding: 11px 20px;
     font-size: 12px;
     border-radius: 0; }
     .el-checkbox-button__inner.is-round {
-      padding: 10px 20px; }
+      padding: 11px 20px; }
     .el-checkbox-button__inner:hover {
       color: #2D5AFF; }
     .el-checkbox-button__inner [class*="el-icon-"] {
@@ -48700,13 +48700,13 @@
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-  padding: 10px 20px;
+  padding: 11px 20px;
   font-size: 12px;
   border-radius: 2px; }
   .el-button + .el-button {
     margin-left: 10px; }
   .el-button.is-round {
-    padding: 10px 20px; }
+    padding: 11px 20px; }
   .el-button:hover, .el-button:focus {
     color: #2D5AFF;
     border-color: #c0ceff;
@@ -48761,7 +48761,7 @@
     padding: 12px 23px; }
   .el-button.is-circle {
     border-radius: 50%;
-    padding: 10px; }
+    padding: 11px; }
   .el-button--primary {
     color: #FFFFFF;
     background-color: #2D5AFF;
@@ -49642,11 +49642,11 @@
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    padding: 10px 20px;
+    padding: 11px 20px;
     font-size: 12px;
     border-radius: 0; }
     .el-checkbox-button__inner.is-round {
-      padding: 10px 20px; }
+      padding: 11px 20px; }
     .el-checkbox-button__inner:hover {
       color: #2D5AFF; }
     .el-checkbox-button__inner [class*="el-icon-"] {
@@ -53228,13 +53228,13 @@
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-  padding: 10px 20px;
+  padding: 11px 20px;
   font-size: 12px;
   border-radius: 2px; }
   .el-button + .el-button {
     margin-left: 10px; }
   .el-button.is-round {
-    padding: 10px 20px; }
+    padding: 11px 20px; }
   .el-button:hover, .el-button:focus {
     color: #2D5AFF;
     border-color: #c0ceff;
@@ -53289,7 +53289,7 @@
     padding: 12px 23px; }
   .el-button.is-circle {
     border-radius: 50%;
-    padding: 10px; }
+    padding: 11px; }
   .el-button--primary {
     color: #FFFFFF;
     background-color: #2D5AFF;
@@ -55031,11 +55031,11 @@
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    padding: 10px 20px;
+    padding: 11px 20px;
     font-size: 12px;
     border-radius: 0; }
     .el-checkbox-button__inner.is-round {
-      padding: 10px 20px; }
+      padding: 11px 20px; }
     .el-checkbox-button__inner:hover {
       color: #2D5AFF; }
     .el-checkbox-button__inner [class*="el-icon-"] {
