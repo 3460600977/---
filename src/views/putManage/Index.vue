@@ -1,23 +1,23 @@
 <template>
   <div class="container">
-    <el-tabs class="my-tabs creative-box" type="border-card">
+    <el-tabs class="my-tabs" type="border-card">
       <el-tab-pane label="投放计划">投放方案</el-tab-pane>
       <el-tab-pane label="投放计划">投放计划</el-tab-pane>
       <el-tab-pane label="广告创意">
-        <plan-list></plan-list>
+        <planList/>
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 
 <script>
-    import planList from './list/modules/plan/List'
+import planList from './list/modules/plan/List'
 
-    export default {
-        components: {
-            planList,
-        }
-    }
+export default {
+  components: {
+    planList,
+  }
+}
 </script>
 
 <style scoped lang='scss'>

@@ -17,11 +17,13 @@ export const putManageRouter = [
     path: '/creative/list',
     component: () => import ('@/views/putManage/list/modules/creative/List'),
   },
-  // 创建流程
+  // 投放管理
   {
     path: '/putManage',
     component: () => import ('@/views/putManage/Index'),
   },
+  
+  // 创建
   {
     path: '/putManage/create',
     component: () => import ('@/views/putManage/create/index'),
