@@ -47,9 +47,10 @@
     .el-tabs__item{
       background-color: #EEEEEE;
       color: #181819;
+      width: 160px;
       height: 60px;
       line-height: 60px;
-      padding: 0 24px;
+      text-align: center;
       font-size: 14px;
       &.is-active{
         background-color: #fff;
