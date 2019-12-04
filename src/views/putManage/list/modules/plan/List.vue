@@ -47,13 +47,13 @@
         <el-table-column prop="name" label="广告创意名称"></el-table-column>
         <el-table-column prop="status" label="创意状态">
           <template slot-scope="scope">
-            <span v-if="scope.row.status === '待审核'" class="pending_status">
+            <span v-if="scope.row.status === '待审核'" class="pending status">
               待审核
             </span>
-            <span v-else-if="scope.row.status === '审核通过'" class="pass_status">
+            <span v-else-if="scope.row.status === '审核通过'" class="pass status">
               审核通过
             </span>
-            <span v-else-if="scope.row.status === '审核拒绝'" class="deny_status">
+            <span v-else-if="scope.row.status === '审核拒绝'" class="deny status">
               审核拒绝
             </span>
             <span v-else>
@@ -63,7 +63,7 @@
         </el-table-column>
         <el-table-column prop="category" label="屏幕类型"></el-table-column>
         <el-table-column prop="industry" label="创意行业"></el-table-column>
-        <el-table-column prop="action" label="操作">
+        <el-table-column prop="action" label="操作" fixed="right" width="400">
           <template slot-scope="scope">
             <div v-if="scope.row.status === '待审核'">
               <span class="icon-space">
@@ -244,30 +244,29 @@
       background-color: $color-bg;
 
       .list_table {
-        .pending_status {
-          background-color: $color-bg-2;
-          background: $color-bg-2;
-          box-shadow: 0px 2px 4px 0px $color-shadow-1;
+        .status {
+          display: inline-block;
           border-radius: 4px;
-          padding: 6px 14px;
-        }
-
-        .pass_status {
-          background: $color-blue;
-          box-shadow: 0px 2px 4px 0px $color-shadow-2;
-          border-radius: 4px;
-          padding: 6px 14px;
-          color: $color-bg-3;
-        }
-
-        .deny_status {
           width: 70px;
           height: 24px;
-          background: $color-red;
-          box-shadow: 0px 2px 4px 0px $color-shadow-3;
-          border-radius: 4px;
-          padding: 6px 14px;
-          color: $color-bg-3;
+          text-align: center;
+
+          &.pass {
+            background: $color-blue;
+            box-shadow: 0px 2px 4px 0px $color-shadow-2;
+            color: $color-bg-3;
+          }
+
+          &.pending {
+            background: $color-bg-2;
+            box-shadow: 0px 2px 4px 0px $color-shadow-1;
+          }
+
+          &.deny {
+            background: $color-red;
+            box-shadow: 0px 2px 4px 0px $color-shadow-3;
+            color: $color-bg-3;
+          }
         }
 
         div.cell {
@@ -290,6 +289,7 @@
       margin: 0;
       padding-top: 17px;
       padding-left: 15px;
+      background-color: $color-bg-3;
 
 
       .el-form-item {
@@ -329,10 +329,6 @@
     .list_table {
       background-color: $color-bg;
 
-      .el-table__header, .el-table__body, .el-table__footer {
-        border-collapse: collapse;
-      }
-
       table {
         width: 100%;
         text-align: center;
@@ -367,10 +363,14 @@
         color: $color-table-title;
         border-bottom: 0;
       }
-    }
 
-    .el-table tbody tr:hover > td {
-      background-color: $color-bg-3 !important;
+      tr:hover > td {
+        background-color: $color-bg-3 !important
+      }
+
+      tr > td {
+        background-color: $color-bg-3 !important
+      }
     }
 
     .list-page {
@@ -380,6 +380,10 @@
       border-radius: 4px;
       height: 120px;
       margin-top: 33px;
+
+      li.active {
+        background-color: $color-blue !important;
+      }
     }
   }
 </style>
