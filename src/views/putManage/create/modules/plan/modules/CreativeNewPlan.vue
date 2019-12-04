@@ -202,6 +202,10 @@ export default {
       transition: .3s;
       cursor: pointer;
       color: $color-text-1;
+      transition: .3s;
+      &:hover{
+        transform: translateY(-5px);
+      }
       &.active{
         color: $color-main;
         .icon-img{
