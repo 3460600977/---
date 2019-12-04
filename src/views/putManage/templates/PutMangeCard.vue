@@ -1,5 +1,5 @@
 <template>
-  <article class="put-manage-card">
+  <article class="put-manage-card clearfix">
     <div class="font-16" v-if="title">{{title}}</div>
     <slot></slot>
   </article>
@@ -22,5 +22,8 @@ export default {
     padding: 30px 38px;
     border-radius:4px;
     background-color: #fff;
+    &+.put-manage-card{
+      margin-top: 10px;
+    }
   }
 </style>
