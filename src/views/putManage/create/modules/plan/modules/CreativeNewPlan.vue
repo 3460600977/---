@@ -193,7 +193,7 @@ export default {
       if (!isPassEnptyCheck) {
         return this.$message.warning('还有必填字段未填写!')
       } else {
-        // this.$router.push('/putManage/create/project')
+        this.$router.push('/putManage/create/project')
       }
 
     },

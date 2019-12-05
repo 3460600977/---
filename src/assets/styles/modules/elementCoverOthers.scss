@@ -31,42 +31,62 @@
   border: none;
 }
 
-//  投放管理 tabs
-.my-tabs{
-  box-shadow: 0 0 0 #fff;
-  border: none;
-  border-radius: 4px;
-  overflow: hidden;
-  background: transparent;
-  .el-tabs--border-card > .el-tabs__header{
+//  tabs
+
+.el-tabs{
+  &.my-tabs{
+    box-shadow: 0 0 0 #fff;
     border: none;
-  }
-  .el-tabs__header{
-    background-color: #fff;
-    .el-tabs__item{
-      background-color: #EEEEEE;
-      color: #181819;
-      width: 160px;
-      height: 60px;
-      line-height: 60px;
-      text-align: center;
-      font-size: 14px;
-      &.is-active{
-        background-color: #fff;
-        &::before{
-          position: absolute;
-          left: 0;
-          display: inline-block;
-          width: 100%;
-          height: 4px;
-          content: "";
-          background-color: $color-main;
+    border-radius: 4px;
+    overflow: hidden;
+    background: transparent;
+    .el-tabs--border-card > .el-tabs__header{
+      border: none !important;
+    }
+    .el-tabs__header{
+      background-color: #fff;
+      .el-tabs__item{
+        background-color: #EEEEEE;
+        color: #181819;
+        width: 160px;
+        height: 60px;
+        line-height: 60px;
+        text-align: center;
+        font-size: 14px;
+        &.is-active{
+          background-color: #fff;
+          &::before{
+            position: absolute;
+            left: 0;
+            display: inline-block;
+            width: 100%;
+            height: 4px;
+            content: "";
+            background-color: $color-main;
+          }
         }
       }
     }
+    .el-tabs__content{
+      padding: 0;
+    }
   }
-  .el-tabs__content{
-    padding: 0;
+  &.thin-tab{
+    .el-tabs__nav-wrap{
+      &::after{
+        height: 0px !important;
+      }
+    }
+    .el-tabs__active-bar{
+      height:3px;
+      border-radius:2px;
+    }
+    .el-tabs__item{
+      color: #999999;
+      &.is-active{
+        color: #181819;
+      }
+    }
   }
 }
 

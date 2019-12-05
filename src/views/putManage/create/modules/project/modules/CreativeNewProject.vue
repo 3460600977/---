@@ -1,19 +1,10 @@
 <template>
-  <div class="put-goal">
-    <!-- HI, 请选择投放目的 -->
-    <PutMangeCard :title="'HI, 请选择投放目的'" class="form-box put-goal">
-      <!-- 目的 -->
-      <ul class="goal-box clearfix">
-        <li class="item mid-center"
-          @click="goal.activeIndex = index"
-          :class="{'active': goal.activeIndex === index}"
-          v-for="(item, index) in goal.content"
-          :key="index">
-          <img class="icon-img" width="78px" height="66px" :src="item.icon">
-          <p class="name">{{item.name}}</p>
-        </li>
-      </ul>
-
+  <div class="put-project">
+    <div class="title">
+      <h2>所属投放计划：投放计划名称</h2>
+    </div>
+    <!-- 投放设置 -->
+    <PutMangeCard :title="'投放设置'" class="form-box put-goal">
       <el-form
         ref="planTop"
         :label-position="'left'"
@@ -21,58 +12,115 @@
         :rules="formDataRules" 
         label-width="112px" class="put-form">
 
-        <el-form-item prop="budget.value" label="总预算">
-          <MyRadio
-            v-for="(item, index) in budget.content"
-            @click.native="switchBudget(index, item.value)"
-            :active="budget.activeIndex === index"
-            :key="index"
-            v-model="formData.budget.type">{{item.name}}</MyRadio>
-
-          <el-input 
-            class="budget-value"
-            v-if="formData.budget.type === 'assign'" 
-            placeholder="请输入内容" 
-            v-model.number.trim="formData.budget.value">
-            <template slot="append">元</template>
-          </el-input>
-        </el-form-item>
-        
-        <el-form-item class="mt-20" prop="putCity" label="投放城市">
-          <el-select v-model="formData.putCity" placeholder="请选择">
+        <!-- 投放方案行业 -->
+        <el-form-item class="mt-20" prop="industry" label="投放方案行业">
+          <el-select v-model="formData.industry" placeholder="请选择">
             <el-option
-              v-for="(item, index) in city"
+              v-for="(item, index) in 2"
               :key="index"
-              :label="item.name"
-              :value="item.code">
+              :label="item"
+              :value="item">
             </el-option>
           </el-select>
         </el-form-item>
+
+        <!-- 投放类型 -->
+        <el-form-item class="mt-20" prop="type" label="投放类型">
+          <div class="mid-between" style="width: 240px">
+            <el-button 
+              @click="switchMediaType(index)"
+              v-for="(item, index) in putType.values" 
+              :type="index == putType.activeIndex ? 'primary' : 'info'" 
+              :key="index">
+              {{item.name}}
+            </el-button>
+          </div>
+        </el-form-item>
         
-        <el-form-item class="mt-20" prop="putDate" label="投放时间">
+        <!-- 投放时间 -->
+        <el-form-item class="mt-20" prop="date" label="投放时间">
           <el-date-picker
-            style="width: 442px;"
-            v-model="formData.putDate"
+            v-model="formData.date"
             type="daterange"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期">
           </el-date-picker>
         </el-form-item>
+
+        <!-- 投放方式 -->
+        <el-form-item class="mt-20" prop="way" label="投放方式">
+          <MyRadio
+            v-for="(item, index) in putWay.values"
+            @click.native="switchBudget(index, item.value)"
+            :active="putWay.activeIndex === index"
+            :key="index">{{item.name}}</MyRadio>
+        </el-form-item>
+
+        <!-- 投放频次 -->
+        <el-form-item class="mt-20" prop="frequency" label="投放频次">
+          <el-select v-model="formData.putCity" placeholder="请选择">
+            <el-option
+              v-for="(item, index) in 10"
+              :key="index"
+              :label="item"
+              :value="item">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <!-- 投放时长 -->
+        <el-form-item class="mt-20" prop="duration" label="投放时长">
+          <el-select v-model="formData.putCity" placeholder="请选择">
+            <el-option
+              v-for="(item, index) in 10"
+              :key="index"
+              :label="item"
+              :value="item">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        
+        <!-- 屏幕类型 -->
+        <el-form-item class="mt-20" prop="screenType" label="屏幕类型">
+          <el-select v-model="formData.putCity" placeholder="请选择">
+            <el-option
+              v-for="(item, index) in 10"
+              :key="index"
+              :label="item"
+              :value="item">
+            </el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
         
     </PutMangeCard>
 
     
-    <!-- 广告创意名称 -->
-    <PutMangeCard :title="'投放计划名称'" class="form-box aptitude">
+    <!-- 楼盘定向 -->
+    <PutMangeCard :title="'楼盘定向'" class="form-box">
+      <el-tabs class="thin-tab mt-15" v-model="activeBuildingDirection">
+        <el-tab-pane label="新建楼盘定向"   name="create">
+          <div style="margin-top: 5px;">
+            <label class="color-text-1" for="">选点方式</label>
+            <el-button type="primary" style="margin-left: 64px">地图选点</el-button>
+            <SelectedList/>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="选择已有定向包" name="exist">选择已有定向包</el-tab-pane>
+        <el-tab-pane label="导入楼盘数据"   name="import">导入楼盘数据</el-tab-pane>
+      </el-tabs>
+    </PutMangeCard>
+    
+    <!-- 投放方案名称 -->
+    <PutMangeCard :title="'投放方案名称'" class="form-box">
       <el-form
         ref="planName"
         :model="formData"
         :rules="formDataRules"
         :label-position="'left'" 
         label-width="112px" class="put-form">
-        <el-form-item prop="name" label="投放计划名称">
+        <el-form-item prop="name" label="投放方案名称">
           <el-input v-model.trim="formData.name" placeholder="请输入名称"></el-input>
         </el-form-item>
       </el-form>
@@ -81,7 +129,8 @@
     <!-- 保存 取消 -->
     <PutMangeCard class="save-box">
       <div class="float-right">
-        <el-button @click="savePlan" type="primary">下一步</el-button>
+        <el-button @click="savePlan" plain>取消</el-button>
+        <el-button @click="savePlan" type="primary">确定</el-button>
       </div>
     </PutMangeCard>
   </div>
@@ -90,74 +139,51 @@
 <script>
 import PutMangeCard from '../../../../templates/PutMangeCard' 
 import MyRadio from '../../../../../../components/MyRadio' 
+import SelectedList from './SelectedList' 
 export default {
   components: {
     PutMangeCard,
-    MyRadio
+    MyRadio,
+    SelectedList
   },
   data() {
-    // 自定义校验 预算    
-    let validateBudget = (rules, value, callback) => {
-      if (this.formData.budget.type == 'unlimited') return;
-      if (!value) { return callback(new Error('请输入指定预算!')); }
-      if (isNaN(value)) { return callback(new Error('请输入数字!')); }
-      if (value <= 1000) { return callback(new Error('指定预算不少于1000元!')); }
-    }
     return {
-      // 投放目的
-      goal: {
+      // 投放类型
+      putType: {
         activeIndex: 0,
-        content:[
-          { name: '品牌宣传', icon: require('../../../../../../assets/images/test.png')},
-          { name: '新品上线', icon: require('../../../../../../assets/images/test.png')},
-          { name: '活动宣传', icon: require('../../../../../../assets/images/test.png')}
+        activeType: 'byWeek',
+        values: [
+          { name: '按周投放', value: 'byWeek'},
+          { name: '按天投放', value: 'byDay'},
+        ]
+      },
+      // 投放方式
+      putWay: {
+        activeIndex: 0,
+        values: [
+          { name: '一个楼盘所有点位', value: 'all' },
+          { name: '一个单元一个电梯', value: 'one' },
+          { name: '一个单元一半电梯', value: 'half' }
         ]
       },
 
-      // 预算
-      budget: {
-        activeIndex: 0,
-        content: [
-          { name: '不限', value: 'unlimited' },
-          { name: '指定预算', value: 'assign' }
-        ]
-      },
-
-      // 城市
-      city: [
-        { name: '北京', code: 123},
-        { name: '上海', code: 45},
-        { name: '广州', code: 654},
-        { name: '深圳', code: 675}
-      ],
+      // 楼盘定向
+      activeBuildingDirection: 'create',
 
       formData: {
         name: '',
-        budget: {
-          type: 'unlimited',
-          value: ''
-        },
-        putCity: '',
-        putDate: '',
-        goal: '品牌宣传'
-      },
-      
-      formDataRules: {
-        name: [
-          { required: true, message: '请输入计划名称!', trigger: 'blur' },
-        ],
-        putCity: [
-          { required: true, message: '请选择投放城市!', trigger: 'blur' },
-        ],
-        putDate: [
-          { required: true, message: '请选择投放时间!', trigger: 'blur' },
-        ],
-        'budget.value': [
-          { validator: validateBudget, trigger: 'blur' },
-          { type: 'number', message: '请输入数字!'},
-        ],
+        industry: '',
+        type: '',
+        date:'',
+        way: '',
+        frequency:'',
+        duration: '',
+        screenType:'',
+        buildingDirection: '',
       },
 
+      formDataRules: {},
+      
       // 广告创意行业
       creativeIndustry: [
         '餐饮',
@@ -192,19 +218,25 @@ export default {
 
       alert('上传成功')
     },
-
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.put-goal{
+.put-project{
+  .title{
+    padding: 28px 0 0 40px;
+    background: #fff;
+  }
   position: relative;
   .mt-20{
     margin-top: 20px !important;
   }
   .mt-12{
     margin-top: 12px !important;
+  }
+  .mt-15{
+    margin-top: 15px;
   }
   .mt-10{
     margin-top: 10px;
