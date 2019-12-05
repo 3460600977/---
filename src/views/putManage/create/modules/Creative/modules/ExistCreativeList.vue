@@ -1,8 +1,8 @@
 <template>
   <div class="exist-creative-list">
     <div class="search-box mid">
-      <el-input class="search-text" v-model="search" placeholder="请输入内容"></el-input>
-      <el-button type="primary" plain>主要按钮</el-button>
+      <el-input class="search-text" v-model="search" placeholder="输入投广告创意名称"></el-input>
+      <el-button type="primary" plain>查询</el-button>
     </div>
 
     <div class="list-box">

@@ -558,8 +558,7 @@ export default {
       let date = new Date();
       let type = this.creativeType == 'both' ? '联动' : this.creativeType == 'top' ? '上屏' : '下屏';
       this.formData.name = `${this.formData.aptitude.industry}_${type}_${date.getMonth()+1}_${date.getDate()}`
-    },
-
+    }
   }
 }
 </script>

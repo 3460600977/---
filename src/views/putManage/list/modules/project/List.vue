@@ -36,7 +36,7 @@
         <el-button type="primary" plain @click="onSubmit">查询</el-button>
       </el-form-item>
       <el-form-item class="list-new-button">
-        <router-link to="/putManage/create/createCreative">
+        <router-link to="/putManage/create/plan">
           <el-button type="primary" @click="onSubmit">新建投放方案</el-button>
         </router-link>
       </el-form-item>

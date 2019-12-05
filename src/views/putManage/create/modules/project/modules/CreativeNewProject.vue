@@ -5,7 +5,7 @@
       <!-- 目的 -->
       <ul class="goal-box clearfix">
         <li class="item mid-center"
-          @click="goal.activeIndex = index; formData.goal=item.name"
+          @click="goal.activeIndex = index"
           :class="{'active': goal.activeIndex === index}"
           v-for="(item, index) in goal.content"
           :key="index">
@@ -98,7 +98,7 @@ export default {
   data() {
     // 自定义校验 预算    
     let validateBudget = (rules, value, callback) => {
-      if (this.formData.budget.type == 'unlimited') return true;
+      if (this.formData.budget.type == 'unlimited') return;
       if (!value) { return callback(new Error('请输入指定预算!')); }
       if (isNaN(value)) { return callback(new Error('请输入数字!')); }
       if (value <= 1000) { return callback(new Error('指定预算不少于1000元!')); }
@@ -139,7 +139,7 @@ export default {
         },
         putCity: '',
         putDate: '',
-        goal: ''
+        goal: '品牌宣传'
       },
       
       formDataRules: {
@@ -167,9 +167,6 @@ export default {
       ],
     }
   },
-  mounted() {
-    this.formData.goal = this.goal.content[this.goal.activeIndex].name;
-  },
   methods: {
     // 切换预算
     switchBudget(index, type) {
@@ -185,28 +182,18 @@ export default {
       validateForms.forEach((item, index) => {
         if(this.$refs[item]) {
           this.$refs[item].validate((valid) => {
-            console.log(valid)
             if (!valid) { isPassEnptyCheck = false; } 
           });
         }
       })
       if (!isPassEnptyCheck) {
         return this.$message.warning('还有必填字段未填写!')
-      } else {
-        // this.$router.push('/putManage/create/project')
       }
 
+      alert('上传成功')
     },
 
   },
-  watch: {
-    // 生成名字
-    'formData.goal': function() {
-      let date = new Date();
-      let type = this.creativeType == 'both' ? '联动' : this.creativeType == 'top' ? '上屏' : '下屏';
-      this.formData.name = `${this.formData.goal}_${date.getMonth()+1}_${date.getDate()}`
-    },
-  }
 }
 </script>
 
