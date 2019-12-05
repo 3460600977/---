@@ -5,6 +5,7 @@
           <CreativeNewPlan/>
         </el-tab-pane>
         <el-tab-pane name="exist" label="选择已有投放计划">
+
         </el-tab-pane>
       </el-tabs>
   </div>
@@ -12,9 +13,11 @@
 
 <script>
 import CreativeNewPlan from './modules/CreativeNewPlan.vue'
+import ExistPlanList from './modules/ExistPlanList'
 export default {
   components: {
-    CreativeNewPlan
+    CreativeNewPlan,
+    ExistPlanList
   },
   data() {
     return{

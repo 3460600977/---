@@ -266,7 +266,7 @@
         :label-position="'left'" 
         label-width="112px" class="put-form">
         <el-form-item prop="name" label="广告创意名称">
-          <el-input v-model="formData.name" placeholder="请输入名称"></el-input>
+          <el-input v-model.trim="formData.name" placeholder="请输入名称"></el-input>
         </el-form-item>
       </el-form>
     </PutMangeCard>

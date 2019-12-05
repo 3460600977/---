@@ -15,16 +15,16 @@
       </ul>
 
       <el-form
-        ref="creativeForm"
+        ref="planTop"
         :label-position="'left'"
         :model="formData"
         :rules="formDataRules" 
         label-width="112px" class="put-form">
 
-        <el-form-item prop="budget" label="总预算">
+        <el-form-item prop="budget.value" label="总预算">
           <MyRadio
             v-for="(item, index) in budget.content"
-            @click.native="switchBudget(index)"
+            @click.native="switchBudget(index, item.value)"
             :active="budget.activeIndex === index"
             :key="index"
             v-model="formData.budget.type">{{item.name}}</MyRadio>
@@ -33,12 +33,12 @@
             class="budget-value"
             v-if="formData.budget.type === 'assign'" 
             placeholder="请输入内容" 
-            v-model="formData.budget.value">
+            v-model.number.trim="formData.budget.value">
             <template slot="append">元</template>
           </el-input>
         </el-form-item>
         
-        <el-form-item prop="name" label="广告创意行业">
+        <el-form-item class="mt-20" prop="putCity" label="投放城市">
           <el-select v-model="formData.putCity" placeholder="请选择">
             <el-option
               v-for="(item, index) in city"
@@ -49,8 +49,9 @@
           </el-select>
         </el-form-item>
         
-        <el-form-item prop="name" label="投放时间">
+        <el-form-item class="mt-20" prop="putDate" label="投放时间">
           <el-date-picker
+            style="width: 442px;"
             v-model="formData.putDate"
             type="daterange"
             range-separator="至"
@@ -66,13 +67,13 @@
     <!-- 广告创意名称 -->
     <PutMangeCard :title="'投放计划名称'" class="form-box aptitude">
       <el-form
-        ref="creativeFormName"
+        ref="planName"
         :model="formData"
         :rules="formDataRules"
         :label-position="'left'" 
         label-width="112px" class="put-form">
         <el-form-item prop="name" label="投放计划名称">
-          <el-input v-model="formData.name" placeholder="请输入名称"></el-input>
+          <el-input v-model.trim="formData.name" placeholder="请输入名称"></el-input>
         </el-form-item>
       </el-form>
     </PutMangeCard>
@@ -80,7 +81,7 @@
     <!-- 保存 取消 -->
     <PutMangeCard class="save-box">
       <div class="float-right">
-        <el-button @click="saveCreative" type="primary">下一步</el-button>
+        <el-button @click="savePlan" type="primary">下一步</el-button>
       </div>
     </PutMangeCard>
   </div>
@@ -95,6 +96,13 @@ export default {
     MyRadio
   },
   data() {
+    // 自定义校验 预算    
+    let validateBudget = (rules, value, callback) => {
+      if (this.formData.budget.type == 'unlimited') return;
+      if (!value) { return callback(new Error('请输入指定预算!')); }
+      if (isNaN(value)) { return callback(new Error('请输入数字!')); }
+      if (value <= 1000) { return callback(new Error('指定预算不少于1000元!')); }
+    }
     return {
       // 投放目的
       goal: {
@@ -126,7 +134,7 @@ export default {
       formData: {
         name: '',
         budget: {
-          type: 'assign',
+          type: 'unlimited',
           value: ''
         },
         putCity: '',
@@ -135,6 +143,19 @@ export default {
       },
       
       formDataRules: {
+        name: [
+          { required: true, message: '请输入计划名称!', trigger: 'blur' },
+        ],
+        putCity: [
+          { required: true, message: '请选择投放城市!', trigger: 'blur' },
+        ],
+        putDate: [
+          { required: true, message: '请选择投放时间!', trigger: 'blur' },
+        ],
+        'budget.value': [
+          { validator: validateBudget, trigger: 'blur' },
+          { type: 'number', message: '请输入数字!'},
+        ],
       },
 
       // 广告创意行业
@@ -148,14 +169,15 @@ export default {
   },
   methods: {
     // 切换预算
-    switchBudget(index) {
+    switchBudget(index, type) {
       console.log(index)
       this.budget.activeIndex = index;
+      this.formData.budget.type = type;
     },
     // 保存
-    saveCreative() {
+    savePlan() {
       let isPassEnptyCheck = true;
-      let validateForms = ['creativeFormMaterialTop', 'creativeFormMaterialBottom880', 'creativeFormMaterialBottom720', 'creativeFormName'];
+      let validateForms = ['planTop', 'planName'];
       
       validateForms.forEach((item, index) => {
         if(this.$refs[item]) {
@@ -178,6 +200,9 @@ export default {
 <style lang="scss" scoped>
 .put-goal{
   position: relative;
+  .mt-20{
+    margin-top: 20px !important;
+  }
   .mt-12{
     margin-top: 12px !important;
   }
