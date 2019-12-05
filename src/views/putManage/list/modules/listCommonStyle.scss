@@ -4,6 +4,7 @@
   }
   .query_result {
     background-color: $color-bg;
+
     .list_table {
       .status {
         display: inline-block;
@@ -51,25 +52,25 @@
     padding-top: 17px;
     padding-left: 15px;
     background-color: $color-bg-3;
+    margin-bottom: 37px;
 
+    .list-button {
+      width: 340px;
 
-    .el-form-item {
-      margin-bottom: 37px;
-    }
+      div.el-form-item__content {
+        width: 100%;
+      }
 
+      .list-query-button {
+        width: 80px;
+        height: 36px;
+        margin-left: 10px;
+      }
 
-    .list-new-button {
-      float: right;
-      margin-right: 8px;
-    }
-
-    .list-query-button {
-      margin-left: 10px;
-    }
-
-    .list-query-button button {
-      width: 80px;
-      height: 36px;
+      .list-new-button {
+        float: right;
+        margin-right: 8px;
+      }
     }
   }
 
