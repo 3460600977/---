@@ -15,23 +15,14 @@
           </span>
           </a>
         </div>
-        <el-steps direction="vertical" :active="step_active" finish-status="success">
-          <el-step class="step-first">
-            <div slot="title">投放计划</div>
-            <div slot="description" v-for="steps in step1" v-bind:class="classStepDes">
-              {{steps.des}}
-            </div>
-          </el-step>
-          <el-step class="step-second">
-            <div slot="title">投放方案</div>
-            <div slot="description" v-for="steps in step2" v-bind:class="classStepDes">
-              {{steps.des}}
-            </div>
-          </el-step>
-          <el-step class="step-third">
-            <div slot="title">广告创意</div>
-            <div slot="description" v-for="steps in step3" v-bind:class="classStepDes">
-              {{steps.des}}
+        <el-steps direction="vertical" :active="rootActiveIndex" finish-status="success">
+          <el-step v-for="(step_item, rootIndex) in step.content" :key="rootIndex">
+            <div slot="title">{{step_item.name}}</div>
+            <div slot="description" v-for="(steps_sub, subIndex) in step_item.sub"
+                 :key="subIndex"
+                 :sub_index="steps_sub.subId"
+                 v-bind:class="{'step_des':true,'text_active': steps_sub.subId == subActiveIndex}">
+              {{steps_sub.name}}
             </div>
           </el-step>
         </el-steps>
@@ -46,40 +37,75 @@
 
 <script>
     export default {
+        props: {
+            rootActiveIndex: {
+                type: Number,
+                default: 0
+            },
+            subActiveIndex: {
+                type: Number,
+                default: 0
+            }
+        },
         data() {
             return {
-                step_active: 0,
-                step_index: 1,
                 isShowSteps: true,
-                steps_circle_status: 1,
-                steps_des_status: 1,
-                steps_line_status: 1,
-                steps_name:
-                    [
-                        {steps1: '投放目的'},
-                        {steps2: '投放方案'},
-                        {steps3: '广告创意'}
-                    ],
-
-                step1:
-                    [
-                        {id: 1, des: '投放目的'},
-                        {id: 2, des: '投放计划名称'}
-                    ],
-
-                step2:
-                    [
-                        {id: 3, des: '投放设置'},
-                        {id: 4, des: '楼盘定向包'},
-                        {id: 5, des: '投放方案名称'},
-                    ],
-
-                step3:
-                    [
-                        {id: 6, des: '制作创意'},
-                        {id: 7, des: '创意资质'},
-                        {id: 7, des: '广告创意名称'}
+                step: {
+                    rootActiveIndex: 0,
+                    subActiveIndex: 0,
+                    content: [
+                        {
+                            name: '投放计划',
+                            id: 0,
+                            sub: [
+                                {
+                                    name: '投放目的',
+                                    subId: 0
+                                },
+                                {
+                                    name: '投放计划名称',
+                                    subId: 1
+                                },
+                            ]
+                        },
+                        {
+                            name: '投放方案',
+                            id: 1,
+                            sub: [
+                                {
+                                    name: '投放设置',
+                                    subId: 2
+                                },
+                                {
+                                    name: '楼盘定向包',
+                                    subId: 3
+                                },
+                                {
+                                    name: '楼盘定向包',
+                                    subId: 4
+                                },
+                            ]
+                        },
+                        {
+                            name: '广告创意',
+                            id: 2,
+                            sub: [
+                                {
+                                    name: '制作创意',
+                                    subId: 5
+                                },
+                                {
+                                    name: '创意资质',
+                                    subId: 6
+                                },
+                                {
+                                    name: '广告创意名称',
+                                    subId: 7
+                                },
+                            ]
+                        }
                     ]
+                }
             }
         },
         methods: {
@@ -87,14 +113,6 @@
                 this.isShowSteps = !this.isShowSteps;
             },
         },
-        computed: {
-            classStepDes: function () {
-                return {
-                    active: this.isActive && !this.error,
-                    'text-danger': this.error && this.error.type === 'fatal'
-                }
-            }
-        }
     }
 </script>
 
@@ -135,21 +153,8 @@
         margin-left: 26px;
         height: 460px;
 
-        .step-first {
-          .el-step__line {
-            border: 1px solid $color-blue;
-            background-color: $color-blue;
-          }
-        }
-
-        .el-step__line {
-          border: 1px dashed $color-step;
-          background-color: $color-bg-3;
-        }
-
-        .el-step__head.is-process, .el-step__head.is-wait {
-          color: $color-blue;
-          border-color: $color-blue;
+        .el-step__description {
+          color: $color-text-1;
         }
 
         .el-step__main {
@@ -170,11 +175,39 @@
         }
 
         .el-step__icon.is-text {
-          background-color: $color-blue;
+          background-color: $color-step;
           color: $color-bg-3;
           width: 32px;
           height: 32px;
           border-radius: 50%;
+        }
+
+        .el-step__head.is-process, .el-step__head.is-wait {
+          border-color: $color-step;
+        }
+
+        .is-process {
+          .el-step__icon.is-text {
+            background-color: $color-blue;
+            border-color: $color-blue;
+          }
+        }
+
+        .is-success {
+          .el-step__line {
+            border: 1px solid $color-blue;
+            background-color: $color-blue;
+          }
+
+          .el-step__icon.is-text {
+            background-color: $color-blue;
+            border-color: $color-blue;
+          }
+        }
+
+        .el-step__line {
+          border: 1px dashed $color-step;
+          background-color: $color-bg-3;
         }
       }
     }
@@ -196,6 +229,10 @@
         cursor: pointer;
         color: $color-blue;
       }
+    }
+
+    .text_active {
+      color: $color-text;
     }
   }
 </style>
