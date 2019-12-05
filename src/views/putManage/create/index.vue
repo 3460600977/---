@@ -1,21 +1,22 @@
 <!-- 投放管理首页 -->
 <template>
   <div class="put-manage clearfix">
-    <div v-if="isShowSteps===false" class="hide-steps">
-      <a href="#" @click="handleShowSteps">
-        <span><i class="el-icon-s-operation"></i></span>
-      </a>
-    </div>
-    <div v-else class="left-steps">
+    <!--    <div v-if="isShowSteps===false" class="hide-steps">-->
+    <!--      <a href="#" @click="handleShowSteps">-->
+    <!--        <span><i class="el-icon-s-operation"></i></span>-->
+    <!--      </a>-->
+    <!--    </div>-->
+    <div class="left-steps" :class="{'hide': !isShowSteps}">
       <div style="height: 300px;">
         <div class="step_arrow">
-          <a href="#" @click="handleShowSteps">
+          <a href="#" @click="isShowSteps = !isShowSteps">
           <span class="step_arrow_span">
-            <i class="el-icon-d-arrow-left"></i>
+            <i v-if="isShowSteps" class="el-icon-d-arrow-left"></i>
+            <i v-else class="el-icon-d-arrow-right"></i>
           </span>
           </a>
         </div>
-        <el-steps direction="vertical" :active="rootActiveIndex" finish-status="success">
+        <el-steps v-if="isShowSteps" direction="vertical" :active="rootActiveIndex" finish-status="success">
           <el-step v-for="(step_item, rootIndex) in step.content" :key="rootIndex">
             <div slot="title">{{step_item.name}}</div>
             <div slot="description" v-for="(steps_sub, subIndex) in step_item.sub"
@@ -24,6 +25,12 @@
                  v-bind:class="{'step_des':true,'text_active': steps_sub.subId == subActiveIndex}">
               {{steps_sub.name}}
             </div>
+          </el-step>
+        </el-steps>
+        <el-steps v-else direction="vertical" :active="rootActiveIndex" finish-status="success" class="hide-el-steps">
+          <el-step v-for="(step_item, rootIndex) in step.content" :key="rootIndex">
+            <div slot="title"></div>
+            <div slot="description"></div>
           </el-step>
         </el-steps>
       </div>
@@ -40,7 +47,7 @@
         props: {
             rootActiveIndex: {
                 type: Number,
-                default: 0
+                default: 1
             },
             subActiveIndex: {
                 type: Number,
@@ -108,11 +115,6 @@
                 }
             }
         },
-        methods: {
-            handleShowSteps() {
-                this.isShowSteps = !this.isShowSteps;
-            },
-        },
     }
 </script>
 
@@ -128,6 +130,17 @@
       height: calc(100vh - 76px);
       flex-shrink: 0;
       background: #fff;
+      transition: .3s;
+      position: relative;
+
+      .hide-el-steps {
+        position: absolute;
+        right: -5px;
+      }
+
+      &.hide {
+        transform: translateX(-60%);
+      }
 
       .step_arrow {
         position: relative;
@@ -153,6 +166,10 @@
         margin-left: 26px;
         height: 460px;
 
+        .el-step__title {
+          color: $color-text
+        }
+
         .el-step__description {
           color: $color-text-1;
         }
@@ -163,6 +180,7 @@
 
           .el-step__title {
             font-size: 16px;
+            font-weight: 400;
           }
 
           .el-step__description {
@@ -208,6 +226,7 @@
         .el-step__line {
           border: 1px dashed $color-step;
           background-color: $color-bg-3;
+          left: 14px;
         }
       }
     }
