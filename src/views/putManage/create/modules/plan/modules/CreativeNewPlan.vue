@@ -204,7 +204,7 @@ export default {
       color: $color-text-1;
       transition: .3s;
       &:hover{
-        transform: translateY(-5px);
+        transform: translateY(-3px);
       }
       &.active{
         color: $color-main;
