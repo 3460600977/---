@@ -1321,16 +1321,16 @@
     position: relative;
     vertical-align: middle; }
     .el-radio__input.is-disabled .el-radio__inner {
-      background-color: #C5C8CE;
+      background-color: rgba(197, 200, 206, 0.24);
       border-color: #E5E7E9;
       cursor: not-allowed; }
       .el-radio__input.is-disabled .el-radio__inner::after {
         cursor: not-allowed;
-        background-color: #C5C8CE; }
+        background-color: rgba(197, 200, 206, 0.24); }
       .el-radio__input.is-disabled .el-radio__inner + .el-radio__label {
         cursor: not-allowed; }
     .el-radio__input.is-disabled.is-checked .el-radio__inner {
-      background-color: #C5C8CE;
+      background-color: rgba(197, 200, 206, 0.24);
       border-color: #E5E7E9; }
       .el-radio__input.is-disabled.is-checked .el-radio__inner::after {
         background-color: #C0C4CC; }
@@ -1350,8 +1350,8 @@
   .el-radio__inner {
     border: 1px solid #E5E7E9;
     border-radius: 100%;
-    width: 14px;
-    height: 14px;
+    width: 22px;
+    height: 22px;
     background-color: #FFFFFF;
     position: relative;
     cursor: pointer;

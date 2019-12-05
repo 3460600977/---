@@ -1,6 +1,6 @@
 <template>
   <div class="list">
-    <el-form :inline="true" :model="creativeFormInline" class="list-form-inline" inline>
+    <el-form :inline="true" :model="creativeFormInline" class="list-form-inline clearfix">
       <el-form-item class="line-space" label="投放计划名称">
         <div slot="label">投放计划名称</div>
         <el-select v-model="creativeFormInline.project_status" placeholder="不限" clearable>
@@ -35,9 +35,13 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item class="list-button">
-        <el-button type="primary" plain @click="onSubmit" class="list-query-button">查询</el-button>
-        <el-button type="primary" @click="onSubmit" class="list-new-button">新建广告创意</el-button>
+      <el-form-item class="list-query-button">
+        <el-button type="primary" plain @click="onSubmit">查询</el-button>
+      </el-form-item>
+      <el-form-item class="list-new-button">
+        <router-link to="/putManage/create/creative">
+          <el-button type="primary" @click="onSubmit">新建广告创意</el-button>
+        </router-link>
       </el-form-item>
     </el-form>
     <div class="query_result">
@@ -237,147 +241,6 @@
 </script>
 
 <style lang='scss'>
-  .list {
-    .query_result {
-      background-color: $color-bg;
-
-      .list_table {
-        .status {
-          display: inline-block;
-          border-radius: 4px;
-          width: 70px;
-          height: 24px;
-          text-align: center;
-
-          &.pass {
-            background: $color-blue;
-            box-shadow: 0px 2px 4px 0px $color-shadow-2;
-            color: $color-bg-3;
-          }
-
-          &.pending {
-            background: $color-bg-2;
-            box-shadow: 0px 2px 4px 0px $color-shadow-1;
-          }
-
-          &.deny {
-            background: $color-red;
-            box-shadow: 0px 2px 4px 0px $color-shadow-3;
-            color: $color-bg-3;
-          }
-        }
-
-        div.cell {
-          overflow: unset !important;
-        }
-
-        span i.icon-color {
-          color: $color-blue;
-          margin-right: 8px;
-        }
-
-        span.icon-space {
-          margin-right: 35px;
-        }
-      }
-    }
-
-    .list-form-inline {
-
-      margin: 0;
-      padding-top: 17px;
-      padding-left: 15px;
-      background-color: $color-bg-3;
-      margin-bottom: 37px;
-
-      .list-button {
-        width: 340px;
-
-        div.el-form-item__content {
-          width: 100%;
-        }
-
-        .list-query-button {
-          width: 80px;
-          height: 36px;
-          margin-left: 10px;
-        }
-
-        .list-new-button {
-          float: right;
-          margin-right: 8px;
-        }
-      }
-    }
-
-    .line-space {
-      margin-left: 10px;
-      margin-right: 0 !important;
-    }
-
-    .line-space:first-child {
-      margin-left: 0;
-    }
-
-    .list_table {
-      background-color: $color-bg;
-
-      table {
-        width: 100%;
-        text-align: center;
-      }
-
-      td, th {
-        font-size: 14px;
-        padding: 14px 0 14px 20px;
-        color: $color-text;
-      }
-
-      td {
-        border-top: 10px solid $color-bg;
-        padding-left: 17px;
-      }
-
-
-      tr:first-child td {
-        border-top: 0;
-      }
-
-      tr td:first-child {
-        border-radius: 4px;
-      }
-
-      tr td:last-child {
-        border-radius: 4px;
-      }
-
-      th {
-        background-color: $color-bg;
-        color: $color-table-title;
-        border-bottom: 0;
-      }
-
-      tr:hover > td {
-        background-color: $color-bg-3 !important
-      }
-
-      tr > td {
-        background-color: $color-bg-3 !important
-      }
-    }
-
-    .list-page {
-      background-color: $color-bg-3;
-      padding: 54px 0;
-      text-align: center;
-      border-radius: 4px;
-      height: 120px;
-      margin-top: 33px;
-
-      li.active {
-        background-color: $color-blue !important;
-      }
-    }
-  }
+@import '../listCommonStyle.scss';
 </style>
 

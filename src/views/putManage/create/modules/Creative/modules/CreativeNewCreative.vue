@@ -10,7 +10,7 @@
         :label-position="'left'" 
         label-width="112px" class="put-form">
         <!-- 上屏 -->
-        <el-form-item prop="top.name" v-if="materialType === 'both' || materialType === 'top'" class="top-box" label="上屏内容">
+        <el-form-item prop="top.name" v-if="creativeType === 'both' || creativeType === 'top'" class="top-box" label="上屏内容">
           <!-- 类型 -->
           <div class="mid-center">
             <el-button 
@@ -23,7 +23,7 @@
           </div>
           
           <!-- 视频 -->
-          <div v-if="mediaType.values[mediaType.activeIndex].value === 'video'">
+          <div v-if="mediaType.activeType === 'video'">
             <div class="mt-12 my-input-upload">
               <input 
                 ref="topVideo"
@@ -41,7 +41,7 @@
           </div>
 
           <!-- 图片 -->
-          <div v-if="mediaType.values[mediaType.activeIndex].value === 'image'">
+          <div v-if="mediaType.activeType === 'image'">
             <div class="mt-12 my-input-upload">
               <input 
                 ref="topImage"
@@ -59,10 +59,25 @@
           </div>
 
         </el-form-item>
+
+        <!-- 时长 -->
+        <el-form-item prop="durationType" label="投放时长">
+          <el-select :disabled="mediaType.activeType == 'video'" class="width-100-p" 
+            v-model="formData.durationType" 
+            :placeholder="mediaType.activeType == 'video' ? '上传视频自动获取' : '请选择'">
+            <el-option
+              v-for="(item, index) in duration"
+              :key="index"
+              :label="item.name"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
       </el-form>
 
       <!--下屏 -->
-      <div v-if="materialType === 'both' || materialType === 'bottom'">
+      <div v-if="creativeType === 'both' || creativeType === 'bottom'">
         <!-- 1080 880 -->
         <el-form
           ref="creativeFormMaterialBottom880"
@@ -121,11 +136,12 @@
           <video controls 
             class="top"
             autoplay
+            loop
             muted
-            v-if="mediaType.values[mediaType.activeIndex].value === 'video' && formData.top.base64" 
+            v-if="mediaType.activeType === 'video' && formData.top.base64" 
             :src="formData.top.base64"></video>
           <img 
-            v-else-if="mediaType.values[mediaType.activeIndex].value === 'image' && formData.top.base64" 
+            v-else-if="mediaType.activeType === 'image' && formData.top.base64" 
             class="top" 
             :src="formData.top.base64"/>
 
@@ -250,7 +266,7 @@
         :label-position="'left'" 
         label-width="112px" class="put-form">
         <el-form-item prop="name" label="广告创意名称">
-          <el-input v-model="formData.name" placeholder="请输入名称"></el-input>
+          <el-input v-model.trim="formData.name" placeholder="请输入名称"></el-input>
         </el-form-item>
       </el-form>
     </PutMangeCard>
@@ -269,13 +285,21 @@
 import PutMangeCard from '../../../../templates/PutMangeCard' 
 export default {
   props:{
-    materialType: {
+    /**
+     * 创意类型
+     * both => 联动 top => 上屏 bottom => 下屏
+     */
+    creativeType: {
       type: String,
-      default: 'both' // both top bottom
+      default: 'both'
     },
+    /**
+     * 创建类型
+     * single => 单独创建 step => 按步骤创建 edit => 编辑
+     */
     createType: {
       type: String,
-      default: 'single' // single => 单独创建 step => 按步骤创建 edit => 编辑
+      default: 'single'
     }
   },
   components: {
@@ -285,14 +309,22 @@ export default {
     return {
       mediaType: {
         activeIndex: 0,
+        activeType: 'video',
         values: [
           { name: '上传视频', value: 'video'},
           { name: '上传图片', value: 'image'},
         ]
       },
+
+      duration: [
+        { name: '5秒',  value: 0 },
+        { name: '10秒', value: 1 },
+        { name: '15秒', value: 2 },
+      ],
       
       formData: {
         name: '',
+        creativeType: 'both',
         top: {
           name: '',
           file: '',
@@ -308,6 +340,7 @@ export default {
           file: '',
           base64: ''
         },
+        durationType: '',
         aptitude: {
           industry: '餐饮',
           images: [
@@ -320,7 +353,7 @@ export default {
         thirdPartMonitor: [
           {
             mode: 'SDK',
-            thirdPardMonitor: 'admaster',
+            thirdPardMonitor: '酷云',
             thirdPardMonitorAddr: ''
           }
         ]
@@ -329,6 +362,10 @@ export default {
       formDataRules: {
         name: [
           { required: true, message: '请输入广告创意名称!', trigger: 'blur' },
+          { max: 100, message: '创意名称100字以内!'}
+        ],
+        durationType: [
+          { required: true, message: '请选择投放时长!', trigger: 'blur' },
         ],
         'top.name': [
           { required: true, message: '请上传创意!', trigger: 'blur' },
@@ -344,7 +381,7 @@ export default {
       // 默认第三方检测
       monitorData: {
         mode: ['SDK', 'C2S', 'S2S'],
-        thirdPardMonitor: ['admaster', '国双', '数字100', '秒针']
+        thirdPardMonitor: ['酷云', 'admaster', '国双', '数字100', '秒针']
       },
 
       // 广告创意行业
@@ -364,9 +401,10 @@ export default {
     uploadMedia(event, mediaType) {
 
       if (mediaType === 'video') {
-        return this.$tools.checkVideoTimeAndSize(event.target.files[0], 15000, 100, 1080, 1920)
+        return this.$tools.checkVideoTimeAndSize(event.target.files[0], 15000, 200, 1080, 1920)
           .then(res => {
             // this.$message.success(res.msg);
+            this.formData.durationType = res.durationType
             this.formData.top = {
               name: res.name,
               file: event.target.files[0],
@@ -452,11 +490,13 @@ export default {
     switchMediaType(index) {
       if (this.mediaType.activeIndex === index) return;
       this.mediaType.activeIndex = index;
-      this.topFile = {
+      this.mediaType.activeType = this.mediaType.values[index].value;
+      this.formData.durationType = '';
+      this.formData.top = {
         name: '请上传',
         file: '',
         base64: ''
-      }
+      };
     },
 
     // 添加资质
@@ -476,7 +516,7 @@ export default {
     addThirdPartMonitor() {
       this.formData.thirdPartMonitor.push({
         mode: 'SDK',
-        thirdPardMonitor: 'admaster',
+        thirdPardMonitor: '酷云',
         thirdPardMonitorAddr: ''
       })
     },
@@ -511,15 +551,14 @@ export default {
     // 监听资质行业和上下屏类型生成名字
     'formData.aptitude.industry': function() {
       let date = new Date();
-      let type = this.materialType == 'both' ? '联动' : this.materialType == 'top' ? '上屏' : '下屏';
+      let type = this.creativeType == 'both' ? '联动' : this.creativeType == 'top' ? '上屏' : '下屏';
       this.formData.name = `${this.formData.aptitude.industry}_${type}_${date.getMonth()+1}_${date.getDate()}`
     },
-    materialType: function() {
+    creativeType: function() {
       let date = new Date();
-      let type = this.materialType == 'both' ? '联动' : this.materialType == 'top' ? '上屏' : '下屏';
+      let type = this.creativeType == 'both' ? '联动' : this.creativeType == 'top' ? '上屏' : '下屏';
       this.formData.name = `${this.formData.aptitude.industry}_${type}_${date.getMonth()+1}_${date.getDate()}`
-    },
-
+    }
   }
 }
 </script>
@@ -543,7 +582,7 @@ export default {
     position: relative;
     &.creative{
       margin-top: -10px;
-      height: 435px;
+      height: 485px;
     }
     .put-form{
       width: 352px;

@@ -2,26 +2,26 @@
   <div class="create-creative">
       <el-tabs v-model="activeName" class="my-tabs creative-box" type="border-card">
         <el-tab-pane name="create" label="创建新广告创意">
-          <CreativeCreativeCommon/>
+          <CreativeNewCreative/>
         </el-tab-pane>
         <el-tab-pane name="exist" label="选择已有广告创意">
-          <existCreativeList/>
+          <ExistCreativeList/>
         </el-tab-pane>
       </el-tabs>
   </div>
 </template>
 
 <script>
-import CreativeCreativeCommon from './modules/CreativeNewCreative.vue'
-import existCreativeList from './modules/existCreativeList.vue'
+import CreativeNewCreative from './modules/CreativeNewCreative.vue'
+import ExistCreativeList from './modules/ExistCreativeList.vue'
 export default {
   components: {
-    CreativeCreativeCommon,
-    existCreativeList
+    CreativeNewCreative,
+    ExistCreativeList
   },
   data() {
     return{
-      activeName: 'exist'
+      activeName: 'create'
     }
   }
 }

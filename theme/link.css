@@ -321,15 +321,15 @@
     .el-link.el-link--success.is-underline:hover:after {
       border-color: #2D5AFF; }
   .el-link.el-link--warning {
-    color: #E6A23C; }
+    color: #FFCC00; }
     .el-link.el-link--warning:hover {
-      color: #ebb563; }
+      color: #ffd633; }
     .el-link.el-link--warning:after {
-      border-color: #E6A23C; }
+      border-color: #FFCC00; }
     .el-link.el-link--warning.is-disabled {
-      color: #f3d19e; }
+      color: #ffe680; }
     .el-link.el-link--warning.is-underline:hover:after {
-      border-color: #E6A23C; }
+      border-color: #FFCC00; }
   .el-link.el-link--info {
     color: #999999; }
     .el-link.el-link--info:hover {

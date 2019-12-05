@@ -1,6 +1,5 @@
 // elementUI 主题编辑中无法修改的内容在此处覆盖
 .el-button{
-  width: 136px;
   &.is-circle{
     width: auto;
   }
@@ -75,10 +74,27 @@
 .el-form-item__label{
   color: #999999;
 }
-
+.el-input{
+  width: 240px;
+}
 .el-input__inner{
   &::placeholder{
     color: $color-text;
   }
   border:1px solid rgba(229,231,233,1);
 }
+
+.el-input-group__append{
+  color: $color-text !important;
+}
+// .el-radio__inner::after{
+//   display: inline-block;
+//   position: absolute;
+//   left: 50%;
+//   top: 50%;
+//   transform: translate(-50% -50%);
+//   content: '✔';
+//   width: 21px;
+//   height: 21px;
+//   color: $color-main;
+// }
