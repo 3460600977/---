@@ -1,22 +1,16 @@
 <!-- 投放管理首页 -->
 <template>
   <div class="put-manage clearfix">
-    <!--    <div v-if="isShowSteps===false" class="hide-steps">-->
-    <!--      <a href="#" @click="handleShowSteps">-->
-    <!--        <span><i class="el-icon-s-operation"></i></span>-->
-    <!--      </a>-->
-    <!--    </div>-->
     <div class="left-steps" :class="{'hide': !isShowSteps}">
       <div style="height: 300px;">
         <div class="step_arrow">
           <a href="#" @click="isShowSteps = !isShowSteps">
           <span class="step_arrow_span">
-            <i v-if="isShowSteps" class="el-icon-d-arrow-left"></i>
-            <i v-else class="el-icon-d-arrow-right"></i>
+            <i :class="{'rotate': !isShowSteps}" class="el-icon-d-arrow-left"></i>
           </span>
           </a>
         </div>
-        <el-steps v-if="isShowSteps" direction="vertical" :active="rootActiveIndex" finish-status="success">
+        <el-steps direction="vertical" :active="rootActiveIndex" finish-status="success">
           <el-step v-for="(step_item, rootIndex) in step.content" :key="rootIndex">
             <div slot="title">{{step_item.name}}</div>
             <div slot="description" v-for="(steps_sub, subIndex) in step_item.sub"
@@ -25,12 +19,6 @@
                  v-bind:class="{'step_des':true,'text_active': steps_sub.subId == subActiveIndex}">
               {{steps_sub.name}}
             </div>
-          </el-step>
-        </el-steps>
-        <el-steps v-else direction="vertical" :active="rootActiveIndex" finish-status="success" class="hide-el-steps">
-          <el-step v-for="(step_item, rootIndex) in step.content" :key="rootIndex">
-            <div slot="title"></div>
-            <div slot="description"></div>
           </el-step>
         </el-steps>
       </div>
@@ -128,18 +116,18 @@
     .left-steps {
       width: 220px;
       height: calc(100vh - 76px);
+      overflow: hidden;
       flex-shrink: 0;
       background: #fff;
-      transition: .3s;
+      transition: .4s;
       position: relative;
-
       .hide-el-steps {
         position: absolute;
         right: -5px;
       }
 
       &.hide {
-        transform: translateX(-60%);
+        width: 84px;
       }
 
       .step_arrow {
@@ -153,11 +141,14 @@
         display: inline-block;
         top: 15%;
         right: 0;
-
         i {
           color: $color-split-line2;
           font-size: 22px;
           cursor: pointer;
+          transition: .3s;
+          &.rotate{
+            transform: rotate(180deg);
+          }
         }
       }
 
@@ -184,6 +175,7 @@
           }
 
           .el-step__description {
+            white-space: nowrap;
             font-size: 14px;
           }
 
