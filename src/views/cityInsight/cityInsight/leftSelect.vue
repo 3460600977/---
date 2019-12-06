@@ -72,7 +72,6 @@
 </script>
 
 <style scoped lang='scss'>
-  @import "@/assets/styles/modules/_color.scss";
 .left-select {
   background: #fff;
   line-height:38px;
