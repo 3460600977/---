@@ -1,5 +1,5 @@
 <template>
-  <div class="put-goal">
+  <div class="put-plan">
     <!-- HI, 请选择投放目的 -->
     <PutMangeCard :title="'HI, 请选择投放目的'" class="form-box put-goal">
       <!-- 目的 -->
@@ -21,7 +21,8 @@
         :rules="formDataRules" 
         label-width="112px" class="put-form">
 
-        <el-form-item prop="budget.value" label="总预算">
+        <el-form-item prop="budget.value">
+          <label slot="label"><span class="color-red">* </span>总预算</label>
           <MyRadio
             v-for="(item, index) in budget.content"
             @click.native="switchBudget(index, item.value)"
@@ -39,7 +40,7 @@
         </el-form-item>
         
         <el-form-item class="mt-20" prop="putCity" label="投放城市">
-          <el-select v-model="formData.putCity" placeholder="请选择">
+          <el-select multiple clearable v-model="formData.putCity" placeholder="请选择">
             <el-option
               v-for="(item, index) in city"
               :key="index"
@@ -73,7 +74,7 @@
         :label-position="'left'" 
         label-width="112px" class="put-form">
         <el-form-item prop="name" label="投放计划名称">
-          <el-input v-model.trim="formData.name" placeholder="请输入名称"></el-input>
+          <el-input v-model.trim="formData.name" clearable placeholder="请输入名称"></el-input>
         </el-form-item>
       </el-form>
     </PutMangeCard>
@@ -81,7 +82,7 @@
     <!-- 保存 取消 -->
     <PutMangeCard class="save-box">
       <div class="float-right">
-        <el-button @click="savePlan" type="primary">下一步</el-button>
+        <el-button @click="savePlan" style="width: 136px" type="primary">下一步</el-button>
       </div>
     </PutMangeCard>
   </div>
@@ -98,7 +99,9 @@ export default {
   data() {
     // 自定义校验 预算    
     let validateBudget = (rules, value, callback) => {
-      if (this.formData.budget.type == 'unlimited') return true;
+      if (this.formData.budget.type == 'unlimited') {
+        return callback();
+      }
       if (!value) { return callback(new Error('请输入指定预算!')); }
       if (isNaN(value)) { return callback(new Error('请输入数字!')); }
       if (value <= 1000) { return callback(new Error('指定预算不少于1000元!')); }
@@ -144,17 +147,16 @@ export default {
       
       formDataRules: {
         name: [
-          { required: true, message: '请输入计划名称!', trigger: 'blur' },
+          { required: true, message: '请输入计划名称!', trigger: 'blur' }
         ],
         putCity: [
-          { required: true, message: '请选择投放城市!', trigger: 'blur' },
+          { required: true, message: '请选择投放城市!', trigger: 'blur' }
         ],
         putDate: [
-          { required: true, message: '请选择投放时间!', trigger: 'blur' },
+          { required: true, message: '请选择投放时间!', trigger: 'blur' }
         ],
         'budget.value': [
-          { validator: validateBudget, trigger: 'blur' },
-          { type: 'number', message: '请输入数字!'},
+          { validator: validateBudget, trigger: 'blur' }
         ],
       },
 
@@ -185,16 +187,19 @@ export default {
       validateForms.forEach((item, index) => {
         if(this.$refs[item]) {
           this.$refs[item].validate((valid) => {
-            console.log(valid)
-            if (!valid) { isPassEnptyCheck = false; } 
+            if (!valid) { return isPassEnptyCheck = false; } 
           });
         }
       })
-      if (!isPassEnptyCheck) {
-        return this.$message.warning('还有必填字段未填写!')
-      } else {
-        // this.$router.push('/putManage/create/project')
-      }
+      // if (!isPassEnptyCheck) {
+      //   return this.$notify({
+      //     title: '警告',
+      //     message: '还有必填字段未填写',
+      //     type: 'warning'
+      //   });
+      // } 
+      this.$router.replace('/putManage/create/project')
+      
 
     },
 
@@ -211,7 +216,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.put-goal{
+.put-plan{
   position: relative;
   .mt-20{
     margin-top: 20px !important;

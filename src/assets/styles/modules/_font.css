@@ -15,7 +15,7 @@
 }
 
 .font-18 {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 /* 数字字体 */
@@ -29,5 +29,8 @@
 }
 .font-number{
   font-family: DINMittelschrift;
+}
+.bold{
+  font-weight: bold;
 }
 

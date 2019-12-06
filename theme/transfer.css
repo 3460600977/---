@@ -1444,13 +1444,13 @@
     .el-button--small.is-circle {
       padding: 9px; }
   .el-button--mini {
-    padding: 7px 15px;
+    padding: 5px 10px;
     font-size: 12px;
     border-radius: 2; }
     .el-button--mini.is-round {
-      padding: 7px 15px; }
+      padding: 5px 10px; }
     .el-button--mini.is-circle {
-      padding: 7px; }
+      padding: 5px; }
   .el-button--text {
     border-color: transparent;
     color: #2D5AFF;
@@ -2174,11 +2174,11 @@
     .el-checkbox-button--small .el-checkbox-button__inner.is-round {
       padding: 9px 15px; }
   .el-checkbox-button--mini .el-checkbox-button__inner {
-    padding: 7px 15px;
+    padding: 5px 10px;
     font-size: 12px;
     border-radius: 0; }
     .el-checkbox-button--mini .el-checkbox-button__inner.is-round {
-      padding: 7px 15px; }
+      padding: 5px 10px; }
 
 .el-checkbox-group {
   font-size: 0; }
