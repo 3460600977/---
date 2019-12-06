@@ -112,11 +112,11 @@
     
     <!-- 楼盘定向 -->
     <PutMangeCard :title="'楼盘定向'" class="form-box">
-      <el-tabs class="thin-tab mt-15" v-model="activeBuildingDirection">
+      <el-tabs class="thin-tab mt-15" v-model="buildingDirection.activeType">
         <el-tab-pane label="新建楼盘定向"   name="create">
           <div style="margin-top: 5px;">
             <label class="color-text-1" for="">选点方式</label>
-            <el-button type="primary" style="margin-left: 64px;width: 102px">地图选点</el-button>
+            <el-button @click="showMapChoose" type="primary" style="margin-left: 64px;width: 102px">地图选点</el-button>
             <SelectedList/>
           </div>
         </el-tab-pane>
@@ -124,6 +124,9 @@
         <el-tab-pane label="导入楼盘数据"   name="import">导入楼盘数据</el-tab-pane>
       </el-tabs>
     </PutMangeCard>
+
+    <!-- 地图选点 -->
+    <mapChoosePoint :mapChooseShow.sync="buildingDirection.mapChooseShow"/>
     
     <!-- 投放方案名称 -->
     <PutMangeCard :title="'投放方案名称'" class="form-box">
@@ -173,11 +176,14 @@
 import PutMangeCard from '../../../../templates/PutMangeCard' 
 import MyRadio from '../../../../../../components/MyRadio' 
 import SelectedList from './SelectedList' 
+import mapChoosePoint from './mapChoosePoint' 
+
 export default {
   components: {
     PutMangeCard,
     MyRadio,
-    SelectedList
+    SelectedList,
+    mapChoosePoint
   },
   data() {
     return {
@@ -228,8 +234,13 @@ export default {
         ]
       },
 
+
       // 楼盘定向
-      activeBuildingDirection: 'create',
+      buildingDirection: {
+        activeType: 'create',
+        mapChooseShow: true,
+        buildingData: {}
+      },
 
       formData: {
         name: '',
@@ -270,13 +281,6 @@ export default {
         ]
       },
       
-      // 广告创意行业
-      creativeIndustry: [
-        '餐饮',
-        '餐饮2',
-        '餐饮3',
-        '餐饮4'
-      ],
     }
   },
 
@@ -291,11 +295,9 @@ export default {
       this.formData.name = `投放方案_成都_${date.getMonth()+1}_${date.getDate()}`
     },
 
-    // 切换预算
-    switchBudget(index, type) {
-      console.log(index)
-      this.budget.activeIndex = index;
-      this.formData.budget.type = type;
+    // 显示地图选点
+    showMapChoose() {
+      this.buildingDirection.mapChooseShow = true;
     },
 
     // 保存
@@ -317,7 +319,7 @@ export default {
           type: 'warning'
         });
       }
-      this.$router.push('/putManage/create/creative')
+      this.$router.replace('/putManage/create/creative')
     },
   },
 }

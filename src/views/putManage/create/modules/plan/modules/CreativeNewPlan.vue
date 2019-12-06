@@ -191,15 +191,15 @@ export default {
           });
         }
       })
-      if (!isPassEnptyCheck) {
-        return this.$notify({
-          title: '警告',
-          message: '还有必填字段未填写',
-          type: 'warning'
-        });
-      } else {
-        this.$router.push('/putManage/create/project')
-      }
+      // if (!isPassEnptyCheck) {
+      //   return this.$notify({
+      //     title: '警告',
+      //     message: '还有必填字段未填写',
+      //     type: 'warning'
+      //   });
+      // } 
+      this.$router.replace('/putManage/create/project')
+      
 
     },
 
