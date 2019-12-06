@@ -1,5 +1,5 @@
 <template>
-  <div class="put-goal">
+  <div class="put-plan">
     <!-- HI, 请选择投放目的 -->
     <PutMangeCard :title="'HI, 请选择投放目的'" class="form-box put-goal">
       <!-- 目的 -->
@@ -40,7 +40,7 @@
         </el-form-item>
         
         <el-form-item class="mt-20" prop="putCity" label="投放城市">
-          <el-select v-model="formData.putCity" placeholder="请选择">
+          <el-select multiple clearable v-model="formData.putCity" placeholder="请选择">
             <el-option
               v-for="(item, index) in city"
               :key="index"
@@ -99,7 +99,9 @@ export default {
   data() {
     // 自定义校验 预算    
     let validateBudget = (rules, value, callback) => {
-      if (this.formData.budget.type == 'unlimited') return true;
+      if (this.formData.budget.type == 'unlimited') {
+        return callback();
+      }
       if (!value) { return callback(new Error('请输入指定预算!')); }
       if (isNaN(value)) { return callback(new Error('请输入数字!')); }
       if (value <= 1000) { return callback(new Error('指定预算不少于1000元!')); }
@@ -145,17 +147,16 @@ export default {
       
       formDataRules: {
         name: [
-          { required: true, message: '请输入计划名称!', trigger: 'blur' },
+          { required: true, message: '请输入计划名称!', trigger: 'blur' }
         ],
         putCity: [
-          { required: true, message: '请选择投放城市!', trigger: 'blur' },
+          { required: true, message: '请选择投放城市!', trigger: 'blur' }
         ],
         putDate: [
-          { required: true, message: '请选择投放时间!', trigger: 'blur' },
+          { required: true, message: '请选择投放时间!', trigger: 'blur' }
         ],
         'budget.value': [
-          { validator: validateBudget, trigger: 'blur' },
-          { type: 'number', message: '请输入数字!'},
+          { validator: validateBudget, trigger: 'blur' }
         ],
       },
 
@@ -186,13 +187,16 @@ export default {
       validateForms.forEach((item, index) => {
         if(this.$refs[item]) {
           this.$refs[item].validate((valid) => {
-            console.log(valid)
-            if (!valid) { isPassEnptyCheck = false; } 
+            if (!valid) { return isPassEnptyCheck = false; } 
           });
         }
       })
       if (!isPassEnptyCheck) {
-        return this.$message.warning('还有必填字段未填写!')
+        return this.$notify({
+          title: '警告',
+          message: '还有必填字段未填写',
+          type: 'warning'
+        });
       } else {
         this.$router.push('/putManage/create/project')
       }
@@ -212,7 +216,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.put-goal{
+.put-plan{
   position: relative;
   .mt-20{
     margin-top: 20px !important;

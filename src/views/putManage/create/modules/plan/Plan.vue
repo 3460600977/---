@@ -13,7 +13,7 @@
 
 <script>
 import CreativeNewPlan from './modules/CreativeNewPlan.vue'
-import ExistPlanList from './modules/ExistPlanList'
+import ExistPlanList from './modules/ExistPlanList.vue'
 import { mapMutations } from 'vuex'
 export default {
   components: {

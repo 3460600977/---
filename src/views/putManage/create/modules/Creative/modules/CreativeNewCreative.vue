@@ -65,7 +65,7 @@
         <el-form-item prop="durationType" label="投放时长">
           <el-select :disabled="mediaType.activeType == 'video'" class="width-100-p" 
             v-model="formData.durationType" 
-            :placeholder="mediaType.activeType == 'video' ? '上传视频自动获取' : '请选择'">
+            :placeholder="mediaType.activeType == 'video' ? '上传视频后自动获取' : '请选择'">
             <el-option
               v-for="(item, index) in duration"
               :key="index"
@@ -534,12 +534,16 @@ export default {
       validateForms.forEach((item, index) => {
         if(this.$refs[item]) {
           this.$refs[item].validate((valid) => {
-            if (!valid) { isPassEnptyCheck = false; } 
+            if (!valid) { return isPassEnptyCheck = false; } 
           });
         }
       })
       if (!isPassEnptyCheck) {
-        return this.$message.warning('还有必填字段未填写!')
+        return this.$notify({
+          title: '警告',
+          message: '还有必填字段未填写',
+          type: 'warning'
+        });
       }
 
       alert('上传成功')

@@ -6,12 +6,10 @@
 
 <script>
 import CreativeNewProject from './modules/CreativeNewProject.vue'
-import ExistProjectList from './modules/ExistProjectList'
 import { mapMutations } from 'vuex'
 export default {
   components: {
-    CreativeNewProject,
-    ExistProjectList
+    CreativeNewProject
   },
 
   data() {
