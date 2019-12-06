@@ -21,7 +21,8 @@
         :rules="formDataRules" 
         label-width="112px" class="put-form">
 
-        <el-form-item prop="budget.value" label="总预算">
+        <el-form-item prop="budget.value">
+          <label slot="label"><span class="color-red">* </span>总预算</label>
           <MyRadio
             v-for="(item, index) in budget.content"
             @click.native="switchBudget(index, item.value)"
@@ -73,7 +74,7 @@
         :label-position="'left'" 
         label-width="112px" class="put-form">
         <el-form-item prop="name" label="投放计划名称">
-          <el-input v-model.trim="formData.name" placeholder="请输入名称"></el-input>
+          <el-input v-model.trim="formData.name" clearable placeholder="请输入名称"></el-input>
         </el-form-item>
       </el-form>
     </PutMangeCard>
@@ -81,7 +82,7 @@
     <!-- 保存 取消 -->
     <PutMangeCard class="save-box">
       <div class="float-right">
-        <el-button @click="savePlan" type="primary">下一步</el-button>
+        <el-button @click="savePlan" style="width: 136px" type="primary">下一步</el-button>
       </div>
     </PutMangeCard>
   </div>

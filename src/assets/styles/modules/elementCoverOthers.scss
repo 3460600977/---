@@ -36,14 +36,12 @@
 .el-tabs{
   &.my-tabs{
     box-shadow: 0 0 0 #fff;
-    border: none;
     border-radius: 4px;
     overflow: hidden;
     background: transparent;
-    .el-tabs--border-card > .el-tabs__header{
-      border: none !important;
-    }
+    border: none;
     .el-tabs__header{
+      border: none;
       background-color: #fff;
       .el-tabs__item{
         background-color: #EEEEEE;
@@ -107,14 +105,8 @@
 .el-input-group__append{
   color: $color-text !important;
 }
-// .el-radio__inner::after{
-//   display: inline-block;
-//   position: absolute;
-//   left: 50%;
-//   top: 50%;
-//   transform: translate(-50% -50%);
-//   content: '✔';
-//   width: 21px;
-//   height: 21px;
-//   color: $color-main;
-// }
+// 时间组件 至 显示不全
+.el-date-editor .el-range-separator{
+  padding: 0;
+  line-height: 29px;
+}

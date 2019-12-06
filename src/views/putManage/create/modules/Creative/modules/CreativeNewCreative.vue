@@ -12,8 +12,9 @@
         <!-- 上屏 -->
         <el-form-item prop="top.name" v-if="creativeType === 'both' || creativeType === 'top'" class="top-box" label="上屏内容">
           <!-- 类型 -->
-          <div class="mid-center">
+          <div class="mid-between">
             <el-button 
+              style="width: 102px"
               @click="switchMediaType(index)"
               v-for="(mtype, index) in mediaType.values" 
               :type="index == mediaType.activeIndex ? 'primary' : 'info'" 
@@ -266,7 +267,7 @@
         :label-position="'left'" 
         label-width="112px" class="put-form">
         <el-form-item prop="name" label="广告创意名称">
-          <el-input v-model.trim="formData.name" placeholder="请输入名称"></el-input>
+          <el-input v-model.trim="formData.name" clearable placeholder="请输入名称"></el-input>
         </el-form-item>
       </el-form>
     </PutMangeCard>
@@ -274,8 +275,8 @@
     <!-- 保存 取消 -->
     <PutMangeCard class="save-box">
       <div class="float-right">
-        <el-button>取消</el-button>
-        <el-button @click="saveCreative" type="primary">新建并关闭</el-button>
+        <el-button  style="width: 136px">取消</el-button>
+        <el-button  style="width: 136px" @click="saveCreative" type="primary">新建并关闭</el-button>
       </div>
     </PutMangeCard>
   </div>
@@ -399,7 +400,6 @@ export default {
      * @param: mediaType 视频 图片(上, 880 720)
      */
     uploadMedia(event, mediaType) {
-
       if (mediaType === 'video') {
         return this.$tools.checkVideoTimeAndSize(event.target.files[0], 15000, 200, 1080, 1920)
           .then(res => {

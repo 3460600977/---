@@ -3,6 +3,7 @@
     <div class="title">
       <h2>所属投放计划：投放计划名称</h2>
     </div>
+
     <!-- 投放设置 -->
     <PutMangeCard :title="'投放设置'" class="form-box put-goal">
       <el-form
@@ -16,10 +17,10 @@
         <el-form-item class="mt-20" prop="industry" label="投放方案行业">
           <el-select v-model="formData.industry" placeholder="请选择">
             <el-option
-              v-for="(item, index) in 2"
+              v-for="(item, index) in industry"
               :key="index"
-              :label="item"
-              :value="item">
+              :label="item.name"
+              :value="item.value">
             </el-option>
           </el-select>
         </el-form-item>
@@ -28,11 +29,14 @@
         <el-form-item class="mt-20" prop="type" label="投放类型">
           <div class="mid-between" style="width: 240px">
             <el-button 
-              @click="switchMediaType(index)"
-              v-for="(item, index) in putType.values" 
+              style="width: 102px"
+              @click="putType.activeIndex=index;
+                      putType.activeType=type.value;
+                      formData.type=type.value;"
+              v-for="(type, index) in putType.values" 
               :type="index == putType.activeIndex ? 'primary' : 'info'" 
               :key="index">
-              {{item.name}}
+              {{type.name}}
             </el-button>
           </div>
         </el-form-item>
@@ -51,46 +55,55 @@
         <!-- 投放方式 -->
         <el-form-item class="mt-20" prop="way" label="投放方式">
           <MyRadio
-            v-for="(item, index) in putWay.values"
-            @click.native="switchBudget(index, item.value)"
+            v-for="(way, index) in putWay.values"
+            @click.native="formData.way=way.value; putWay.activeIndex=index"
             :active="putWay.activeIndex === index"
-            :key="index">{{item.name}}</MyRadio>
+            :key="index">{{way.name}}</MyRadio>
         </el-form-item>
 
         <!-- 投放频次 -->
-        <el-form-item class="mt-20" prop="frequency" label="投放频次">
-          <el-select v-model="formData.putCity" placeholder="请选择">
+        <el-form-item class="mt-20" prop="duration" label="投放频次">
+          <el-select v-model="formData.frequency" placeholder="请选择">
             <el-option
-              v-for="(item, index) in 10"
+              v-for="(frequency, index) in putFrequency"
               :key="index"
-              :label="item"
-              :value="item">
+              :label="frequency.name"
+              :value="frequency.value">
             </el-option>
           </el-select>
         </el-form-item>
 
         <!-- 投放时长 -->
         <el-form-item class="mt-20" prop="duration" label="投放时长">
-          <el-select v-model="formData.putCity" placeholder="请选择">
+          <el-select v-model="formData.duration" placeholder="请选择">
             <el-option
-              v-for="(item, index) in 10"
+              v-for="(duration, index) in putDuration"
               :key="index"
-              :label="item"
-              :value="item">
+              :label="duration.name"
+              :value="duration.value">
             </el-option>
           </el-select>
         </el-form-item>
         
         <!-- 屏幕类型 -->
-        <el-form-item class="mt-20" prop="screenType" label="屏幕类型">
-          <el-select v-model="formData.putCity" placeholder="请选择">
-            <el-option
-              v-for="(item, index) in 10"
-              :key="index"
-              :label="item"
-              :value="item">
-            </el-option>
-          </el-select>
+        <el-form-item class="screen-type-preview-box mt-20" prop="screenType" label="屏幕类型">
+          <div class="screen-type-preview-content">
+            <MyRadio
+              v-for="(item, index) in screenType.values"
+              @click.native="screenType.activeIndex = index; screenType.activeValue = item.value"
+              :active="screenType.activeIndex === index"
+              :key="index">
+              <span class="float-left">{{item.name}}</span>
+              <div class="float-left screen-preview">
+                <div 
+                  class="top" 
+                  :class="{'bg-gray': item.value == 'both' || item.value == 'top'}"></div>
+                <div 
+                  :class="{'bg-gray': item.value == 'both' || item.value == 'bottom'}" 
+                  class="bottom"></div>
+              </div>
+            </MyRadio>
+          </div>
         </el-form-item>
       </el-form>
         
@@ -103,7 +116,7 @@
         <el-tab-pane label="新建楼盘定向"   name="create">
           <div style="margin-top: 5px;">
             <label class="color-text-1" for="">选点方式</label>
-            <el-button type="primary" style="margin-left: 64px">地图选点</el-button>
+            <el-button type="primary" style="margin-left: 64px;width: 102px">地图选点</el-button>
             <SelectedList/>
           </div>
         </el-tab-pane>
@@ -121,7 +134,7 @@
         :label-position="'left'" 
         label-width="112px" class="put-form">
         <el-form-item prop="name" label="投放方案名称">
-          <el-input v-model.trim="formData.name" placeholder="请输入名称"></el-input>
+          <el-input v-model.trim="formData.name" clearable placeholder="请输入名称"></el-input>
         </el-form-item>
       </el-form>
     </PutMangeCard>
@@ -129,8 +142,8 @@
     <!-- 保存 取消 -->
     <PutMangeCard class="save-box">
       <div class="float-right">
-        <el-button @click="savePlan" plain>取消</el-button>
-        <el-button @click="savePlan" type="primary">确定</el-button>
+        <el-button style="width: 136px" plain>取消</el-button>
+        <el-button @click="saveProject" style="width: 136px" type="primary">确定</el-button>
       </div>
     </PutMangeCard>
   </div>
@@ -148,6 +161,11 @@ export default {
   },
   data() {
     return {
+      // 投放行业
+      industry: [
+        { name: '餐饮', value: 'byWeek'},
+        { name: '医疗', value: 'byDay'},
+      ],
       // 投放类型
       putType: {
         activeIndex: 0,
@@ -166,6 +184,29 @@ export default {
           { name: '一个单元一半电梯', value: 'half' }
         ]
       },
+      // 投放频次
+      putFrequency: [
+        { name: '300 次/天', value: 300 },
+        { name: '600 次/天', value: 600 },
+        { name: '900 次/天', value: 900 },
+      ],
+      // 投放时长
+      putDuration: [
+        { name: ' 5 秒/次', value: 5000 },
+        { name: '10 秒/次', value: 10000 },
+        { name: '15 秒/次', value: 15000 },
+      ],
+
+      // 屏幕类型 
+      screenType: {
+        activeIndex: 0,
+        activeValue: 'both',
+        values: [
+          { name: '联动', value: 'both' },
+          { name: '上屏', value: 'top' },
+          { name: '下屏', value: 'bottom' },
+        ]
+      },
 
       // 楼盘定向
       activeBuildingDirection: 'create',
@@ -173,16 +214,41 @@ export default {
       formData: {
         name: '',
         industry: '',
-        type: '',
+        type: 'byWeek',
         date:'',
-        way: '',
+        way: 'all',
         frequency:'',
         duration: '',
-        screenType:'',
+        screenType:'both',
         buildingDirection: '',
       },
 
-      formDataRules: {},
+      formDataRules: {
+        name: [
+          { required: true, message: '请输入投放方案名称!', trigger: 'blur' },
+        ],
+        industry: [
+          { required: true, message: '请选择投放方案行业!', trigger: 'blur' },
+        ],
+        type: [
+          { required: true, message: '请设置投放类型!', trigger: 'blur' },
+        ],
+        date:[
+          { required: true, message: '请设置投放时间!', trigger: 'blur' },
+        ],
+        way: [
+          { required: true, message: '请设置投放方式!', trigger: 'blur' },
+        ],
+        frequency:[
+          { required: true, message: '请选投放频次!', trigger: 'blur' },
+        ],
+        duration: [
+          { required: true, message: '请选择投放时长!', trigger: 'blur' },
+        ],
+        screenType:[
+          { required: true, message: '请选择屏幕类型!', trigger: 'blur' },
+        ]
+      },
       
       // 广告创意行业
       creativeIndustry: [
@@ -193,15 +259,27 @@ export default {
       ],
     }
   },
+
+  mounted() {
+    this.generateProjectName()
+  },
+
   methods: {
+    // 生成方案名字
+    generateProjectName() {
+      let date = new Date();
+      this.formData.name = `投放方案_成都_${date.getMonth()+1}_${date.getDate()}`
+    },
+
     // 切换预算
     switchBudget(index, type) {
       console.log(index)
       this.budget.activeIndex = index;
       this.formData.budget.type = type;
     },
+
     // 保存
-    savePlan() {
+    saveProject() {
       let isPassEnptyCheck = true;
       let validateForms = ['planTop', 'planName'];
       
@@ -215,8 +293,7 @@ export default {
       if (!isPassEnptyCheck) {
         return this.$message.warning('还有必填字段未填写!')
       }
-
-      alert('上传成功')
+      this.$router.push('/putManage/create/creative')
     },
   },
 }
@@ -247,46 +324,41 @@ export default {
   .width-100-p{
     width: 100%;
   }
-  .goal-box{
-    .item{
-      float: left;
-      margin: 30px 40px 0 0;
-      width:200px;
-      height:100px;
-      background:rgba(255,255,255,1);
-      box-shadow:0px 2px 12px 0px rgba(118,118,118,0.2);
-      border-radius:2px;
-      transition: .3s;
-      cursor: pointer;
-      color: $color-text-1;
-      transition: .3s;
-      &:hover{
-        transform: translateY(-3px);
-      }
-      &.active{
-        color: $color-main;
-        .icon-img{
-          opacity: 1;
-        }
-      }
-      .icon-img{
-        transition: .3s;
-        opacity: 0.4;
-      }
-      .name{
-        margin-left: 8px;
-        font-size:16px;
-        font-weight:bold;
-      }
-    }
-  }
   .form-box{
     position: relative;
     .put-form{
       margin-top: 18px;
-      .budget-value{
-        margin-left: -30px;
-        width: 240px;
+      .screen-type-preview-box{
+        overflow: hidden;
+        .screen-type-preview-content{
+          margin-top: -100px;
+          .screen-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            margin-top: 100px;
+            width:78px;
+            height:180px;
+            background:rgba(255,255,255,1);
+            border:1px solid rgba(229,231,233,1);
+            .bg-gray{
+              background:rgba(249,250,255,1) !important;
+            }
+            .top{
+              width:76px;
+              height:139px;
+              background:rgba(255,255,255,1);
+            }
+            .bottom{
+              width:76px;
+              height:44px;
+              background:rgba(255,255,255,1);
+              border-top:1px solid rgba(229,231,233,1);
+            }
+          }
+        }
       }
     }
   }
