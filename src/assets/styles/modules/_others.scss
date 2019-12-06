@@ -6,3 +6,8 @@
 .border-bottom {
   border-bottom: 1px solid $color-border;
 }
+
+.BMapLib_Drawing { // 隐藏地图页面开源库DrawingManager的工具栏
+  visibility: hidden;
+}
+

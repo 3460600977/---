@@ -10,11 +10,11 @@ let tools = {
   checkVideoTimeAndSize: (file, limitTime, timeRange = 0, limitWidth, limitHeight) => {
     let url = URL.createObjectURL(file);
     let video = document.createElement('video');
-  
+
     video.src = url;
     video.style="position: relative; z-index: -1; opacity: 0;"
     document.getElementById('app').appendChild(video)
-  
+
     video.addEventListener('canplay', (e) => {
       let videoTime = e.target.duration;
       let videoWidth = e.target.videoWidth;
@@ -46,7 +46,35 @@ let tools = {
     }
     if (prefixInt) { result = prefixInt + result; }
     return result + '.' + suffixDecimal;
-  }
+  },
+  /**
+   * @description: 深度克隆
+   * @param:
+   */
+  deepCopy: (data) => {
+    var t = type(data)
+    var o
+    var i
+    var ni
+    if (t === 'array') {
+      o = []
+    } else if (t === 'object') {
+      o = {}
+    } else {
+      return data
+    }
+    if (t === 'array') {
+      for (i = 0, ni = data.length; i < ni; i++) {
+        o.push(deepCopy(data[i]))
+      }
+      return o
+    } else if (t === 'object') {
+      for (i in data) {
+        o[i] = deepCopy(data[i])
+      }
+      return o
+    }
+  },
 }
 
 export default tools;
