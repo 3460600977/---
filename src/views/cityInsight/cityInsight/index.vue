@@ -119,7 +119,11 @@
         this.location.x = location.x
         this.location.y = location.y - NAV_HEIGHT
         this.currentSelectType = {type: type}
-        this.$refs.dbmap.triggerDraw(type)
+        if (type === 'circle') {
+          this.$refs.dbmap.closeDrawingManager()
+        } else {
+          this.$refs.dbmap.triggerDraw(type)
+        }
       },
       /*
       * 当前鼠标文字 用于显示提示文本位置

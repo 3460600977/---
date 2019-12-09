@@ -19,6 +19,7 @@
         activePath: null,
         points: null, // 楼盘设备数据
         defaultRadius: 3000,
+        drawingManager: null,
         styleOptions: {
           strokeColor:"red",    //边线颜色。
           fillColor:"red",      //填充颜色。当参数为空时，圆形将没有填充效果。
@@ -78,12 +79,20 @@
           this.loading = false
         })
       },
+
+      /*
+      * 关闭DrawingManager画线方法 需要在绘画类型切换成圆形时调用
+      * */
+      closeDrawingManager() {
+        if (this.drawingManager) {
+          this.drawingManager.close()
+        }
+      },
       /*
       * 因为折线和多边形是依赖于开源库DrawingManager，
       * 但是元素不能显示，这里手动触发画折线和多边形方法
       * */
       triggerDraw(type) {
-        if (type === 'circle') return
         let dom = document.getElementsByClassName(`BMapLib_${type}`)[0]
         console.log(dom)
         dom.click()
@@ -115,6 +124,7 @@
           polylineOptions: this.styleOptions, //线的样式
           polygonOptions: this.styleOptions, //多边形的样式
         });
+        this.drawingManager = drawingManager
         this.drawComplete(drawingManager)
       },
 
@@ -143,7 +153,7 @@
         this.map.addOverlay(polyline);
         console.log({...path, overlay: polyline})
         this.getPopUpData({...path, overlay: polyline})
-        this.overlayBindEvent(path.overlay, this.pathArr.length - 1)
+        this.overlayBindEvent(path)
       },
       /*
       *折线和多边形画线完成回调函数
@@ -157,6 +167,7 @@
             overlay: e.overlay,
             location: location, // 结束绘制时鼠标的经纬度位置用于显示弹窗位置
             isShow: true,
+            index: this.pathArr.length,
             radius: this.defaultRadius,
             points: e.overlay.getPath()
           }
@@ -164,19 +175,18 @@
             this.drawpolylineBg(path)
           } else {
             this.getPopUpData(path)
-            this.overlayBindEvent(path.overlay, this.pathArr.length - 1)
+            this.overlayBindEvent(path)
           }
           this.$emit('drawCancle')
         });
       },
       /*
-      给新建的Path添加显示隐藏弹窗事件
+      *给新建的Path添加显示隐藏弹窗事件
       */
-      overlayBindEvent(overlay, index) {
-        console.log(overlay)
-        overlay.addEventListener('click', (e) => {
+      overlayBindEvent(path) {
+        path.overlay.addEventListener('click', (e) => {
           console.log(e)
-          this.activePath = {...this.pathArr[index], location: e.point}
+          this.activePath = {...path, location: e.point}
         })
       },
       /*
@@ -186,9 +196,8 @@
         path.buildings = this.isInArea(path)
         console.log(path)
         this.getBuildingData(path)
-        let index = this.pathArr.length
-        this.activePath = {...path, index: index}
-        this.pathArr[index] = this.activePath
+        this.activePath = path
+        this.pathArr[path.index] = path
       },
       /*
       根据楼盘数据 计算出楼盘数据所覆盖的设备数，设备数，预估覆盖人次
@@ -358,12 +367,13 @@
           overlay: circle,
           location: point, // 结束绘制时鼠标的经纬度位置用于显示弹窗位置
           isShow: true,
+          index: this.pathArr.length,
           radius: this.defaultRadius,
           points: circle.getCenter()
         }
         console.log(this.pathArr.length)
         this.getPopUpData(path)
-        this.overlayBindEvent(path.overlay, this.pathArr.length - 1)
+        this.overlayBindEvent(path)
       },
       addMarker(point){  // 创建图标对象
         var myIcon = new BMap.Icon(require('@/assets/images/icon_location.png'), new BMap.Size(12, 22), {

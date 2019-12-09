@@ -32,8 +32,9 @@
         </div>
       </div>
       <p class="info border-bottom wrapper">建议最少半径：<span class="color-text-1">3KM，低于该半径广告投放效果可能受到影响。</span></p>
-      <div class="wrapper">
-btn
+      <div class="wrapper btn-wrapper">
+        <el-button class="btn">删除</el-button>
+        <el-button class="btn" type="primary" plain>确定</el-button>
       </div>
     </div>
 </template>
@@ -77,6 +78,14 @@ btn
     }
     .wrapper {
       padding: 0 14px;
+    }
+    .btn {
+      height: 24px;
+      width: 46px;
+      line-height: 24px;
+    }
+    .btn-wrapper {
+      padding: 11px 0;
     }
     .buildingName {
       line-height: 44px;
