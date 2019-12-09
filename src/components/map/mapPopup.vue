@@ -31,10 +31,10 @@
           </div>
         </div>
       </div>
-      <p class="info border-bottom wrapper">建议最少半径：<span class="color-text-1">3KM，低于该半径广告投放效果可能受到影响。</span></p>
-      <div class="wrapper btn-wrapper">
-        <el-button class="btn">删除</el-button>
-        <el-button class="btn" type="primary" plain>确定</el-button>
+      <p class="info border-bottom">建议最少半径：<span class="color-text-1">3KM，低于该半径广告投放效果可能受到影响。</span></p>
+      <div class="btn-wrapper text-right">
+        <el-button class="btn" size="mini" @click="operate(0)">删除</el-button>
+        <el-button class="btn" type="primary" size="mini" @click="operate(1)" plain>确定</el-button>
       </div>
     </div>
 </template>
@@ -53,15 +53,21 @@
         required: true
       }
     },
+    created() {
+      this.value = this.item.type === 'polyline'? this.item.radius /2 : this.item.radius
+    },
     watch: {
       item(val) {
-        this.value = val.radius
+        this.value = val.type === 'polyline'? val.radius /2 : val.radius
         console.log(val)
       }
     },
     methods: {
       sliderChange(val) {
         this.$emit('sliderChange', val)
+      },
+      operate(val) {
+        this.$emit('operate', val)
       }
     }
   }
@@ -80,12 +86,12 @@
       padding: 0 14px;
     }
     .btn {
-      height: 24px;
-      width: 46px;
-      line-height: 24px;
+      /*height: 24px;*/
+      /*width: 46px;*/
+      /*line-height: 24px;*/
     }
     .btn-wrapper {
-      padding: 11px 0;
+      padding: 11px 14px;
     }
     .buildingName {
       line-height: 44px;
@@ -94,7 +100,7 @@
       border-bottom: 1px solid rgba(229,231,233,1);
     }
     .content {
-      margin: 15px 0 10px;
+      margin: 15px 0 0;
       background:rgba(45,90,255,0.05);
       border-radius:0px 4px 0px 0px;
       padding: 12px 15px;
@@ -107,6 +113,7 @@
     }
     .location-name {
       margin-bottom: 6px;
+      margin-top: 10px;
     }
     .slider {
       & /deep/ .el-slider__runway {
@@ -124,7 +131,7 @@
       }
     }
     .info {
-      margin-top: 20px;
+      padding: 20px 14px;
     }
   }
 </style>

@@ -50,7 +50,6 @@
     },
     watch: {
       activePath(val) {
-        console.log(val)
         this.$emit('activePathChange', val)
       },
     },
@@ -79,7 +78,25 @@
           this.loading = false
         })
       },
-
+      /*
+      * 隐藏弹窗，即设置activePath为null
+      * */
+      setActivePathNull() {
+        this.activePath = null
+      },
+      /*
+      *  删除当前选中的path
+      * */
+      deletePath() {
+        this.map.removeOverlay(this.activePath.overlay)
+        this.pathArr.splice(this.activePath.index, 1)
+        for (let item of this.pathArr) {
+          if (item.index >= this.activePath.index) {
+            item.index -= 1
+          }
+        }
+        this.setActivePathNull()
+      },
       /*
       * 关闭DrawingManager画线方法 需要在绘画类型切换成圆形时调用
       * */
@@ -101,10 +118,11 @@
       改变当前path的radius
       */
       changeActivePathRadius(val) {
-        this.activePath.radius = val
+        this.activePath.radius = this.activePath.type === 'polyline'? 2*val: val
         this.zoomSinglePathChange(this.activePath)
         this.activePath.buildings = this.isInArea(this.activePath)
         this.getBuildingData(this.activePath)
+        console.log(this.activePath)
         this.pathArr[this.activePath.index] = this.activePath
         console.log(this.pathArr)
       },
@@ -143,7 +161,7 @@
       画折现背景层
       */
       drawpolylineBg(path) {
-        let radius = this.RealDistanceTranPixels(this.defaultRadius)
+        let radius = this.RealDistanceTranPixels(path.radius)
         let polyline = new BMap.Polyline(path.overlay.getPath(), {
           strokeColor:"red",    //边线颜色。
           strokeWeight: radius,       //边线的宽度，以像素为单位。
@@ -151,7 +169,6 @@
           strokeStyle: 'solid' //边线的样式，solid或dashed。
         });
         this.map.addOverlay(polyline);
-        console.log({...path, overlay: polyline})
         this.getPopUpData({...path, overlay: polyline})
         this.overlayBindEvent(path)
       },
@@ -167,8 +184,8 @@
             overlay: e.overlay,
             location: location, // 结束绘制时鼠标的经纬度位置用于显示弹窗位置
             isShow: true,
-            index: this.pathArr.length,
-            radius: this.defaultRadius,
+            index: this.pathArr.length, // 即将是pathArr的第几个元素
+            radius: this.defaultRadius * 2, // 这里只有折线会用这个属性，折线的直径就是defaultRadius的两倍
             points: e.overlay.getPath()
           }
           if (e.drawingMode === "polyline") {
@@ -185,8 +202,7 @@
       */
       overlayBindEvent(path) {
         path.overlay.addEventListener('click', (e) => {
-          console.log(e)
-          this.activePath = {...path, location: e.point}
+          this.activePath = {...this.pathArr[path.index], location: e.point}
         })
       },
       /*
@@ -316,7 +332,9 @@
 
       zoomChangeAllPath() {
         for(let item of this.pathArr) {
-          this.zoomSinglePathChange(item)
+          if (item.type === 'polyline') { // 只有折线需要在改变zoom时变半径，圆和多边形都是自动变的
+            this.zoomSinglePathChange(item)
+          }
         }
       },
 
@@ -371,7 +389,6 @@
           radius: this.defaultRadius,
           points: circle.getCenter()
         }
-        console.log(this.pathArr.length)
         this.getPopUpData(path)
         this.overlayBindEvent(path)
       },

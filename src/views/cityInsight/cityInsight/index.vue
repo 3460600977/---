@@ -4,6 +4,7 @@
         <map-popup
           v-if="showPath"
           @sliderChange="sliderChange"
+          @operate="operate"
           :item="showPath"
           :style="{top: showPath.location.y+'px', left:showPath.location.x+ 'px'}"
         ></map-popup>
@@ -21,8 +22,8 @@
       <div class="left-select">
         <left-select @drawTypeSelect="drawTypeSelect"></left-select>
       </div>
-      <div class="info">
-<!--        <right-info></right-info>-->
+      <div class="right-info">
+        <right-info></right-info>
       </div>
       <div class="map container">
         <db-map
@@ -70,9 +71,9 @@
         sliderVal: 3000,
         currentSelectType: null,
         popUpHeight: {
-          'polyline': 292,
-          'polygon': 231,
-          'circle': 377 // 355 + 22圆形时弹窗位置为弹窗高度加图标高度
+          'polyline': 329,
+          'polygon': 278,
+          'circle': 424 // 402 + 22圆形时弹窗位置为弹窗高度加图标高度
         }
       }
     },
@@ -103,7 +104,17 @@
           }
         })
       },
+      // mapPopup里面点击删除(0)和确定按钮(1)
+      operate(val) {
+        console.log(val)
+        if (val === 0) {
+          this.$refs.dbmap.deletePath()
+        } else if (val === 1) {
+          this.$refs.dbmap.setActivePathNull()
+        }
+      },
       activePathChange(val) {
+        console.log(val)
         this.showPathCopy = val
       },
       sliderChange(value) {
@@ -158,7 +169,7 @@
     position: absolute;
     z-index: 10;
   }
-  .info {
+  .right-info {
     position: absolute;
     z-index: 3;
     top: 29px;
