@@ -3,7 +3,7 @@ import { putPlan } from './modules/putPlan'
 
 const api = {
   cityInsight,
-  putPlan
+  // putPlan
 }
 
 export default api;
