@@ -1,7 +1,7 @@
 <template>
   <div class="put-project">
     <div class="title">
-      <h2>所属投放计划：投放计划名称</h2>
+      <h2>所属投放计划：{{planData.planName || '正在加载中...'}}</h2>
     </div>
 
     <!-- 投放设置 -->
@@ -15,24 +15,30 @@
 
         <!-- 投放方案行业 -->
         <el-form-item class="mt-20" prop="industry" label="投放方案行业">
-          <el-select v-model="formData.industry" placeholder="请选择">
+          <el-select 
+            @focus="getIndustryList"
+            :loading="industry.loading"
+            filterable
+            clearable
+            v-model="formData.industry" 
+            placeholder="请选择">
             <el-option
-              v-for="(item, index) in industry"
+              v-for="(item, index) in industry.data"
               :key="index"
               :label="item.name"
-              :value="item.value">
+              :value="item.industryId">
             </el-option>
           </el-select>
         </el-form-item>
 
         <!-- 投放类型 -->
-        <el-form-item class="mt-20" prop="type" label="投放类型">
+        <el-form-item class="mt-20" prop="projectType" label="投放类型">
           <div class="mid-between" style="width: 240px">
             <el-button 
               style="width: 102px"
               @click="putType.activeIndex=index;
                       putType.activeType=type.value;
-                      formData.type=type.value;"
+                      formData.projectType=type.value;"
               v-for="(type, index) in putType.values" 
               :type="index == putType.activeIndex ? 'primary' : 'info'" 
               :key="index">
@@ -53,17 +59,17 @@
         </el-form-item>
 
         <!-- 投放方式 -->
-        <el-form-item class="mt-20" prop="way" label="投放方式">
+        <el-form-item class="mt-20" prop="deliveryMode" label="投放方式">
           <MyRadio
             v-for="(way, index) in putWay.values"
-            @click.native="formData.way=way.value; putWay.activeIndex=index"
+            @click.native="formData.deliveryMode=way.value; putWay.activeIndex=index"
             :active="putWay.activeIndex === index"
             :key="index">{{way.name}}</MyRadio>
         </el-form-item>
 
         <!-- 投放频次 -->
-        <el-form-item class="mt-20" prop="duration" label="投放频次">
-          <el-select v-model="formData.frequency" placeholder="请选择">
+        <el-form-item class="mt-20" prop="count" label="投放频次">
+          <el-select v-model="formData.count" placeholder="请选择">
             <el-option
               v-for="(frequency, index) in putFrequency"
               :key="index"
@@ -74,8 +80,8 @@
         </el-form-item>
 
         <!-- 投放时长 -->
-        <el-form-item class="mt-20" prop="duration" label="投放时长">
-          <el-select v-model="formData.duration" placeholder="请选择">
+        <el-form-item class="mt-20" prop="second" label="投放时长">
+          <el-select v-model="formData.second" placeholder="请选择">
             <el-option
               v-for="(duration, index) in putDuration"
               :key="index"
@@ -86,7 +92,7 @@
         </el-form-item>
         
         <!-- 屏幕类型 -->
-        <el-form-item class="screen-type-preview-box mt-20" prop="screenType" label="屏幕类型">
+        <el-form-item class="screen-type-preview-box mt-20" prop=" type" label="屏幕类型">
           <div class="screen-type-preview-content">
             <MyRadio
               v-for="(item, index) in screenType.values"
@@ -187,50 +193,55 @@ export default {
   },
   data() {
     return {
+      // 所属计划的信息
+      planData: {},
+
       // 投放行业
-      industry: [
-        { name: '餐饮', value: 'byWeek'},
-        { name: '医疗', value: 'byDay'},
-      ],
-      // 投放类型
+      industry: {
+        loading: false,
+        data: ''
+      },
+      // 投放类型，0按周投放，1按天投放
       putType: {
         activeIndex: 0,
-        activeType: 'byWeek',
+        activeType: 0,
         values: [
-          { name: '按周投放', value: 'byWeek'},
-          { name: '按天投放', value: 'byDay'},
+          { name: '按周投放', value: 0},
+          { name: '按天投放', value: 1},
         ]
       },
       // 投放方式
       putWay: {
         activeIndex: 0,
         values: [
-          { name: '一个楼盘所有点位', value: 'all' },
-          { name: '一个单元一个电梯', value: 'one' },
-          { name: '一个单元一半电梯', value: 'half' }
+          { name: '一个楼盘所有点位', value: '001' },
+          { name: '一个单元一个电梯', value: '002' },
+          { name: '一个单元一半电梯', value: '003' }
         ]
       },
-      // 投放频次
+
+      // 投放频次，001-300次/天，002-600次/天，003-900次/天 依次类推
       putFrequency: [
-        { name: '300 次/天', value: 300 },
-        { name: '600 次/天', value: 600 },
-        { name: '900 次/天', value: 900 },
-      ],
-      // 投放时长
-      putDuration: [
-        { name: ' 5 秒/次', value: 5000 },
-        { name: '10 秒/次', value: 10000 },
-        { name: '15 秒/次', value: 15000 },
+        { name: '300 次/天', value: '001' },
+        { name: '600 次/天', value: '002' },
+        { name: '900 次/天', value: '003' },
       ],
 
-      // 屏幕类型 
+      // 投放时长，001-5s/次，002-10s/次，003-15s/次 依次类推
+      putDuration: [
+        { name: ' 5 秒/次', value: '001' },
+        { name: '10 秒/次', value: '002' },
+        { name: '15 秒/次', value: '003' },
+      ],
+
+      // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
       screenType: {
         activeIndex: 0,
         activeValue: 'both',
         values: [
-          { name: '联动', value: 'both' },
-          { name: '上屏', value: 'top' },
-          { name: '下屏', value: 'bottom' },
+          { name: '联动', value: '003' },
+          { name: '上屏', value: '001' },
+          { name: '下屏', value: '002' },
         ]
       },
 
@@ -238,19 +249,20 @@ export default {
       // 楼盘定向
       buildingDirection: {
         activeType: 'create',
-        mapChooseShow: true,
+        mapChooseShow: false,
         buildingData: {}
       },
 
       formData: {
         name: '',
         industry: '',
-        type: 'byWeek',
+        projectType: 0, // 投放类型，0按周投放，1按天投放
         date:'',
-        way: 'all',
-        frequency:'',
-        duration: '',
-        screenType:'both',
+        deliveryMode: '001', // 投放方式
+        count:'', // 投放频次
+        second: '', // 投放时长
+        type:'003', // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
+        projectCity: '', // 投放类型，0按周投放，1按天投放
         buildingDirection: '',
       },
 
@@ -261,22 +273,22 @@ export default {
         industry: [
           { required: true, message: '请选择投放方案行业!', trigger: 'blur' },
         ],
-        type: [
+        projectType: [
           { required: true, message: '请设置投放类型!', trigger: 'blur' },
         ],
         date:[
           { required: true, message: '请设置投放时间!', trigger: 'blur' },
         ],
-        way: [
+        deliveryMode: [
           { required: true, message: '请设置投放方式!', trigger: 'blur' },
         ],
-        frequency:[
+        count:[
           { required: true, message: '请选投放频次!', trigger: 'blur' },
         ],
-        duration: [
+        second: [
           { required: true, message: '请选择投放时长!', trigger: 'blur' },
         ],
-        screenType:[
+         type:[
           { required: true, message: '请选择屏幕类型!', trigger: 'blur' },
         ]
       },
@@ -284,8 +296,9 @@ export default {
     }
   },
 
-  mounted() {
+  beforeMount() {
     this.generateProjectName()
+    this.planData = this.$route.query;
   },
 
   methods: {
@@ -293,6 +306,20 @@ export default {
     generateProjectName() {
       let date = new Date();
       this.formData.name = `投放方案_成都_${date.getMonth()+1}_${date.getDate()}`
+    },
+
+    // 行业列表
+    getIndustryList() {
+      if (this.industry.data) return;
+      this.industry.loading = true;
+      this.$api.industryList.AllList()
+        .then(res => {
+          this.industry.loading = false;
+          this.industry.data = res.result;
+        })
+        .catch(res => {
+          this.industry.loading = false;
+        })
     },
 
     // 显示地图选点
@@ -304,7 +331,7 @@ export default {
     saveProject() {
       let isPassEnptyCheck = true;
       let validateForms = ['planTop', 'planName'];
-      
+      console.log(this.formData)
       validateForms.forEach((item, index) => {
         if(this.$refs[item]) {
           this.$refs[item].validate((valid) => {
@@ -319,7 +346,7 @@ export default {
           type: 'warning'
         });
       }
-      this.$router.replace('/putManage/create/creative')
+      // this.$router.replace('/putManage/create/creative')
     },
   },
 }
@@ -355,9 +382,9 @@ export default {
     .put-form{
       margin-top: 18px;
       .screen-type-preview-box{
-        overflow: hidden;
+        // overflow: hidden;
         .screen-type-preview-content{
-          margin-top: -100px;
+          // margin-top: -100px;
           .screen-preview {
             display: flex;
             flex-direction: column;
@@ -393,7 +420,7 @@ export default {
   }
   .estimate-box{
     position: fixed;
-    top: 20vh;
+    top: 18vh;
     right: 60px;
     padding: 20px 20px 25px;
     z-index: 10;

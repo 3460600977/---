@@ -22,7 +22,7 @@ h3 { font-size: 14px; }
 h4, h5, h6 { font-size: 100%; }
 
 /* 将斜体扶正 */
-address, cite, dfn, em, var, i { font-style: normal; } 
+address, cite, dfn, em, var, i { font-style: normal; }
 code, kbd, pre, samp, tt { font-family: "Courier New", Courier, monospace; } /* 统一等宽字体 */
 small { font-size: 12px; } /* 小于 12px 的中文很难阅读，让 small 正常化 */
 
@@ -65,6 +65,7 @@ body, html {
     overflow: hidden;
     font-weight: 400;
     font-size: 14px;
+    color: $color-text;
 }
 input{
     outline: none;

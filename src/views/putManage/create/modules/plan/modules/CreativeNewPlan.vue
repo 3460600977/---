@@ -91,7 +91,7 @@
     <!-- 保存 取消 -->
     <PutMangeCard class="save-box">
       <div class="float-right">
-        <el-button @click="savePlan" style="width: 136px" type="primary">下一步</el-button>
+        <el-button :loading='formData.saving' @click="savePlan" style="width: 136px" type="primary">下一步</el-button>
       </div>
     </PutMangeCard>
   </div>
@@ -141,6 +141,7 @@ export default {
 
       formData: {
         name: '',
+        saving: false,
         budget: {
           type: 0,
           value: ''
@@ -196,7 +197,7 @@ export default {
     // 获取城市列表
     getCityList() {
       if (this.city) return;
-      this.$api.PutPlan.CityList()
+      this.$api.CityList.AllList()
         .then(res => {
           this.city = res.result;
         })
@@ -207,10 +208,11 @@ export default {
 
     // 保存
     savePlan() {
-      let isPassEnptyCheck = true;
-      let validateForms = ['planTop', 'planName'];
-      let param;
-      
+      let isPassEnptyCheck = true,
+          validateForms = ['planTop', 'planName'],
+          param;
+
+      this.formData.saving = true;
       validateForms.forEach((item, index) => {
         if(this.$refs[item]) {
           this.$refs[item].validate((valid) => {
@@ -219,6 +221,7 @@ export default {
         }
       })
       if (!isPassEnptyCheck) {
+        this.formData.saving = false;
         return this.$notify({
           title: '警告',
           message: '还有必填字段未填写',
@@ -236,16 +239,26 @@ export default {
         endTime: this.formData.putDate[1]
       }
 
-      this.$api.PutPlan.AddPlan(param).then(res => {
-        this.$notify({
-          title: '成功',
-          message: res.msg,
-          type: 'success'
-        });
-        console.log(res)
-      })
+      this.$api.PutPlan.AddPlan(param)
+        .then(res => {
+          this.formData.saving = false;
+          this.$notify({
+            title: '成功',
+            message: '创建投放计划成功',
+            type: 'success'
+          });
+          this.$router.replace({
+            path: '/putManage/create/project',
+            query: {
+              planId: res.result.id,
+              planName: res.result.name
+            }
+          })
+        })
+        .catch(res => {
+          this.formData.saving = false;
+        })
 
-      // this.$router.replace('/putManage/create/project')
       
     },
 

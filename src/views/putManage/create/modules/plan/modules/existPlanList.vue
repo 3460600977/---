@@ -2,21 +2,32 @@
   <div class="exist-creative-list clearfix">
     <div class="box-top">
       <div class="search-box mid">
-        <el-input class="search-text" v-model="search" placeholder="输入投放计划名称"></el-input>
-        <el-button type="primary" plain>查询</el-button>
+        <el-input class="search-text" clearable v-model="search" placeholder="输入投放计划名称"></el-input>
+        <el-button @click="searchPlanByName" type="primary" plain>查询</el-button>
       </div>
 
       <div class="list-box">
         <div class="title">列表</div>
-        <ul>
-          <li class="item" v-for="(item, index) in list" :key="index">{{item.name}}</li>
-          <li class="item page-box clearfix" v-loading="!list">
+        <ul v-if="list.data" v-loading="list.loading">
+          <li 
+            class="item"
+            :class="{'active': list.choosedIndex === index}"
+            @click="list.choosedItem = item; list.choosedIndex = index" 
+            v-for="(item, index) in list.data" :key="index">{{item.name}}</li>
+          <li class="item page-box clearfix">
             <el-pagination
               class="float-right"
               background
               layout="total, sizes, prev, pager, next"
-              :total="20">
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :total="list.page.totalCount">
             </el-pagination>
+          </li>
+        </ul>
+        <ul v-else>
+          <li class="item">
+           无数据
           </li>
         </ul>
       </div>
@@ -49,16 +60,50 @@ export default {
   data() {
     return {
       search: '',
-      list: ''
+      list: {
+        loading: false,
+        choosedItem: '',
+        choosedIndex: '',
+        data: '',
+        page: ''
+      },
     }
   },
 
   methods: {
-    getExistPlanList() {
-      this.$api.PutPlan.PlanList()
+    getExistPlanList(name, pageIndex, pageSize) {
+      let param = {
+        name, 
+        pageIndex, 
+        pageSize, 
+        record: 0,
+        startIndex: 0, 
+        startindex: 0, 
+        totalPageCount: 0
+      }
+      this.list.loading = true;
+      this.$api.PutPlan.PlanList(param)
         .then(res => {
-          console.log(res)
+          this.list.loading = false;
+          this.list.data = res.result;
+          this.list.page = res.page;
         })
+        .catch(res => {
+          this.list.loading = false;
+          this.list.data = '';
+        })
+    },
+
+    handleSizeChange(size) {
+      this.getExistPlanList('', '', size)
+    },
+
+    handleCurrentChange(cur) {
+      this.getExistPlanList('', cur, '')
+    },
+
+    searchPlanByName() {
+      this.getExistPlanList(this.search, 0, 0)
     },
 
     nextStep() {}
@@ -66,11 +111,8 @@ export default {
 
   watch: {
     isShow: function(newVal, oldVal) {
-      if (newVal && !this.list) {
-        this.$api.PutPlan.PlanList()
-          .then(res => {
-            this.list = res.result;
-          })
+      if (newVal) {
+        this.getExistPlanList()
       }
     }
   }
@@ -104,6 +146,10 @@ export default {
         color: $color-text-1;
         border-top:1px solid rgba(229,231,233,1);
         cursor: pointer;
+        &.active{
+          background-color: $color-bg;
+          color: $color-text;
+        }
         &.page-box{
           padding: 20px 40px;
         }

@@ -56,7 +56,7 @@ service.interceptors.response.use(
       Notification({
         title: '警告',
         message: res.msg || '网络异常, 请稍后再试',
-        type: 'error'
+        type: 'warning'
       });
       return Promise.reject(res)
     } else {
@@ -68,10 +68,10 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err' + error) // for debug
-    Message({
+    Notification({
+      title: '错误',
       message: error.msg || '网络异常, 请稍后再试',
       type: 'error',
-      duration: 3 * 1000
     })
     return Promise.reject(error)
   }

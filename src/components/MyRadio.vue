@@ -39,7 +39,7 @@ export default {
       cursor: pointer;
       float: left;
       width: 22px;
-      height: 22px;
+      min-height: 22px;
       text-align: center;
       line-height: 22px;
       border-radius: 100%;

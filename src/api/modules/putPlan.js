@@ -1,12 +1,8 @@
 import request from "@/utils/request";
 
-// 投放计划相关接口
-const CityList = () => {
-  return request({
-    url: "/dpapi/map",
-    method: "GET"
-  });
-}
+/**
+ * 投放计划相关接口
+ */
 
 // 新增计划
 const AddPlan = (data) => {
@@ -30,7 +26,7 @@ const EditPlan = (data) => {
 const PlanList = (data) => {
   return request({
     url: "/dpapi/campaign/list",
-    method: "GET",
+    method: "post",
     data,
   });
 }
@@ -58,7 +54,6 @@ const PlanNameList = (data) => {
 
 
 export const PutPlan = {
-  CityList,
   AddPlan,
   PlanList,
   PlanDetail,
