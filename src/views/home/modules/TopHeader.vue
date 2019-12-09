@@ -27,16 +27,16 @@
     <!-- user msg -->
     <div class="user-msg color-white mid">
       <!-- 钱 -->
-      <div 
-        @mouseenter="hoverRightMsg(0)" 
-        @mouseleave="leaveMenu" 
+      <div
+        @mouseenter="hoverRightMsg(0)"
+        @mouseleave="leaveMenu"
         class="item mid"><img width="20px" :src="images.money" alt="">
       </div>
 
       <!-- 消息 -->
-      <div 
-        @mouseenter="hoverRightMsg(1)" 
-        @mouseleave="leaveMenu" 
+      <div
+        @mouseenter="hoverRightMsg(1)"
+        @mouseleave="leaveMenu"
         class="item mid">
         <el-badge :value="20">
           <img width="20px" :src="images.notification" alt="">
@@ -44,9 +44,9 @@
       </div>
 
       <!-- 用户信息，下拉菜单 -->
-      <div 
-        @mouseenter="hoverRightMsg(2)" 
-        @mouseleave="leaveMenu" 
+      <div
+        @mouseenter="hoverRightMsg(2)"
+        @mouseleave="leaveMenu"
         class="item">
         <div class="user-head mid clearfix">
           <img class="head" width="47px" :src="images.userHead" alt="头像">
@@ -94,7 +94,7 @@ export default {
           { name: '首页', path: '/'},
           { name: '城市洞察', path: '/'},
           { name: '投放管理', path: '/putManage'},
-          { name: '报表中心', path: '/'},
+          { name: '报表中心', path: '/reportList/plan'},
           { name: '工具箱', path: '/'},
           { name: '审核管理', path: '/'},
         ]
