@@ -82,7 +82,7 @@ let tools = {
    * @description: 数字转千位计数
    * @param: num: 数字
    */
-  toThousands: num => {
+  toThousands: (num, hasZero = true) => {
     num = (num || 0).toString();
     let prefixInt = num.split('.')[0];
     let suffixDecimal = num.split('.')[1] || '00';
@@ -92,7 +92,8 @@ let tools = {
       prefixInt = num.slice(0, prefixInt.length - 3);
     }
     if (prefixInt) { result = prefixInt + result; }
-    return result + '.' + suffixDecimal;
+    if (hasZero) return result + '.' + suffixDecimal;
+    else return result
   },
   /**
    * @description: 深度克隆

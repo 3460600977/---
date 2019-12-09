@@ -19,12 +19,14 @@
           </div>
         </div>
       </div>
-      <div class="chart">
-
+      <div class="text-center">
+        <div class="chart">
+          <dash-board></dash-board>
+        </div>
       </div>
       <div class="margin1">
         <p>选点</p>
-        <ul class="list margin2">
+        <ul class="list margin2 border-bottom">
           <li class="list-item mid-between">
             <p>选点1</p>
             <img src="@/assets/images/icons/icon_remove.png" alt="" class="icon-remove">
@@ -47,7 +49,9 @@
           </li>
         </ul>
       </div>
-<!--      <dash-board></dash-board>-->
+      <div style="margin-top: 14px;text-align: center">
+        <el-button type="primary" class="btn">创建资源包</el-button>
+      </div>
     </div>
 </template>
 
@@ -76,8 +80,11 @@
   width: 312px;
   line-height: 1.15;
   padding: 20px 20px 15px;
+  .btn {
+    width: 194px;
+  }
   .list {
-
+    padding-bottom: 10px;
     .list-item {
       line-height:36px;
       color: $color-main;
@@ -95,13 +102,13 @@
     margin: 0 10px;
   }
   .margin1 {
-    margin-top: 30px;
+    margin-top: 20px;
   }
   .margin2 {
     margin-top: 20px;
   }
   .content {
-    padding: 22px 0 33px;
+    padding: 22px 0 29px;
     .buldingNum {
       margin-right: 113px;
     }
@@ -112,7 +119,7 @@
   .chart {
     width:154px;
     height:154px;
-    background: red;
+    display: inline-block;
   }
 }
 </style>
