@@ -7,3 +7,7 @@ export function getCityList() {
     method: "GET",
   });
 }
+
+export const putPlan = {
+  getCityList
+}
