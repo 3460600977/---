@@ -4,6 +4,7 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import {putManageRouter} from './modules/putManage' // 投放管理
 import {cityInsightRouter} from './modules/cityInsight'
+import {reportCenterRouter} from './modules/reportCenter'//报表中心
 
 Vue.use(Router)
 
@@ -19,7 +20,8 @@ const router =  new Router({
           component: () => import ('@/views/home/modules/homeBody'),
         },
         ...putManageRouter,
-        ...cityInsightRouter
+        ...cityInsightRouter,
+        ...reportCenterRouter
       ],
     },
     {
