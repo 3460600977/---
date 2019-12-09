@@ -60,7 +60,6 @@
         <el-form-item class="mt-20" prop="putDate" label="投放时间">
           <el-date-picker
             v-model="formData.putDate"
-            format="yyyy 年 MM 月 dd 日"
             value-format="yyyy-MM-dd"
             :picker-options="pickerOptions"
             type="daterange"
@@ -251,7 +250,9 @@ export default {
             path: '/putManage/create/project',
             query: {
               planId: res.result.id,
-              planName: res.result.name
+              planName: res.result.name,
+              beginTime: res.result.beginTime,
+              endTime: res.result.endTime
             }
           })
         })

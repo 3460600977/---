@@ -47,14 +47,33 @@
           </div>
         </el-form-item>
         
-        <!-- 投放时间 -->
-        <el-form-item class="mt-20" prop="date" label="投放时间">
+        <!----- 
+          投放时间 
+        ----->
+
+        <!-- 按天投放 -->
+        <el-form-item v-show="formData.projectType === 1" class="mt-20" prop="date" label="投放时间">
           <el-date-picker
             v-model="formData.date"
             type="daterange"
+            value-format="yyyy-MM-dd"
+            :picker-options="pickerOptionsForDay"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期">
+          </el-date-picker>
+        </el-form-item>
+
+        <!-- 按周投放 -->
+        <el-form-item v-show="formData.projectType === 0" class="mt-20" prop="date" label="投放时间">
+          <el-date-picker
+            style="width: 240px;"
+            v-model="formData.date"
+            type="week"
+            format="yyyy 第 WW 周"
+            value-format="yyyy-MM-dd"
+            placeholder="请选择"
+            :picker-options="pickerOptionsForWeek">
           </el-date-picker>
         </el-form-item>
 
@@ -201,6 +220,7 @@ export default {
         loading: false,
         data: ''
       },
+
       // 投放类型，0按周投放，1按天投放
       putType: {
         activeIndex: 0,
@@ -210,6 +230,7 @@ export default {
           { name: '按天投放', value: 1},
         ]
       },
+
       // 投放方式
       putWay: {
         activeIndex: 0,
@@ -244,7 +265,6 @@ export default {
           { name: '下屏', value: '002' },
         ]
       },
-
 
       // 楼盘定向
       buildingDirection: {
@@ -299,6 +319,7 @@ export default {
   beforeMount() {
     this.generateProjectName()
     this.planData = this.$route.query;
+    console.log(this.planData)
   },
 
   methods: {
@@ -332,6 +353,7 @@ export default {
       let isPassEnptyCheck = true;
       let validateForms = ['planTop', 'planName'];
       console.log(this.formData)
+      console.log(this.formData.date)
       validateForms.forEach((item, index) => {
         if(this.$refs[item]) {
           this.$refs[item].validate((valid) => {
@@ -349,6 +371,29 @@ export default {
       // this.$router.replace('/putManage/create/creative')
     },
   },
+
+  computed: {
+    // 限制时间选择器 按天 投放选择范围
+    pickerOptionsForDay() {
+      let _this = this;
+      return {
+        disabledDate(date) {
+          return date.getTime() < Date.now() - 8.64e7 || date.getTime() > _this.planData.endTime || date.getTime() < _this.planData.beginTime;
+        }
+      };
+    },
+
+    // 限制时间选择器 按周 投放选择范围
+    pickerOptionsForWeek() {
+      let _this = this;
+      return {
+        firstDayOfWeek: 6,
+        disabledDate(date) {
+          return date.getTime() < Date.now() - 8.64e7 || date.getTime() > _this.planData.endTime || date.getTime() < _this.planData.beginTime;
+        }
+      };
+    }
+  }
 }
 </script>
 
@@ -382,9 +427,9 @@ export default {
     .put-form{
       margin-top: 18px;
       .screen-type-preview-box{
-        // overflow: hidden;
+        overflow: hidden;
         .screen-type-preview-content{
-          // margin-top: -100px;
+          margin-top: -100px;
           .screen-preview {
             display: flex;
             flex-direction: column;
