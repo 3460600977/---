@@ -178,10 +178,13 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$api)
-    this.$api.getCityList.then(res=>{
-      console.log(this.$api)
-    })
+    this.$api.putPlan.getCityList()
+      .then(res=>{
+        console.log(res)
+      })
+      .catch(res=>{
+        console.log(res)
+      })
     this.formData.goal = this.goal.content[this.goal.activeIndex].name;
   },
   methods: {
