@@ -13,7 +13,8 @@
 
 <script>
 import CreativeNewPlan from './modules/CreativeNewPlan.vue'
-import ExistPlanList from './modules/ExistPlanList'
+import ExistPlanList from './modules/ExistPlanList.vue'
+import { mapMutations } from 'vuex'
 export default {
   components: {
     CreativeNewPlan,
@@ -23,6 +24,14 @@ export default {
     return{
       activeName: 'create'
     }
+  },
+  
+  methods: {
+    ...mapMutations(['setLeftStep'])
+  },
+  
+  beforeMount() {
+    this.setLeftStep({rootActiveIndex: 0, subActiveIndex: 0})
   }
 }
 </script>

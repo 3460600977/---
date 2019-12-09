@@ -1,9 +1,9 @@
-import { test } from './modules/test'
 import {cityInsight} from './modules/cityInsight'
+import { putPlan } from './modules/putPlan'
 
 const api = {
-  test,
-  cityInsight
+  cityInsight,
+  putPlan
 }
 
 export default api;

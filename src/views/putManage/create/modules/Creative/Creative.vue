@@ -14,6 +14,7 @@
 <script>
 import CreativeNewCreative from './modules/CreativeNewCreative.vue'
 import ExistCreativeList from './modules/ExistCreativeList.vue'
+import { mapMutations } from 'vuex'
 export default {
   components: {
     CreativeNewCreative,
@@ -23,6 +24,14 @@ export default {
     return{
       activeName: 'create'
     }
+  },
+  
+  methods: {
+    ...mapMutations(['setLeftStep'])
+  },
+  
+  beforeMount() {
+    this.setLeftStep({rootActiveIndex: 2, subActiveIndex: 0})
   }
 }
 </script>

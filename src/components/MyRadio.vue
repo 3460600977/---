@@ -4,7 +4,7 @@
     <div class="my-r-button">
       <i :class="{'el-icon-check': active}"></i>
     </div>
-    <label class="label">
+    <label class="label mid">
       <slot>选项</slot>
     </label>
   </div>
@@ -24,7 +24,7 @@ export default {
 <style lang="scss" scoped>
   .my-radio{
     cursor: pointer;
-    height: 36px;
+    min-height: 36px;
     line-height: 36px;
     display: inline-flex;
     align-items: center;
@@ -53,7 +53,7 @@ export default {
       cursor: pointer;
       float: left;
       line-height: 22px;
-      height: 22px;
+      min-height: 22px;
       margin-left: 10px;
       color: $color-text;
     }

@@ -39,7 +39,7 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data;
-    if (res.code !== 200) {
+    if (res.code !== 100001) {
       // 100201:token过期
       if (res.code === 100201 && location.hash.indexOf('/login') === -1) {
         MessageBox.confirm('身份信息失效，可以取消继续留在该页面，或者重新登录', '确定退出', {

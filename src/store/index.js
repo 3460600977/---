@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import VueX from 'vuex'
-import flowTabs from './modules/flowTabs'
+import { leftStep } from './modules/leftStep'
 
 Vue.use(VueX)
 
 export default new VueX.Store({
   modules: {
-    flowTabs,
+    leftStep,
   }
 })

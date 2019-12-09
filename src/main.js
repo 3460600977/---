@@ -9,6 +9,7 @@ import '../theme/index.css'; // element主题重置生成文件,勿手动修改,
 import '@/assets/styles/index.scss';
 import api from '@/api/index'
 import tools from '@/utils/tools'
+import store from '@/store'
 
 Vue.use(ElementUI);
 
@@ -25,6 +26,7 @@ Vue.prototype.$tools = tools;
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
