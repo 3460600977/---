@@ -19,6 +19,7 @@
         activePath: null,
         points: null, // 楼盘设备数据
         defaultRadius: 3000,
+        drawingManager: null,
         styleOptions: {
           strokeColor:"red",    //边线颜色。
           fillColor:"red",      //填充颜色。当参数为空时，圆形将没有填充效果。
@@ -49,7 +50,6 @@
     },
     watch: {
       activePath(val) {
-        console.log(val)
         this.$emit('activePathChange', val)
       },
     },
@@ -79,11 +79,37 @@
         })
       },
       /*
+      * 隐藏弹窗，即设置activePath为null
+      * */
+      setActivePathNull() {
+        this.activePath = null
+      },
+      /*
+      *  删除当前选中的path
+      * */
+      deletePath() {
+        this.map.removeOverlay(this.activePath.overlay)
+        this.pathArr.splice(this.activePath.index, 1)
+        for (let item of this.pathArr) {
+          if (item.index >= this.activePath.index) {
+            item.index -= 1
+          }
+        }
+        this.setActivePathNull()
+      },
+      /*
+      * 关闭DrawingManager画线方法 需要在绘画类型切换成圆形时调用
+      * */
+      closeDrawingManager() {
+        if (this.drawingManager) {
+          this.drawingManager.close()
+        }
+      },
+      /*
       * 因为折线和多边形是依赖于开源库DrawingManager，
       * 但是元素不能显示，这里手动触发画折线和多边形方法
       * */
       triggerDraw(type) {
-        if (type === 'circle') return
         let dom = document.getElementsByClassName(`BMapLib_${type}`)[0]
         console.log(dom)
         dom.click()
@@ -92,10 +118,11 @@
       改变当前path的radius
       */
       changeActivePathRadius(val) {
-        this.activePath.radius = val
+        this.activePath.radius = this.activePath.type === 'polyline'? 2*val: val
         this.zoomSinglePathChange(this.activePath)
         this.activePath.buildings = this.isInArea(this.activePath)
         this.getBuildingData(this.activePath)
+        console.log(this.activePath)
         this.pathArr[this.activePath.index] = this.activePath
         console.log(this.pathArr)
       },
@@ -115,6 +142,7 @@
           polylineOptions: this.styleOptions, //线的样式
           polygonOptions: this.styleOptions, //多边形的样式
         });
+        this.drawingManager = drawingManager
         this.drawComplete(drawingManager)
       },
 
@@ -133,7 +161,7 @@
       画折现背景层
       */
       drawpolylineBg(path) {
-        let radius = this.RealDistanceTranPixels(this.defaultRadius)
+        let radius = this.RealDistanceTranPixels(path.radius)
         let polyline = new BMap.Polyline(path.overlay.getPath(), {
           strokeColor:"red",    //边线颜色。
           strokeWeight: radius,       //边线的宽度，以像素为单位。
@@ -141,9 +169,8 @@
           strokeStyle: 'solid' //边线的样式，solid或dashed。
         });
         this.map.addOverlay(polyline);
-        console.log({...path, overlay: polyline})
         this.getPopUpData({...path, overlay: polyline})
-        this.overlayBindEvent(path.overlay, this.pathArr.length - 1)
+        this.overlayBindEvent(path)
       },
       /*
       *折线和多边形画线完成回调函数
@@ -157,26 +184,25 @@
             overlay: e.overlay,
             location: location, // 结束绘制时鼠标的经纬度位置用于显示弹窗位置
             isShow: true,
-            radius: this.defaultRadius,
+            index: this.pathArr.length, // 即将是pathArr的第几个元素
+            radius: this.defaultRadius * 2, // 这里只有折线会用这个属性，折线的直径就是defaultRadius的两倍
             points: e.overlay.getPath()
           }
           if (e.drawingMode === "polyline") {
             this.drawpolylineBg(path)
           } else {
             this.getPopUpData(path)
-            this.overlayBindEvent(path.overlay, this.pathArr.length - 1)
+            this.overlayBindEvent(path)
           }
           this.$emit('drawCancle')
         });
       },
       /*
-      给新建的Path添加显示隐藏弹窗事件
+      *给新建的Path添加显示隐藏弹窗事件
       */
-      overlayBindEvent(overlay, index) {
-        console.log(overlay)
-        overlay.addEventListener('click', (e) => {
-          console.log(e)
-          this.activePath = {...this.pathArr[index], location: e.point}
+      overlayBindEvent(path) {
+        path.overlay.addEventListener('click', (e) => {
+          this.activePath = {...this.pathArr[path.index], location: e.point}
         })
       },
       /*
@@ -186,9 +212,8 @@
         path.buildings = this.isInArea(path)
         console.log(path)
         this.getBuildingData(path)
-        let index = this.pathArr.length
-        this.activePath = {...path, index: index}
-        this.pathArr[index] = this.activePath
+        this.activePath = path
+        this.pathArr[path.index] = path
       },
       /*
       根据楼盘数据 计算出楼盘数据所覆盖的设备数，设备数，预估覆盖人次
@@ -307,7 +332,9 @@
 
       zoomChangeAllPath() {
         for(let item of this.pathArr) {
-          this.zoomSinglePathChange(item)
+          if (item.type === 'polyline') { // 只有折线需要在改变zoom时变半径，圆和多边形都是自动变的
+            this.zoomSinglePathChange(item)
+          }
         }
       },
 
@@ -358,12 +385,12 @@
           overlay: circle,
           location: point, // 结束绘制时鼠标的经纬度位置用于显示弹窗位置
           isShow: true,
+          index: this.pathArr.length,
           radius: this.defaultRadius,
           points: circle.getCenter()
         }
-        console.log(this.pathArr.length)
         this.getPopUpData(path)
-        this.overlayBindEvent(path.overlay, this.pathArr.length - 1)
+        this.overlayBindEvent(path)
       },
       addMarker(point){  // 创建图标对象
         var myIcon = new BMap.Icon(require('@/assets/images/icon_location.png'), new BMap.Size(12, 22), {
