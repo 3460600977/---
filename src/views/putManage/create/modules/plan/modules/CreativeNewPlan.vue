@@ -54,6 +54,7 @@
           <el-date-picker
             style="width: 442px;"
             v-model="formData.putDate"
+            :picker-options="pickerOptions"
             type="daterange"
             range-separator="至"
             start-placeholder="开始日期"
@@ -167,9 +168,20 @@ export default {
         '餐饮3',
         '餐饮4'
       ],
+
+      // 日期控件限制
+      pickerOptions: {
+        disabledDate(date) {
+          return date.getTime() <= Date.now();
+        },
+      }
     }
   },
   mounted() {
+    console.log(this.$api)
+    this.$api.getCityList.then(res=>{
+      console.log(this.$api)
+    })
     this.formData.goal = this.goal.content[this.goal.activeIndex].name;
   },
   methods: {
@@ -211,7 +223,7 @@ export default {
       let type = this.creativeType == 'both' ? '联动' : this.creativeType == 'top' ? '上屏' : '下屏';
       this.formData.name = `${this.formData.goal}_${date.getMonth()+1}_${date.getDate()}`
     },
-  }
+  },
 }
 </script>
 
