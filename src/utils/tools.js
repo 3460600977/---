@@ -95,12 +95,28 @@ let tools = {
     if (hasZero) return result + '.' + suffixDecimal;
     else return result
   },
+  type: (obj) => {
+    var toString = Object.prototype.toString
+    var map = {
+      '[object Boolean]': 'boolean',
+      '[object Number]': 'number',
+      '[object String]': 'string',
+      '[object Function]': 'function',
+      '[object Array]': 'array',
+      '[object Date]': 'date',
+      '[object RegExp]': 'regExp',
+      '[object Undefined]': 'undefined',
+      '[object Null]': 'null',
+      '[object Object]': 'object'
+    }
+    return map[toString.call(obj)]
+  },
   /**
    * @description: 深度克隆
    * @param:
    */
   deepCopy: (data) => {
-    var t = type(data)
+    var t = tools.type(data)
     var o
     var i
     var ni
@@ -113,29 +129,16 @@ let tools = {
     }
     if (t === 'array') {
       for (i = 0, ni = data.length; i < ni; i++) {
-        o.push(deepCopy(data[i]))
+        o.push(tools.deepCopy(data[i]))
       }
       return o
     } else if (t === 'object') {
       for (i in data) {
-        o[i] = deepCopy(data[i])
+        o[i] = tools.deepCopy(data[i])
       }
       return o
     }
   },
-  /*
-  * 产生start到end的长度未length的随机数数组
-  */
-  getRandom(start, end, length) {
-    console.log(start, end, length)
-    let set = new Set()
-
-    while (set.size <= length) {
-      let val = parseInt(Math.random()*(end - start), 10) + start
-      set.add(val)
-    }
-    console.log(set)
-  }
 }
 
 export default tools;

@@ -75,18 +75,19 @@
     },
     data() {
       return {
-        val: 100
+        val: 0,
+        maxVal: 100
       }
     },
     created() {
-      this.val = this.budget
+      this.val = this.budget * this.maxVal
     },
     methods: {
       formatTooltip(val) {
         return val+'%'
       },
       budgetChange(val) {
-        this.$emit('budgetChange', val)
+        this.$emit('budgetChange', val / this.maxVal)
       },
     }
   }

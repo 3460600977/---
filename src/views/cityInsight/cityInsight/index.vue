@@ -66,13 +66,12 @@
     data() {
       return {
         showPathCopy: null, // 用于储存经纬度计算showPath的位置
-        value: 100,
         map: null,
         location: { // 鼠标当前位置
           x: 0,
           y: 0
         },
-        budget: 100,
+        budget: 1, // 投放预算默认值
         sliderVal: 3000,
         currentSelectType: null,
         popUpHeight: {
