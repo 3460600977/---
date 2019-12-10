@@ -8,11 +8,11 @@
 
       <div class="list-box">
         <div class="title">列表</div>
-        <ul v-if="list.data" v-loading="list.loading">
+        <ul v-loading="list.loading">
           <li 
             class="item"
             :class="{'active': list.choosedIndex === index}"
-            @click="list.choosedItem = item; list.choosedIndex = index" 
+            @click="list.choosedItem = item; list.choosedIndex = index; nextStep()" 
             v-for="(item, index) in list.data" :key="index">{{item.name}}</li>
           <li class="item page-box clearfix">
             <el-pagination
@@ -25,21 +25,16 @@
             </el-pagination>
           </li>
         </ul>
-        <ul v-else>
-          <li class="item">
-           无数据
-          </li>
-        </ul>
       </div>
     </div>
 
     
     <!-- 保存 取消 -->
-    <PutMangeCard class="save-box clearfix">
+    <!-- <PutMangeCard class="save-box clearfix">
       <div class="float-right">
         <el-button @click="nextStep" style="width: 136px" type="primary">下一步</el-button>
       </div>
-    </PutMangeCard>
+    </PutMangeCard> -->
   </div>
 </template>
 
@@ -106,7 +101,19 @@ export default {
       this.getExistPlanList(this.search, 0, 0)
     },
 
-    nextStep() {}
+    nextStep() {
+      setTimeout(() => {
+        this.$router.replace({
+          path: '/putManage/create/project',
+          query: {
+            planId: this.list.choosedItem.id,
+            planName: this.list.choosedItem.name,
+            beginTime: this.list.choosedItem.beginTime,
+            endTime: this.list.choosedItem.endTime
+          }
+        })
+      }, 300);
+    }
   },
 
   watch: {

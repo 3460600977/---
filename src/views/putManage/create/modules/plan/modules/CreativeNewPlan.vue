@@ -119,10 +119,10 @@ export default {
       goal: {
         activeIndex: 0,
         content:[
-          { name: '品牌宣传', value: 0, icon: require('../../../../../../assets/images/test.png')},
-          { name: '新品上线', value: 1, icon: require('../../../../../../assets/images/test.png')},
-          { name: '活动宣传', value: 2, icon: require('../../../../../../assets/images/test.png')},
-          { name: '其他',     value: 3, icon: require('../../../../../../assets/images/test.png')}
+          { name: '品牌宣传', value: 0, icon: require('../../../../../../assets/images/plan_title_1.png')},
+          { name: '新品上线', value: 1, icon: require('../../../../../../assets/images/plan_title_2.png')},
+          { name: '活动宣传', value: 2, icon: require('../../../../../../assets/images/plan_title_3.png')},
+          { name: '其他',     value: 3, icon: require('../../../../../../assets/images/plan_title_4.png')}
         ]
       },
 
@@ -296,27 +296,30 @@ export default {
   .goal-box{
     .item{
       float: left;
-      padding: 17px 13px;
+      padding: 0px 23px;
       margin: 30px 40px 0 0;
       width:200px;
       height:100px;
       background:rgba(255,255,255,1);
-      box-shadow:0px 2px 12px 0px rgba(118,118,118,0.2);
       border-radius:2px;
       transition: .3s;
       cursor: pointer;
-      color: $color-text-1;
       transition: .3s;
       &:hover{
         transform: translateY(-3px);
       }
       &.active{
-        color: $color-main;
+        box-shadow: 0px 4px 10px 0px rgba(45,90,255,0.18);
+        .name{
+          color: $color-main;
+        }
         .icon-img{
           opacity: 1;
         }
       }
       .icon-img{
+        width: 53px;
+        height: auto;
         transition: .3s;
         opacity: 0.4;
       }
@@ -324,6 +327,7 @@ export default {
         margin-left: 8px;
         font-size:16px;
         font-weight:bold;
+        color: #A8A8A8;
       }
     }
   }
