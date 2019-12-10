@@ -20,6 +20,14 @@
         points: null, // 楼盘设备数据
         defaultRadius: 3000,
         drawingManager: null,
+        circleSelectedOption: {
+          shape: BMAP_POINT_SHAPE_CIRCLE,
+          color: 'rgba(45,90,255,0.74)'
+        },
+        circleUnSelectedOption: {
+          shape: BMAP_POINT_SHAPE_CIRCLE,
+          color: 'rgba(158, 158, 158, 0.7)'
+        },
         styleOptions: {
           strokeColor:"red",    //边线颜色。
           fillColor:"red",      //填充颜色。当参数为空时，圆形将没有填充效果。
@@ -34,6 +42,10 @@
       sliderVal: {
         type: Number,
         default: 3000
+      },
+      budget: {
+        type: Number,
+        required: true
       },
       showPathCopy: {
         type: Object,
@@ -74,7 +86,7 @@
           this.initMouse()
           // this.drawHotMap(data.result)
           this.points = this.normalizePointsAll(data.result)
-          this.setDevicePoints(this.normalizePoints(this.points))
+          this.setDeviceSelectedPoints(this.normalizePoints(this.points))
           this.loading = false
         })
       },
@@ -89,12 +101,7 @@
       * */
       deletePath() {
         this.map.removeOverlay(this.activePath.overlay)
-        this.pathArr.splice(this.activePath.index, 1)
-        for (let item of this.pathArr) {
-          if (item.index >= this.activePath.index) {
-            item.index -= 1
-          }
-        }
+        delete this.pathArr[this.activePath.index]
         this.setActivePathNull()
       },
       /*
@@ -421,11 +428,12 @@
         })
         return result
       },
-      setDevicePoints(arrPoints) {
-        let points = new BMap.PointCollection(arrPoints, {
-          shape: BMAP_POINT_SHAPE_CIRCLE,
-          color: 'rgba(45,90,255,0.74)'
-        });
+      setDeviceSelectedPoints(arrPoints) {
+        let points = new BMap.PointCollection(arrPoints, this.circleSelectedOption);
+        this.map.addOverlay(points);
+      },
+      setDeviceUnSelectedPoints(arrPoints) {
+        let points = new BMap.PointCollection(arrPoints, this.circleUnSelectedOption);
         this.map.addOverlay(points);
       },
     }

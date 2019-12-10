@@ -3,7 +3,12 @@
       <p class="font-16">投放预算</p>
       <div class="mid-between color-text-1 margin2">
         <span>低</span>
-        <el-slider class="flex1 slider" v-model="value" :format-tooltip="formatTooltip"></el-slider>
+        <el-slider
+          class="flex1 slider"
+          v-model="val"
+          @change="budgetChange"
+          :format-tooltip="formatTooltip"
+        ></el-slider>
         <span>高</span>
       </div>
       <p class="font-16 margin1">投放预估数</p>
@@ -62,14 +67,26 @@
     components: {
       DashBoard
     },
+    props: {
+      budget: {
+        type: Number,
+        required: true
+      }
+    },
     data() {
       return {
-        value: 20
+        val: 100
       }
+    },
+    created() {
+      this.val = this.budget
     },
     methods: {
       formatTooltip(val) {
         return val+'%'
+      },
+      budgetChange(val) {
+        this.$emit('budgetChange', val)
       },
     }
   }

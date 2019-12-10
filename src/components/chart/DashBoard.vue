@@ -73,6 +73,7 @@
     left: 50%;
     transform-origin: 0px 60px;
     bottom: 59px;
+    transition: 0.5s;
   }
 }
 </style>

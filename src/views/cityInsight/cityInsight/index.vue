@@ -23,11 +23,15 @@
         <left-select @drawTypeSelect="drawTypeSelect"></left-select>
       </div>
       <div class="right-info">
-        <right-info></right-info>
+        <right-info
+          :budget="budget"
+          @budgetChange="budgetChange"
+        ></right-info>
       </div>
       <div class="map container">
         <db-map
           ref="dbmap"
+          :budget="budget"
           :currentSelectType="currentSelectType"
           @activePathChange="activePathChange"
           @currentMouseLocation="currentMouseLocation"
@@ -68,6 +72,7 @@
           x: 0,
           y: 0
         },
+        budget: 100,
         sliderVal: 3000,
         currentSelectType: null,
         popUpHeight: {
@@ -147,6 +152,12 @@
       * */
       drawCancle() {
         this.currentSelectType = null
+      },
+      /*
+      * 投放预算变化
+      * */
+      budgetChange(val) {
+        this.budget = val
       },
     },
   }
