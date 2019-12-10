@@ -208,7 +208,8 @@
                         dataShadow: [1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250]
                     },
                 },
-                tableData: [{
+                tableData: [
+                    {
                     date: '2016-05-02',
                     name: '投放计划1',
                     costNum: '100',
@@ -352,6 +353,7 @@
       .card_value {
         font-size: 26px;
         font-weight: normal;
+        font-family: DINMittelschrift;
       }
 
       &.select-box {
