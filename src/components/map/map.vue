@@ -64,6 +64,9 @@
       activePath(val) {
         this.$emit('activePathChange', val)
       },
+      budget(val) {
+        console.log(val)
+      },
     },
     created() {
     },
@@ -86,6 +89,7 @@
           this.initMouse()
           // this.drawHotMap(data.result)
           this.points = this.normalizePointsAll(data.result)
+          // this.drawDevicePoints(this.points)
           this.setDeviceSelectedPoints(this.normalizePoints(this.points))
           this.loading = false
         })
@@ -428,6 +432,13 @@
         })
         return result
       },
+
+      drawDevicePoints(arr) {
+        let percent = this.budget / 100
+        let len = parseInt(arr.length*percent, 10)
+        this.$tools.getRandom(0, arr.length, len)
+      },
+
       setDeviceSelectedPoints(arrPoints) {
         let points = new BMap.PointCollection(arrPoints, this.circleSelectedOption);
         this.map.addOverlay(points);

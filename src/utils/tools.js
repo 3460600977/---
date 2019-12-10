@@ -123,6 +123,19 @@ let tools = {
       return o
     }
   },
+  /*
+  * 产生start到end的长度未length的随机数数组
+  */
+  getRandom(start, end, length) {
+    console.log(start, end, length)
+    let set = new Set()
+
+    while (set.size <= length) {
+      let val = parseInt(Math.random()*(end - start), 10) + start
+      set.add(val)
+    }
+    console.log(set)
+  }
 }
 
 export default tools;
