@@ -19,4 +19,9 @@ export const reportCenterRouter = [
       },
     ]
   },
+  // 投放方案-某个方案的详情
+  {
+    path: '/reportList/projectDetail',
+    component: () => import('@/views/report/projectDetail/projectDetail')
+  },
 ]

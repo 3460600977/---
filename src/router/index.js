@@ -5,10 +5,11 @@ import 'nprogress/nprogress.css'
 import {putManageRouter} from './modules/putManage' // 投放管理
 import {cityInsightRouter} from './modules/cityInsight'
 import {reportCenterRouter} from './modules/reportCenter'//报表中心
+import {auditManageRouter} from './modules/auditManage'//审核管理
 
 Vue.use(Router)
 
-const router =  new Router({
+const router = new Router({
   mode: 'history',
   routes: [
     {
@@ -21,7 +22,8 @@ const router =  new Router({
         },
         ...putManageRouter,
         ...cityInsightRouter,
-        ...reportCenterRouter
+        ...reportCenterRouter,
+        ...auditManageRouter
       ],
     },
     {
@@ -36,14 +38,14 @@ const router =  new Router({
       path: '/themePreview',
       component: () => import('@/views/themePreview/themePreview')
     },
-    { path: '/', redirect: '/home', hidden: true },
-    { path: '*', redirect: '/404', hidden: true }
+    {path: '/', redirect: '/home', hidden: true},
+    {path: '*', redirect: '/404', hidden: true}
   ]
 })
 
 
 NProgress.inc(0.8)
-NProgress.configure({ easing: 'ease', speed: 1500, showSpinner: false })
+NProgress.configure({easing: 'ease', speed: 1500, showSpinner: false})
 router.beforeEach((to, from, next) => {
   NProgress.start()
   next();

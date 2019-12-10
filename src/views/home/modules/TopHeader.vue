@@ -96,7 +96,7 @@ export default {
           { name: '投放管理', path: '/putManage'},
           { name: '报表中心', path: '/reportList/plan'},
           { name: '工具箱', path: '/'},
-          { name: '审核管理', path: '/'},
+          { name: '审核管理', path: '/auditList/creative'},
         ]
       },
       rightMsg: {
