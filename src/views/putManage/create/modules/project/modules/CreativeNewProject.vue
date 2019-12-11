@@ -74,6 +74,7 @@
               style="width: 150px"
               v-model="formData.dateForWeekBegin"
               type="date"
+              placeholder="开始时间"
               :picker-options="pickerOptionsForWeekBegin">
             </el-date-picker>
           </el-form-item>
@@ -81,11 +82,13 @@
           <label class="float-left week-center-label center">至</label>
           <el-form-item class="week-item end mt-20" prop="dateForWeekEnd">
             <el-date-picker
+              :disabled="!formData.dateForWeekBegin"
               @change="chooseWeek"
               value-format="yyyy-MM-dd"
               style="width: 170px"
               v-model="formData.dateForWeekEnd"
               type="date"
+              :placeholder="formData.dateForWeekBegin ? '请选择' : '请选择开始时间'"
               :picker-options="pickerOptionsForWeekEnd">
             </el-date-picker>
           </el-form-item>
@@ -278,7 +281,7 @@ export default {
 
       // 确认信息
       confirmMsg: {
-        show: true,
+        show: false,
       },
 
       formData: {
@@ -363,37 +366,42 @@ export default {
       this.buildingDirection.mapChooseShow = true;
     },
 
-    // 按周投放 可用周六开始时间戳
-    getLaunchWeek() {
-      let date = new Date(+this.planData.beginTime > Date.now() ? +this.planData.beginTime : Date.now()); // 开始时间 毫秒
-      let nowWeek = 6 - date.getDay();
-      let dayMilliSecond = 24 * 60 * 60 * 1000; //一天的毫秒数
-      let offsetWeek = 0; // 判断是否过期，是否往后延期一个星期
+    // 按周投放 可用开始结束时间
+    // getLaunchWeek() {
+    //   let date = new Date(+this.planData.beginTime > Date.now() ? +this.planData.beginTime : Date.now()); // 开始时间 毫秒
+    //   let nowWeek = 6 - date.getDay();
+    //   let dayMilliSecond = 24 * 60 * 60 * 1000; //一天的毫秒数
+    //   let offsetWeek = 0; // 判断是否过期，是否往后延期一个星期
 
-      if (nowWeek <= 1 || date.getHours() > 18) {
-        offsetWeek = 1;
-      }
+    //   if (nowWeek <= 1 || date.getHours() > 18) {
+    //     offsetWeek = 1;
+    //   }
 
-      let saturdayBegin = (date.getTime() + (nowWeek + ((offsetWeek) * 7)) * dayMilliSecond); //周六开始
-      let saturdayEnd; //周五结束
-      for (let i=0; i<10000; i++) {
-        saturdayEnd = (date.getTime() + (nowWeek + 6 + ((offsetWeek) * 7) + (i * 7)) * dayMilliSecond); 
-        if (saturdayEnd > +this.planData.endTime) {
-          saturdayEnd = (date.getTime() + (nowWeek + 6 + ((offsetWeek) * 7) + (--i * 7)) * dayMilliSecond);
-          break;
-        }
-      }
+    //   let saturdayBegin = (date.getTime() + (nowWeek + ((offsetWeek) * 7)) * dayMilliSecond); //周六开始
+    //   let saturdayEnd; //周五结束
+    //   let weekCount = 0;
+    //   while(saturdayEnd < +this.planData.endTime) {
+    //     saturdayEnd = (date.getTime() + (nowWeek + 6 + ((offsetWeek) * 7) + (weekCount * 7)) * dayMilliSecond); 
+    //     weekCount++;
+    //   }
+    //   // for (let i=0; i<10; i++) {
+    //   //   if (saturdayEnd >= +this.planData.endTime) {
+    //   //     saturdayEnd = (date.getTime() + (nowWeek + 6 + ((offsetWeek) * 7) + (--i * 7)) * dayMilliSecond);
+    //   //   console.log(i)
+    //   //     break;
+    //   //   }
+    //   // }
 
-      return {
-        saturdayBegin, saturdayEnd
-      }
-    },
+    //   return {
+    //     saturdayBegin, saturdayEnd
+    //   }
+    // },
 
     // 按周投放 选择时间校验结束大于开始
     chooseWeek() {
       if (!this.formData.dateForWeekBegin || !this.formData.dateForWeekEnd) return;
       if (this.formData.dateForWeekBegin >= this.formData.dateForWeekEnd) {
-        this.formData.dateForWeekBegin = '';
+        this.formData.dateForWeekBegin = this.formData.dateForWeekEnd = '';
         return this.$notify({
           title: '警告',
           message: '开始时间应早于结束时间',
@@ -407,7 +415,6 @@ export default {
       let isPassEnptyCheck = true;
       let validateForms = ['planTop', 'planName'];
       console.log(this.formData)
-      console.log(this.formData.date)
       validateForms.forEach((item, index) => {
         if(this.$refs[item]) {
           this.$refs[item].validate((valid) => {
@@ -431,6 +438,7 @@ export default {
     pickerOptionsForDay() {
       let _this = this;
       return {
+        firstDayOfWeek: 6,
         disabledDate(date) {
           return date.getTime() < Date.now() - 8.64e7 || 
             date.getTime() > _this.planData.endTime || 
@@ -445,9 +453,10 @@ export default {
       return {
         firstDayOfWeek: 6,
         disabledDate(date) {
-          return date.getTime() < _this.getLaunchWeek().saturdayBegin || 
-           date.getTime() > _this.getLaunchWeek().saturdayEnd || 
-           date.getDay() != 6;
+          return date.getTime() < Date.now() - 8.64e7 || 
+            date.getTime() > _this.planData.endTime || 
+            date.getTime() < _this.planData.beginTime || 
+            date.getDay() != 6;
         },
       };
     },
@@ -457,10 +466,11 @@ export default {
       return {
         firstDayOfWeek: 6,
         disabledDate(date) {
-          return date.getTime() < _this.getLaunchWeek().saturdayBegin || 
-           date.getTime() > _this.getLaunchWeek().saturdayEnd || 
-           date.getDay() != 5 ||
-           date.getTime() < (new Date(_this.formData.dateForWeekBegin)).getTime();
+          return date.getTime() < Date.now() - 8.64e7 || 
+            date.getTime() > _this.planData.endTime || 
+            date.getTime() < _this.planData.beginTime || 
+            date.getDay() != 5 ||
+            date.getTime() < (new Date(_this.formData.dateForWeekBegin)).getTime();
         },
       };
     }

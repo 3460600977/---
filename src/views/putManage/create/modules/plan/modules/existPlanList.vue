@@ -112,7 +112,7 @@ export default {
             endTime: this.list.choosedItem.endTime
           }
         })
-      }, 300);
+      }, 100);
     }
   },
 

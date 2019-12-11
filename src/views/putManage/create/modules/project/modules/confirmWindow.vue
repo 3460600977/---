@@ -9,7 +9,7 @@
       <el-tabs class="thin-tab" v-model="activeTab">
 
         <el-tab-pane label="方案信息" name="plan">
-          <el-form ref="form" :model="form" label-position='left' label-width="150px">
+          <el-form label-position='left' label-width="150px">
             <el-form-item label="投放方案名称">
               <span class="color-text-1">广告创意</span>
             </el-form-item>
@@ -45,13 +45,6 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <el-dialog
-      class=""
-      width="30%"
-      title="内层 Dialog"
-      :visible.sync="innerVisible"
-      append-to-body>
-    </el-dialog>
     <div slot="footer" class="dialog-footer center">
       <el-button class="map-btn" @click="$emit('update:confirmMsgShow', false)">取消投放</el-button>
       <el-button class="map-btn" type="primary">确认并关闭</el-button>

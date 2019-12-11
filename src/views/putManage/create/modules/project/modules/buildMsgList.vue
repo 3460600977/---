@@ -7,7 +7,7 @@
       </div>
     </div>
     <ul>
-      <li class="item mid color-text" v-for="i in 10">
+      <li class="item mid color-text" v-for="i in 10" :key="i">
         <div class="left-info">
           <p class="name">汇丰公寓</p>
         </div>
