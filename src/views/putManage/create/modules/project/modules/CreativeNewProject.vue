@@ -1,7 +1,7 @@
 <template>
   <div class="put-project">
     <div class="title">
-      <h2>所属投放计划：{{planData.planName || '正在加载中...'}}</h2>
+      <h2>所属投放计划：{{planData.name || '正在加载中...'}}</h2>
     </div>
 
     <!-- 投放设置 -->
@@ -155,15 +155,54 @@
     <!-- 楼盘定向 -->
     <PutMangeCard :title="'楼盘定向'" class="form-box">
       <el-tabs class="thin-tab mt-15" v-model="buildingDirection.activeType">
+
         <el-tab-pane label="新建楼盘定向"   name="create">
-          <div style="margin-top: 5px;">
-            <label class="color-text-1" for="">选点方式</label>
-            <el-button @click="showMapChoose" type="primary" style="margin-left: 64px;width: 102px">地图选点</el-button>
-            <SelectedList/>
-          </div>
+          <el-form label-position='left' label-width="125px">
+            <el-form-item label="选点方式">
+              <el-button @click="showMapChoose" type="primary" style="width: 102px">地图选点</el-button>
+            </el-form-item>
+          </el-form>
+          <SelectedList/>
         </el-tab-pane>
-        <el-tab-pane label="选择已有定向包" name="exist">选择已有定向包</el-tab-pane>
-        <el-tab-pane label="导入楼盘数据"   name="import">导入楼盘数据</el-tab-pane>
+
+        <el-tab-pane label="已有资源包" name="exist">
+          <el-form label-position='left' label-width="125px">
+            <el-form-item label="已有资源包">
+              <el-select placeholder="请选择">
+                <el-option
+                  v-for="item in 10"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
+              <el-button @click="showMapChoose" type="primary" style="margin-left: 10px;">管理已有资源包</el-button>
+            </el-form-item>
+          </el-form>
+          <SelectedList/>
+        </el-tab-pane>
+
+        <el-tab-pane label="导入楼盘数据"   name="import">
+          <el-form label-position='left' label-width="125px">
+
+            <el-form-item label="城市">
+              <el-select placeholder="请选择">
+                <el-option
+                  v-for="item in 10"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
+            </el-form-item>
+
+            <el-form-item label="导入楼盘数据" style="margin-top: 8px">
+              <el-input suffix-icon="el-icon-upload2"></el-input>
+            </el-form-item>
+          </el-form>
+          
+          <SelectedList/>
+        </el-tab-pane>
       </el-tabs>
     </PutMangeCard>
 
@@ -414,6 +453,7 @@ export default {
     saveProject() {
       let isPassEnptyCheck = true;
       let validateForms = ['planTop', 'planName'];
+      let param;
       console.log(this.formData)
       validateForms.forEach((item, index) => {
         if(this.$refs[item]) {
@@ -428,6 +468,26 @@ export default {
           message: '还有必填字段未填写',
           type: 'warning'
         });
+      }
+      
+      param = {
+        name: "",
+        type: "", // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
+        industry: "", // 投放行业
+        beginTime: "",
+        endTime: "",
+        campaignId: 0, // 投放计划ID
+        count: "", // 投放频次，001-300次/天，002-600次/天，003-900次/天 依次类推
+        deliveryMode: "", // 投放方式，001一个楼盘所有点位，002一个单元一个电梯，003一个单元一半电梯
+        details: [
+          {
+            deviceNum: 0,
+            premiseId: ""
+          }
+        ], // 楼盘列表
+        projectCity: "", // 城市
+        projectType: 0, // 投放类型，0按周投放，1按天投放
+        second: "", // 投放时长，001-5s/次，002-10s/次，003-15s/次 依次类推
       }
       // this.$router.replace('/putManage/create/creative')
     },

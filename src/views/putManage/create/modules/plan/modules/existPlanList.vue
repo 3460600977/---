@@ -107,9 +107,6 @@ export default {
           path: '/putManage/create/project',
           query: {
             planId: this.list.choosedItem.id,
-            planName: this.list.choosedItem.name,
-            beginTime: this.list.choosedItem.beginTime,
-            endTime: this.list.choosedItem.endTime
           }
         })
       }, 100);
