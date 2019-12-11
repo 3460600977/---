@@ -1,9 +1,13 @@
 import {cityInsight} from './modules/cityInsight'
-import { putPlan } from './modules/putPlan'
+import { PutPlan } from './modules/PutPlan'
+import { CityList } from './modules/CityList'
+import { industryList } from './modules/industryList'
 
 const api = {
   cityInsight,
-  putPlan
+  PutPlan,  // 投放计划
+  CityList, // 城市列表
+  industryList, // 行业
 }
 
 export default api;

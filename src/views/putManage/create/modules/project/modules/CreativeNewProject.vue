@@ -1,11 +1,11 @@
 <template>
   <div class="put-project">
     <div class="title">
-      <h2>所属投放计划：投放计划名称</h2>
+      <h2>所属投放计划：{{planData.name || '正在加载中...'}}</h2>
     </div>
 
     <!-- 投放设置 -->
-    <PutMangeCard :title="'投放设置'" class="form-box put-goal">
+    <PutMangeCard :title="'投放设置'" class="form-box">
       <el-form
         ref="planTop"
         :label-position="'left'"
@@ -15,24 +15,34 @@
 
         <!-- 投放方案行业 -->
         <el-form-item class="mt-20" prop="industry" label="投放方案行业">
-          <el-select v-model="formData.industry" placeholder="请选择">
+          <el-select 
+            @focus="getIndustryList"
+            :loading="industry.loading"
+            filterable
+            clearable
+            v-model="formData.industry" 
+            placeholder="请选择">
             <el-option
-              v-for="(item, index) in industry"
+              v-for="(item, index) in industry.data"
               :key="index"
               :label="item.name"
-              :value="item.value">
+              :value="item.industryId">
             </el-option>
           </el-select>
         </el-form-item>
 
         <!-- 投放类型 -->
-        <el-form-item class="mt-20" prop="type" label="投放类型">
+        <el-form-item class="mt-20" prop="projectType" label="投放类型">
           <div class="mid-between" style="width: 240px">
             <el-button 
               style="width: 102px"
               @click="putType.activeIndex=index;
                       putType.activeType=type.value;
-                      formData.type=type.value;"
+                      formData.projectType=type.value;
+                      formData.dateForDay='';
+                      formData.dateForWeekBegin='';
+                      formData.dateForWeekEnd='';
+                      "
               v-for="(type, index) in putType.values" 
               :type="index == putType.activeIndex ? 'primary' : 'info'" 
               :key="index">
@@ -41,29 +51,61 @@
           </div>
         </el-form-item>
         
-        <!-- 投放时间 -->
-        <el-form-item class="mt-20" prop="date" label="投放时间">
+        <!----- 
+          投放时间 
+        ----->
+        <!-- 按天投放 -->
+        <el-form-item v-show="formData.projectType === 1" class="mt-20" prop="dateForDay" label="投放时间">
           <el-date-picker
-            v-model="formData.date"
+            v-model="formData.dateForDay"
+            value-format="yyyy-MM-dd"
             type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期">
+            :picker-options="pickerOptionsForDay"
+            range-separator="至">
           </el-date-picker>
         </el-form-item>
 
+        <!-- 按周投放 -->
+        <div v-show="formData.projectType === 0" class="week-picker-box clearfix">
+          <el-form-item class="week-item mt-20" prop="dateForWeekBegin" label="投放时间">
+            <el-date-picker
+              @change="chooseWeek"
+              value-format="yyyy-MM-dd"
+              style="width: 150px"
+              v-model="formData.dateForWeekBegin"
+              type="date"
+              placeholder="开始时间"
+              :picker-options="pickerOptionsForWeekBegin">
+            </el-date-picker>
+          </el-form-item>
+
+          <label class="float-left week-center-label center">至</label>
+          <el-form-item class="week-item end mt-20" prop="dateForWeekEnd">
+            <el-date-picker
+              :disabled="!formData.dateForWeekBegin"
+              @change="chooseWeek"
+              value-format="yyyy-MM-dd"
+              style="width: 170px"
+              v-model="formData.dateForWeekEnd"
+              type="date"
+              :placeholder="formData.dateForWeekBegin ? '请选择' : '请选择开始时间'"
+              :picker-options="pickerOptionsForWeekEnd">
+            </el-date-picker>
+          </el-form-item>
+        </div>
+
         <!-- 投放方式 -->
-        <el-form-item class="mt-20" prop="way" label="投放方式">
+        <el-form-item class="mt-20" prop="deliveryMode" label="投放方式">
           <MyRadio
             v-for="(way, index) in putWay.values"
-            @click.native="formData.way=way.value; putWay.activeIndex=index"
+            @click.native="formData.deliveryMode=way.value; putWay.activeIndex=index"
             :active="putWay.activeIndex === index"
             :key="index">{{way.name}}</MyRadio>
         </el-form-item>
 
         <!-- 投放频次 -->
-        <el-form-item class="mt-20" prop="duration" label="投放频次">
-          <el-select v-model="formData.frequency" placeholder="请选择">
+        <el-form-item class="mt-20" prop="count" label="投放频次">
+          <el-select v-model="formData.count" placeholder="请选择">
             <el-option
               v-for="(frequency, index) in putFrequency"
               :key="index"
@@ -74,8 +116,8 @@
         </el-form-item>
 
         <!-- 投放时长 -->
-        <el-form-item class="mt-20" prop="duration" label="投放时长">
-          <el-select v-model="formData.duration" placeholder="请选择">
+        <el-form-item class="mt-20" prop="second" label="投放时长">
+          <el-select v-model="formData.second" placeholder="请选择">
             <el-option
               v-for="(duration, index) in putDuration"
               :key="index"
@@ -86,7 +128,7 @@
         </el-form-item>
         
         <!-- 屏幕类型 -->
-        <el-form-item class="screen-type-preview-box mt-20" prop="screenType" label="屏幕类型">
+        <el-form-item class="screen-type-preview-box mt-20" prop=" type" label="屏幕类型">
           <div class="screen-type-preview-content">
             <MyRadio
               v-for="(item, index) in screenType.values"
@@ -97,9 +139,9 @@
               <div class="float-left screen-preview">
                 <div 
                   class="top" 
-                  :class="{'bg-gray': item.value == 'both' || item.value == 'top'}"></div>
+                  :class="{'bg-gray': item.value == '003' || item.value == '001'}"></div>
                 <div 
-                  :class="{'bg-gray': item.value == 'both' || item.value == 'bottom'}" 
+                  :class="{'bg-gray': item.value == '003' || item.value == '002'}" 
                   class="bottom"></div>
               </div>
             </MyRadio>
@@ -113,20 +155,59 @@
     <!-- 楼盘定向 -->
     <PutMangeCard :title="'楼盘定向'" class="form-box">
       <el-tabs class="thin-tab mt-15" v-model="buildingDirection.activeType">
+
         <el-tab-pane label="新建楼盘定向"   name="create">
-          <div style="margin-top: 5px;">
-            <label class="color-text-1" for="">选点方式</label>
-            <el-button @click="showMapChoose" type="primary" style="margin-left: 64px;width: 102px">地图选点</el-button>
-            <SelectedList/>
-          </div>
+          <el-form label-position='left' label-width="125px">
+            <el-form-item label="选点方式">
+              <el-button @click="showMapChoose" type="primary" style="width: 102px">地图选点</el-button>
+            </el-form-item>
+          </el-form>
+          <SelectedList/>
         </el-tab-pane>
-        <el-tab-pane label="选择已有定向包" name="exist">选择已有定向包</el-tab-pane>
-        <el-tab-pane label="导入楼盘数据"   name="import">导入楼盘数据</el-tab-pane>
+
+        <el-tab-pane label="已有资源包" name="exist">
+          <el-form label-position='left' label-width="125px">
+            <el-form-item label="已有资源包">
+              <el-select placeholder="请选择">
+                <el-option
+                  v-for="item in 10"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
+              <el-button @click="showMapChoose" type="primary" style="margin-left: 10px;">管理已有资源包</el-button>
+            </el-form-item>
+          </el-form>
+          <SelectedList/>
+        </el-tab-pane>
+
+        <el-tab-pane label="导入楼盘数据"   name="import">
+          <el-form label-position='left' label-width="125px">
+
+            <el-form-item label="城市">
+              <el-select placeholder="请选择">
+                <el-option
+                  v-for="item in 10"
+                  :key="item"
+                  :label="item"
+                  :value="item">
+                </el-option>
+              </el-select>
+            </el-form-item>
+
+            <el-form-item label="导入楼盘数据" style="margin-top: 8px">
+              <el-input suffix-icon="el-icon-upload2"></el-input>
+            </el-form-item>
+          </el-form>
+          
+          <SelectedList/>
+        </el-tab-pane>
       </el-tabs>
     </PutMangeCard>
 
     <!-- 地图选点 -->
-    <mapChoosePoint :mapChooseShow.sync="buildingDirection.mapChooseShow"/>
+    <mapChooseWindow :mapChooseShow.sync="buildingDirection.mapChooseShow"/>
     
     <!-- 投放方案名称 -->
     <PutMangeCard :title="'投放方案名称'" class="form-box">
@@ -142,6 +223,9 @@
       </el-form>
     </PutMangeCard>
 
+    <!-- 确认投放方案信息 -->
+    <confirmWindow :confirmMsgShow.sync ="confirmMsg.show"/>
+
     <!-- 保存 取消 -->
     <PutMangeCard class="save-box">
       <div class="float-right">
@@ -150,25 +234,7 @@
       </div>
     </PutMangeCard>
 
-    
-    <!-- 投放预估数 -->
-    <div class="estimate-box">
-      <div class="font16">楼盘预估数</div>
-      <div class="mid-between">
-        <div class="estimate-number-box">
-          <p class="color-text-1 estimate-title">楼盘数</p>
-          <p class="font-14 estimate-number">
-            <span class="bold font-18">34563456</span>个
-          </p>
-        </div>
-        <div class="estimate-number-box">
-          <p class="color-text-1 estimate-title">设备数</p>
-          <p class="font-14 estimate-number">
-            <span class="bold font-18">678567</span>个
-          </p>
-        </div>
-      </div>
-    </div>
+    <EstimateBox/>
   </div>
 </template>
 
@@ -176,81 +242,99 @@
 import PutMangeCard from '../../../../templates/PutMangeCard' 
 import MyRadio from '../../../../../../components/MyRadio' 
 import SelectedList from './SelectedList' 
-import mapChoosePoint from './mapChoosePoint' 
+import mapChooseWindow from './mapChooseWindow' 
+import confirmWindow from './confirmWindow' 
+import EstimateBox from './EstimateBox' 
 
 export default {
   components: {
     PutMangeCard,
     MyRadio,
     SelectedList,
-    mapChoosePoint
+    mapChooseWindow,
+    confirmWindow,
+    EstimateBox
   },
   data() {
     return {
+      // 所属计划的信息
+      planData: {},
+
       // 投放行业
-      industry: [
-        { name: '餐饮', value: 'byWeek'},
-        { name: '医疗', value: 'byDay'},
-      ],
-      // 投放类型
+      industry: {
+        loading: false,
+        data: ''
+      },
+
+      // 投放类型，0按周投放，1按天投放
       putType: {
         activeIndex: 0,
-        activeType: 'byWeek',
+        activeType: 0,
         values: [
-          { name: '按周投放', value: 'byWeek'},
-          { name: '按天投放', value: 'byDay'},
+          { name: '按周投放', value: 0},
+          { name: '按天投放', value: 1},
         ]
       },
+
       // 投放方式
       putWay: {
         activeIndex: 0,
         values: [
-          { name: '一个楼盘所有点位', value: 'all' },
-          { name: '一个单元一个电梯', value: 'one' },
-          { name: '一个单元一半电梯', value: 'half' }
+          { name: '一个楼盘所有点位', value: '001' },
+          { name: '一个单元一个电梯', value: '002' },
+          { name: '一个单元一半电梯', value: '003' }
         ]
       },
-      // 投放频次
+
+      // 投放频次，001-300次/天，002-600次/天，003-900次/天 依次类推
       putFrequency: [
-        { name: '300 次/天', value: 300 },
-        { name: '600 次/天', value: 600 },
-        { name: '900 次/天', value: 900 },
-      ],
-      // 投放时长
-      putDuration: [
-        { name: ' 5 秒/次', value: 5000 },
-        { name: '10 秒/次', value: 10000 },
-        { name: '15 秒/次', value: 15000 },
+        { name: '300 次/天', value: '001' },
+        { name: '600 次/天', value: '002' },
+        { name: '900 次/天', value: '003' },
       ],
 
-      // 屏幕类型 
+      // 投放时长，001-5s/次，002-10s/次，003-15s/次 依次类推
+      putDuration: [
+        { name: ' 5 秒/次', value: '001' },
+        { name: '10 秒/次', value: '002' },
+        { name: '15 秒/次', value: '003' },
+      ],
+
+      // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
       screenType: {
         activeIndex: 0,
         activeValue: 'both',
         values: [
-          { name: '联动', value: 'both' },
-          { name: '上屏', value: 'top' },
-          { name: '下屏', value: 'bottom' },
+          { name: '联动', value: '003' },
+          { name: '上屏', value: '001' },
+          { name: '下屏', value: '002' },
         ]
       },
-
 
       // 楼盘定向
       buildingDirection: {
         activeType: 'create',
-        mapChooseShow: true,
+        mapChooseShow: false,
         buildingData: {}
+      },
+
+      // 确认信息
+      confirmMsg: {
+        show: false,
       },
 
       formData: {
         name: '',
         industry: '',
-        type: 'byWeek',
-        date:'',
-        way: 'all',
-        frequency:'',
-        duration: '',
-        screenType:'both',
+        projectType: 0, // 投放类型，0按周投放，1按天投放
+        dateForDay:'',
+        dateForWeekBegin:'',
+        dateForWeekEnd:'',
+        deliveryMode: '001', // 投放方式
+        count:'', // 投放频次
+        second: '', // 投放时长
+        type:'003', // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
+        projectCity: '', // 投放类型，0按周投放，1按天投放
         buildingDirection: '',
       },
 
@@ -261,22 +345,28 @@ export default {
         industry: [
           { required: true, message: '请选择投放方案行业!', trigger: 'blur' },
         ],
-        type: [
+        projectType: [
           { required: true, message: '请设置投放类型!', trigger: 'blur' },
         ],
-        date:[
+        dateForDay:[
           { required: true, message: '请设置投放时间!', trigger: 'blur' },
         ],
-        way: [
+        dateForWeekBegin:[
+          { required: true, message: '请设置投放开始时间!', trigger: 'blur' },
+        ],
+        dateForWeekEnd:[
+          { required: true, message: '请设置投放结束时间!', trigger: 'blur' },
+        ],
+        deliveryMode: [
           { required: true, message: '请设置投放方式!', trigger: 'blur' },
         ],
-        frequency:[
+        count:[
           { required: true, message: '请选投放频次!', trigger: 'blur' },
         ],
-        duration: [
+        second: [
           { required: true, message: '请选择投放时长!', trigger: 'blur' },
         ],
-        screenType:[
+         type:[
           { required: true, message: '请选择屏幕类型!', trigger: 'blur' },
         ]
       },
@@ -284,8 +374,9 @@ export default {
     }
   },
 
-  mounted() {
+  beforeMount() {
     this.generateProjectName()
+    this.planData = this.$route.query;
   },
 
   methods: {
@@ -295,16 +386,75 @@ export default {
       this.formData.name = `投放方案_成都_${date.getMonth()+1}_${date.getDate()}`
     },
 
+    // 行业列表
+    getIndustryList() {
+      if (this.industry.data) return;
+      this.industry.loading = true;
+      this.$api.industryList.AllList()
+        .then(res => {
+          this.industry.loading = false;
+          this.industry.data = res.result;
+        })
+        .catch(res => {
+          this.industry.loading = false;
+        })
+    },
+
     // 显示地图选点
     showMapChoose() {
       this.buildingDirection.mapChooseShow = true;
+    },
+
+    // 按周投放 可用开始结束时间
+    // getLaunchWeek() {
+    //   let date = new Date(+this.planData.beginTime > Date.now() ? +this.planData.beginTime : Date.now()); // 开始时间 毫秒
+    //   let nowWeek = 6 - date.getDay();
+    //   let dayMilliSecond = 24 * 60 * 60 * 1000; //一天的毫秒数
+    //   let offsetWeek = 0; // 判断是否过期，是否往后延期一个星期
+
+    //   if (nowWeek <= 1 || date.getHours() > 18) {
+    //     offsetWeek = 1;
+    //   }
+
+    //   let saturdayBegin = (date.getTime() + (nowWeek + ((offsetWeek) * 7)) * dayMilliSecond); //周六开始
+    //   let saturdayEnd; //周五结束
+    //   let weekCount = 0;
+    //   while(saturdayEnd < +this.planData.endTime) {
+    //     saturdayEnd = (date.getTime() + (nowWeek + 6 + ((offsetWeek) * 7) + (weekCount * 7)) * dayMilliSecond); 
+    //     weekCount++;
+    //   }
+    //   // for (let i=0; i<10; i++) {
+    //   //   if (saturdayEnd >= +this.planData.endTime) {
+    //   //     saturdayEnd = (date.getTime() + (nowWeek + 6 + ((offsetWeek) * 7) + (--i * 7)) * dayMilliSecond);
+    //   //   console.log(i)
+    //   //     break;
+    //   //   }
+    //   // }
+
+    //   return {
+    //     saturdayBegin, saturdayEnd
+    //   }
+    // },
+
+    // 按周投放 选择时间校验结束大于开始
+    chooseWeek() {
+      if (!this.formData.dateForWeekBegin || !this.formData.dateForWeekEnd) return;
+      if (this.formData.dateForWeekBegin >= this.formData.dateForWeekEnd) {
+        this.formData.dateForWeekBegin = this.formData.dateForWeekEnd = '';
+        return this.$notify({
+          title: '警告',
+          message: '开始时间应早于结束时间',
+          type: 'warning'
+        });
+      }
     },
 
     // 保存
     saveProject() {
       let isPassEnptyCheck = true;
       let validateForms = ['planTop', 'planName'];
-      
+      let param;
+      console.log(this.formData)
       validateForms.forEach((item, index) => {
         if(this.$refs[item]) {
           this.$refs[item].validate((valid) => {
@@ -319,13 +469,76 @@ export default {
           type: 'warning'
         });
       }
-      this.$router.replace('/putManage/create/creative')
+      
+      param = {
+        name: "",
+        type: "", // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
+        industry: "", // 投放行业
+        beginTime: "",
+        endTime: "",
+        campaignId: 0, // 投放计划ID
+        count: "", // 投放频次，001-300次/天，002-600次/天，003-900次/天 依次类推
+        deliveryMode: "", // 投放方式，001一个楼盘所有点位，002一个单元一个电梯，003一个单元一半电梯
+        details: [
+          {
+            deviceNum: 0,
+            premiseId: ""
+          }
+        ], // 楼盘列表
+        projectCity: "", // 城市
+        projectType: 0, // 投放类型，0按周投放，1按天投放
+        second: "", // 投放时长，001-5s/次，002-10s/次，003-15s/次 依次类推
+      }
+      // this.$router.replace('/putManage/create/creative')
     },
   },
+
+  computed: {
+    // 限制时间选择器 按天 投放选择范围
+    pickerOptionsForDay() {
+      let _this = this;
+      return {
+        firstDayOfWeek: 6,
+        disabledDate(date) {
+          return date.getTime() < Date.now() - 8.64e7 || 
+            date.getTime() > _this.planData.endTime || 
+            date.getTime() < _this.planData.beginTime;
+        }
+      };
+    },
+
+    // 限制时间选择器 按周 投放选择范围
+    pickerOptionsForWeekBegin() {
+      let _this = this;
+      return {
+        firstDayOfWeek: 6,
+        disabledDate(date) {
+          return date.getTime() < Date.now() - 8.64e7 || 
+            date.getTime() > _this.planData.endTime || 
+            date.getTime() < _this.planData.beginTime || 
+            date.getDay() != 6;
+        },
+      };
+    },
+
+    pickerOptionsForWeekEnd() {
+      let _this = this;
+      return {
+        firstDayOfWeek: 6,
+        disabledDate(date) {
+          return date.getTime() < Date.now() - 8.64e7 || 
+            date.getTime() > _this.planData.endTime || 
+            date.getTime() < _this.planData.beginTime || 
+            date.getDay() != 5 ||
+            date.getTime() < (new Date(_this.formData.dateForWeekBegin)).getTime();
+        },
+      };
+    }
+  }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .put-project{
   .title{
     padding: 28px 0 0 40px;
@@ -386,32 +599,25 @@ export default {
           }
         }
       }
+      .week-picker-box{
+        .week-item{
+          width: 262px; 
+          float: left;
+          &.end{
+            .el-form-item__content{
+              margin-left: 0 !important;
+            }
+          }
+        }
+        .week-center-label{
+          width: 32px;
+          padding-top: 30px;
+        }
+      }
     }
   }
   .save-box{
     margin-top: 40px !important;
-  }
-  .estimate-box{
-    position: fixed;
-    top: 20vh;
-    right: 60px;
-    padding: 20px 20px 25px;
-    z-index: 10;
-    width:312px;
-    height:460px;
-    background:rgba(255,255,255,1);
-    border:1px solid rgba(229,231,233,1);
-    box-shadow:0px 4px 16px 0px rgba(118,118,118,0.16);
-    .estimate-number-box{
-      &+.estimate-number-box{
-        left: 175px;
-      }
-      position: absolute;
-      margin-top: 55px;
-      .estimate-number{
-        margin-top: 6px;
-      }
-    }
   }
 }
 </style>

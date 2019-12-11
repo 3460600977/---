@@ -122,6 +122,14 @@ let tools = {
       return o
     }
   },
+
+  /**
+   * @description: 前端分页
+   * @param: pageSize
+   */
+  localPagegation: () => {
+
+  },
 }
 
 export default tools;

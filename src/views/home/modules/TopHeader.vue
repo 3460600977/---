@@ -210,7 +210,7 @@ export default {
     .my-menu{
       height: $headerHeight;
       float: left;
-      color: #fff;
+      color: #D4D4D4;
       .item{
         position: relative;
         z-index: 2;
@@ -226,6 +226,7 @@ export default {
         // }
         &.active{
           background: #242945;
+          color: #fff;
         }
         .menu-text{
           height: $headerHeight - 4px;

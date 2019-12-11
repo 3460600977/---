@@ -5,7 +5,7 @@
           <CreativeNewPlan/>
         </el-tab-pane>
         <el-tab-pane name="exist" label="选择已有投放计划">
-          <ExistPlanList/>
+          <ExistPlanList :isShow="activeName==='exist'"/>
         </el-tab-pane>
       </el-tabs>
   </div>
@@ -13,7 +13,7 @@
 
 <script>
 import CreativeNewPlan from './modules/CreativeNewPlan.vue'
-import ExistPlanList from './modules/ExistPlanList.vue'
+import ExistPlanList from './modules/existPlanList.vue'
 import { mapMutations } from 'vuex'
 export default {
   components: {
@@ -35,9 +35,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-  .create-creative{
-    
-  }
-</style>

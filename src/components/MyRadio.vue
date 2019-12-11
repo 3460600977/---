@@ -24,7 +24,7 @@ export default {
 <style lang="scss" scoped>
   .my-radio{
     cursor: pointer;
-    min-height: 36px;
+    min-height: 36px; 
     line-height: 36px;
     display: inline-flex;
     align-items: center;
