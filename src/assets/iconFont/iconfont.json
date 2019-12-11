@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "430536",
+      "name": "错号-无框",
+      "font_class": "error2",
+      "unicode": "e644",
+      "unicode_decimal": 58948
+    },
+    {
       "icon_id": "689294",
       "name": "属性 列表 详情2",
       "font_class": "shuxingliebiaoxiangqing2",
@@ -174,11 +181,18 @@
       "unicode_decimal": 58921
     },
     {
-      "icon_id": "12260931",
+      "icon_id": "12269301",
+      "name": "uploading",
+      "font_class": "uploading1",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
+    },
+    {
+      "icon_id": "12270714",
       "name": "reconnaissance",
-      "font_class": "reconnaissance",
-      "unicode": "e62a",
-      "unicode_decimal": 58922
+      "font_class": "reconnaissance1",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
     }
   ]
 }

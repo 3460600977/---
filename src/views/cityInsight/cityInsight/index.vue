@@ -1,5 +1,10 @@
 <template>
     <div class="container cityInsight">
+      <div class="top-select">
+        <top-select
+          @drawTypeSelect="drawTypeSelect"
+        ></top-select>
+      </div>
       <div class="mapPopup">
         <map-popup
           v-if="showPath"
@@ -19,9 +24,9 @@
           :currentSelectType="currentSelectType"
         ></mouseMove-text>
       </div>
-      <div class="left-select">
-        <left-select @drawTypeSelect="drawTypeSelect"></left-select>
-      </div>
+<!--      <div class="left-select">-->
+<!--        <left-select @drawTypeSelect="drawTypeSelect"></left-select>-->
+<!--      </div>-->
       <div class="right-info">
         <right-info
           :budget="budget"
@@ -48,6 +53,7 @@
   import rightInfo from "./rightInfo";
   import leftSelect from "./leftSelect";
   import mouseMoveText from "./mouseMoveText";
+  import topSelect from "./topSelect";
 
   const NAV_HEIGHT = 76,
     ANOTHER_HEIGHT = 10,
@@ -61,6 +67,7 @@
       mapPopup,
       leftSelect,
       rightInfo,
+      topSelect,
       mouseMoveText
     },
     data() {
@@ -171,6 +178,13 @@
     top: 10px;
     left: 20px;
   }
+  .top-select {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+  }
   .mapPopup {
     position: absolute;
     z-index: 3;
@@ -182,7 +196,7 @@
   .right-info {
     position: absolute;
     z-index: 3;
-    top: 29px;
+    top: 79px;
     background: #fff;
     right: 40px;
   }

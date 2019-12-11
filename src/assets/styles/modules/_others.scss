@@ -19,6 +19,18 @@
 .border-bottom {
   border-bottom: 1px solid $color-border;
 }
+.border-left {
+  border-left: 1px solid $color-border;
+}
+.border-right {
+  border-right: 1px solid $color-border;
+}
+.margin-right-10 {
+  margin-right: 10px;
+}
+.hand {
+  cursor: pointer;
+}
 .base-radius {
   border-radius: 2px;
 }
