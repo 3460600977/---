@@ -10,23 +10,29 @@
     name: "index",
     data() {
       return {
-        loading: true,
+        loading: false,
         map: null,
         pathArr: {},
         indexArr: [],
+        pointsOverlayObj: { // 记录已选和未选海量点的对象 用于重画
+          selectedOverlay: null,
+          unSelectedOverlay: null
+        },
         showHotMapLevel: 12,
         heatmapOverlay: null,
         activePath: null,
         points: null, // 楼盘设备数据
         defaultRadius: 3000,
         drawingManager: null,
-        circleSelectedOption: {
-          shape: BMAP_POINT_SHAPE_CIRCLE,
-          color: 'rgba(45,90,255,0.74)'
-        },
-        circleUnSelectedOption: {
-          shape: BMAP_POINT_SHAPE_CIRCLE,
-          color: 'rgba(158, 158, 158, 0.7)'
+        pointsOptions: {
+          0: {
+            shape: BMAP_POINT_SHAPE_CIRCLE,
+            color: 'rgba(45,90,255,0.74)'
+          },
+          1: {
+            shape: BMAP_POINT_SHAPE_CIRCLE,
+            color: 'rgba(158, 158, 158, 0.7)'
+          }
         },
         styleOptions: {
           strokeColor:"red",    //边线颜色。
@@ -65,7 +71,6 @@
         this.$emit('activePathChange', val)
       },
       budget(val) {
-        console.log(val)
         this.drawDevicePoints()
       },
     },
@@ -77,26 +82,23 @@
       var myCity = new BMap.LocalCity();
       myCity.get((result) => {
         map.centerAndZoom(result.name,10);
-        this.loadData(map)
+        // this.loadData(map)
       });
       map.enableScrollWheelZoom();
       map.addControl(new BMap.ScaleControl());
       this.mapBindEvent()
     },
     methods:{
-      loadData(map) {
+      loadData() {
         this.loading = true
         this.$api.cityInsight.getPremisesByCity({cityCode: '510100'}).then((data) => {
           this.initMouse()
-          // this.drawHotMap(data.result)
           if (data.result) {
             this.points = this.normalizePointsAll(data.result)
-            // this.drawDevicePoints(this.points)
-            this.setDeviceSelectedPoints(this.normalizePoints(this.points))
+            this.drawDevicePoints()
           } else {
-            console.log('没有数据')
+            this.clearPoints()
           }
-
           this.loading = false
         })
       },
@@ -116,6 +118,7 @@
         }
         delete this.pathArr[this.activePath.index]
         this.setActivePathNull()
+        this.drawDevicePoints()
       },
       /*
       * 关闭DrawingManager画线方法 需要在绘画类型切换成圆形时调用
@@ -145,6 +148,7 @@
         console.log(this.activePath)
         this.pathArr[this.activePath.index] = this.activePath
         console.log(this.pathArr)
+        this.drawDevicePoints()
       },
       initMouse() {
         //实例化鼠标绘制工具
@@ -197,7 +201,6 @@
       */
       drawComplete(drawingManager) {
         drawingManager.addEventListener("overlaycomplete", (e) => {
-          // this.closePathWindow(this.pathArr)
           let location = this.map.pixelToPoint(e.currentTarget._mask._draggingMovePixel)
           let path = {
             type: e.drawingMode,
@@ -235,6 +238,7 @@
         this.activePath = path
         this.pathArr[path.index] = path
         this.indexArr[path.index] = path.index // 记录所有画过路径的index数组
+        this.drawDevicePoints()
       },
       /*
       根据楼盘数据 计算出楼盘数据所覆盖的设备数，设备数，预估覆盖人次
@@ -256,23 +260,13 @@
         if (path.type === 'polyline') {
           arr = this.filterProjectByPolyline(this.points, path.overlay, path.radius)
         } else if (path.type === 'polygon') {
-          for (let key in this.points) {
-            if (BMapLib.GeoUtils.isPointInPolygon(this.points[key].point, path.overlay)) {
-              arr.push(this.points[key])
-            }
-          }
-          // arr = this.points.filter((item) => {
-          //   return BMapLib.GeoUtils.isPointInPolygon(item.point, path.overlay)
-          // })
+          arr = this.points.filter((item) => {
+            return BMapLib.GeoUtils.isPointInPolygon(item.point, path.overlay)
+          })
         } else if (path.type === 'circle') {
-          for (let key in this.points) {
-            if (BMapLib.GeoUtils.isPointInCircle(this.points[key].point, path.overlay)) {
-              arr.push(this.points[key])
-            }
-          }
-          // arr = this.points.filter((item) => {
-          //   return BMapLib.GeoUtils.isPointInCircle(item.point, path.overlay)
-          // })
+          arr = this.points.filter((item) => {
+            return BMapLib.GeoUtils.isPointInCircle(item.point, path.overlay)
+          })
         }
         return arr
       },
@@ -327,17 +321,10 @@
         let filterPs = [];
         for (let i in polyline) {
           let circle = new BMap.Circle(polyline[i], radius/2, this.styleOptions);
-          let filterP = []
-          for (let key in points) {
-            let b = points[key].point;
-            if (BMapLib.GeoUtils.isPointInCircle(b, circle)) {
-              filterP.push(points[key])
-            }
-          }
-          // let filterP = points.filter((p) => {
-          //   let b = p.point;
-          //   return BMapLib.GeoUtils.isPointInCircle(b, circle);
-          // });
+          let filterP = points.filter((p) => {
+            let b = p.point;
+            return BMapLib.GeoUtils.isPointInCircle(b, circle);
+          });
           filterPs = [...filterP, ...filterPs];
         }
         // 未选 多边形计算
@@ -353,17 +340,9 @@
           polygons.push(this.getFourP(lat1, lng1, lat2, lng2, radius/2));
         }
         for (let j in polygons) {
-
-          let filterP = []
-          for (let key in points) {
-            let b = points[key].point;
-            if (BMapLib.GeoUtils.isPointInPolygon(b, polygons[j])) {
-              filterP.push(points[key])
-            }
-          }
-          // let filterP = points.filter((p) => {
-          //   return BMapLib.GeoUtils.isPointInPolygon(p.point, polygons[j]);
-          // });
+          let filterP = points.filter((p) => {
+            return BMapLib.GeoUtils.isPointInPolygon(p.point, polygons[j]);
+          });
           filterPs = [...filterP, ...filterPs];
         }
         let result = this.unique(filterPs)
@@ -377,8 +356,7 @@
       },
 
       zoomChangeAllPath() {
-        // console.log(this.pathArr.getOwnPropertyNames)
-        if (JSON.stringify(this.pathArr) === '{}') return
+        if (!Object.keys(this.pathArr).length) return
         for(let item of this.pathArr) {
           if (item.type === 'polyline') { // 只有折线需要在改变zoom时变半径，圆和多边形都是自动变的
             this.zoomSinglePathChange(item)
@@ -475,22 +453,29 @@
       * 根据预算随机得到已选的楼盘数据
       * */
       drawDevicePoints() {
-        if (Object.is(this.pathArr, {})) {
-
-        } else {
+        if (!Object.keys(this.pathArr).length) {
           if (this.budget === 1) {
-            item.selectedBuildings = item.buildings
-            console.log(this.budget)
+            this.setDevicePoints(this.normalizePoints(this.points), 0)
           } else {
-            let selectedBuildings = []
+            let [selectP, unSelectP] = this.getRandomBuildings(this.points, this.budget)
+            this.setDevicePoints(selectP, 0)
+            this.setDevicePoints(unSelectP, 1)
+          }
+        } else {
+          let selectedBuildings = []
+          if (this.budget === 1) {
             for (let key in this.pathArr) {
-              this.pathArr[key].selectedBuildings = this.getRandomBuildings(this.pathArr[key].buildings, this.budget)
+              this.pathArr[key].selectedBuildings = this.pathArr[key].buildings
               selectedBuildings = selectedBuildings.concat(this.pathArr[key].selectedBuildings)
             }
-            let result = this.unique(selectedBuildings)
-            console.log(result)
-            this.separateBgPonits(result)
+          } else {
+            for (let key in this.pathArr) {
+              this.pathArr[key].selectedBuildings = this.getRandomBuildings(this.pathArr[key].buildings, this.budget)[0]
+              selectedBuildings = selectedBuildings.concat(this.pathArr[key].selectedBuildings)
+            }
           }
+          let result = this.unique(selectedBuildings)
+          this.separateBgPonits(result)
         }
       },
       /*
@@ -514,8 +499,18 @@
       drawBg(selected, unSelected) {
         let selectP = this.normalizePoints(Object.values(selected))
         let unSelectP = this.normalizePoints(Object.values(unSelected))
-        this.setDeviceSelectedPoints(selectP)
-        this.setDeviceUnSelectedPoints(unSelectP)
+        this.setDevicePoints(selectP, 0)
+        this.setDevicePoints(unSelectP, 1)
+      },
+      /*
+      * 根据pointsOverlayObj里面存在的背景海量点 清空海量点图层
+      * */
+      clearPoints() {
+        for (let key in this.pointsOverlayObj) {
+          if (this.pointsOverlayObj[key]) {
+            this.pointsOverlayObj[key].clear()
+          }
+        }
       },
       /*
       * 得到已选的楼盘数据
@@ -531,16 +526,23 @@
           result.push(arrCopy[val])
           arrCopy.splice(val, 1)
         }
-        return result
+        return [result, arrCopy]
       },
 
-      setDeviceSelectedPoints(arrPoints) {
-        let points = new BMap.PointCollection(arrPoints, this.circleSelectedOption);
-        this.map.addOverlay(points);
-      },
-      setDeviceUnSelectedPoints(arrPoints) {
-        let points = new BMap.PointCollection(arrPoints, this.circleUnSelectedOption);
-        this.map.addOverlay(points);
+      /*
+      * 画背景点方法 0：已选 1：未选
+      * */
+      setDevicePoints(points, type) {
+        let str = type === 0?'selected':'unSelected'
+        let overlay = `${str}Overlay`
+        if (this.pointsOverlayObj[overlay]) {
+          let points = new BMap.PointCollection(points, this.pointsOptions[type]);
+          this.pointsOverlayObj[overlay] = points
+          this.map.addOverlay(points);
+        } else {
+          this.pointsOverlayObj[overlay].clear()
+          this.pointsOverlayObj[overlay].setPoints(points)
+        }
       },
     }
   }
