@@ -23,11 +23,15 @@
         <left-select @drawTypeSelect="drawTypeSelect"></left-select>
       </div>
       <div class="right-info">
-        <right-info></right-info>
+        <right-info
+          :budget="budget"
+          @budgetChange="budgetChange"
+        ></right-info>
       </div>
       <div class="map container">
         <db-map
           ref="dbmap"
+          :budget="budget"
           :currentSelectType="currentSelectType"
           @activePathChange="activePathChange"
           @currentMouseLocation="currentMouseLocation"
@@ -62,12 +66,12 @@
     data() {
       return {
         showPathCopy: null, // 用于储存经纬度计算showPath的位置
-        value: 100,
         map: null,
         location: { // 鼠标当前位置
           x: 0,
           y: 0
         },
+        budget: 1, // 投放预算默认值
         sliderVal: 3000,
         currentSelectType: null,
         popUpHeight: {
@@ -147,6 +151,12 @@
       * */
       drawCancle() {
         this.currentSelectType = null
+      },
+      /*
+      * 投放预算变化
+      * */
+      budgetChange(val) {
+        this.budget = val
       },
     },
   }
