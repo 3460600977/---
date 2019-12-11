@@ -124,12 +124,27 @@ let tools = {
   },
 
   /**
+   * TODO
    * @description: 前端分页
    * @param: pageSize
    */
   localPagegation: () => {
 
   },
+
+  /**
+   * @description: 校验后缀
+   * @param: str 校验的字符串
+   * @param: suffix 后缀
+   */
+  checkSuffix: (str, suffix) => {
+    let strSuffix = str.substr(str.lastIndexOf(".") + 1)
+    if (strSuffix === suffix) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 export default tools;

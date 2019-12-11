@@ -5,7 +5,7 @@
     </div>
 
     <!-- 投放设置 -->
-    <PutMangeCard :title="'投放设置'" class="form-box">
+    <PutMangeCard v-loading="planDataLoading" :title="'投放设置'" class="form-box">
       <el-form
         ref="planTop"
         :label-position="'left'"
@@ -153,7 +153,7 @@
 
     
     <!-- 楼盘定向 -->
-    <PutMangeCard :title="'楼盘定向'" class="form-box">
+    <PutMangeCard v-loading="planDataLoading" :title="'楼盘定向'" class="form-box">
       <el-tabs class="thin-tab mt-15" v-model="buildingDirection.activeType">
 
         <el-tab-pane label="新建楼盘定向"   name="create">
@@ -182,22 +182,38 @@
           <SelectedList/>
         </el-tab-pane>
 
-        <el-tab-pane label="导入楼盘数据"   name="import">
+        <el-tab-pane label="导入楼盘数据" name="import">
           <el-form label-position='left' label-width="125px">
 
             <el-form-item label="城市">
               <el-select placeholder="请选择">
                 <el-option
-                  v-for="item in 10"
-                  :key="item"
-                  :label="item"
-                  :value="item">
+                  v-for="item in planData.cityList"
+                  :key="item.cityCode"
+                  :label="item.cityName"
+                  :value="item.cityCode">
                 </el-option>
               </el-select>
             </el-form-item>
 
             <el-form-item label="导入楼盘数据" style="margin-top: 8px">
-              <el-input suffix-icon="el-icon-upload2"></el-input>
+              <div class="mid">
+               <div class="my-input-upload" style="width: 240px;">
+                <input 
+                  ref="topVideo"
+                  @change="uploadCSV($event)"
+                  suffix-icon="el-icon-upload2"
+                  type="file" 
+                  accept=".csv"
+                  class="input-real"/>
+                <el-input
+                  suffix-icon="el-icon-upload2"
+                  placeholder="请上传"
+                  v-model="buildingDirection.csvFile.name"
+                  class="input-fake"></el-input>
+              </div>
+              <el-button @click="showMapChoose" type="primary" style="width: 102px; margin-left: 10px">模板下载</el-button>
+              </div>
             </el-form-item>
           </el-form>
           
@@ -210,7 +226,7 @@
     <mapChooseWindow :mapChooseShow.sync="buildingDirection.mapChooseShow"/>
     
     <!-- 投放方案名称 -->
-    <PutMangeCard :title="'投放方案名称'" class="form-box">
+    <PutMangeCard v-loading="planDataLoading" :title="'投放方案名称'" class="form-box">
       <el-form
         ref="planName"
         :model="formData"
@@ -227,14 +243,14 @@
     <confirmWindow :confirmMsgShow.sync ="confirmMsg.show"/>
 
     <!-- 保存 取消 -->
-    <PutMangeCard class="save-box">
+    <PutMangeCard v-loading="planDataLoading" class="save-box">
       <div class="float-right">
         <el-button style="width: 136px" plain>取消</el-button>
         <el-button @click="saveProject" style="width: 136px" type="primary">确定</el-button>
       </div>
     </PutMangeCard>
 
-    <EstimateBox/>
+    <EstimateBox  v-loading="planDataLoading"/>
   </div>
 </template>
 
@@ -259,6 +275,7 @@ export default {
     return {
       // 所属计划的信息
       planData: {},
+      planDataLoading: true,
 
       // 投放行业
       industry: {
@@ -313,9 +330,13 @@ export default {
 
       // 楼盘定向
       buildingDirection: {
-        activeType: 'create',
+        activeType: 'import',
         mapChooseShow: false,
-        buildingData: {}
+        csvFile: '',
+        buildingData: {
+          name: '',
+          file: ''
+        }
       },
 
       // 确认信息
@@ -335,7 +356,7 @@ export default {
         second: '', // 投放时长
         type:'003', // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
         projectCity: '', // 投放类型，0按周投放，1按天投放
-        buildingDirection: '',
+        builds: '', // 楼盘数据
       },
 
       formDataRules: {
@@ -375,11 +396,23 @@ export default {
   },
 
   beforeMount() {
+    this.getPlanDetailById(this.$route.query.planId)
     this.generateProjectName()
-    this.planData = this.$route.query;
   },
 
   methods: {
+    // 根据id获取计划详情
+    getPlanDetailById(planid) {
+      this.$api.PutPlan.PlanDetail(+planid)
+        .then(res => {
+          this.planDataLoading = false;
+          this.planData = res.result;
+        })
+        .catch(res => {
+          this.planDataLoading = false;
+        })
+    },
+
     // 生成方案名字
     generateProjectName() {
       let date = new Date();
@@ -447,6 +480,19 @@ export default {
           type: 'warning'
         });
       }
+    },
+
+    // 上传csv
+    uploadCSV(event) {
+      let file = event.target.files[0];
+      if (!this.$tools.checkSuffix(file.name, 'csv')) {
+        return this.$notify({
+          title: '警告',
+          message: '请上传CSV格式的文件',
+          type: 'warning'
+        });
+      }
+      this.buildingDirection.csvFile = file;
     },
 
     // 保存

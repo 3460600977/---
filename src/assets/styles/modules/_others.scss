@@ -26,6 +26,25 @@
   visibility: hidden;
 }
 
+// el-input input上传
+.my-input-upload {
+  overflow: hidden;
+  display: inline-block;
+  position: relative;
+  height: 36px;
+  .input-real{
+    position: absolute;
+    z-index: 2;
+    height: 36px;
+    cursor: pointer;
+    opacity: 0;
+  }
+  .input-fake{
+    position: absolute;
+    z-index: 1;
+  }
+}
+
 /***
  *          .,:,,,                                        .::,,,::.
  *        .::::,,;;,                                  .,;;:,,....:i:

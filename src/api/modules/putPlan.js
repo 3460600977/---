@@ -34,9 +34,8 @@ const PlanList = (data) => {
 // 计划详情
 const PlanDetail = (data) => {
   return request({
-    url: "/dpapi/campaign/detail",
+    url: "/dpapi/campaign/detail?id=" + data,
     method: "get",
-    data,
   });
 }
 
