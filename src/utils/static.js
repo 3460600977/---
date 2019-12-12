@@ -15,4 +15,7 @@ export const scaleData =[
   {zoom:6 ,length:200000 ,Pixels:59},
   {zoom:5 ,length:500000 ,Pixels:76},
   {zoom:4 ,length:1000000 ,Pixels:76},
-  {zoom:3 ,length:2000000 ,Pixels:75}]
+  {zoom:3 ,length:2000000 ,Pixels:75}
+]
+
+export const colorMain = '#2D5AFF'
