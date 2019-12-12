@@ -177,6 +177,7 @@
       },
       returnResult(val, type) {
         console.log(val)
+        this.$emit('returnBuildingTags', val)
         this.hide(type)
       }
     }

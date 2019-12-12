@@ -3,6 +3,7 @@
       <div class="top-select">
         <top-select
           :buildingFilter="buildingFilter"
+          @returnBuildingTags="returnBuildingTags"
           @drawTypeSelect="drawTypeSelect"
         ></top-select>
       </div>
@@ -133,6 +134,10 @@
             }
           }
         })
+      },
+      returnBuildingTags(val) {
+        console.log(val)
+        this.buildingFilter = this.$tools.deepCopy(val)
       },
       deletePath(item) {
         this.$refs.dbmap.deletePath(item)

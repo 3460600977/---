@@ -62,12 +62,16 @@
       },
       filters: {
         type: Object,
-        default: {}
+        required: true
       },
     },
     watch: {
       activePath(val) {
         this.$emit('activePathChange', val)
+      },
+      filters(val) {
+        console.log(val)
+        this.loadData()
       },
       budget() {
         this.drawDevicePoints()
@@ -90,19 +94,38 @@
       var myCity = new BMap.LocalCity();
       myCity.get((result) => {
         map.centerAndZoom(result.name,10);
-        this.loadData(map)
+        this.initMouse()
+        this.loadData()
       });
       map.enableScrollWheelZoom();
       map.addControl(new BMap.ScaleControl());
       this.mapBindEvent()
     },
     methods:{
+      filtersChange() {
+        this.loading = true
+        this.$api.cityInsight.getPremisesByCity({cityCode: '510100', tag: this.filters}).then((data) => {
+          if (data.result) {
+            this.points = this.normalizePointsAll(data.result)
+            this.drawDevicePoints()
+          } else {
+            this.clearPoints()
+          }
+          this.loading = false
+        })
+      },
       loadData() {
         this.loading = true
         this.$api.cityInsight.getPremisesByCity({cityCode: '510100', tag: this.filters}).then((data) => {
-          this.initMouse()
+          console.log(data.result)
           if (data.result) {
             this.points = this.normalizePointsAll(data.result)
+            if (Object.keys(this.pathArr).length) {
+              for(let key in this.pathArr) {
+                this.pathArr[key].buildings = this.isInArea(this.pathArr[key])
+              }
+            }
+            console.log(this.pathArr)
             this.drawDevicePoints()
           } else {
             this.clearPoints()
@@ -262,6 +285,7 @@
       得出在当前操作路径区域内的点
        */
       isInArea(path) {
+        console.log(path)
         let arr = []
         if (path.type === 'polyline') {
           arr = this.filterProjectByPolyline(this.points, path.overlay, path.radius)
@@ -270,6 +294,7 @@
             return BMapLib.GeoUtils.isPointInPolygon(item.point, path.overlay)
           })
         } else if (path.type === 'circle') {
+          console.log(this.points)
           arr = this.points.filter((item) => {
             return BMapLib.GeoUtils.isPointInCircle(item.point, path.overlay)
           })

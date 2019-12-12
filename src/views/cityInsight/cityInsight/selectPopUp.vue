@@ -48,9 +48,9 @@
         if (val === 0) {
           for (let key in this.filters) {
             this.filtersCopy[key] = []
-            this.setFiltersOld()
-            this.$emit('returnResult', this.filtersCopy)
           }
+          this.setFiltersOld()
+          this.$emit('returnResult', this.filtersCopy)
         } else if (val === 1) {
           this.filtersCopy = this.$tools.deepCopy(this.filtersOld)
           this.$emit('hide')
@@ -64,7 +64,6 @@
       },
       typeClick(v1, v2) {
         this.filtersCopy[v1].push(v2)
-        console.log(this.filtersOld)
       },
     }
   }
