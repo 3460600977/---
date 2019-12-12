@@ -151,16 +151,28 @@ let tools = {
 
   /**
    * @description: 校验后缀
-   * @param: str 校验的字符串
-   * @param: suffix 后缀
+   * @param: 字符串 str 校验的字符串
+   * @param: 数组 suffix 后缀
    */
   checkSuffix: (str, suffix) => {
-    let strSuffix = str.substr(str.lastIndexOf(".") + 1)
-    if (strSuffix === suffix) {
-      return true;
-    } else {
-      return false;
+    let result = false;
+    let strSuffix = str.substr(str.lastIndexOf(".") + 1);
+    for (let i=0; i<suffix.length; i++) {
+      if (strSuffix === suffix[i]) {
+        result = true;
+        break;
+      }
     }
+    return result;
+  },
+
+  /**
+   * @description: 根据index删除数组元素
+   * @param: arrData
+   * @param: index
+   */
+  removeArrayItemByIndex(arrData, index) {
+    return arrData.splice(index, 1);
   }
 }
 

@@ -234,7 +234,7 @@ export default {
         campaignType: this.formData.goal,
         budgetType: this.formData.budget.type,
         totalBudget: this.formData.budget.value,
-        city: this.formData.putCity,
+        cityList: this.formData.putCity,
         beginTime: this.formData.putDate[0],
         endTime: this.formData.putDate[1]
       };

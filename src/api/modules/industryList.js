@@ -12,6 +12,6 @@ const AllList = () => {
   });
 }
 
-export const industryList = {
+export const IndustryList = {
   AllList
 }

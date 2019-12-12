@@ -6,7 +6,7 @@
     <div class="title">确认投放方案信息</div>
     <div class="confirm-content">
       <div class="sub-title">确认投放方案信息</div>
-      <el-tabs class="thin-tab" v-model="activeTab">
+      <el-tabs class="thin-tab small" v-model="activeTab">
 
         <el-tab-pane label="方案信息" name="plan">
           <el-form label-position='left' label-width="150px">
@@ -93,28 +93,6 @@ export default {
       .sub-title{
         padding: 30px 0 17px;
         font-size:14px;
-      }
-      .el-tabs.thin-tab .el-tabs__active-bar{
-        height: 1px;
-      }
-      .el-tabs__nav-wrap{
-        border-bottom: 1px solid #E5E7E9;
-      }
-      .el-tabs.thin-tab .el-tabs__item.is-active{
-        color: $color-main;
-      }
-      .el-form-item__label{
-        color: $color-text;
-      }
-      .el-tabs__active-bar{
-        display: none;
-      }
-      .el-tabs__item{
-        margin-right: 93px;
-        padding: 0;
-        &.is-active{
-          border-bottom: 1px solid $color-main;
-        }
       }
     }
   }

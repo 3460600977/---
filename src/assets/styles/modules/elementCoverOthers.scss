@@ -85,6 +85,30 @@
         color: #181819;
       }
     }
+    &.small{
+      .el-tabs__active-bar{
+        height: 1px;
+      }
+      .el-tabs__nav-wrap{
+        border-bottom: 1px solid #E5E7E9;
+      }
+      .el-tabs__item.is-active{
+        color: $color-main;
+      }
+      .el-form-item__label{
+        color: $color-text;
+      }
+      .el-tabs__active-bar{
+        display: none;
+      }
+      .el-tabs__item{
+        margin-right: 93px;
+        padding: 0;
+        &.is-active{
+          border-bottom: 1px solid $color-main;
+        }
+      }
+    }
   }
 }
 
@@ -113,4 +137,10 @@
 
 .el-form-item__content{
   line-height: 36px;
+}
+
+.el-date-editor .el-range-input{
+  &::placeholder{
+    color: $color-text;
+  }
 }

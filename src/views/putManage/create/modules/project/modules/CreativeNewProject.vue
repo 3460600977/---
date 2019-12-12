@@ -55,19 +55,23 @@
           投放时间 
         ----->
         <!-- 按天投放 -->
-        <el-form-item v-show="formData.projectType === 1" class="mt-20" prop="dateForDay" label="投放时间">
+        <el-form-item v-show="formData.projectType === 1" class="mt-20" prop="dateForDay">
+          <label slot="label"><span class="color-red">* </span>投放时间</label>
           <el-date-picker
             v-model="formData.dateForDay"
             value-format="yyyy-MM-dd"
             type="daterange"
             :picker-options="pickerOptionsForDay"
-            range-separator="至">
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间">
           </el-date-picker>
         </el-form-item>
 
         <!-- 按周投放 -->
         <div v-show="formData.projectType === 0" class="week-picker-box clearfix">
-          <el-form-item class="week-item mt-20" prop="dateForWeekBegin" label="投放时间">
+          <el-form-item class="week-item mt-20" prop="dateForWeekBegin">
+            <label slot="label"><span class="color-red">* </span>投放时间</label>
             <el-date-picker
               @change="chooseWeek"
               value-format="yyyy-MM-dd"
@@ -105,7 +109,7 @@
 
         <!-- 投放频次 -->
         <el-form-item class="mt-20" prop="count" label="投放频次">
-          <el-select v-model="formData.count" placeholder="请选择">
+          <el-select filterable v-model="formData.count" placeholder="请选择">
             <el-option
               v-for="(frequency, index) in putFrequency"
               :key="index"
@@ -117,7 +121,7 @@
 
         <!-- 投放时长 -->
         <el-form-item class="mt-20" prop="second" label="投放时长">
-          <el-select v-model="formData.second" placeholder="请选择">
+          <el-select filterable v-model="formData.second" placeholder="请选择">
             <el-option
               v-for="(duration, index) in putDuration"
               :key="index"
@@ -128,7 +132,7 @@
         </el-form-item>
         
         <!-- 屏幕类型 -->
-        <el-form-item class="screen-type-preview-box mt-20" prop=" type" label="屏幕类型">
+        <el-form-item class="screen-type-preview-box mt-20" prop="type" label="屏幕类型">
           <div class="screen-type-preview-content">
             <MyRadio
               v-for="(item, index) in screenType.values"
@@ -151,46 +155,56 @@
         
     </PutMangeCard>
 
-    
     <!-- 楼盘定向 -->
     <PutMangeCard v-loading="planDataLoading" :title="'楼盘定向'" class="form-box">
       <el-tabs class="thin-tab mt-15" v-model="buildingDirection.activeType">
-
-        <el-tab-pane label="新建楼盘定向"   name="create">
+        <!-- 新建楼盘定向 -->
+        <el-tab-pane label="新建楼盘定向" name="create">
           <el-form label-position='left' label-width="125px">
             <el-form-item label="选点方式">
               <el-button @click="showMapChoose" type="primary" style="width: 102px">地图选点</el-button>
             </el-form-item>
           </el-form>
-          <SelectedList/>
         </el-tab-pane>
-
+        
+        <!-- 已有资源包 -->
         <el-tab-pane label="已有资源包" name="exist">
           <el-form label-position='left' label-width="125px">
             <el-form-item label="已有资源包">
-              <el-select placeholder="请选择">
+              <el-select 
+                @focus="getCityInsightList"
+                @change="getCityInsightDetail(buildingDirection.cityInsight.selectedItemId)"
+                :loading="buildingDirection.cityInsight.loading" 
+                :disabled="cityInsightDisabled"
+                v-model="buildingDirection.cityInsight.selectedItemId" 
+                filterable
+                clearable
+                :placeholder="!cityInsightDisabled ? '请选择' : '请先完善投放设置'">
                 <el-option
-                  v-for="item in 10"
-                  :key="item"
-                  :label="item"
-                  :value="item">
+                  v-for="item in buildingDirection.cityInsight.data"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
                 </el-option>
               </el-select>
               <el-button @click="showMapChoose" type="primary" style="margin-left: 10px;">管理已有资源包</el-button>
             </el-form-item>
           </el-form>
-          <SelectedList/>
         </el-tab-pane>
 
+        <!-- 导入楼盘数据 -->
         <el-tab-pane label="导入楼盘数据" name="import">
           <el-form label-position='left' label-width="125px">
 
             <el-form-item label="城市">
-              <el-select placeholder="请选择">
+              <el-select 
+                filterable
+                v-model="formData.projectCity" 
+                placeholder="请选择">
                 <el-option
                   v-for="item in planData.cityList"
                   :key="item.cityCode"
-                  :label="item.cityName"
+                  :label="item.name"
                   :value="item.cityCode">
                 </el-option>
               </el-select>
@@ -200,26 +214,30 @@
               <div class="mid">
                <div class="my-input-upload" style="width: 240px;">
                 <input 
-                  ref="topVideo"
-                  @change="uploadCSV($event)"
+                  v-show="!cityInsightDisabled"
+                  ref="uplaodBuild"
+                  @change="uplaodBuild($event)"
                   suffix-icon="el-icon-upload2"
                   type="file" 
-                  accept=".csv"
+                  accept=".csv, .xls, .xlsx"
                   class="input-real"/>
                 <el-input
                   suffix-icon="el-icon-upload2"
-                  placeholder="请上传"
-                  v-model="buildingDirection.csvFile.name"
+                  :disabled="cityInsightDisabled"
+                  :placeholder="!cityInsightDisabled ? '请上传' : '请先完善投放设置'"
+                  v-model="buildingDirection.uploadBuildsFile.name"
                   class="input-fake"></el-input>
-              </div>
-              <el-button @click="showMapChoose" type="primary" style="width: 102px; margin-left: 10px">模板下载</el-button>
+                </div>
+
+                <el-button @click="downloadTemplate" type="primary" 
+                  style="width: 102px; margin-left: 10px">模板下载</el-button>
               </div>
             </el-form-item>
           </el-form>
-          
-          <SelectedList/>
         </el-tab-pane>
       </el-tabs>
+
+      <SelectedList :list.sync="this.buildingDirection.builds.data" :loading="buildingDirection.builds.loading"/>
     </PutMangeCard>
 
     <!-- 地图选点 -->
@@ -272,6 +290,21 @@ export default {
     EstimateBox
   },
   data() {
+    let checkDate = (rule, value, callback) => {
+      // 投放类型，0按周投放，1按天投放
+      if (this.putType.activeType === 1 && !value) {
+        callback(new Error('请设置时间！'));
+      }
+      callback()
+    };
+    let checkWeek = (rule, value, callback) => {
+      // 投放类型，0按周投放，1按天投放
+      if (this.putType.activeType === 0 && !value) {
+        callback(new Error('请设置时间！'));
+      }
+      callback()
+    };
+
     return {
       // 所属计划的信息
       planData: {},
@@ -330,14 +363,22 @@ export default {
 
       // 楼盘定向
       buildingDirection: {
-        activeType: 'import',
+        activeType: 'create',
         mapChooseShow: false,
-        csvFile: '',
-        buildingData: {
-          name: '',
-          file: ''
-        }
+        uploadBuildsFile: '',
+        // 城市洞察包列表
+        cityInsight: {
+          loading: true,
+          data: '',
+          selectedItemId: ''
+        },
+        // 楼盘余量
+        builds: {
+          loading: false, // null loading notnull
+          data: []
+        },
       },
+
 
       // 确认信息
       confirmMsg: {
@@ -352,11 +393,11 @@ export default {
         dateForWeekBegin:'',
         dateForWeekEnd:'',
         deliveryMode: '001', // 投放方式
-        count:'', // 投放频次
-        second: '', // 投放时长
+        count:'001', // 投放频次
+        second: '001', // 投放时长
         type:'003', // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
-        projectCity: '', // 投放类型，0按周投放，1按天投放
-        builds: '', // 楼盘数据
+        projectCity: '', // 城市
+        details: this.buildsDetails, // 楼盘数据
       },
 
       formDataRules: {
@@ -364,30 +405,30 @@ export default {
           { required: true, message: '请输入投放方案名称!', trigger: 'blur' },
         ],
         industry: [
-          { required: true, message: '请选择投放方案行业!', trigger: 'blur' },
+          { required: true, message: '请选择投放方案行业!', trigger: 'change' },
         ],
         projectType: [
           { required: true, message: '请设置投放类型!', trigger: 'blur' },
         ],
         dateForDay:[
-          { required: true, message: '请设置投放时间!', trigger: 'blur' },
+          { validator: checkDate, trigger: 'blur' },
         ],
         dateForWeekBegin:[
-          { required: true, message: '请设置投放开始时间!', trigger: 'blur' },
+          { validator: checkWeek, trigger: 'blur' },
         ],
         dateForWeekEnd:[
-          { required: true, message: '请设置投放结束时间!', trigger: 'blur' },
+          { validator: checkWeek, trigger: 'blur' },
         ],
         deliveryMode: [
           { required: true, message: '请设置投放方式!', trigger: 'blur' },
         ],
         count:[
-          { required: true, message: '请选投放频次!', trigger: 'blur' },
+          { required: true, message: '请选投放频次!', trigger: 'change' },
         ],
         second: [
-          { required: true, message: '请选择投放时长!', trigger: 'blur' },
+          { required: true, message: '请选择投放时长!', trigger: 'change' },
         ],
-         type:[
+        type:[
           { required: true, message: '请选择屏幕类型!', trigger: 'blur' },
         ]
       },
@@ -409,6 +450,7 @@ export default {
           this.planData = res.result;
         })
         .catch(res => {
+          this.planData.name = '加载失败请刷新页面或重新进入';
           this.planDataLoading = false;
         })
     },
@@ -423,7 +465,7 @@ export default {
     getIndustryList() {
       if (this.industry.data) return;
       this.industry.loading = true;
-      this.$api.industryList.AllList()
+      this.$api.IndustryList.AllList()
         .then(res => {
           this.industry.loading = false;
           this.industry.data = res.result;
@@ -438,37 +480,6 @@ export default {
       this.buildingDirection.mapChooseShow = true;
     },
 
-    // 按周投放 可用开始结束时间
-    // getLaunchWeek() {
-    //   let date = new Date(+this.planData.beginTime > Date.now() ? +this.planData.beginTime : Date.now()); // 开始时间 毫秒
-    //   let nowWeek = 6 - date.getDay();
-    //   let dayMilliSecond = 24 * 60 * 60 * 1000; //一天的毫秒数
-    //   let offsetWeek = 0; // 判断是否过期，是否往后延期一个星期
-
-    //   if (nowWeek <= 1 || date.getHours() > 18) {
-    //     offsetWeek = 1;
-    //   }
-
-    //   let saturdayBegin = (date.getTime() + (nowWeek + ((offsetWeek) * 7)) * dayMilliSecond); //周六开始
-    //   let saturdayEnd; //周五结束
-    //   let weekCount = 0;
-    //   while(saturdayEnd < +this.planData.endTime) {
-    //     saturdayEnd = (date.getTime() + (nowWeek + 6 + ((offsetWeek) * 7) + (weekCount * 7)) * dayMilliSecond); 
-    //     weekCount++;
-    //   }
-    //   // for (let i=0; i<10; i++) {
-    //   //   if (saturdayEnd >= +this.planData.endTime) {
-    //   //     saturdayEnd = (date.getTime() + (nowWeek + 6 + ((offsetWeek) * 7) + (--i * 7)) * dayMilliSecond);
-    //   //   console.log(i)
-    //   //     break;
-    //   //   }
-    //   // }
-
-    //   return {
-    //     saturdayBegin, saturdayEnd
-    //   }
-    // },
-
     // 按周投放 选择时间校验结束大于开始
     chooseWeek() {
       if (!this.formData.dateForWeekBegin || !this.formData.dateForWeekEnd) return;
@@ -482,59 +493,170 @@ export default {
       }
     },
 
-    // 上传csv
-    uploadCSV(event) {
+    // 获取城市洞察包列表
+    getCityInsightList() {
+      if (this.buildingDirection.cityInsight.data) return;
+      let param = {
+        "name": "",
+        "pageIndex": 0,
+        "pageSize": 0
+      }
+      this.$api.cityInsight.CityInsightList(param)
+        .then(res => {
+          this.buildingDirection.cityInsight = {
+            loading: false,
+            data: res.result
+          }
+        })
+        .catch(res => {
+          this.buildingDirection.cityInsight.loading = false;
+        })
+    },
+
+    // 根据id获取城市洞察包详情
+    getCityInsightDetail(id) {
+      if (!id) return;
+      this.buildingDirection.builds.loading = true;
+      this.$api.cityInsight.GetCityInsightDetailById(id)
+        .then(res => {
+          this.getBuildsAvalable(res.result)
+        })
+        .catch(res => {
+          this.buildingDirection.builds.loading = false;
+        })
+    },
+
+    /**
+     * @description 根据 城市洞察 楼盘余量
+     * @param cityInsight 城市洞察详细信息
+     */
+    getBuildsAvalable(cityInsight) {
+      if(!cityInsight) return
+      let param;
+      param = {
+        beginTime:   this.formData.projectType == 0 ? this.formData.dateForWeekBegin : this.formData.dateForDay[0],
+        endTime:     this.formData.projectType == 0 ? this.formData.dateForWeekEnd : this.formData.dateForDay[1],
+        count:       this.formData.count,
+        deliveryMode:this.formData.deliveryMode,
+        industry:    this.formData.industry,
+        premiseIds:  cityInsight.premiseIds,
+        projectCity: cityInsight.city,
+        projectType: this.formData.projectType,
+        second:      this.formData.second,
+        type:        this.formData.type
+      };
+
+      this.$api.PutProject.BuildsAvailableByCityInsignt(param)
+        .then(res => {
+          this.buildingDirection.builds.data = res.result;
+          this.buildingDirection.builds.loading = false;
+        })
+        .catch(res => {
+          this.buildingDirection.builds.data = [];
+          this.buildingDirection.builds.loading = false;
+        })
+    },
+
+    // 导入楼盘数据
+    uplaodBuild(event) {
       let file = event.target.files[0];
-      if (!this.$tools.checkSuffix(file.name, 'csv')) {
+      let formData = new FormData();
+      let param;
+
+      if (!this.$tools.checkSuffix(file.name, ['csv', 'xls', 'xlsx'])) {
+        this.$refs.uplaodBuild.value = '';
         return this.$notify({
           title: '警告',
-          message: '请上传CSV格式的文件',
+          message: '请上传正确格式的文件',
           type: 'warning'
         });
       }
-      this.buildingDirection.csvFile = file;
+      this.buildingDirection.uploadBuildsFile = file;
+
+      param = {
+        beginTime:   this.formData.projectType === 0 ? this.formData.dateForWeekBegin : this.formData.dateForDay[0],
+        endTime:     this.formData.projectType === 1 ? this.formData.dateForWeekEnd : this.formData.dateForDay[1],
+        count:       this.formData.count,
+        deliveryMode:this.formData.deliveryMode,
+        industry:    this.formData.industry,
+        projectCity: this.formData.projectCity,
+        projectType: this.formData.projectType,
+        second:      this.formData.second,
+        type:        this.formData.type,
+        excelFile:   this.buildingDirection.uploadBuildsFile
+      };
+
+      for (let item in param) {
+        formData.append(item, param[item])
+      }
+      this.$api.PutProject.BuildsAvailableByImport(formData)
+        .then(res => {
+          console.log(res)
+          this.buildingDirection.builds.data = res.result;
+          this.buildingDirection.builds.loading = false;
+        })
+        .catch(res => {
+          this.buildingDirection.builds.loading = false;
+        })
+    },
+
+    // 下载模板
+    downloadTemplate() {
+      this.$api.PutProject.BuildsTemplate()
+        .then(res => {
+          console.log(res)
+        })
+    },
+
+    // 校验表单
+    validataForm() {
+      let isPassEnptyCheck = true;
+      let validateForms = ['planTop', 'planName'];
+      for (let i=0; i<validateForms.length; i++) {
+        let item = validateForms[i];
+        this.$refs[item].validate((valid) => {
+          isPassEnptyCheck = valid; 
+        });
+        if (!isPassEnptyCheck) break;
+      }
+      return isPassEnptyCheck
     },
 
     // 保存
     saveProject() {
-      let isPassEnptyCheck = true;
-      let validateForms = ['planTop', 'planName'];
       let param;
-      console.log(this.formData)
-      validateForms.forEach((item, index) => {
-        if(this.$refs[item]) {
-          this.$refs[item].validate((valid) => {
-            if (!valid) { return isPassEnptyCheck = false; } 
-          });
-        }
-      })
-      if (!isPassEnptyCheck) {
+      let isformValidatePass = this.validataForm();
+      if (!isformValidatePass) {
         return this.$notify({
           title: '警告',
           message: '还有必填字段未填写',
           type: 'warning'
         });
       }
-      
       param = {
-        name: "",
-        type: "", // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
-        industry: "", // 投放行业
-        beginTime: "",
-        endTime: "",
-        campaignId: 0, // 投放计划ID
-        count: "", // 投放频次，001-300次/天，002-600次/天，003-900次/天 依次类推
-        deliveryMode: "", // 投放方式，001一个楼盘所有点位，002一个单元一个电梯，003一个单元一半电梯
-        details: [
-          {
-            deviceNum: 0,
-            premiseId: ""
-          }
-        ], // 楼盘列表
-        projectCity: "", // 城市
-        projectType: 0, // 投放类型，0按周投放，1按天投放
-        second: "", // 投放时长，001-5s/次，002-10s/次，003-15s/次 依次类推
+        name:         this.formData.name,
+        type:         this.formData.type, // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
+        industry:     this.formData.industry, // 投放行业
+        beginTime:    this.formData.projectType == 0 ? this.formData.dateForWeekBegin : this.formData.dateForDay[0],
+        endTime:      this.formData.projectType == 0 ? this.formData.dateForWeekEnd : this.formData.dateForDay[1],
+        campaignId:   this.$route.query.planId, // 投放计划ID
+        count:        this.formData.count, // 投放频次，001-300次/天，002-600次/天，003-900次/天 依次类推
+        deliveryMode: this.formData.deliveryMode, // 投放方式，001一个楼盘所有点位，002一个单元一个电梯，003一个单元一半电梯
+        details:      this.buildsDetails, // 楼盘列表
+        projectCity:  this.formData.projectCity, // 城市
+        projectType:  this.formData.projectType, // 投放类型，0按周投放，1按天投放
+        second:       this.formData.second // 投放时长，001-5s/次，002-10s/次，003-15s/次 依次类推
       }
+      this.$api.PutProject.AddProject(param)
+        .then(res => {
+          this.$notify({
+            title: '成功',
+            message: '创建投放计划成功',
+            type: 'success'
+          });
+          console.log(res)
+        })
+        .catch(res => {})
       // this.$router.replace('/putManage/create/creative')
     },
   },
@@ -566,7 +688,6 @@ export default {
         },
       };
     },
-
     pickerOptionsForWeekEnd() {
       let _this = this;
       return {
@@ -579,6 +700,24 @@ export default {
             date.getTime() < (new Date(_this.formData.dateForWeekBegin)).getTime();
         },
       };
+    },
+
+    // 判断城市洞察包是否可选择
+    cityInsightDisabled() {
+      if (this.buildingDirection.activeType === 'create') return;
+      return !this.validataForm();
+    },
+
+    // 楼盘数据
+    buildsDetails() {
+      let result = [];
+      this.buildingDirection.builds.data.forEach(item => {
+        result.push({ 
+          deviceNum: item.deviceNum,
+          premiseId: item.premiseId
+        })
+      })
+      return result;
     }
   }
 }
@@ -586,6 +725,9 @@ export default {
 
 <style lang="scss">
 .put-project{
+  .el-select .el-input.is-disabled .el-input__inner{
+    height: 36px !important;
+  }
   .title{
     padding: 28px 0 0 40px;
     background: #fff;
