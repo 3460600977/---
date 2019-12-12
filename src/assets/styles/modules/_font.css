@@ -2,6 +2,9 @@
  * @Description: 字体规范
  * @Author: 何彬
  */
+.font-0 {
+  font-size: 0;
+}
 .font-12 {
   font-size: 12px;
 }

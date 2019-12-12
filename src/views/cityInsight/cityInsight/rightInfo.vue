@@ -16,41 +16,25 @@
         <div class="clearfix">
           <div class="float-left buldingNum">
             <p class="color-text-1">楼盘数</p>
-            <p class="margin-top-10"><span class="font-number font-20">100</span>个</p>
+            <p class="margin-top-10"><span class="font-number font-20">{{selectedBuildings.length}}</span>个</p>
           </div>
           <div class="float-left">
             <p class="color-text-1">设备数</p>
-            <p class="margin-top-10"><span class="font-number font-20">100</span>个</p>
+            <p class="margin-top-10"><span class="font-number font-20">{{deviceCount}}</span>个</p>
           </div>
         </div>
       </div>
       <div class="text-center">
         <div class="chart">
-          <dash-board></dash-board>
+          <dash-board :displayData="coveredPeople" :total="120" :value="selectedBuildings.length"></dash-board>
         </div>
       </div>
-      <div class="margin1">
+      <div class="margin1" v-show="pathArrCopy.length">
         <p>选点</p>
         <ul class="list margin2 border-bottom">
-          <li class="list-item mid-between">
-            <p>选点1</p>
-            <img src="@/assets/images/icons/icon_remove.png" alt="" class="icon-remove">
-          </li>
-          <li class="list-item mid-between">
-            <p>选点1</p>
-            <img src="@/assets/images/icons/icon_remove.png" alt="" class="icon-remove">
-          </li>
-          <li class="list-item mid-between">
-            <p>选点1</p>
-            <img src="@/assets/images/icons/icon_remove.png" alt="" class="icon-remove">
-          </li>
-          <li class="list-item mid-between">
-            <p>选点1</p>
-            <img src="@/assets/images/icons/icon_remove.png" alt="" class="icon-remove">
-          </li>
-          <li class="list-item mid-between">
-            <p>选点1</p>
-            <img src="@/assets/images/icons/icon_remove.png" alt="" class="icon-remove">
+          <li class="list-item mid-between" v-for="(item, index) in pathArrCopy" :key="index">
+            <p>选点{{item.index}}</p>
+            <span class="iconfont icon-remove icon-error" @click="deletePath(item)"></span>
           </li>
         </ul>
       </div>
@@ -71,16 +55,40 @@
       budget: {
         type: Number,
         required: true
-      }
+      },
+      selectedBuildings: {
+        type: Array,
+        required: true
+      },
+      pathArr: {
+        type: Object,
+        required: true
+      },
     },
     data() {
       return {
         val: 0,
-        maxVal: 100
+        maxVal: 100,
+        deviceCount: 0,
+        coveredPeople: 0,
+        pathArrCopy: [],
       }
     },
     created() {
       this.val = this.budget * this.maxVal
+      this.renderDatas(this.selectedBuildings)
+      this.pathArrCopy = Object.values(this.pathArr)
+      console.log(this.pathArrCopy)
+    },
+    watch: {
+      selectedBuildings(val) {
+        this.renderDatas(val)
+      },
+      pathArr(val) {
+        console.log(val)
+        this.pathArrCopy = Object.values(val)
+        console.log(this.pathArrCopy)
+      },
     },
     methods: {
       formatTooltip(val) {
@@ -88,6 +96,17 @@
       },
       budgetChange(val) {
         this.$emit('budgetChange', val / this.maxVal)
+      },
+      renderDatas(arr) {
+        this.deviceCount = 0
+        this.coveredPeople = 0
+        arr.forEach((item) => {
+          this.deviceCount += item.signElevatorNum
+          this.coveredPeople += item.totalPeople
+        })
+      },
+      deletePath(key) {
+        this.$emit('deletePath', key)
       },
     }
   }

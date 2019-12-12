@@ -8,7 +8,7 @@
         class="pointer"
       >
       <div class="desc">
-        <p class="font-20 font-number">{{toThousands(value, false)}}</p>
+        <p class="font-20 font-number">{{toThousands(displayData, false)}}</p>
         <p class="color-text-1">覆盖人次</p>
       </div>
     </div>
@@ -20,11 +20,15 @@
     props: {
       total: {
         type: Number,
-        default: 1000
+        required: true
       },
       value: {
         type: Number,
-        default: 1000
+        required: true
+      },
+      displayData: {
+        type: Number,
+        required: true
       }
     },
     data() {
@@ -38,15 +42,16 @@
       this.getRotate()
     },
     watch: {
-      total() {
-        this.getRotate()
-      },
       value() {
         this.getRotate()
       },
     },
     methods: {
       getRotate() {
+        if (this.value >= this.total) {
+          this.rotate = this.totalDeg/2
+          return
+        }
         this.rotate = parseInt(this.value / this.total * this.totalDeg, 10) - this.totalDeg/2
       },
     }

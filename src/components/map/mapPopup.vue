@@ -6,14 +6,14 @@
           <div class="clearfix">
             <div class="float-left buldingNum">
               <p class="color-text-1">楼盘数</p>
-              <p><span class="font-number font-16">{{item.buildings.length}}</span>个</p>
+              <p><span class="font-number font-16">{{item.selectedBuildings.length}}</span>个</p>
             </div>
             <div class="float-left buldingNum">
               <p class="color-text-1">设备数</p>
-              <p><span class="font-number font-16">{{item.deviceCount}}</span>个</p>
+              <p><span class="font-number font-16">{{deviceCount}}</span>个</p>
             </div>
           </div>
-          <p class="color-text-1 predict">预估覆盖人次 <span class="color-text font-number font-16">{{item.coveredPeople}}</span></p>
+          <p class="color-text-1 predict">预估覆盖人次 <span class="color-text font-number font-16">{{coveredPeople}}</span></p>
         </div>
         <div class="location" v-if="item.type === 'circle'">
           <p class="location-name">茂业中心</p>
@@ -33,8 +33,8 @@
       </div>
       <p class="info border-bottom">建议最少半径：<span class="color-text-1">3KM，低于该半径广告投放效果可能受到影响。</span></p>
       <div class="btn-wrapper text-right">
-        <el-button class="btn" size="mini" @click="operate(0)">删除</el-button>
-        <el-button class="btn" type="primary" size="mini" @click="operate(1)" plain>确定</el-button>
+        <el-button class="btn" size="mini" @click="operate(0, item)">删除</el-button>
+        <el-button class="btn" type="primary" size="mini" @click="operate(1, item)" plain>确定</el-button>
       </div>
     </div>
 </template>
@@ -45,6 +45,8 @@
     data() {
       return {
         value: 3000,
+        deviceCount: 0,
+        coveredPeople: 0
       }
     },
     props: {
@@ -55,20 +57,29 @@
     },
     created() {
       this.value = this.item.type === 'polyline'? this.item.radius /2 : this.item.radius
+      this.renderDatas(this.item.selectedBuildings)
     },
     watch: {
       item(val) {
-        this.value = val.type === 'polyline'? val.radius /2 : val.radius
-        console.log(val)
+        this.value = val.radius
+        this.renderDatas(this.item.selectedBuildings)
       }
     },
     methods: {
       sliderChange(val) {
         this.$emit('sliderChange', val)
       },
-      operate(val) {
-        this.$emit('operate', val)
-      }
+      operate(val, item) {
+        this.$emit('operate', val, item)
+      },
+      renderDatas(arr) {
+        this.deviceCount = 0
+        this.coveredPeople = 0
+        arr.forEach((item) => {
+          this.deviceCount += item.signElevatorNum
+          this.coveredPeople += item.totalPeople
+        })
+      },
     }
   }
 </script>

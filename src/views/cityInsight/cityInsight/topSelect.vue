@@ -3,7 +3,7 @@
       <div class="ts-left clearfix float-left">
         <p class="border-right float-left bold">目标人群</p>
         <div class="float-left ul border-right hand">
-          <p class="border-right ul-p">目标人群<span class="iconfont icon1 icon-icon-test"></span></p>
+          <p class="border-right ul-p">成都市<span class="iconfont icon1 icon-icon-test"></span></p>
           <p class="border-right ul-p">行业标签<span class="iconfont icon1 icon-icon-test"></span></p>
           <p class="ul-p">人群标签<span class="iconfont icon1 icon-icon-test"></span></p>
         </div>
@@ -21,19 +21,30 @@
         <div class="float-left hand">
           <p @click="showHide(0)" class="border-right padding ul-p border-right">楼宇标签<span :class="isShowBuildingTags?'icon-down': 'icon-up'" class="iconfont icon1 icon-icon-test"></span></p>
         </div>
-        <div class="float-left hand">
-          <p class="ul-p selectType border-right"><span class="font-22 iconfont margin2 icon-locating"></span>查找选点</p>
-          <p class="ul-p selectType border-right" @click="(e) => drawTypeSelect(e, 'circle')"><span class="font-22 iconfont margin2 icon-reconnaissance"></span>手动选点</p>
-          <p class="ul-p selectType border-right" @click="(e) => drawTypeSelect(e, 'polyline')"><span class="font-22 iconfont margin2 icon-brokenline"></span>折线选点</p>
-          <p class="ul-p selectType" @click="(e) => drawTypeSelect(e, 'polygon')"><span class="font-22 iconfont margin2 icon-polygon"></span>多边形选点</p>
+        <div class="float-left hand font0 font-0">
+          <p class="ul-p selectType border-right" title="查找选点"><span class="font-22 iconfont margin2 icon-locating"></span></p>
+          <p class="ul-p selectType border-right" title="手动选点" @click="(e) => drawTypeSelect(e, 'circle')"><span class="font-22 iconfont margin2 icon-reconnaissance1"></span></p>
+          <p class="ul-p selectType border-right" title="折线选点" @click="(e) => drawTypeSelect(e, 'polyline')"><span class="font-22 iconfont margin2 icon-brokenline"></span></p>
+          <p class="ul-p selectType" title="多边形选点" @click="(e) => drawTypeSelect(e, 'polygon')"><span class="font-22 iconfont margin2 icon-polygon"></span></p>
         </div>
       </div>
-      <div class="building-label" v-show="isShowBuildingTags">
+      <div class="building-select select-style" v-show="isShowBuildingTags">
         <select-popUp
-          :selectDatas="selectDatas"
+          :selectDatas="buildingDatas"
+          :filters="buildingFilter"
           @hide="() => hide(0)"
           @returnResult="(val) => returnResult(val, 0)"
         ></select-popUp>
+      </div>
+      <div class="city-select select-style">
+        <singleSelect-popup
+          v-if="cityDatas.length"
+          title="城市列表"
+          :selectDatas="cityDatas"
+          :filters="cityFilter"
+          @hide="() => hide(1)"
+          @returnResult="(val) => returnResult(val, 1)"
+        ></singleSelect-popup>
       </div>
     </div>
 </template>
@@ -41,17 +52,33 @@
 <script>
   import {colorMain} from '../../../utils/static'
   import selectPopUp from "./selectPopUp";
+  import singleSelectPopup from "../../../components/map/singleSelectPopup";
+
+  const CITY_MAPPING = {
+    1: '一线城市:',
+    2: '二线城市:',
+    3: '三线城市:'
+  }
+
   export default {
     name: "topSelect",
     components: {
-      selectPopUp
+      selectPopUp,
+      singleSelectPopup
+    },
+    props: {
+      buildingFilter: {
+        type: Object,
+        required: true
+      },
     },
     data() {
       return {
         value: true,
         activeColor: colorMain,
+        activeArr: [false, false],
         isShowBuildingTags: false,
-        selectDatas: {
+        buildingDatas: {
           title: '楼宇标签',
           options: [
             {
@@ -115,9 +142,20 @@
             },
           ]
         },
+        cityDatas: [],
+        cityFilter: {
+          cityCode: 440100
+        },
       }
     },
     created() {
+      // this.$api.CityList.TypeList().then((data) => {
+      //   if (data.result) {
+      //     this.cityDatas = data.result.map((item) => {
+      //       return {title: CITY_MAPPING[item.level], values: item.citys}
+      //     })
+      //   }
+      // })
     },
     methods: {
       drawTypeSelect(e, type) {
@@ -146,10 +184,18 @@
 </script>
 
 <style scoped lang='scss'>
-  .building-label {
+  .select-style {
     position: absolute;
     top: 60px;
+  }
+  .building-select {
     right: 147px;
+  }
+  .city-select {
+    left: 114px;
+  }
+  .iconfont {
+    vertical-align: middle;
   }
 .ts {
   background:rgba(255,255,255,1);
@@ -204,7 +250,6 @@
   }
 }
   .ts-right {
-    padding-right: 10px;
     line-height: 50px;
     .right1 {
       padding-right: 40px;

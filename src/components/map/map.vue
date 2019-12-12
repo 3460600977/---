@@ -24,6 +24,7 @@
         points: null, // 楼盘设备数据
         defaultRadius: 3000,
         drawingManager: null,
+        selectedBuildings: [], //当前选中楼盘
         pointsOptions: {
           0: {
             shape: BMAP_POINT_SHAPE_CIRCLE,
@@ -53,25 +54,32 @@
         type: Number,
         required: true
       },
-      showPathCopy: {
-        type: Object,
-        default: function () {
-          return {}
-        }
-      },
       currentSelectType: {
         type: Object,
         default: function () {
           return {}
         }
-      }
+      },
+      filters: {
+        type: Object,
+        default: {}
+      },
     },
     watch: {
       activePath(val) {
         this.$emit('activePathChange', val)
       },
-      budget(val) {
+      budget() {
         this.drawDevicePoints()
+        if (this.activePath !== null) {
+          this.$emit('activePathChange', this.activePath)
+        }
+      },
+      selectedBuildings(val) {
+        this.$emit('returnSelectedBuildings', val)
+      },
+      pathArr(val) {
+        this.$emit('pathArrChange', val)
       },
     },
     created() {
@@ -82,7 +90,7 @@
       var myCity = new BMap.LocalCity();
       myCity.get((result) => {
         map.centerAndZoom(result.name,10);
-        // this.loadData(map)
+        this.loadData(map)
       });
       map.enableScrollWheelZoom();
       map.addControl(new BMap.ScaleControl());
@@ -91,7 +99,7 @@
     methods:{
       loadData() {
         this.loading = true
-        this.$api.cityInsight.getPremisesByCity({cityCode: '510100'}).then((data) => {
+        this.$api.cityInsight.getPremisesByCity({cityCode: '510100', tag: this.filters}).then((data) => {
           this.initMouse()
           if (data.result) {
             this.points = this.normalizePointsAll(data.result)
@@ -111,12 +119,13 @@
       /*
       *  删除当前选中的path
       * */
-      deletePath() {
-        this.map.removeOverlay(this.activePath.overlay)
-        if (this.activePath.anotherOverlay) {
-          this.map.removeOverlay(this.activePath.anotherOverlay)
+      deletePath(item) {
+        this.map.removeOverlay(item.overlay)
+        if (item.anotherOverlay) {
+          this.map.removeOverlay(item.anotherOverlay)
         }
-        delete this.pathArr[this.activePath.index]
+        delete this.pathArr[item.index]
+        this.pathArr = {...this.pathArr}
         this.setActivePathNull()
         this.drawDevicePoints()
       },
@@ -134,20 +143,16 @@
       * */
       triggerDraw(type) {
         let dom = document.getElementsByClassName(`BMapLib_${type}`)[0]
-        console.log(dom)
         dom.click()
       },
       /*
       改变当前path的radius
       */
       changeActivePathRadius(val) {
-        this.activePath.radius = this.activePath.type === 'polyline'? 2*val: val
+        this.activePath.radius = val
         this.zoomSinglePathChange(this.activePath)
         this.activePath.buildings = this.isInArea(this.activePath)
-        this.getBuildingData(this.activePath)
-        console.log(this.activePath)
         this.pathArr[this.activePath.index] = this.activePath
-        console.log(this.pathArr)
         this.drawDevicePoints()
       },
       initMouse() {
@@ -188,7 +193,7 @@
         let radius = this.RealDistanceTranPixels(path.radius)
         let polyline = new BMap.Polyline(path.overlay.getPath(), {
           strokeColor:"red",    //边线颜色。
-          strokeWeight: radius,       //边线的宽度，以像素为单位。
+          strokeWeight: 2*radius,       //边线的宽度，以像素为单位。
           strokeOpacity: 0.5,    //边线透明度，取值范围0 - 1。
           strokeStyle: 'solid' //边线的样式，solid或dashed。
         });
@@ -208,7 +213,7 @@
             location: location, // 结束绘制时鼠标的经纬度位置用于显示弹窗位置
             isShow: true,
             index: this.indexArr.length, // 即将是pathArr的第几个元素
-            radius: this.defaultRadius * 2, // 这里只有折线会用这个属性，折线的直径就是defaultRadius的两倍
+            radius: this.defaultRadius, // 这里只有折线会用这个属性，折线的直径就是defaultRadius的两倍
             points: e.overlay.getPath()
           }
           if (e.drawingMode === "polyline") {
@@ -225,7 +230,8 @@
       */
       overlayBindEvent(path) {
         path.overlay.addEventListener('click', (e) => {
-          this.activePath = {...this.pathArr[path.index], location: e.point}
+          this.pathArr[path.index].location = e.point
+          this.activePath = this.pathArr[path.index]
         })
       },
       /*
@@ -233,12 +239,12 @@
       */
       getPopUpData(path) {
         path.buildings = this.isInArea(path)
-        console.log(path)
-        this.getBuildingData(path)
-        this.activePath = path
-        this.pathArr[path.index] = path
+        this.pathArr = {[path.index]: path, ...this.pathArr}
+        console.log(this.pathArr)
+        // this.pathArr[path.index] = path
         this.indexArr[path.index] = path.index // 记录所有画过路径的index数组
         this.drawDevicePoints()
+        this.activePath = this.pathArr[path.index]
       },
       /*
       根据楼盘数据 计算出楼盘数据所覆盖的设备数，设备数，预估覆盖人次
@@ -320,7 +326,7 @@
         //圆形计算
         let filterPs = [];
         for (let i in polyline) {
-          let circle = new BMap.Circle(polyline[i], radius/2, this.styleOptions);
+          let circle = new BMap.Circle(polyline[i], radius, this.styleOptions);
           let filterP = points.filter((p) => {
             let b = p.point;
             return BMapLib.GeoUtils.isPointInCircle(b, circle);
@@ -337,7 +343,7 @@
           let lat2 = polyline[parseInt(kk + 1)].lat;
           let lng2 = polyline[parseInt(kk + 1)].lng;
           // 得到折线上所有多边形集合
-          polygons.push(this.getFourP(lat1, lng1, lat2, lng2, radius/2));
+          polygons.push(this.getFourP(lat1, lng1, lat2, lng2, radius));
         }
         for (let j in polygons) {
           let filterP = points.filter((p) => {
@@ -356,10 +362,9 @@
       },
 
       zoomChangeAllPath() {
-        if (!Object.keys(this.pathArr).length) return
-        for(let item of this.pathArr) {
-          if (item.type === 'polyline') { // 只有折线需要在改变zoom时变半径，圆和多边形都是自动变的
-            this.zoomSinglePathChange(item)
+        for(let key in this.pathArr) {
+          if (this.pathArr[key].type === 'polyline') { // 只有折线需要在改变zoom时变半径，圆和多边形都是自动变的
+            this.zoomSinglePathChange(this.pathArr[key])
           }
         }
       },
@@ -368,7 +373,7 @@
         if (path.type === 'polygon') return
         let radius = this.RealDistanceTranPixels(path.radius)
         if (path.type === 'polyline') {
-          path.overlay.setStrokeWeight(radius)
+          path.overlay.setStrokeWeight(2*radius)
         } else if (path.type === 'circle') {
           path.overlay.setRadius(path.radius)
         }
@@ -385,7 +390,6 @@
           this.zoomChangeAllPath()
         })
         this.map.addEventListener('click', ({point}) => {
-          console.log(point)
           if (this.currentSelectType && this.currentSelectType.type === 'circle') {
               this.drawCircle(point)
               this.$emit('drawCancle')
@@ -456,10 +460,13 @@
         if (!Object.keys(this.pathArr).length) {
           if (this.budget === 1) {
             this.setDevicePoints(this.normalizePoints(this.points), 0)
+            this.setDevicePoints([], 1)
+            this.selectedBuildings = this.points
           } else {
             let [selectP, unSelectP] = this.getRandomBuildings(this.points, this.budget)
             this.setDevicePoints(selectP, 0)
             this.setDevicePoints(unSelectP, 1)
+            this.selectedBuildings = selectP
           }
         } else {
           let selectedBuildings = []
@@ -475,6 +482,7 @@
             }
           }
           let result = this.unique(selectedBuildings)
+          this.selectedBuildings = result
           this.separateBgPonits(result)
         }
       },
@@ -493,6 +501,9 @@
         })
         this.drawBg(selected, unSelected)
       },
+      /*
+      * 传已选及未选的点画背景点
+      * */
       /*
       * 画背景点
       * */
@@ -535,13 +546,17 @@
       setDevicePoints(points, type) {
         let str = type === 0?'selected':'unSelected'
         let overlay = `${str}Overlay`
-        if (this.pointsOverlayObj[overlay]) {
-          let points = new BMap.PointCollection(points, this.pointsOptions[type]);
-          this.pointsOverlayObj[overlay] = points
-          this.map.addOverlay(points);
+        if (!this.pointsOverlayObj[overlay]) {
+          let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
+          this.pointsOverlayObj[overlay] = pointsOverlay
+          this.map.addOverlay(pointsOverlay);
         } else {
-          this.pointsOverlayObj[overlay].clear()
-          this.pointsOverlayObj[overlay].setPoints(points)
+          if (points.length === 0) {
+            this.pointsOverlayObj[overlay].clear()
+          } else {
+            this.pointsOverlayObj[overlay].clear()
+            this.pointsOverlayObj[overlay].setPoints(points)
+          }
         }
       },
     }

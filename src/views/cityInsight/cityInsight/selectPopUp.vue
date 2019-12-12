@@ -2,13 +2,13 @@
     <div class="selectPopUp">
       <p class="title border-bottom padding mid-between">
         <span>{{selectDatas.title}}</span>
-        <span class="iconfont icon1 icon-error2" @click="operate(1)"></span>
+        <span class="iconfont icon1 icon-error2 hand" @click="operate(1)"></span>
       </p>
       <div class="content padding">
         <div class="item" v-for="(item, index) in selectDatas.options" :key="index">
           <p class="type">{{item.title}}</p>
           <ul class="ul hand">
-            <li :class="{'active': filters[item.key].includes(val.key)}" v-for="(val, key) in item.types" :key="key" @click="typeClick(item.key, val.key)">{{val.label}}</li>
+            <li :class="{'active': filtersCopy[item.key].includes(val.key)}" v-for="(val, key) in item.types" :key="key" @click="typeClick(item.key, val.key)">{{val.label}}</li>
           </ul>
         </div>
       </div>
@@ -28,31 +28,43 @@
         type: Object,
         required: true
       },
+      filters: {
+        type: Object,
+        required: true
+      },
     },
     data() {
       return {
-        filters: {},
+        filtersOld: {},
+        filtersCopy: {}
       }
     },
     created() {
-      this.selectDatas.options.forEach((item) => {
-        this.$set(this.filters, item.key, [])
-      })
+      this.filtersCopy = this.$tools.deepCopy(this.filters)
+      this.filtersOld = this.$tools.deepCopy(this.filters)
     },
     methods: {
       operate(val) {
         if (val === 0) {
           for (let key in this.filters) {
-            this.filters[key] = []
+            this.filtersCopy[key] = []
+            this.setFiltersOld()
+            this.$emit('returnResult', this.filtersCopy)
           }
         } else if (val === 1) {
+          this.filtersCopy = this.$tools.deepCopy(this.filtersOld)
           this.$emit('hide')
         } else if (val === 2) {
-          this.$emit('returnResult', this.filters)
+          this.setFiltersOld()
+          this.$emit('returnResult', this.filtersCopy)
         }
       },
+      setFiltersOld() {
+        this.filtersOld = this.$tools.deepCopy(this.filtersCopy)
+      },
       typeClick(v1, v2) {
-        this.filters[v1].push(v2)
+        this.filtersCopy[v1].push(v2)
+        console.log(this.filtersOld)
       },
     }
   }
@@ -61,7 +73,7 @@
 <style scoped lang='scss'>
 .selectPopUp {
   background: #ffffff;
-  line-height: 20px;
+  line-height: 1.4;
   box-shadow:0px 3px 5px 0px rgba(0, 0, 0, 0.1);
   border-radius:2px;
   .active {
@@ -78,7 +90,7 @@
     line-height: 40px;
   }
   .btns {
-    padding-bottom: 26px;
+    padding-bottom: 20px;
     margin-top: 24px;
     font-size: 0;
     & /deep/ .el-button + .el-button {
@@ -86,13 +98,14 @@
     }
   }
   .content {
+    padding-top: 10px;
     .type {
       width: 95px;
       vertical-align: top;
       display: inline-block;
     }
     .item {
-      margin-top: 24px;
+      margin-bottom: 24px;
     }
     .ul {
       display: inline-block;
