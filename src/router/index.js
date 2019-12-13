@@ -6,6 +6,7 @@ import {putManageRouter} from './modules/putManage' // 投放管理
 import {cityInsightRouter} from './modules/cityInsight'
 import {reportCenterRouter} from './modules/reportCenter'//报表中心
 import {auditManageRouter} from './modules/auditManage'//审核管理
+import {toolBoxRouter} from './modules/toolBox'//工具箱
 
 Vue.use(Router)
 
@@ -23,7 +24,8 @@ const router = new Router({
         ...putManageRouter,
         ...cityInsightRouter,
         ...reportCenterRouter,
-        ...auditManageRouter
+        ...auditManageRouter,
+        ...toolBoxRouter
       ],
     },
     {

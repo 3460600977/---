@@ -17,7 +17,7 @@ export const putManageRouter = [
     path: '/creative/list',
     component: () => import ('@/views/putManage/list/modules/creative/List'),
   },
-  
+
   // 投放管理
   {
     path: '/putManage',
@@ -29,6 +29,11 @@ export const putManageRouter = [
     path: '/putManage/create',
     component: () => import ('@/views/putManage/create/Index'),
     children: [
+      //默认创建路径
+      {
+        path: '/',
+        component: () => import ('@/views/putManage/create/modules/plan/Plan'),
+      },
       // 创建计划
       {
         path: '/putManage/create/plan',
