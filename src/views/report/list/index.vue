@@ -1,6 +1,6 @@
 <template>
   <div class="report-center">
-    <div class="left-report-route clearfix" :class="{'hide': !isShowReportRoute}">
+    <div class="left-menu clearfix" :class="{'hide': !isShowReportRoute}">
       <div style="height: 300px;">
         <div class="step_arrow">
           <a href="#" @click="handleShow">
@@ -42,6 +42,7 @@
         name: "reportIndex",
         data() {
             return {
+                default_path: '/reportList/plan',
                 menuActiveIndex: 0,
                 isShowReportRoute: true,
                 menuCollapse: false,
@@ -99,7 +100,7 @@
     background-color: $color-bg;
     overflow-x: hidden;
 
-    .left-report-route {
+    .left-menu {
       width: 220px;
       height: calc(100vh - 76px);
       overflow: hidden;
@@ -240,4 +241,5 @@
       background-color: $color-bg-4;
     }
   }
+
 </style>
