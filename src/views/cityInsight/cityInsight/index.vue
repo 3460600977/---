@@ -2,16 +2,18 @@
     <div class="container cityInsight">
       <div class="top-select">
         <top-select
+          :buildingFilter="buildingFilter"
+          @returnBuildingTags="returnBuildingTags"
           @drawTypeSelect="drawTypeSelect"
         ></top-select>
       </div>
       <div class="mapPopup">
         <map-popup
-          v-if="showPath"
+          v-if="showPathCopy"
           @sliderChange="sliderChange"
           @operate="operate"
-          :item="showPath"
-          :style="{top: showPath.location.y+'px', left:showPath.location.x+ 'px'}"
+          :item="showPathCopy"
+          :style="{top: mapLocation.y+'px', left: mapLocation.x+ 'px'}"
         ></map-popup>
       </div>
       <div class="mouseMove-text" :style="{
@@ -30,6 +32,9 @@
       <div class="right-info">
         <right-info
           :budget="budget"
+          :selectedBuildings="selectedBuildings"
+          :pathArr="pathArr"
+          @deletePath="deletePath"
           @budgetChange="budgetChange"
         ></right-info>
       </div>
@@ -37,10 +42,13 @@
         <db-map
           ref="dbmap"
           :budget="budget"
+          :filters="buildingFilter"
           :currentSelectType="currentSelectType"
+          @pathArrChange="pathArrChange"
           @activePathChange="activePathChange"
           @currentMouseLocation="currentMouseLocation"
           @drawCancle="drawCancle"
+          @returnSelectedBuildings="returnSelectedBuildings"
         ></db-map>
       </div>
     </div>
@@ -72,9 +80,19 @@
     },
     data() {
       return {
-        showPathCopy: null, // 用于储存经纬度计算showPath的位置
+        showPathCopy: null, // 当前显示的path
         map: null,
-        location: { // 鼠标当前位置
+        selectedBuildings: [], // 当前选中的楼盘
+        pathArr: {}, // 当前存在的画线path
+        buildingFilter: {
+          buildType: [],
+          premiseAvgFee: [],
+          occupancyRate: [],
+          buildingAge: [],
+          parkingNum: [],
+          propertyRent: []
+        },
+        location: {
           x: 0,
           y: 0
         },
@@ -92,15 +110,17 @@
       this.bindEvent()
     },
     computed: {
-      showPath() { // 当前显示弹窗得path
+      mapLocation() { // 当前显示弹窗得path
         if (this.showPathCopy && this.showPathCopy.location) {
           let location = this.$refs.dbmap.map.pointToPixel(this.showPathCopy.location)
           return {
-            ...this.showPathCopy,
-            location: {
-              x: location.x - POPUP_WIDTH/2,
-              y: location.y - this.popUpHeight[this.showPathCopy.type] - ANOTHER_HEIGHT
-            },
+            x: location.x - POPUP_WIDTH/2,
+            y: location.y - this.popUpHeight[this.showPathCopy.type] - ANOTHER_HEIGHT
+          }
+        } else {
+          return {
+            x: 0,
+            y: 0
           }
         }
       }
@@ -115,23 +135,34 @@
           }
         })
       },
-      // mapPopup里面点击删除(0)和确定按钮(1)
-      operate(val) {
+      returnBuildingTags(val) {
         console.log(val)
+        this.buildingFilter = this.$tools.deepCopy(val)
+      },
+      deletePath(item) {
+        this.$refs.dbmap.deletePath(item)
+      },
+      pathArrChange(val) {
+        this.pathArr = val
+      },
+      /*
+      *
+      * */
+      returnSelectedBuildings(val) {
+        this.selectedBuildings = val
+      },
+      // mapPopup里面点击删除(0)和确定按钮(1)
+      operate(val, item) {
         if (val === 0) {
-          this.$refs.dbmap.deletePath()
+          this.deletePath(item)
         } else if (val === 1) {
           this.$refs.dbmap.setActivePathNull()
         }
       },
       activePathChange(val) {
-        console.log(val)
         this.showPathCopy = val
       },
       sliderChange(value) {
-        console.log(value)
-        // this.showPathCopy.radius = value
-        console.log(this.showPathCopy)
         this.$refs.dbmap.changeActivePathRadius(value)
       },
       /*

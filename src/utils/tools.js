@@ -140,6 +140,15 @@ let tools = {
     }
   },
 
+  /*
+  * 过略出对象数组里面的key属性形成一个新的数组
+  * */
+  FilterByKey(arr, key) {
+    let arrTotal = arr.reduce((total, item) => {
+      return total.concat(item[key])
+    }, [])
+    return arrTotal
+  },
   /**
    * TODO
    * @description: 前端分页
