@@ -1,23 +1,30 @@
 <template>
   <div class="selected-list">
     <div class="title mid-between">
+
       <div>
-        <span>已选择楼盘 <span class="color-main font16">{{list.length}}</span> 个</span>
-        <span>, 可售设备 <span class="color-main font16">{{totalDeviceNumber}}</span> 个</span>
+        <span>已选择楼盘 <span class="color-main font16">{{list.length || 0}}</span> 个</span>
+        <span>, 可售设备 <span class="color-main font16">{{totalDeviceNumber || 0}}</span> 个</span>
       </div>
-      <el-button v-show="list" size="small">下载</el-button>
+
+      <el-button :loading="exporting" @click="buildsListExport" v-show="list.length" size="small">下载</el-button>
+
     </div>
 
     <ul class="selected-list-data-box" v-if="!!list.length" v-loading='loading'>
       <li class="item mid" v-for="(item, index) in list" :key="index">
+
         <div class="left-info">
           <p class="name">{{item.premiseName}}</p>
           <p class="addr font-12 color-text-1">{{item.address}}</p>
         </div>
+
         <div class="account">
-          <span class="font-16 number">{{item.deviceNum}}</span><span class="font-14">个</span>
+          <span class="font-16 number">{{item.deviceNum || 0}}</span><span class="font-14">个</span>
         </div>
+
         <DelCirclrButton @click.native="$emit('update:data', $tools.removeArrayItemByIndex(list, index))" class="delete-item"/>
+
       </li>
 
       <!-- 分页 -->
@@ -51,19 +58,41 @@ export default {
     }
   },
 
+  data() {
+    return {
+      nodataImg: require('../../../../../../assets/images/icon_no_data.png'),
+      exporting: false,
+    }
+  },
+
   components: {
     DelCirclrButton
   },
 
   methods: {
-    removeItemByIndex() {}
-  },
+    // 导出列表
+    buildsListExport() {
+      let param = [];
+      this.list.forEach(item => {
+        param.push({
+          address: item.address,
+          deviceNum: item.deviceNum,
+          premiseName: item.premiseName
+        })
+      })
+      this.exporting = true;
 
-  data() {
-    return {
-      nodataImg: require('../../../../../../assets/images/icon_no_data.png')
+      this.$api.PutProject.ExportBuildsByMsg(param)
+        .then(res => {
+          this.exporting = false;
+          this.$tools.downLoadFileFlow(res, `楼盘列表${this.$tools.getFormatDate("YYmmdd")}.csv`)
+        })
+        .catch(res => {
+          this.exporting = false;
+        })
     }
   },
+
   computed: {
     totalDeviceNumber() {
       let total = 0;

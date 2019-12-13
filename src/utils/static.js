@@ -19,3 +19,42 @@ export const scaleData =[
 ]
 
 export const colorMain = '#2D5AFF'
+
+// 创建方案所需常量
+export const projectConst = {
+  // 投放类型，0按周投放，1按天投放
+  putType: [
+    { name: '按周投放', value: 0},
+    { name: '按天投放', value: 1},
+  ],
+  
+  // 投放方式
+  putWay: [
+    { name: '一个楼盘所有点位', value: '001' },
+    { name: '一个单元一个电梯', value: '002' },
+    { name: '一个单元一半电梯', value: '003' }
+  ],
+  
+  // 投放频次，001-300次/天，002-600次/天，003-900次/天 依次类推
+  putFrequency: [
+    { name: '300 次/天', value: '001' },
+    { name: '600 次/天', value: '002' },
+    { name: '900 次/天', value: '003' }
+  ],
+  
+  // 投放时长，001-5s/次，002-10s/次，003-15s/次 依次类推
+  putDuration: [
+    { name: '5 秒/次', value: '001' },
+    { name: '10 秒/次', value: '002' },
+    { name: '15 秒/次', value: '003' },
+  ],
+  
+  // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
+  screenType: [
+    { name: '联动', value: '003' },
+    { name: '上屏', value: '001' },
+    { name: '下屏', value: '002' },
+  ]
+}
+
+

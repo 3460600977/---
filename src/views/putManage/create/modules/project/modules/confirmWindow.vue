@@ -1,6 +1,6 @@
 <template>
   <el-dialog 
-    :visible.sync="confirmMsgShow"
+    :visible.sync="confirmWindowMsg.show"
     width="1200px" 
     class="confirm-box">
     <div class="title">确认投放方案信息</div>
@@ -11,42 +11,42 @@
         <el-tab-pane label="方案信息" name="plan">
           <el-form label-position='left' label-width="150px">
             <el-form-item label="投放方案名称">
-              <span class="color-text-1">广告创意</span>
+              <span class="color-text-1">{{confirmWindowMsg.data.name}}</span>
             </el-form-item>
             <el-form-item label="投放方案行业">
-              <span class="color-text-1">广告创意</span>
+              <span class="color-text-1">{{confirmWindowMsg.data.industry}}</span>
             </el-form-item>
             <el-form-item label="投放类型">
-              <span class="color-text-1">广告创意</span>
+              <span class="color-text-1">{{confirmWindowMsg.data.projectType}}</span>
             </el-form-item>
             <el-form-item label="投放时间">
-              <span class="color-text-1">广告创意</span>
+              <span class="color-text-1">{{confirmWindowMsg.data.beginTime}}-{{confirmWindowMsg.data.endTime}}</span>
             </el-form-item>
             <el-form-item label="投放方式">
-              <span class="color-text-1">广告创意</span>
+              <span class="color-text-1">{{confirmWindowMsg.data.deliveryMode}}</span>
             </el-form-item>
             <el-form-item label="投放频次">
-              <span class="color-text-1">广告创意</span>
+              <span class="color-text-1">{{confirmWindowMsg.data.count}}</span>
             </el-form-item>
             <el-form-item label="投放时长">
-              <span class="color-text-1">广告创意</span>
+              <span class="color-text-1">{{confirmWindowMsg.data.second}}</span>
             </el-form-item>
             <el-form-item label="屏幕类型">
-              <span class="color-text-1">广告创意</span>
+              <span class="color-text-1">{{confirmWindowMsg.data.type}}</span>
             </el-form-item>
             <el-form-item class="bold" label="总计">
-              <span class="color-red">广告创意</span>
+              <span class="color-red">{{confirmWindowMsg.data.totalCost}}</span>
             </el-form-item>
           </el-form>
         </el-tab-pane>
 
         <el-tab-pane label="楼盘信息" name="build">
-          <buildMsgList/>
+          <buildMsgList :list="confirmWindowMsg.data.premiseVOS"/>
         </el-tab-pane>
       </el-tabs>
     </div>
     <div slot="footer" class="dialog-footer center">
-      <el-button class="map-btn" @click="$emit('update:confirmMsgShow', false)">取消投放</el-button>
+      <el-button class="map-btn" @click="$emit('update:confirmWindowMsg.show', false)">取消投放</el-button>
       <el-button class="map-btn" type="primary">确认并关闭</el-button>
       <el-button class="map-btn" type="primary">确认并编辑创意</el-button>
       <!-- <el-button type="primary" @click="innerVisible = true">打开内层 Dialog</el-button> -->
@@ -61,14 +61,14 @@ export default {
     buildMsgList
   },
   props: {
-    confirmMsgShow: {
-      type: Boolean,
-      default: false
+    confirmWindowMsg: {
+      type: Object,
+      default: () => {}
     }
   },
   data() {
     return {
-      activeTab: 'build'
+      activeTab: 'plan'
     }
   },
 }

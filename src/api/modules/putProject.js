@@ -32,13 +32,29 @@ const BuildsAvailableByImport = (data) => {
 }
 
 // 投放方案楼盘数据导入模板下载接口 
-const BuildsTemplate = () => {
-  window.location.href = process.env.BASE_API + "/dpapi/project/premises/template";
+const DowloadBuildsTemplate = () => {
+  return request({
+    url: "/dpapi/project/premises/template",
+    method: "get",
+    responseType: 'blob', //一定要写
+  });
+  // window.location.href = process.env.BASE_API + "/dpapi/project/premises/template";
+}
+
+// 前端传楼盘信息进行导出 
+const ExportBuildsByMsg = (data) => {
+  return request({
+    url: "/dpapi/project/csv",
+    method: "post",
+    responseType: 'blob', //一定要写
+    data
+  });
 }
 
 export const PutProject = {
   BuildsAvailableByCityInsignt,
   BuildsAvailableByImport,
-  BuildsTemplate,
-  AddProject
+  DowloadBuildsTemplate,
+  AddProject,
+  ExportBuildsByMsg
 }

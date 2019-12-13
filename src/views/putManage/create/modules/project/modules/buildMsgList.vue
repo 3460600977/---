@@ -28,6 +28,12 @@
 <script>
 import DelCirclrButton from '../../../../../../components/DelCircleButton'
 export default {
+  props: {
+    list: {
+      type: Array,
+      default: () => {}
+    }
+  },
   components: {
     DelCirclrButton
   }
