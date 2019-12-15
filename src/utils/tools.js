@@ -141,13 +141,21 @@ let tools = {
   },
 
   /*
-  * 过略出对象数组里面的key属性形成一个新的数组
+  * 1, key存在 过略出对象数组里面的key属性形成一个新的数组
+  * 2，key不存在的话 相当于sum函数
   * */
-  FilterByKey(arr, key) {
-    let arrTotal = arr.reduce((total, item) => {
-      return total.concat(item[key])
-    }, [])
-    return arrTotal
+  operation(arr, key, type = 'concat') {
+    if (type === 'concat') {
+      let arrTotal = arr.reduce((total, item) => {
+        return total.concat(item[key])
+      }, [])
+      return arrTotal
+    } else if (type === 'sum') {
+      let result = arr.reduce((total, item) => {
+        return total += item[key]
+      }, 0)
+      return result
+    }
   },
   /**
    * @description: 前端分页
