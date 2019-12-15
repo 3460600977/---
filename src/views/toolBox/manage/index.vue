@@ -39,22 +39,23 @@
 
 <script>
     export default {
-        name: "auditIndex",
+        name: "toolManageIndex",
         data() {
             return {
+                default_path: '/toolBox/accountInfo',
                 menuActiveIndex: 0,
                 isShowReportRoute: true,
                 menuCollapse: false,
                 report: {
                     menu_index: 0,
-                    default_name: '审核管理',
+                    default_name: '账号管理',
                     menu: [
                         {
-                            name: '审核管理',
+                            name: '账号管理',
                             sub_menu: [
                                 {
-                                    name: '创意审核',
-                                    path: '/auditList/creative',
+                                    name: '账号信息',
+                                    path: '/toolBox/accountInfo',
                                 },
                             ]
                         }

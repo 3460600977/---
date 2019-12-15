@@ -94,9 +94,9 @@ export default {
           { name: '首页', path: '/'},
           { name: '城市洞察', path: '/'},
           { name: '投放管理', path: '/putManage'},
-          { name: '报表中心', path: '/reportList/plan'},
-          { name: '工具箱', path: '/'},
-          { name: '审核管理', path: '/auditList/creative'},
+          { name: '报表中心', path: '/reportList'},
+          { name: '工具箱', path: '/toolBox'},
+          { name: '审核管理', path: '/auditList'},
         ]
       },
       rightMsg: {
