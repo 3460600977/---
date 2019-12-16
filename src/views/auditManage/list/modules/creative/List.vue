@@ -83,7 +83,8 @@
         </el-form-item>
       </el-form>
       <div class="choose-deny-list">
-
+        <el-tag closable>不得使用或者变相使用中华人民共和国的国旗、国歌、国徽、军旗、军歌、军徽</el-tag>
+        <el-tag closable>涉及虚假误导宣传</el-tag>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDenyVisible = false">取 消</el-button>
@@ -466,8 +467,8 @@
             handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);
             },
-            handleCheckedReasonChange(value) {
-                console.log(value)
+            handleCheckedReasonChange(checkItem) {
+                console.log(checkItem[0], checkItem[1])
             },
             handleContentClick() {
 
@@ -747,6 +748,35 @@
         height: 160px;
         background: $color-bg-7;
         border-radius: 4px;
+        padding: 20px;
+
+        .el-tag {
+          background: $color-blue;
+          border-radius: 12px;
+          font-size: 12px;
+          font-weight: 400;
+          color: $color-bg-3;
+          position: relative;
+        }
+
+        i.el-icon-close {
+          padding: 5px;
+          position: absolute;
+          top: -30%;
+          background-color: $color-bg-3;
+          color: $color-blue;
+        }
+
+        i.el-icon-close:hover {
+          background-color: $color-blue;
+          color: $color-bg-3;
+        }
+
+        .el-tag .el-icon-close::before {
+          position: absolute;
+          top: 6%;
+          left: 13%;
+        }
       }
     }
 

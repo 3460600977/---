@@ -2,7 +2,7 @@
   <!-- 投放预估数 -->
   <div class="estimate-box">
     <div class="font16">楼盘预估数</div>
-    <div class="mid-between">
+    <div class="relative mid-between">
       <div class="estimate-number-box">
         <p class="color-text-1 estimate-title">楼盘数</p>
         <p class="font-14 estimate-number">
@@ -16,8 +16,26 @@
         </p>
       </div>
     </div>
+
+    <div class="estimate-dash-board-box">
+      <DashBoard :total="43" :value="443" :displayData="443"/>
+    </div>
+
+    <div class="estimate-price-box font-16">
+      <span>价格预估: </span>
+      <span class="font-number color-main">¥ {{$tools.toThousands(3456)}}</span>
+    </div>
   </div>
 </template>
+
+<script>
+import DashBoard from '../../../../../../components/chart/DashBoard'
+export default {
+  components: {
+    DashBoard
+  }
+}
+</script>
 
 <style lang="scss" scoped>
   .estimate-box{
@@ -40,6 +58,20 @@
       .estimate-number{
         margin-top: 6px;
       }
+    }
+    .estimate-dash-board-box{
+      position: absolute;
+      top: 150px;
+      left: 77px;
+      width: 154px;
+      height: 154px;
+    }
+    .estimate-price-box{
+      position: absolute;
+      bottom: 0px;
+      width: 272px;
+      padding: 21px 0 26px;
+      border-top: 1px solid #E5E7E9;
     }
   }
 </style>

@@ -10,11 +10,11 @@
     <!-- menu -->
     <ul class="my-menu font-14 relative">
       <li class="item"
-        :class="{'active': index === menu.activeIndex}"
-        @mouseenter="hoverMenu(menu.content, index)"
-        @mouseleave="leaveMenu"
-        @click="menu.activeIndex = index; handleTo(mitem.path)"
-        v-for="(mitem, index) in menu.content" :key="index">
+          :class="{'active': index === menu.activeIndex}"
+          @mouseenter="hoverMenu(menu.content, index)"
+          @mouseleave="leaveMenu"
+          @click="menu.activeIndex = index; handleTo(mitem.path)"
+          v-for="(mitem, index) in menu.content" :key="index">
         <div class="menu-text" :class="{'active': index === menu.activeIndex}">
           {{mitem.name}}
         </div>
@@ -50,15 +50,15 @@
         class="item">
         <div class="user-head mid clearfix">
           <img class="head" width="47px" :src="images.userHead" alt="头像">
-          <div  class="operation-box mid relative">
+          <div class="operation-box mid relative">
             <div class="user-name font-14">admin</div>
             <img class="up-icon" width="10px" :src="images.up" alt="" srcset="">
             <transition name="to-top">
               <div v-show="rightMsg.dropMenuShow" class="drop-box absolute font-14">
                 <ul>
-                  <li class="o-item center">账号管理</li>
-                  <li class="o-item center">修改密码</li>
-                  <li class="o-item center color-red">退出登录</li>
+                  <li class="o-item center" @click="handleToAccount">账号管理</li>
+                  <li class="o-item center" @click="handleToPass">修改密码</li>
+                  <li class="o-item center color-red" @click="handleToLogout">退出登录</li>
                 </ul>
               </div>
             </transition>
@@ -72,115 +72,122 @@
 </template>
 
 <script>
-export default {
-  name: 'TopHeader',
-  data () {
-    return {
-      images: {
-        logo: require('../../../assets/images/icon_logo.png'),
-        money: require('../../../assets/images/icons/icon_money.png'),
-        notification: require('../../../assets/images/icons/icon_notification.png'),
-        userHead: require('../../../assets/images/icons/icon_tx.png'),
-        up: require('../../../assets/images/icons/icon_up.png'),
-      },
-      menu: {
-        activeIndex: 0,
-        moveBlockStyle: {
-          width: '78px',
-          transform: 'translateX(0px)',
-          opacity: 0
+    export default {
+        name: 'TopHeader',
+        data() {
+            return {
+                images: {
+                    logo: require('../../../assets/images/icon_logo.png'),
+                    money: require('../../../assets/images/icons/icon_money.png'),
+                    notification: require('../../../assets/images/icons/icon_notification.png'),
+                    userHead: require('../../../assets/images/icons/icon_tx.png'),
+                    up: require('../../../assets/images/icons/icon_up.png'),
+                },
+                menu: {
+                    activeIndex: 0,
+                    moveBlockStyle: {
+                        width: '78px',
+                        transform: 'translateX(0px)',
+                        opacity: 0
+                    },
+                    content: [
+                        {name: '首页', path: '/'},
+                        {name: '城市洞察', path: '/'},
+                        {name: '投放管理', path: '/putManage'},
+                        {name: '报表中心', path: '/reportList'},
+                        {name: '工具箱', path: '/toolBox'},
+                        {name: '审核管理', path: '/auditList'},
+                    ]
+                },
+                rightMsg: {
+                    hoverBlock: {
+                        width: ['70px', '70px', '170px'],
+                        style: {
+                            width: '70px',
+                            transform: 'translateX(0px)',
+                            opacity: 0
+                        }
+                    },
+                    dropMenuShow: false,
+                }
+            }
         },
-        content: [
-          { name: '首页', path: '/'},
-          { name: '城市洞察', path: '/'},
-          { name: '投放管理', path: '/putManage'},
-          { name: '报表中心', path: '/reportList'},
-          { name: '工具箱', path: '/toolBox'},
-          { name: '审核管理', path: '/auditList'},
-        ]
-      },
-      rightMsg: {
-        hoverBlock: {
-          width: ['70px', '70px', '170px'],
-          style: {
-            width: '70px',
-            transform: 'translateX(0px)',
-            opacity: 0
-          }
+
+        methods: {
+            /**
+             * 顶部菜单覆盖样式 宽度,位移
+             * @param: menuArr 菜单数组
+             * @param: index 覆盖的index
+             */
+            hoverMenu(menuArr, index) {
+                let blockWidth = menuArr[index].name.length * 14 + 50;
+                let left = 0;
+                for (let i = 0; i < index; i++) {
+                    left += menuArr[i].name.length * 14 + 50;
+                }
+                this.menu.moveBlockStyle = {
+                    width: blockWidth + 'px',
+                    transform: `translateX(${left}px)`,
+                    opacity: 1
+                }
+            },
+            /**
+             * 右侧信息覆盖位移
+             */
+            hoverRightMsg(index) {
+                if (index === 2) {
+                    this.rightMsg.dropMenuShow = true;
+                }
+                this.rightMsg.hoverBlock.style = {
+                    width: this.rightMsg.hoverBlock.width[index],
+                    transform: `translateX(${index * 70}px)`,
+                    opacity: 1
+                }
+            },
+
+            /**
+             * 鼠标离开菜单
+             */
+            leaveMenu() {
+                this.menu.moveBlockStyle.opacity = 0;
+                this.rightMsg.hoverBlock.style.opacity = 0;
+                this.rightMsg.dropMenuShow = false;
+            },
+
+            /**
+             * 手动跳转
+             */
+            handleTo(path) {
+                this.$router.push(path)
+            },
+
+            /**
+             * 初始化时设置激活的菜单
+             */
+            setActiveTopMenu() {
+                let currentBasePath = this.$route.path.split('/')[1];
+                this.menu.content.forEach((item, index) => {
+                    if (item.path.indexOf(currentBasePath) !== -1) {
+                        this.menu.activeIndex = index;
+                    }
+                })
+            },
+            handleToAccount() {
+                this.$router.replace('/toolBox/account')
+            },
+            handleToPass() {
+                this.$router.replace('/toolBox/editPass')
+            },
+            handleToLogout() {
+
+            },
         },
-        dropMenuShow: false,
-      }
-    }
-  },
 
-  methods: {
-    /**
-     * 顶部菜单覆盖样式 宽度,位移
-     * @param: menuArr 菜单数组
-     * @param: index 覆盖的index
-     */
-    hoverMenu(menuArr, index) {
-      let blockWidth = menuArr[index].name.length * 14 + 50;
-      let left = 0;
-      for (let i = 0; i<index; i++) {
-        left += menuArr[i].name.length * 14 + 50;
-      }
-      this.menu.moveBlockStyle = {
-        width: blockWidth + 'px',
-        transform: `translateX(${left}px)`,
-        opacity: 1
-      }
-    },
-
-    /**
-     * 右侧信息覆盖位移
-     */
-    hoverRightMsg(index) {
-      if (index === 2) {
-        this.rightMsg.dropMenuShow = true;
-      }
-      this.rightMsg.hoverBlock.style = {
-        width: this.rightMsg.hoverBlock.width[index],
-        transform: `translateX(${index * 70}px)`,
-        opacity: 1
-      }
-    },
-
-    /**
-     * 鼠标离开菜单
-     */
-    leaveMenu() {
-      this.menu.moveBlockStyle.opacity = 0;
-      this.rightMsg.hoverBlock.style.opacity = 0;
-      this.rightMsg.dropMenuShow = false;
-    },
-
-    /**
-     * 手动跳转
-     */
-    handleTo(path) {
-      this.$router.push(path)
-    },
-
-    /**
-     * 初始化时设置激活的菜单
-     */
-    setActiveTopMenu() {
-      let currentBasePath = this.$route.path.split('/')[1];
-      this.menu.content.forEach((item, index) => {
-        if (item.path.indexOf(currentBasePath) !== -1) {
-          this.menu.activeIndex = index;
+        beforeMount() {
+            this.setActiveTopMenu()
         }
-      })
     }
-  },
-
-  beforeMount() {
-    this.setActiveTopMenu()
-  }
-}
 </script>
-
 <style scoped lang="scss">
   $headerHeight: 76px;
   .top-header{
