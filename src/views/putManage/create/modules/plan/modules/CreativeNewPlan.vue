@@ -4,8 +4,8 @@
     <PutMangeCard :title="'HI, 请选择投放目的'" class="form-box put-goal">
       <!-- 目的 -->
       <ul class="goal-box clearfix">
-        <li class="item mid-center"
-          @click="goal.activeIndex = index; formData.goal=item.name"
+        <li class="item mid"
+          @click="goal.activeIndex = index; formData.goal=item.value"
           :class="{'active': goal.activeIndex === index}"
           v-for="(item, index) in goal.content"
           :key="index">
@@ -32,7 +32,7 @@
 
           <el-input 
             class="budget-value"
-            v-if="formData.budget.type === 'assign'" 
+            v-if="formData.budget.type === 1" 
             placeholder="请输入内容" 
             v-model.number.trim="formData.budget.value">
             <template slot="append">元</template>
@@ -40,20 +40,27 @@
         </el-form-item>
         
         <el-form-item class="mt-20" prop="putCity" label="投放城市">
-          <el-select multiple clearable v-model="formData.putCity" placeholder="请选择">
+          <el-select 
+            @focus="getCityList"
+            :loading="!city" 
+            multiple 
+            filterable
+            clearable 
+            v-model="formData.putCity" 
+            placeholder="请选择">
             <el-option
               v-for="(item, index) in city"
               :key="index"
               :label="item.name"
-              :value="item.code">
+              :value="+item.cityCode">
             </el-option>
           </el-select>
         </el-form-item>
         
         <el-form-item class="mt-20" prop="putDate" label="投放时间">
           <el-date-picker
-            style="width: 442px;"
             v-model="formData.putDate"
+            value-format="yyyy-MM-dd"
             :picker-options="pickerOptions"
             type="daterange"
             range-separator="至"
@@ -83,7 +90,7 @@
     <!-- 保存 取消 -->
     <PutMangeCard class="save-box">
       <div class="float-right">
-        <el-button @click="savePlan" style="width: 136px" type="primary">下一步</el-button>
+        <el-button :loading='formData.saving' @click="savePlan" style="width: 136px" type="primary">下一步</el-button>
       </div>
     </PutMangeCard>
   </div>
@@ -100,7 +107,7 @@ export default {
   data() {
     // 自定义校验 预算    
     let validateBudget = (rules, value, callback) => {
-      if (this.formData.budget.type == 'unlimited') {
+      if (this.formData.budget.type == 0) {
         return callback();
       }
       if (!value) { return callback(new Error('请输入指定预算!')); }
@@ -112,33 +119,30 @@ export default {
       goal: {
         activeIndex: 0,
         content:[
-          { name: '品牌宣传', icon: require('../../../../../../assets/images/test.png')},
-          { name: '新品上线', icon: require('../../../../../../assets/images/test.png')},
-          { name: '活动宣传', icon: require('../../../../../../assets/images/test.png')}
+          { name: '品牌宣传', value: 0, icon: require('../../../../../../assets/images/plan_title_1.png')},
+          { name: '新品上线', value: 1, icon: require('../../../../../../assets/images/plan_title_2.png')},
+          { name: '活动宣传', value: 2, icon: require('../../../../../../assets/images/plan_title_3.png')},
+          { name: '其他',     value: 3, icon: require('../../../../../../assets/images/plan_title_4.png')}
         ]
       },
 
-      // 预算
+      // 预算 0 不限 1 指定
       budget: {
         activeIndex: 0,
         content: [
-          { name: '不限', value: 'unlimited' },
-          { name: '指定预算', value: 'assign' }
+          { name: '不限', value: 0 },
+          { name: '指定预算', value: 1 }
         ]
       },
 
       // 城市
-      city: [
-        { name: '北京', code: 123},
-        { name: '上海', code: 45},
-        { name: '广州', code: 654},
-        { name: '深圳', code: 675}
-      ],
+      city: '',
 
       formData: {
         name: '',
+        saving: false,
         budget: {
-          type: 'unlimited',
+          type: 0,
           value: ''
         },
         putCity: '',
@@ -148,7 +152,8 @@ export default {
       
       formDataRules: {
         name: [
-          { required: true, message: '请输入计划名称!', trigger: 'blur' }
+          { required: true, message: '请输入计划名称!', trigger: 'blur' },
+          { max: 100, message: '计划名称100字以内!'}
         ],
         putCity: [
           { required: true, message: '请选择投放城市!', trigger: 'blur' }
@@ -172,33 +177,41 @@ export default {
       // 日期控件限制
       pickerOptions: {
         disabledDate(date) {
-          return date.getTime() <= Date.now();
+          return date.getTime() < Date.now() - 8.64e7;
         },
       }
     }
   },
   mounted() {
-    this.$api.putPlan.getCityList()
-      .then(res=>{
-        console.log(res)
-      })
-      .catch(res=>{
-        console.log(res)
-      })
-    this.formData.goal = this.goal.content[this.goal.activeIndex].name;
+    this.formData.goal = this.goal.content[this.goal.activeIndex].value;
   },
   methods: {
     // 切换预算
     switchBudget(index, type) {
-      console.log(index)
       this.budget.activeIndex = index;
       this.formData.budget.type = type;
+      this.formData.budget.value = '';
     },
+
+    // 获取城市列表
+    getCityList() {
+      if (this.city) return;
+      this.$api.CityList.AllList()
+        .then(res => {
+          this.city = res.result;
+        })
+        .catch(res => {
+          this.city = [];
+        })
+    },
+
     // 保存
     savePlan() {
-      let isPassEnptyCheck = true;
-      let validateForms = ['planTop', 'planName'];
-      
+      let isPassEnptyCheck = true,
+          validateForms = ['planTop', 'planName'],
+          param;
+
+      this.formData.saving = true;
       validateForms.forEach((item, index) => {
         if(this.$refs[item]) {
           this.$refs[item].validate((valid) => {
@@ -206,25 +219,57 @@ export default {
           });
         }
       })
-      // if (!isPassEnptyCheck) {
-      //   return this.$notify({
-      //     title: '警告',
-      //     message: '还有必填字段未填写',
-      //     type: 'warning'
-      //   });
-      // } 
-      this.$router.replace('/putManage/create/project')
-      
+      if (!isPassEnptyCheck) {
+        this.formData.saving = false;
+        return this.$notify({
+          title: '警告',
+          message: '还有必填字段未填写',
+          type: 'warning'
+        });
+      } 
 
+      param = {
+        name: this.formData.name,
+        campaignType: this.formData.goal,
+        budgetType: this.formData.budget.type,
+        totalBudget: this.formData.budget.value,
+        city: JSON.stringify(this.formData.putCity),
+        beginTime: this.formData.putDate[0],
+        endTime: this.formData.putDate[1]
+      }
+
+      this.$api.PutPlan.AddPlan(param)
+        .then(res => {
+          this.formData.saving = false;
+          this.$notify({
+            title: '成功',
+            message: '创建投放计划成功',
+            type: 'success'
+          });
+          this.$router.replace({
+            path: '/putManage/create/project',
+            query: {
+              planId: res.result.id,
+              planName: res.result.name,
+              beginTime: res.result.beginTime,
+              endTime: res.result.endTime
+            }
+          })
+        })
+        .catch(res => {
+          this.formData.saving = false;
+        })
+
+      
     },
+
 
   },
   watch: {
     // 生成名字
     'formData.goal': function() {
       let date = new Date();
-      let type = this.creativeType == 'both' ? '联动' : this.creativeType == 'top' ? '上屏' : '下屏';
-      this.formData.name = `${this.formData.goal}_${date.getMonth()+1}_${date.getDate()}`
+      this.formData.name = `${this.goal.content[this.goal.activeIndex].name}_${date.getMonth()+1}_${date.getDate()}`
     },
   },
 }
@@ -251,26 +296,30 @@ export default {
   .goal-box{
     .item{
       float: left;
+      padding: 0px 23px;
       margin: 30px 40px 0 0;
       width:200px;
       height:100px;
       background:rgba(255,255,255,1);
-      box-shadow:0px 2px 12px 0px rgba(118,118,118,0.2);
       border-radius:2px;
       transition: .3s;
       cursor: pointer;
-      color: $color-text-1;
       transition: .3s;
       &:hover{
         transform: translateY(-3px);
       }
       &.active{
-        color: $color-main;
+        box-shadow: 0px 4px 10px 0px rgba(45,90,255,0.18);
+        .name{
+          color: $color-main;
+        }
         .icon-img{
           opacity: 1;
         }
       }
       .icon-img{
+        width: 53px;
+        height: auto;
         transition: .3s;
         opacity: 0.4;
       }
@@ -278,6 +327,7 @@ export default {
         margin-left: 8px;
         font-size:16px;
         font-weight:bold;
+        color: #A8A8A8;
       }
     }
   }

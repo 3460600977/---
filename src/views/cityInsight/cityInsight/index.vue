@@ -1,12 +1,19 @@
 <template>
     <div class="container cityInsight">
+      <div class="top-select">
+        <top-select
+          :buildingFilter="buildingFilter"
+          @returnBuildingTags="returnBuildingTags"
+          @drawTypeSelect="drawTypeSelect"
+        ></top-select>
+      </div>
       <div class="mapPopup">
         <map-popup
-          v-if="showPath"
+          v-if="showPathCopy"
           @sliderChange="sliderChange"
           @operate="operate"
-          :item="showPath"
-          :style="{top: showPath.location.y+'px', left:showPath.location.x+ 'px'}"
+          :item="showPathCopy"
+          :style="{top: mapLocation.y+'px', left: mapLocation.x+ 'px'}"
         ></map-popup>
       </div>
       <div class="mouseMove-text" :style="{
@@ -19,19 +26,29 @@
           :currentSelectType="currentSelectType"
         ></mouseMove-text>
       </div>
-      <div class="left-select">
-        <left-select @drawTypeSelect="drawTypeSelect"></left-select>
-      </div>
+<!--      <div class="left-select">-->
+<!--        <left-select @drawTypeSelect="drawTypeSelect"></left-select>-->
+<!--      </div>-->
       <div class="right-info">
-        <right-info></right-info>
+        <right-info
+          :budget="budget"
+          :selectedBuildings="selectedBuildings"
+          :pathArr="pathArr"
+          @deletePath="deletePath"
+          @budgetChange="budgetChange"
+        ></right-info>
       </div>
       <div class="map container">
         <db-map
           ref="dbmap"
+          :budget="budget"
+          :filters="buildingFilter"
           :currentSelectType="currentSelectType"
+          @pathArrChange="pathArrChange"
           @activePathChange="activePathChange"
           @currentMouseLocation="currentMouseLocation"
           @drawCancle="drawCancle"
+          @returnSelectedBuildings="returnSelectedBuildings"
         ></db-map>
       </div>
     </div>
@@ -44,6 +61,7 @@
   import rightInfo from "./rightInfo";
   import leftSelect from "./leftSelect";
   import mouseMoveText from "./mouseMoveText";
+  import topSelect from "./topSelect";
 
   const NAV_HEIGHT = 76,
     ANOTHER_HEIGHT = 10,
@@ -57,17 +75,28 @@
       mapPopup,
       leftSelect,
       rightInfo,
+      topSelect,
       mouseMoveText
     },
     data() {
       return {
-        showPathCopy: null, // 用于储存经纬度计算showPath的位置
-        value: 100,
+        showPathCopy: null, // 当前显示的path
         map: null,
-        location: { // 鼠标当前位置
+        selectedBuildings: [], // 当前选中的楼盘
+        pathArr: {}, // 当前存在的画线path
+        buildingFilter: {
+          buildType: [],
+          premiseAvgFee: [],
+          occupancyRate: [],
+          buildingAge: [],
+          parkingNum: [],
+          propertyRent: []
+        },
+        location: {
           x: 0,
           y: 0
         },
+        budget: 1, // 投放预算默认值
         sliderVal: 3000,
         currentSelectType: null,
         popUpHeight: {
@@ -81,15 +110,17 @@
       this.bindEvent()
     },
     computed: {
-      showPath() { // 当前显示弹窗得path
+      mapLocation() { // 当前显示弹窗得path
         if (this.showPathCopy && this.showPathCopy.location) {
           let location = this.$refs.dbmap.map.pointToPixel(this.showPathCopy.location)
           return {
-            ...this.showPathCopy,
-            location: {
-              x: location.x - POPUP_WIDTH/2,
-              y: location.y - this.popUpHeight[this.showPathCopy.type] - ANOTHER_HEIGHT
-            },
+            x: location.x - POPUP_WIDTH/2,
+            y: location.y - this.popUpHeight[this.showPathCopy.type] - ANOTHER_HEIGHT
+          }
+        } else {
+          return {
+            x: 0,
+            y: 0
           }
         }
       }
@@ -104,23 +135,34 @@
           }
         })
       },
-      // mapPopup里面点击删除(0)和确定按钮(1)
-      operate(val) {
+      returnBuildingTags(val) {
         console.log(val)
+        this.buildingFilter = this.$tools.deepCopy(val)
+      },
+      deletePath(item) {
+        this.$refs.dbmap.deletePath(item)
+      },
+      pathArrChange(val) {
+        this.pathArr = val
+      },
+      /*
+      *
+      * */
+      returnSelectedBuildings(val) {
+        this.selectedBuildings = val
+      },
+      // mapPopup里面点击删除(0)和确定按钮(1)
+      operate(val, item) {
         if (val === 0) {
-          this.$refs.dbmap.deletePath()
+          this.deletePath(item)
         } else if (val === 1) {
           this.$refs.dbmap.setActivePathNull()
         }
       },
       activePathChange(val) {
-        console.log(val)
         this.showPathCopy = val
       },
       sliderChange(value) {
-        console.log(value)
-        // this.showPathCopy.radius = value
-        console.log(this.showPathCopy)
         this.$refs.dbmap.changeActivePathRadius(value)
       },
       /*
@@ -148,6 +190,12 @@
       drawCancle() {
         this.currentSelectType = null
       },
+      /*
+      * 投放预算变化
+      * */
+      budgetChange(val) {
+        this.budget = val
+      },
     },
   }
 </script>
@@ -161,6 +209,13 @@
     top: 10px;
     left: 20px;
   }
+  .top-select {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+  }
   .mapPopup {
     position: absolute;
     z-index: 3;
@@ -172,7 +227,7 @@
   .right-info {
     position: absolute;
     z-index: 3;
-    top: 29px;
+    top: 79px;
     background: #fff;
     right: 40px;
   }

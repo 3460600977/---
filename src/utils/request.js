@@ -3,7 +3,7 @@
  * CAS-RMS ->  beike-rms
  */
 import axios from 'axios'
-import { Message, MessageBox } from 'element-ui'
+import { Message, MessageBox, Notification  } from 'element-ui'
 import store from '@/store'
 // import { getToken } from '@/utils/auth'
 // create an axios instance
@@ -19,6 +19,7 @@ service.interceptors.request.use(
     //   // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
     //   config.headers['token'] = getToken();
     // }
+    config.headers['token'] = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJrYWtheGkiLCJleHAiOjE1NzYyMjg3NTh9.VMikBL6ut6hHNp0PM8JCeFgtvYwEdThbJruKnn0hbkU';
     return config
   },
   error => {
@@ -52,11 +53,11 @@ service.interceptors.response.use(
           })
         })
       }
-      Message({
+      Notification({
+        title: '警告',
         message: res.msg || '网络异常, 请稍后再试',
-        type: 'error',
-        duration: 3 * 1000
-      })
+        type: 'warning'
+      });
       return Promise.reject(res)
     } else {
       if (response.headers.token) {
@@ -67,10 +68,10 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err' + error) // for debug
-    Message({
+    Notification({
+      title: '错误',
       message: error.msg || '网络异常, 请稍后再试',
       type: 'error',
-      duration: 3 * 1000
     })
     return Promise.reject(error)
   }

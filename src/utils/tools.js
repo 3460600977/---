@@ -82,7 +82,7 @@ let tools = {
    * @description: 数字转千位计数
    * @param: num: 数字
    */
-  toThousands: num => {
+  toThousands: (num, hasZero = true) => {
     num = (num || 0).toString();
     let prefixInt = num.split('.')[0];
     let suffixDecimal = num.split('.')[1] || '00';
@@ -92,14 +92,31 @@ let tools = {
       prefixInt = num.slice(0, prefixInt.length - 3);
     }
     if (prefixInt) { result = prefixInt + result; }
-    return result + '.' + suffixDecimal;
+    if (hasZero) return result + '.' + suffixDecimal;
+    else return result
+  },
+  type: (obj) => {
+    var toString = Object.prototype.toString
+    var map = {
+      '[object Boolean]': 'boolean',
+      '[object Number]': 'number',
+      '[object String]': 'string',
+      '[object Function]': 'function',
+      '[object Array]': 'array',
+      '[object Date]': 'date',
+      '[object RegExp]': 'regExp',
+      '[object Undefined]': 'undefined',
+      '[object Null]': 'null',
+      '[object Object]': 'object'
+    }
+    return map[toString.call(obj)]
   },
   /**
    * @description: 深度克隆
    * @param:
    */
   deepCopy: (data) => {
-    var t = type(data)
+    var t = tools.type(data)
     var o
     var i
     var ni
@@ -112,15 +129,32 @@ let tools = {
     }
     if (t === 'array') {
       for (i = 0, ni = data.length; i < ni; i++) {
-        o.push(deepCopy(data[i]))
+        o.push(tools.deepCopy(data[i]))
       }
       return o
     } else if (t === 'object') {
       for (i in data) {
-        o[i] = deepCopy(data[i])
+        o[i] = tools.deepCopy(data[i])
       }
       return o
     }
+  },
+
+  /*
+  * 过略出对象数组里面的key属性形成一个新的数组
+  * */
+  FilterByKey(arr, key) {
+    let arrTotal = arr.reduce((total, item) => {
+      return total.concat(item[key])
+    }, [])
+    return arrTotal
+  },
+  /**
+   * @description: 前端分页
+   * @param: pageSize
+   */
+  localPagegation: () => {
+
   },
 }
 
