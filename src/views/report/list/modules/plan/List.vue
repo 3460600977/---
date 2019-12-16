@@ -69,10 +69,10 @@
         :default-sort="{prop: 'costNum', order: 'ascending'}"
         style="width: 100%"
         class="report-table">
-        <el-table-column
-          prop="name"
-          label="投放计划"
-          width="180">
+        <el-table-column prop="name" label="投放计划" width="180">
+          <template>
+            <router-link :to="{path:'/reportList/project'}" class="project-id">投放计划</router-link>
+          </template>
         </el-table-column>
         <el-table-column
           prop="date"
@@ -210,38 +210,38 @@
                 },
                 tableData: [
                     {
-                    date: '2016-05-02',
-                    name: '投放计划1',
-                    costNum: '100',
-                    exposureNum: '900',
-                    deviceNum: '1200',
-                    watchAudiences: '102000',
-                    watchNum: '102000'
-                }, {
-                    date: '2016-05-02',
-                    name: '投放计划2',
-                    costNum: '100',
-                    exposureNum: '900',
-                    deviceNum: '1200',
-                    watchAudiences: '102000',
-                    watchNum: '102000'
-                }, {
-                    date: '2016-05-02',
-                    name: '投放计划3',
-                    costNum: '100',
-                    exposureNum: '900',
-                    deviceNum: '1200',
-                    watchAudiences: '102000',
-                    watchNum: '102000'
-                }, {
-                    date: '2016-05-02',
-                    name: '投放计划4',
-                    costNum: '100',
-                    exposureNum: '900',
-                    deviceNum: '1200',
-                    watchAudiences: '102000',
-                    watchNum: '102000'
-                }]
+                        date: '2016-05-02',
+                        name: '投放计划1',
+                        costNum: '100',
+                        exposureNum: '900',
+                        deviceNum: '1200',
+                        watchAudiences: '102000',
+                        watchNum: '102000'
+                    }, {
+                        date: '2016-05-02',
+                        name: '投放计划2',
+                        costNum: '100',
+                        exposureNum: '900',
+                        deviceNum: '1200',
+                        watchAudiences: '102000',
+                        watchNum: '102000'
+                    }, {
+                        date: '2016-05-02',
+                        name: '投放计划3',
+                        costNum: '100',
+                        exposureNum: '900',
+                        deviceNum: '1200',
+                        watchAudiences: '102000',
+                        watchNum: '102000'
+                    }, {
+                        date: '2016-05-02',
+                        name: '投放计划4',
+                        costNum: '100',
+                        exposureNum: '900',
+                        deviceNum: '1200',
+                        watchAudiences: '102000',
+                        watchNum: '102000'
+                    }]
             }
         },
         methods: {
@@ -455,16 +455,20 @@
 
       tr td:first-child {
         border-radius: 4px;
+
+      }
+
+      .project-id {
         font-size: 14px;
         font-weight: 400;
-        font-family: Microsoft YaHei;
         color: $color-blue;
+        text-decoration: none;
+        cursor: pointer;
       }
 
       tr td:nth-child(2) {
         font-size: 14px;
         font-weight: 400;
-        font-family: Microsoft YaHei;
         color: $color-text;
       }
 
