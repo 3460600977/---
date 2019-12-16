@@ -1,13 +1,18 @@
 import request from "@/utils/request";
 
-const getPremisesByCity = (data) => {
-  return request({
-    url: "/dpapi/premises/city",
-    method: "POST",
-    data
-  });
-}
-
 export const cityInsight = {
-  getPremisesByCity: getPremisesByCity
+  getPremisesByCity: (data) => {
+    return request({
+      url: "/dpapi/premises/city",
+      method: "POST",
+      data
+    });
+  },
+  getBuildingDetail: (params) => {
+    return request({
+      url: "/dpapi/premises/detail",
+      method: "GET",
+      params
+    });
+  }
 }

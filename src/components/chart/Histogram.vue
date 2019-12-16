@@ -15,13 +15,30 @@
       height: {
         type: String,
         required: true
-      }
+      },
+      color: {
+        type: Array,
+        required: true
+      },
+      isShowLine: {
+        type: Boolean,
+        default: false
+      },
+      isShowLegend: {
+        type: Boolean,
+        default: true
+      },
+      data: {
+        type: Object,
+        required: true
+      },
     },
     mounted() {
       let myChart = echarts.init(this.$refs.chartBox);
       let option = {
         legend: {
           icon: 'circle',
+          show: this.isShowLegend,
           top: 20,
           right: 40,
           padding: 0,
@@ -30,6 +47,7 @@
             color: '#999999'
           }
         },
+        tooltip: {},
         textStyle: {
           color: '#999999'
         },
@@ -45,50 +63,34 @@
           axisLine: {show: false},
           axisTick: {show: false},
           axisLabel: {
-            margin: 16
+            margin: 16,
+            interval: 0
           },
-          data:['巴西','印尼','美国','印度','中国','世界人口(万)'],
+          data: this.data.xAxis,
         },
+        color: this.color,
         yAxis: {
           type: 'value',
-          splitLine:{show:false},
-          axisLine: {show: false},
-          axisTick: {show: false}
-        },
-        series: [
-          {
-            name: '2011年',
-            type: 'bar',
-            data: [18203, 23489, 29034, 104970, 131744, 630230],
-            itemStyle: {
-              normal: {
-                color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [{
-                  offset: 0,
-                  color: 'rgba(250,126,82,1)' // 0% 处的颜色
-                },{
-                  offset: 1,
-                  color: 'rgba(251,180,103,1)' // 100% 处的颜色
-                }], false)
-              }
+          axisLabel: {
+            formatter: function (v) {
+              return `${parseInt(v * 100)}%`
             }
           },
-          {
-            name: '2012年',
-            type: 'bar',
-            data: [19325, 23438, 31000, 121594, 134141, 681807],
-            itemStyle: {
-              normal: {
-                color: new echarts.graphic.LinearGradient(0, 1, 1, 0, [{
-                  offset: 0,
-                  color: 'rgba(254,217,42,1)' // 0% 处的颜色
-                },{
-                  offset: 1,
-                  color: 'rgba(250,206,98,1)' // 100% 处的颜色
-                }], false)
-              }
-            }
-          }
-        ]
+          splitLine:{
+            show: this.isShowLine,
+            lineStyle: {
+              color: '#E5E7E9'
+            },
+          },
+          axisLine: {
+            show: this.isShowLine,
+            lineStyle: {
+              color: '#E5E7E9'
+            },
+          },
+          axisTick: {show: false}
+        },
+        series: this.data.yAxis
       };
       myChart.setOption(option);
     },

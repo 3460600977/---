@@ -22,6 +22,10 @@
         type: String,
         required: true
       },
+      color: {
+        type: Array,
+        required: true
+      },
       data: {
         type: Array,
         required: true
@@ -48,54 +52,19 @@
           containLabel: true
         },
         calculable : true,
-        color:[
-          {
-            type: 'radial',
-            x: 0,
-            y: 0,
-            r: 1,
-            colorStops: [{
-              offset: 0, color: '#5F81FF' // 0% 处的颜色
-            }, {
-              offset: 1, color: '#2D5AFF' // 100% 处的颜色
-            }],
-            global: false // 缺省为 false
-          },
-          {
-            type: 'radial',
-            x: 0,
-            y: 0,
-            r: 1,
-            colorStops: [{
-              offset: 0, color: '#F08D6B' // 0% 处的颜色
-            }, {
-              offset: 1, color: '#FACE62' // 100% 处的颜色
-            }],
-            global: false // 缺省为 false
-          },
-          {
-            type: 'radial',
-            x: 0,
-            y: 0,
-            r: 1,
-            colorStops: [{
-              offset: 0, color: '#B0E69D' // 0% 处的颜色
-            }, {
-              offset: 1, color: '#7CC86F' // 100% 处的颜色
-            }],
-            global: false // 缺省为 false
-          }
-        ],
+        color: this.color,
         series : [
           {
+            name:'半径模式',
             type:'pie',
-            radius : '56%',
-            center : ['28%', '50%'],
-            roseType : 'radius',
+            radius : ['24%', '48%'],
+            center : ['29%', '50%'],
+            // roseType : 'radius',
             label: {
               normal: {
                 show: false,
                 color: '#999999'
+                // position: 'inside'
               },
               emphasis: {
                 show: true,
@@ -111,10 +80,10 @@
             data: this.data[0]
           },
           {
+            name:'面积模式',
             type:'pie',
-            radius : '56%',
-            center : ['72%', '50%'],
-            roseType : 'radius',
+            radius : ['24%', '48%'],
+            center : ['69%', '50%'],
             itemStyle: {
               shadowColor: 'rgba(238,162,104,0.2)',
               shadowBlur: 17,
