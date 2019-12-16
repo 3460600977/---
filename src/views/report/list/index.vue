@@ -23,7 +23,7 @@
                           v-for="(menu_sub, subIndex) in rootMenu.sub_menu"
                           :key="subIndex"
                           @click="handleTo(menu_sub.path, subIndex)"
-                          :class="{'item_active':onRoutes===menu_sub.path.substr(1)}">
+                          :class="{'item_active':(onRoutes===menu_sub.path.substr(1)||(subIndex===0&&onRoutes===default_path))}">
               <router-link :to="menu_sub.path" target="_self">{{menu_sub.name}}</router-link>
             </el-menu-item>
           </el-submenu>
@@ -42,7 +42,7 @@
         name: "reportIndex",
         data() {
             return {
-                default_path: '/reportList/plan',
+                default_path: 'reportList',
                 menuActiveIndex: 0,
                 isShowReportRoute: true,
                 menuCollapse: false,
