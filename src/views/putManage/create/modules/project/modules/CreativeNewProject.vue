@@ -171,6 +171,7 @@
               <el-select 
                 @focus="getCityInsightList"
                 @change="getCityInsightDetail(buildingDirection.cityInsight.selectedItemId)"
+                @clear="setBuildsList([])"
                 :loading="buildingDirection.cityInsight.loading" 
                 :disabled="cityInsightDisabled"
                 v-model="buildingDirection.cityInsight.selectedItemId" 
@@ -237,12 +238,11 @@
         </el-tab-pane>
       </el-tabs>
 
-      <SelectedList :list.sync="this.buildingDirection.builds.data" :loading="buildingDirection.builds.loading"/>
+      <!-- 楼盘定向->选中列表 -->
+      <SelectedList
+        :loading="buildingDirection.builds.loading"/>
     </PutMangeCard>
 
-    <!-- 地图选点 -->
-    <mapChooseWindow :mapChooseShow.sync="buildingDirection.mapChooseShow"/>
-    
     <!-- 投放方案名称 -->
     <PutMangeCard v-loading="planDataLoading" :title="'投放方案名称'" class="form-box">
       <el-form
@@ -257,9 +257,6 @@
       </el-form>
     </PutMangeCard>
 
-    <!-- 确认投放方案信息 -->
-    <confirmWindow :confirmWindowMsg.sync ="confirmWindowMsg"/>
-
     <!-- 保存 取消 -->
     <PutMangeCard v-loading="planDataLoading" class="save-box">
       <div class="float-right">
@@ -268,7 +265,19 @@
       </div>
     </PutMangeCard>
 
-    <EstimateBox  v-loading="planDataLoading"/>
+
+
+
+
+    <!-- 楼盘预估数面板 -->
+    <EstimateBox/>
+    
+    <!-- 地图选点 -->
+    <mapChooseWindow :mapChooseShow.sync="buildingDirection.mapChooseShow"/>
+
+    <!-- 确认投放方案信息 -->
+    <confirmWindow @closeDetail="confirmWindowMsg.show = false" :confirmWindowMsg.sync ="confirmWindowMsg"/>
+
   </div>
 </template>
 
@@ -280,6 +289,7 @@ import mapChooseWindow from './mapChooseWindow'
 import confirmWindow from './confirmWindow' 
 import EstimateBox from './EstimateBox'
 import { projectConst } from '../../../../../../utils/static'
+import { mapGetters, mapMutations } from 'vuex'
 export default {
   components: {
     PutMangeCard,
@@ -292,14 +302,14 @@ export default {
   data() {
     let checkDate = (rule, value, callback) => {
       // 投放类型，0按周投放，1按天投放
-      if (this.formData.projectType === 1 && !value) {
+      if (this.formData.projectType.value === 1 && !value) {
         callback(new Error('请设置时间！'));
       }
       callback()
     };
     let checkWeek = (rule, value, callback) => {
       // 投放类型，0按周投放，1按天投放
-      if (this.formData.projectType === 0 && !value) {
+      if (this.formData.projectType.value === 0 && !value) {
         callback(new Error('请设置时间！'));
       }
       callback()
@@ -339,23 +349,24 @@ export default {
       // 确认信息
       confirmWindowMsg: {
         show: false,
-        data: {
-          beginTime: "2019-12-14",
-          count: "001",
-          deliveryMode: "001",
-          endTime: "2019-12-27",
+        resData: '',
+        pageData: {
+          beginTime: "",
+          count: "",
+          deliveryMode: "",
+          endTime: "",
           industry: "",
-          name: "投放方案_成都_12_13",
+          name: "",
           premiseVOS: [{
-            premiseId: 1172963, 
-            premiseName: "重庆石桥Style广场", 
-            address: "渝州路59号", 
-            weekForPeople: "1400"}],
-          projectCity: "500100",
+            premiseId: '', 
+            premiseName: "", 
+            address: "", 
+            weekForPeople: ""}],
+          projectCity: "",
           projectType: 0,
-          second: "001",
-          totalCost: 180,
-          type: "003",
+          second: "",
+          totalCost: 0,
+          type: "",
         }
       },
 
@@ -412,11 +423,14 @@ export default {
   },
 
   beforeMount() {
+    this.setBuildsList([])
     this.getPlanDetailById(this.$route.query.planId)
     this.generateProjectName()
   },
 
   methods: {
+    ...mapMutations(['setBuildsList']),
+
     // 根据id获取计划详情
     getPlanDetailById(planid) {
       this.$api.PutPlan.PlanDetail(+planid)
@@ -433,7 +447,7 @@ export default {
     // 生成方案名字
     generateProjectName() {
       let date = new Date();
-      this.formData.name = `投放方案_成都_${date.getMonth()+1}_${date.getDate()}`
+      this.formData.name = `投放方案_${this.$tools.getFormatDate('mm_dd')}`
     },
 
     // 行业列表
@@ -488,7 +502,7 @@ export default {
         })
     },
 
-    // 根据id获取城市洞察包详情
+    // 根据洞察id获取城市洞察包详情
     getCityInsightDetail(id) {
       if (!id) return;
       this.buildingDirection.builds.loading = true;
@@ -524,11 +538,13 @@ export default {
 
       this.$api.PutProject.BuildsAvailableByCityInsignt(param)
         .then(res => {
-          this.buildingDirection.builds.data = res.result;
+          this.setBuildsList(res.result)
+          // this.buildingDirection.builds.data = res.result;
           this.buildingDirection.builds.loading = false;
         })
         .catch(res => {
-          this.buildingDirection.builds.data = [];
+          this.setBuildsList([])
+          // this.buildingDirection.builds.data = [];
           this.buildingDirection.builds.loading = false;
         })
     },
@@ -538,7 +554,6 @@ export default {
       let file = event.target.files[0];
       let formData = new FormData();
       let param;
-      this.buildingDirection.builds.loading = true;
       if (!this.$tools.checkSuffix(file.name, ['xls', 'xlsx'])) {
         this.$refs.uplaodBuild.value = '';
         return this.$notify({
@@ -547,6 +562,8 @@ export default {
           type: 'warning'
         });
       }
+
+      this.buildingDirection.builds.loading = true;
       this.buildingDirection.uploadBuildsFile = file;
 
       param = {
@@ -567,11 +584,13 @@ export default {
       }
       this.$api.PutProject.BuildsAvailableByImport(formData)
         .then(res => {
-          this.buildingDirection.builds.data = res.result;
+          this.setBuildsList(res.result)
+          // this.buildingDirection.builds.data = res.result;
           this.buildingDirection.builds.loading = false;
         })
         .catch(res => {
-          this.buildingDirection.builds.data = [];
+          this.setBuildsList([])
+          // this.buildingDirection.builds.data = [];
           this.buildingDirection.builds.loading = false;
         })
     },
@@ -608,15 +627,16 @@ export default {
       let param;
       let isformValidatePass = this.validataForm();
       
-      this.formData.confirming = true;
       if (!isformValidatePass) {
-        this.formData.confirming = false;
         return this.$notify({
           title: '警告',
           message: '还有必填字段未填写',
           type: 'warning'
         });
       }
+
+      this.planDataLoading = true;
+      this.formData.confirming = true;
       param = {
         name:         this.formData.name,
         type:         this.formData.type.value, // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
@@ -641,8 +661,8 @@ export default {
         .then(res => {
           this.formData.confirming = false;
           this.confirmWindowMsg.show = true;
-          this.confirmWindowMsg.data = res.result;
-          console.log(res)
+          this.confirmWindowMsg.pageData = this.formData;
+          this.confirmWindowMsg.resData = res.result;
         })
         .catch(res => {
           this.formData.confirming = false;
@@ -651,6 +671,14 @@ export default {
   },
 
   computed: {
+    ...mapGetters([
+      'buildsNumber',
+      'deviceNumber',
+      'peopleNumber',
+      'priceNumber',
+      'buildsDetails'
+    ]),
+
     // 限制时间选择器 按天 投放选择范围
     pickerOptionsForDay() {
       let _this = this;
@@ -691,23 +719,26 @@ export default {
       };
     },
 
-    // 判断城市洞察包是否可选择
+    // 判断 资源包 导入是否可用
     cityInsightDisabled() {
       this.formData.projectCity = '';
       if (this.buildingDirection.activeType === 'create') return;
       return !this.validataForm();
     },
 
-    // 接口需要的楼盘数据
-    buildsDetails() {
-      let result = [];
-      this.buildingDirection.builds.data.forEach(item => {
-        result.push({ 
-          deviceNum: item.deviceNum,
-          premiseId: item.premiseId
-        })
-      })
-      return result;
+  },
+
+  watch: {
+    // 点击页面选项, 清空已选择的洞察包 楼盘数据
+    formData: {
+      handler(val, oldVal) {
+        if (!val.projectCity) {
+          this.buildingDirection.cityInsight.selectedItemId = '';
+          this.setBuildsList([])
+          // this.buildingDirection.builds.data = [];
+        }
+      },
+      deep: true,
     },
   }
 }

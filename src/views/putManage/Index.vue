@@ -25,6 +25,10 @@ export default {
       activeName: 'plan'
     }
   },
+
+  beforeMount() {
+    this.activeName = this.$route.query.active || 'plan';
+  }
 }
 </script>
 

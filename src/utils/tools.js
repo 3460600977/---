@@ -95,6 +95,7 @@ let tools = {
     if (hasZero) return result + '.' + suffixDecimal;
     else return result
   },
+  
   type: (obj) => {
     var toString = Object.prototype.toString
     var map = {

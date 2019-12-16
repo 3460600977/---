@@ -13,6 +13,15 @@ const AddProject = (data) => {
   });
 }
 
+// 取消方案接口 
+const CancelProject = (data) => {
+  return request({
+    url: "/dpapi/project/projectCancel",
+    method: "post",
+    data
+  });
+}
+
 // 根据楼盘查询余量
 const BuildsAvailableByCityInsignt = (data) => {
   return request({
@@ -51,10 +60,12 @@ const ExportBuildsByMsg = (data) => {
   });
 }
 
+
 export const PutProject = {
   BuildsAvailableByCityInsignt,
   BuildsAvailableByImport,
   DowloadBuildsTemplate,
   AddProject,
-  ExportBuildsByMsg
+  ExportBuildsByMsg,
+  CancelProject
 }

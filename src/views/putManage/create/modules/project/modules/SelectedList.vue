@@ -3,16 +3,16 @@
     <div class="title mid-between">
 
       <div>
-        <span>已选择楼盘 <span class="color-main font16">{{list.length || 0}}</span> 个</span>
-        <span>, 可售设备 <span class="color-main font16">{{totalDeviceNumber || 0}}</span> 个</span>
+        <span>已选择楼盘 <span class="color-main font16">{{buildsNumber}}</span> 个</span>
+        <span>, 可售设备 <span class="color-main font16">{{deviceNumber}}</span> 个</span>
       </div>
 
-      <el-button :loading="exporting" @click="buildsListExport" v-show="list.length" size="small">下载</el-button>
+      <el-button :loading="exporting" @click="buildsListExport" v-show="buildsNumber > 0" size="small">下载</el-button>
 
     </div>
 
-    <ul class="selected-list-data-box" v-if="!!list.length" v-loading='loading'>
-      <li class="item mid" v-for="(item, index) in list" :key="index">
+    <ul class="selected-list-data-box" v-if="buildsNumber > 0" v-loading='loading'>
+      <li class="item mid" v-for="(item, index) in putProject.list" :key="index">
 
         <div class="left-info">
           <p class="name">{{item.premiseName}}</p>
@@ -23,7 +23,7 @@
           <span class="font-16 number">{{item.deviceNum || 0}}</span><span class="font-14">个</span>
         </div>
 
-        <DelCirclrButton @click.native="$emit('update:data', $tools.removeArrayItemByIndex(list, index))" class="delete-item"/>
+        <DelCirclrButton @click.native="$emit('update:data', $tools.removeArrayItemByIndex(putProject.list, index))" class="delete-item"/>
 
       </li>
 
@@ -38,7 +38,7 @@
       </li> -->
     </ul>
 
-    <div v-if="!list.length" v-loading='loading' style="padding: 30px; flex-direction: column;" class="mid-center">
+    <div v-if="buildsNumber <= 0" v-loading='loading' style="padding: 30px; flex-direction: column;" class="mid-center">
       <img width="70" :src="nodataImg" alt=""><br>
       <div class="color-text-2">无数据</div>
     </div>
@@ -46,12 +46,9 @@
 </template>
 <script>
 import DelCirclrButton from '../../../../../../components/DelCircleButton'
+import { mapGetters, mapState } from 'vuex'
 export default {
   props: {
-    list: {
-      type: Array,
-      default: () => {},
-    },
     loading: {
       type: Boolean,
       default: true,
@@ -94,14 +91,14 @@ export default {
   },
 
   computed: {
-    totalDeviceNumber() {
-      let total = 0;
-      this.list.forEach(item => {
-        total += item.deviceNum;
-      })
-      return total;
-    }
-  },
+    ...mapGetters([
+      'buildsNumber',
+      'deviceNumber',
+      'peopleNumber',
+      'priceNumber'
+    ]),
+    ...mapState(['putProject'])
+  }
 }
 </script>
 

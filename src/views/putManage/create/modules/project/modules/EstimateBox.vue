@@ -6,34 +6,43 @@
       <div class="estimate-number-box">
         <p class="color-text-1 estimate-title">楼盘数</p>
         <p class="font-14 estimate-number">
-          <span class="bold font-18">34563456</span>个
+          <span class="bold font-18">{{buildsNumber}}</span>个
         </p>
       </div>
       <div class="estimate-number-box">
         <p class="color-text-1 estimate-title">设备数</p>
         <p class="font-14 estimate-number">
-          <span class="bold font-18">678567</span>个
+          <span class="bold font-18">{{deviceNumber}}</span>个
         </p>
       </div>
     </div>
 
     <div class="estimate-dash-board-box">
-      <DashBoard :total="43" :value="443" :displayData="443"/>
+      <DashBoard :total="peopleNumber" :value="peopleNumber" :displayData="peopleNumber"/>
     </div>
 
     <div class="estimate-price-box font-16">
       <span>价格预估: </span>
-      <span class="font-number color-main">¥ {{$tools.toThousands(3456)}}</span>
+      <span class="font-number color-main">¥ {{$tools.toThousands(priceNumber)}}</span>
     </div>
   </div>
 </template>
 
 <script>
 import DashBoard from '../../../../../../components/chart/DashBoard'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     DashBoard
-  }
+  },
+  computed: {
+    ...mapGetters([
+      'buildsNumber',
+      'deviceNumber',
+      'peopleNumber',
+      'priceNumber'
+    ]),
+  },
 }
 </script>
 
@@ -72,6 +81,7 @@ export default {
       width: 272px;
       padding: 21px 0 26px;
       border-top: 1px solid #E5E7E9;
+      line-height: 1;
     }
   }
 </style>
