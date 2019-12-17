@@ -19,3 +19,5 @@ export const scaleData =[
 ]
 
 export const colorMain = '#2D5AFF'
+
+export const PAGE_SIZE = [10, 20, 30, 40,50]

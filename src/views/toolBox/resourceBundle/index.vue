@@ -7,15 +7,15 @@
       </div>
       <el-form :inline="true" :model="checkFormInline" class="report-query-form" label-width="82px">
         <el-form-item class="item-space-1" label="资源包管理">
-          <el-input v-model="checkFormInline.reportPlanValue" placeholder="输入创意名称" clearable></el-input>
+          <el-input v-model="checkFormInline.name" clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" plain>查询</el-button>
+          <el-button type="primary" plain @click="resetLoad">查询</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="query_result">
-      <el-table :data="tableData" class="list_table">
+      <el-table :data="resultData" class="list_table">
         <el-table-column prop="name" label="资源包名称"></el-table-column>
         <el-table-column prop="description" label="资源包描述">
         </el-table-column>
@@ -26,21 +26,20 @@
             <span class="icon-space">
               <i class="el-icon-edit icon-color"></i>编辑
             </span>
-            <span class="icon-space">
+            <span class="icon-space" @click="showDialog(scope.row)">
               <i class="el-icon-error icon-color"></i>删除
             </span>
-<!--            <span v-else>NA</span>-->
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
         background
         layout="total, sizes, prev, pager, next, jumper"
-        :total="1000"
-        :page-sizes="[10, 20, 30, 40,50]"
+        :total="totalCount"
+        :page-sizes="pageSizeSelectable"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="currentPage"
+        :current-page="pageIndex"
         class="list-page"
       ></el-pagination>
     </div>
@@ -49,70 +48,52 @@
                width="568px"
                class="dialog-1"
     >
-      <p>是否确认删除资源包 <span class="color-main">【资源包名称】？</span></p>
-      <span slot="footer" >
+      <p>是否确认删除资源包 <span class="color-main">【{{currentItem.name}}】？</span></p>
+      <span slot="footer">
         <el-button @click="dialogShowContent = false" class="btn1">取 消</el-button>
-        <el-button type="primary" class="btn1" @click="dialogShowContent = false">确 定</el-button>
+        <el-button type="primary" class="btn1" @click="deleteItem">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+  import {tableMixin} from '../../../mixins/tableMixin'
   export default {
     name: "auditList",
+    mixins: [tableMixin],
     data() {
       return {
         currentPage: 50,
-        dialogShowContent: true,
+        currentItem: null,
+        dialogShowContent: false,
         checkFormInline: {
-          reportPlanValue: '',
-        },
-        tableData: [
-              {
-                creativeID: 11002082,
-                description: '餐饮_上屏_11_26',
-                name: '新潮传媒集团有限公司',
-                industry: '医药',
-                city: '成都'
-              },
-              {
-                creativeID: 11002082,
-                description: '餐饮_上屏_11_26',
-                name: '新潮传媒集团有限公司',
-                city: '成都',
-                industry: '医药'
-              },
-              {
-                creativeID: 11002082,
-                description: '餐饮_上屏_11_26',
-                name: '新潮传媒集团有限公司',
-                city: '成都',
-                industry: '医药'
-              },
-              {
-                creativeID: 11002082,
-                description: '餐饮_上屏_11_26',
-                name: '新潮传媒集团有限公司',
-                city: '成都',
-                industry: '医药'
-              },
-              {
-                creativeID: 11002082,
-                description: '餐饮_上屏_11_26',
-                name: '新潮传媒集团有限公司',
-                city: '成都',
-                industry: '医药'
-              },
-          ]
+          name: '',
+        }
       }
     },
     methods: {
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+      loadFunction(param) {
+        const data = { ...this.checkFormInline, ...param }
+        return new Promise((resolve, reject) => {
+          this.$api.toolBox.getResourceBundle(data).then(res => {
+            resolve(res);
+          }).catch((res) => {
+            reject(res)
+          })
+        });
       },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
+      showDialog(item) {
+        this.currentItem = item
+        this.dialogShowContent = true
+      },
+      deleteItem() {
+        this.$api.toolBox.deleteResourceBundle({id: this.currentItem.id}).then((data) => {
+          if (data.result) {
+            this._loadData(this.filterData)
+            this.dialogShowContent = false
+          }
+        })
       },
     }
   }
