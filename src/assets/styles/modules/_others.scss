@@ -38,6 +38,36 @@
   visibility: hidden;
 }
 
+// el-input input上传
+.my-input-upload {
+  overflow: hidden;
+  display: inline-block;
+  position: relative;
+  height: 36px;
+  .input-real{
+    position: absolute;
+    z-index: 2;
+    height: 36px;
+    cursor: pointer;
+    opacity: 0;
+  }
+  .input-fake{
+    position: absolute;
+    z-index: 1;
+  }
+}
+.mt-20{
+  margin-top: 20px !important;
+}
+.mt-12{
+  margin-top: 12px !important;
+}
+.mt-15{
+  margin-top: 15px !important;
+}
+.mt-10{
+  margin-top: 10px !important;
+}
 /***
  *          .,:,,,                                        .::,,,::.
  *        .::::,,;;,                                  .,;;:,,....:i:

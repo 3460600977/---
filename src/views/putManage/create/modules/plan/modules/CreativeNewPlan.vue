@@ -47,12 +47,13 @@
             filterable
             clearable 
             v-model="formData.putCity" 
+            value-key="cityCode"
             placeholder="请选择">
             <el-option
               v-for="(item, index) in city"
               :key="index"
               :label="item.name"
-              :value="+item.cityCode">
+              :value="item">
             </el-option>
           </el-select>
         </el-form-item>
@@ -233,10 +234,10 @@ export default {
         campaignType: this.formData.goal,
         budgetType: this.formData.budget.type,
         totalBudget: this.formData.budget.value,
-        city: JSON.stringify(this.formData.putCity),
+        cityList: this.formData.putCity,
         beginTime: this.formData.putDate[0],
         endTime: this.formData.putDate[1]
-      }
+      };
 
       this.$api.PutPlan.AddPlan(param)
         .then(res => {
@@ -250,9 +251,6 @@ export default {
             path: '/putManage/create/project',
             query: {
               planId: res.result.id,
-              planName: res.result.name,
-              beginTime: res.result.beginTime,
-              endTime: res.result.endTime
             }
           })
         })

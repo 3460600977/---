@@ -95,6 +95,7 @@ let tools = {
     if (hasZero) return result + '.' + suffixDecimal;
     else return result
   },
+  
   type: (obj) => {
     var toString = Object.prototype.toString
     var map = {
@@ -150,12 +151,90 @@ let tools = {
     return arrTotal
   },
   /**
+   * TODO
    * @description: 前端分页
    * @param: pageSize
    */
   localPagegation: () => {
 
   },
+
+  /**
+   * @description: 校验后缀
+   * @param: 字符串 str 校验的字符串
+   * @param: 数组 suffix 后缀
+   */
+  checkSuffix: (str, suffix) => {
+    let result = false;
+    let strSuffix = str.substr(str.lastIndexOf(".") + 1);
+    for (let i=0; i<suffix.length; i++) {
+      if (strSuffix === suffix[i]) {
+        result = true;
+        break;
+      }
+    }
+    return result;
+  },
+
+  /**
+   * @description: 根据index删除数组元素
+   * @param: arrData
+   * @param: index
+   */
+  removeArrayItemByIndex(arrData, index) {
+    return arrData.splice(index, 1);
+  },
+
+  /**
+   * @description: 下载文件流
+   * @param: file
+   * @param: name   名字包括后缀
+   */
+  downLoadFileFlow(file, name) {
+    const blob = new Blob([file]);
+    const fileName = name;
+    if ('download' in document.createElement('a')) { // 非IE下载
+      const elink = document.createElement('a')
+      elink.download = fileName;
+      elink.style.display = 'none';
+      elink.href = URL.createObjectURL(blob);
+      document.body.appendChild(elink)
+      elink.click()
+      URL.revokeObjectURL(elink.href) // 释放URL 对象
+      document.body.removeChild(elink)
+    } else { // IE10+下载
+      navigator.msSaveBlob(blob, fileName)
+    }
+  },
+
+  /**
+   * @description: 获取当前年月日
+   * @param: fmt 格式
+   * @param: date 时间戳, 不传默认返回发当前
+   */
+  getFormatDate(fmt, dateStr) {
+    let ret;
+    let date = dateStr || new Date();
+    let opt = {
+      "Y+": date.getFullYear().toString(),        // 年
+      "m+": (date.getMonth() + 1).toString(),     // 月
+      "d+": date.getDate().toString(),            // 日
+      "H+": date.getHours().toString(),           // 时
+      "M+": date.getMinutes().toString(),         // 分
+      "S+": date.getSeconds().toString()          // 秒
+      // 有其他格式化字符需求可以继续添加，必须转化成字符串
+    };
+    for (let k in opt) {
+        ret = new RegExp("(" + k + ")").exec(fmt);
+        if (ret) {
+            fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+        };
+    };
+    return fmt;
+  },
+
+  
+  
 }
 
 export default tools;
