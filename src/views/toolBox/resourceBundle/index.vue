@@ -14,7 +14,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <div class="query_result">
+    <div class="query_result" v-if="resultData !== null">
       <el-table :data="resultData" class="list_table">
         <el-table-column prop="name" label="资源包名称"></el-table-column>
         <el-table-column prop="description" label="资源包描述">
@@ -48,7 +48,7 @@
                width="568px"
                class="dialog-1"
     >
-      <p>是否确认删除资源包 <span class="color-main">【{{currentItem.name}}】？</span></p>
+      <p>是否确认删除资源包 <span class="color-main">【{{currentItem && currentItem.name}}】？</span></p>
       <span slot="footer">
         <el-button @click="dialogShowContent = false" class="btn1">取 消</el-button>
         <el-button type="primary" class="btn1" @click="deleteItem">确 定</el-button>
