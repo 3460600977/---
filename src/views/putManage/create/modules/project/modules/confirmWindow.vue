@@ -6,7 +6,7 @@
     class="confirm-box">
     <div class="title">确认投放方案信息</div>
     <div class="confirm-content">
-      <div class="sub-title">确认投放方案信息</div>
+      <div class="sub-title">请确定如下投放方案信息：</div>
       <el-tabs class="thin-tab small" v-model="activeTab">
 
         <el-tab-pane label="方案信息" name="plan">
@@ -112,6 +112,9 @@ export default {
     createActive() {
       this.$router.push({
         path: '/putManage/create/creative',
+        query: {
+          'projectId': this.confirmWindowMsg.resData.projectId
+        }
       })
     }
   },

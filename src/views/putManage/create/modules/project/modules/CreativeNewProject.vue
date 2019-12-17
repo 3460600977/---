@@ -666,6 +666,7 @@ export default {
         })
         .catch(res => {
           this.formData.confirming = false;
+          this.planDataLoading = false;
         })
     },
   },

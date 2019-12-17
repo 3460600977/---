@@ -3,6 +3,7 @@ import { PutPlan } from './modules/PutPlan'
 import { PutProject } from './modules/putProject'
 import { CityList } from './modules/CityList'
 import { IndustryList } from './modules/industryList'
+import { CreateCreative } from './modules/createCreative'
 
 const api = {
   cityInsight,
@@ -10,6 +11,7 @@ const api = {
   PutProject,    // 投放方案
   CityList,      // 城市列表
   IndustryList,  // 行业
+  CreateCreative,// 创建创意
 }
 
 export default api;

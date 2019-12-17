@@ -44,9 +44,9 @@ export const projectConst = {
   
   // 投放时长，001-5s/次，002-10s/次，003-15s/次 依次类推
   putDuration: [
-    { name: '5 秒/次', value: '001' },
-    { name: '10 秒/次', value: '002' },
-    { name: '15 秒/次', value: '003' },
+    { name: '5 秒/次',  value: '001', time: 500 },
+    { name: '10 秒/次', value: '002', time: 1000 },
+    { name: '15 秒/次', value: '003', time: 1500 },
   ],
   
   // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
@@ -56,5 +56,12 @@ export const projectConst = {
     { name: '下屏', value: '002' },
   ]
 }
+
+// 第三方监测
+export const MonitorData = {
+  mode: ['SDK', 'C2S', 'S2S'],
+  thirdPartyMonitor: ['酷云', 'admaster', '国双', '数字100', '秒针']
+}
+
 
 
