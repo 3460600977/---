@@ -16,7 +16,8 @@
             v-for="(steps_sub, subIndex) in step_item.sub"
             :key="subIndex"
             :class="{'step_des':true,'text_active': leftStep.rootActiveIndex == rootIndex && subIndex == leftStep.subActiveIndex}"
-          >{{steps_sub}}</div>
+          >{{steps_sub}}
+          </div>
         </el-step>
       </el-steps>
     </div>
@@ -24,39 +25,40 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { mapGetters } from 'vuex'
-export default {
-  data() {
-    return {
-      test: '',
-      isShowSteps: true,
-      step: {
-        content: [
-          {
-            name: "投放计划",
-            sub: ["投放目的", "投放计划名称"]
-          },
-          {
-            name: "投放方案",
-            sub: ["投放设置", "楼盘定向包", "楼盘定向包"]
-          },
-          {
-            name: "广告创意",
-            sub: ["制作创意", "创意资质", "广告创意名称"]
-          }
-        ]
-      }
+    import {mapState} from 'vuex'
+    import {mapGetters} from 'vuex'
+
+    export default {
+        data() {
+            return {
+                test: '',
+                isShowSteps: true,
+                step: {
+                    content: [
+                        {
+                            name: "投放计划",
+                            sub: ["投放目的", "投放计划名称"]
+                        },
+                        {
+                            name: "投放方案",
+                            sub: ["投放设置", "楼盘定向包", "楼盘定向包"]
+                        },
+                        {
+                            name: "广告创意",
+                            sub: ["制作创意", "创意资质", "广告创意名称"]
+                        }
+                    ]
+                }
+            };
+        },
+        computed: {
+            ...mapState(['leftStep']),
+        },
     };
-  },
-  computed: {
-    ...mapState(['leftStep']),
-  },
-};
 </script>
 
 <style lang="scss">
- .left-steps {
+  .left-steps {
     width: 220px;
     height: calc(100vh - 76px);
     overflow: hidden;
@@ -64,6 +66,7 @@ export default {
     background: #fff;
     transition: 0.4s;
     position: relative;
+
     .hide-el-steps {
       position: absolute;
       right: -5px;
@@ -84,11 +87,13 @@ export default {
       display: inline-block;
       top: 15%;
       right: 0;
+
       i {
         color: $color-split-line2;
         font-size: 22px;
         cursor: pointer;
         transition: 0.3s;
+
         &.rotate {
           transform: rotate(180deg);
         }
@@ -160,22 +165,25 @@ export default {
       }
 
       .el-step__line {
-        border: 1px dashed $color-step;
+        border-left: 1px dashed $color-step;
         background-color: $color-bg-3;
-        left: 14px;
+        left: 16px;
       }
     }
   }
+
   .hide-steps {
     position: relative;
     top: 20px;
     left: 20px;
+
     i {
       font-size: 24px;
       cursor: pointer;
       color: $color-blue;
     }
   }
+
   .text_active {
     color: $color-text;
   }

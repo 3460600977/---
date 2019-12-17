@@ -591,21 +591,6 @@ export default {
     .put-form{
       width: 352px;
       margin-top: 18px;
-      .my-input-upload {
-        position: relative;
-        height: 36px;
-        .input-real{
-          position: absolute;
-          z-index: 2;
-          height: 40px;
-          cursor: pointer;
-          opacity: 0;
-        }
-        .input-fake{
-          position: absolute;
-          z-index: 1;
-        }
-      }
       .decription{
         width:256px;
         line-height:18px;

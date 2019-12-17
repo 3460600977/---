@@ -79,10 +79,8 @@
         :default-sort="{prop: 'costNum', order: 'ascending'}"
         style="width: 100%"
         class="report-table">
-        <el-table-column
-          prop="name"
-          label="投放计划"
-          width="180">
+        <el-table-column prop="name" label="投放方案" width="180">
+          <router-link :to="{path:'/reportList/projectDetail'}" class="project-id">投放方案</router-link>
         </el-table-column>
         <el-table-column
           prop="date"
@@ -463,16 +461,19 @@
 
       tr td:first-child {
         border-radius: 4px;
+      }
+
+      .project-id {
         font-size: 14px;
         font-weight: 400;
-        font-family: Microsoft YaHei;
         color: $color-blue;
+        text-decoration: none;
+        cursor: pointer;
       }
 
       tr td:nth-child(2) {
         font-size: 14px;
         font-weight: 400;
-        font-family: Microsoft YaHei;
         color: $color-text;
       }
 

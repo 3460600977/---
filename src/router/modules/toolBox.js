@@ -29,5 +29,10 @@ export const toolBoxRouter = [
       },
     ]
   },
+  // 工具箱--修改账号密码
+  {
+    path: '/toolBox/editPass',
+    component: () => import('@/views/toolBox/pass/index'),
+  },
 ]
 

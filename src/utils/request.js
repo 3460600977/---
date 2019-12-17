@@ -40,6 +40,12 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data;
+    
+    // 下载 csv xls
+    if (response.headers['content-type'] === 'application/xls;charset=UTF-8' || 
+        response.headers['content-type'] ==='application/vnd.ms-excel;charset=UTF-8') {
+      return res;
+    }
     if (res.code !== 100001) {
       // 100201:token过期
       if (res.code === 100201 && location.hash.indexOf('/login') === -1) {

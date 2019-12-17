@@ -26,6 +26,7 @@
         type: Number,
         required: true
       },
+      // 覆盖人数
       displayData: {
         type: Number,
         required: true

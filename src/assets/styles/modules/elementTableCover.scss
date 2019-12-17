@@ -1,4 +1,12 @@
+.el-table--group::after, .el-table--border::after, .el-table::before {
+  background-color: $color-bg-3;
+}
+
 .list_table {
+  ::after, ::before {
+    background-color: $color-bg-3;
+  }
+
   .status {
     display: inline-block;
     border-radius: 4px;
@@ -22,6 +30,10 @@
       box-shadow: 0px 2px 4px 0px $color-shadow-3;
       color: $color-bg-3;
     }
+  }
+
+  th.is-leaf {
+    border-bottom: none;
   }
 
   div.cell {
@@ -52,6 +64,7 @@
 
   td {
     border-top: 10px solid $color-bg;
+    border-bottom: none;
     padding-left: 17px;
   }
 

@@ -14,5 +14,18 @@ export const cityInsight = {
       method: "GET",
       params
     });
+  },
+  CityInsightList: data => {
+    return request({
+      url: "/dpapi/cityInsight/list",
+      method: "POST",
+      data
+    });
+  },
+  GetCityInsightDetailById: data => {
+    return request({
+      url: "/dpapi/cityInsight/" + data,
+      method: "get",
+    });
   }
 }
