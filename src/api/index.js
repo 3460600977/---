@@ -2,7 +2,7 @@ import {cityInsight} from './modules/cityInsight'
 import { PutPlan } from './modules/PutPlan'
 import { PutProject } from './modules/putProject'
 import { CityList } from './modules/CityList'
-import { industryList } from './modules/industryList'
+import { IndustryList } from './modules/industryList'
 import {toolBox} from './modules/toolBox'
 
 const api = {
