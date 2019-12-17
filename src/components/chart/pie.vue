@@ -1,10 +1,6 @@
 <template>
   <div class="fullContainer">
     <div ref="chartBox" class="chartBox" :style="{'width':width,'height': height}"></div>
-    <div class="clearfix text">
-      <p style="width: 50%;" class="float-left">金沙雅苑未来街区</p>
-      <p style="width: 50%;" class="float-left">上海市</p>
-    </div>
   </div>
 </template>
 
@@ -26,6 +22,19 @@
         type: Array,
         required: true
       },
+      center: {
+        type: Array,
+        default: function () {
+          return [
+            ['28%', '50%'],
+            ['72%', '50%']
+          ]
+        }
+      },
+      customTooltip: {
+        type: String,
+        default: ''
+      }
     },
     mounted() {
       let myChart = echarts.init(this.$refs.chartBox);
@@ -90,30 +99,40 @@
           {
             type:'pie',
             radius : '56%',
-            center : ['28%', '50%'],
+            center : this.center[0],
             roseType : 'radius',
             label: {
               normal: {
                 show: false,
                 color: '#999999'
               },
-              emphasis: {
-                show: true,
-                position: 'outside'
-              }
             },
             itemStyle: {
               shadowColor: 'rgba(238,162,104,0.2)',
               shadowBlur: 17,
               shadowOffsetX: 0,
               shadowOffsetY: 10,
+            },
+            emphasis: {
+              label: {
+                show: true,
+                formatter: (param) => {
+                  let str = ''
+                  if (this.customTooltip !== '') {
+                    str = `${param.name}${this.customTooltip}：${param.percent}%`
+                  } else {
+                    str = `${param.name}：${param.percent}%`
+                  }
+                  return str
+                }
+              }
             },
             data: this.data[0]
           },
           {
             type:'pie',
             radius : '56%',
-            center : ['72%', '50%'],
+            center : this.center[1],
             roseType : 'radius',
             itemStyle: {
               shadowColor: 'rgba(238,162,104,0.2)',
@@ -121,13 +140,24 @@
               shadowOffsetX: 0,
               shadowOffsetY: 10,
             },
+            emphasis: {
+              label: {
+                show: true,
+                formatter: (param) => {
+                  let str = ''
+                  if (this.customTooltip !== '') {
+                    str = `${param.name}${this.customTooltip}：${param.percent}%`
+                  } else {
+                    str = `${param.name}：${param.percent}%`
+                  }
+                  return str
+                }
+              }
+            },
             label: {
               normal: {
                 show: false,
                 color: '#999999'
-              },
-              emphasis: {
-                show: true
               }
             },
             data: this.data[1]
@@ -142,11 +172,4 @@
 </script>
 
 <style scoped lang="scss">
-  .text {
-    text-align: center;
-    color: $color-text-1;
-    position: absolute;
-    bottom: 20px;
-    width: 100%;
-  }
 </style>

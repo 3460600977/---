@@ -1,9 +1,14 @@
 <template>
-    <div v-if="ratioArr.length" class="ratio mid-row">
-      <div class="item" v-for="(item, index) in ratioArr" :style="{'width': item.width}" :key="index">
-        <p class="text font-number" :style="item.textStyle">{{item.width}}</p>
-        <div class="box" :style="item.style"></div>
+    <div v-if="ratioArr.length" class="ratio">
+      <slot name="text" :ratioArr="ratioArr">{{ratioArr}}</slot>
+      <div class="mid-between">
+        <div class="item" v-for="(item, index) in ratioArr" :style="item.style" :key="index"></div>
       </div>
+      <slot name="bottom" :ratioArr="ratioArr">{{ratioArr}}</slot>
+<!--      <div class="item" v-for="(item, index) in ratioArr" :style="{'width': item.width}" :key="index">-->
+<!--        <p class="text font-number" :style="item.textStyle">{{item.width}}</p>-->
+<!--        <div class="box" :style="item.style"></div>-->
+<!--      </div>-->
     </div>
 </template>
 
@@ -30,8 +35,9 @@
       this.total = this.$tools.operation(this.dataArr, 'value', 'sum')
       this.ratioArr = this.dataArr.map((item) => {
         let w = (item.value / this.total * 100).toFixed(2)
-        return {textStyle: item.textStyle, width: `${w}%`,style: `${item.style}height: ${this.height}px`}
+        return {...item, style: `${item.style}width: ${w}%`, width: `${w}%`}
       })
+      console.log(this.ratioArr)
     }
   }
 </script>
@@ -39,6 +45,9 @@
 <style scoped lang='scss'>
 .ratio {
   width: 100%;
+  .item {
+    height: 25px;
+  }
   .text {
     margin-bottom: 20px;
   }

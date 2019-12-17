@@ -16,10 +16,6 @@
         type: String,
         required: true
       },
-      rotate: {
-        type: Number,
-        default: 0
-      },
       color: {
         type: Array,
         required: true
@@ -35,16 +31,6 @@
       data: {
         type: Object,
         required: true
-      },
-      grid: {
-        type: Object,
-        default: function () {
-          return {
-            left: '11.36%',
-            right: '14.69%',
-            bottom: 22,
-          }
-        }
       },
     },
     mounted() {
@@ -81,29 +67,13 @@
           color: '#999999'
         },
         grid: {
-          ...this.grid,
+          left: '11.36%',
+          right: '14.69%',
+          bottom: 22,
           containLabel: true
         },
-        xAxis: {
-          type: 'category',
-          splitLine:{ show:false},
-          axisLine: {show: false},
-          axisTick: {show: false},
-          axisLabel: {
-            margin: 16,
-            interval: 0,
-            rotate: this.rotate
-          },
-          data: this.data.xAxis,
-        },
-        color: this.color,
         yAxis: {
-          type: 'value',
-          axisLabel: {
-            formatter: function (v) {
-              return `${parseInt(v * 100)}%`
-            }
-          },
+          type: 'category',
           splitLine:{
             show: this.isShowLine,
             lineStyle: {
@@ -115,6 +85,27 @@
             lineStyle: {
               color: '#E5E7E9'
             },
+          },
+          axisTick: {show: false},
+          axisLabel: {
+            margin: 16,
+            interval: 0
+          },
+          data: this.data.xAxis,
+        },
+        color: this.color,
+        xAxis: {
+          type: 'value',
+          axisLabel: {
+            formatter: function (v) {
+              return `${parseInt(v * 100)}%`
+            }
+          },
+          splitLine:{
+            show: false
+          },
+          axisLine: {
+            show: false
           },
           axisTick: {show: false}
         },

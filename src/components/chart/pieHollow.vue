@@ -1,10 +1,6 @@
 <template>
   <div class="fullContainer">
     <div ref="chartBox" class="chartBox" :style="{'width':width,'height': height}"></div>
-    <div class="clearfix text">
-      <p style="width: 50%;" class="float-left">金沙雅苑未来街区</p>
-      <p style="width: 50%;" class="float-left">上海市</p>
-    </div>
   </div>
 </template>
 
@@ -30,6 +26,15 @@
         type: Array,
         required: true
       },
+      center: {
+        type: Array,
+        default: function () {
+          return [
+            ['29%', '50%'],
+            ['69%', '50%']
+          ]
+        }
+      }
     },
     mounted() {
       let myChart = echarts.init(this.$refs.chartBox);
@@ -58,24 +63,24 @@
             name:'半径模式',
             type:'pie',
             radius : ['24%', '48%'],
-            center : ['29%', '50%'],
-            // roseType : 'radius',
+            center : this.center[0],
             label: {
               normal: {
                 show: false,
                 color: '#999999'
-                // position: 'inside'
               },
-              emphasis: {
-                show: true,
-                position: 'outside'
-              }
             },
             itemStyle: {
               shadowColor: 'rgba(238,162,104,0.2)',
               shadowBlur: 17,
               shadowOffsetX: 0,
               shadowOffsetY: 10,
+            },
+            emphasis: {
+              label: {
+                show: true,
+                formatter: '{b}: {d}%'
+              }
             },
             data: this.data[0]
           },
@@ -83,20 +88,23 @@
             name:'面积模式',
             type:'pie',
             radius : ['24%', '48%'],
-            center : ['69%', '50%'],
+            center : this.center[1],
+            label: {
+              normal: {
+                show: false,
+                color: '#999999'
+              },
+            },
             itemStyle: {
               shadowColor: 'rgba(238,162,104,0.2)',
               shadowBlur: 17,
               shadowOffsetX: 0,
               shadowOffsetY: 10,
             },
-            label: {
-              normal: {
-                show: false,
-                color: '#999999'
-              },
-              emphasis: {
-                show: true
+            emphasis: {
+              label: {
+                show: true,
+                formatter: '{b}: {d}%'
               }
             },
             data: this.data[1]

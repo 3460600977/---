@@ -52,7 +52,24 @@
               <ratio-chart
                 :height="25"
                 :dataArr="sexArr"
-              ></ratio-chart>
+              >
+                <template #text="{ratioArr}">
+                  <div class="mid-between text-container font-number">
+                    <p v-for="(item, index) in ratioArr" :key="index"
+                       :style="{'color': item.color, 'width': item.width, 'textAlign': index === 1?'right':'left'}"
+                    >{{item.width}}</p>
+                  </div>
+                </template>
+                <template #bottom="{ratioArr}">
+                  <div class="bottom-container font-number color-text-1">
+                    <div class="margin-top-10 mid-between">
+                      <p v-for="(item, index) in ratioArr" :key="index"
+                         :style="{'width': item.width, 'textAlign': index === 1?'right':'left'}"
+                      >{{item.tag}}</p>
+                    </div>
+                  </div>
+                </template>
+              </ratio-chart>
             </div>
           </div>
         </div>
@@ -76,8 +93,14 @@
               v-if="consumptionDist"
               width="100%"
               height="100%"
+              customTooltip="端消费水平"
+              :center="positionType[2]"
               :data="consumptionDist"
             ></pie>
+          </div>
+          <div style="position: relative;width: 100%">
+            <p class="text" :style="{'left': positionType[2][0][0]}">{{buildDetail.name}}</p>
+            <p class="text" :style="{'left': positionType[2][1][0]}">{{buildDetail.cityName}}</p>
           </div>
 <!--          <div class="container3 container"></div>-->
         </div>
@@ -90,7 +113,12 @@
               v-if="marriageDist"
               :color="colorType[1]"
               :data="marriageDist"
+              :center="positionType[3]"
             ></pie-hollow>
+          </div>
+          <div style="position: relative;width: 100%">
+            <p class="text" :style="{'left': positionType[3][0][0]}">{{buildDetail.name}}</p>
+            <p class="text" :style="{'left': positionType[3][1][0]}">{{buildDetail.cityName}}</p>
           </div>
 <!--          <div class="container4 container"></div>-->
         </div>
@@ -103,7 +131,12 @@
               v-if="privateCarDist"
               :data="privateCarDist"
               :color="colorType[0]"
+              :center="positionType[3]"
             ></pie-hollow>
+          </div>
+          <div style="position: relative;width: 100%">
+            <p class="text" :style="{'left': positionType[3][0][0]}">{{buildDetail.name}}</p>
+            <p class="text" :style="{'left': positionType[3][1][0]}">{{buildDetail.cityName}}</p>
           </div>
 <!--          <div class="container4 container"></div>-->
         </div>
@@ -118,15 +151,43 @@
               :isShowLine="true"
               :isShowLegend="false"
               :data='hotSearch'
+              :grid="positionType[5]"
+              :rotate="20"
             ></histogram>
           </div>
 <!--          <div class="container5 container"></div>-->
         </div>
         <div class="margin5 box4 box margin4 margin3">
-          <div class="container6 container"></div>
+          <p class="title">收入水平</p>
+          <div class="fullContainer">
+            <vertical-histogram
+              width="100%"
+              height="100%"
+              v-if="incomeDist.xAxis.length"
+              :color="colorType[4]"
+              :isShowLine="true"
+              :grid="positionType[6]"
+              :data='incomeDist'
+            ></vertical-histogram>
+          </div>
+<!--          <div class="container6 container"></div>-->
         </div>
         <div class="margin5 box4 box margin3">
-          <div class="container7 container"></div>
+          <p class="title">学历分布</p>
+          <div class="fullContainer">
+            <pie
+              v-if="educationDist"
+              width="100%"
+              height="100%"
+              :center="positionType[7]"
+              :data="educationDist"
+            ></pie>
+          </div>
+          <div style="position: relative;width: 100%">
+            <p class="text" :style="{'left': positionType[7][0][0]}">{{buildDetail.name}}</p>
+            <p class="text" :style="{'left': positionType[7][1][0]}">{{buildDetail.cityName}}</p>
+          </div>
+<!--          <div class="container7 container"></div>-->
         </div>
       </div>
     </div>
@@ -137,12 +198,15 @@
   import Histogram from "../../../components/chart/Histogram";
   import pie from "../../../components/chart/pie";
   import pieHollow from "../../../components/chart/pieHollow";
+  import verticalHistogram from "../../../components/chart/verticalHistogram";
+
   export default {
     name: "index",
     components: {
       RatioChart,
       Histogram,
       pieHollow,
+      verticalHistogram,
       pie
     },
     data() {
@@ -154,12 +218,14 @@
         marriageDist: null,
         privateCarDist: null,
         hotSearch: null,
+        incomeDist: null,
+        educationDist: null,
         formatDate: this.$tools.formatDate,
         sexArrStyle: [
           {style: 'background:linear-gradient(270deg,rgba(95,129,255,1),rgba(45,90,255,1));' +
-              'box-shadow:0px 10px 17px 3px rgba(45,90,255,0.2);'},
+              'box-shadow:0px 10px 17px 3px rgba(45,90,255,0.2);', color: 'rgba(45,90,255,1)'},
           {style: 'background:linear-gradient(-90deg,rgba(244,74,74,1),rgba(244,102,74,1));' +
-              'box-shadow:0px 10px 17px 3px rgba(242,126,86,0.2);'},
+              'box-shadow:0px 10px 17px 3px rgba(242,126,86,0.2);', color: 'rgba(244,102,74,1)'},
         ],
         colorType: {
           0:[
@@ -257,18 +323,73 @@
               global: false // 缺省为 false
             },
           ],
+          4: [
+            {
+              type: 'linear',
+              x: 1,
+              y: 0,
+              x2: 0,
+              y2: 0,
+              colorStops: [{
+                offset: 0, color: 'rgba(251,180,103,1)' // 0% 处的颜色
+              }, {
+                offset: 1, color: 'rgba(250,126,82,1)' // 100% 处的颜色
+              }],
+              global: false // 缺省为 false
+            },
+            {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [{
+                offset: 0, color: 'rgba(250,206,98,1)' // 0% 处的颜色
+              }, {
+                offset: 1, color: 'rgba(254,217,42,1)' // 100% 处的颜色
+              }],
+              global: false // 缺省为 false
+            }
+          ],
         },
+        positionType: {
+          2: [
+            ['28%', '50%'],
+            ['72%', '50%']
+          ],
+          3: [
+            ['29%', '50%'],
+            ['69%', '50%']
+          ],
+          5: {
+            left: '12.57%',
+            right: '16.51%',
+            bottom: 20
+          },
+          6: {
+            left: '5.66%',
+            right: '16.44%',
+            bottom: 20
+          },
+          7: [
+            ['28%', '50%'],
+            ['66%', '50%']
+          ]
+        }
       }
     },
     created() {
       this.$api.cityInsight.getBuildingDetail({pid: this.$route.params.id}).then((data) => {
         this.buildDetail = data.result
         this.sexArr = this.renderSexChart(data.result.chat.genderDist)
+        console.log(this.sexArr)
         this.ageArr = this.renderAgeChart(data.result.chat.ageDist, data.result.chat.cityAverage.ageAverageDist)
         this.consumptionDist = this.renderPieChart(data.result.chat.consumptionDist, data.result.chat.cityAverage.consumptionAverageDist)
         this.marriageDist = this.renderPieChart(data.result.chat.marriageDist, data.result.chat.cityAverage.marriageAverageDist)
         this.privateCarDist = this.renderPieChart(data.result.chat.privateCarDist, data.result.chat.cityAverage.privateCarAverageDist)
         this.hotSearch = this.renderAgeChart(data.result.chat.hotSearch)
+        this.incomeDist = this.renderAgeChart(data.result.chat.incomeDist, data.result.chat.cityAverage.incomeAverageDist)
+        this.educationDist = this.renderPieChart(data.result.chat.educationDist, data.result.chat.cityAverage.educationAverageDist)
       })
     },
     methods: {
@@ -276,9 +397,9 @@
         let result = []
         result = arr.map((item, i) => {
           if (item.tag === '女') {
-            return {textStyle: `color: rgba(45,90,255,1);textAlign: ${i === 0?'left':'right'}`,...item, ...this.sexArrStyle[1]}
+            return {...item, ...this.sexArrStyle[1]}
           } else {
-            return {textStyle: `color: rgba(244,102,74,1);textAlign: ${i === 0?'left':'right'}`,...item, ...this.sexArrStyle[0]}
+            return {...item, ...this.sexArrStyle[0]}
           }
         })
         return result
@@ -293,12 +414,12 @@
           result.xAxis.push(item.tag)
           data.push(item.value)
         })
-        result.yAxis.push({name: 'dddd', type: 'bar', data: data})
+        result.yAxis.push({name: this.buildDetail.name, type: 'bar', data: data})
         if (arr2) {
           let data1 = arr2.map((item) => {
             return item.value
           })
-          result.yAxis.push({name: 'fffff', type: 'bar', data: data1})
+          result.yAxis.push({name: this.buildDetail.cityName, type: 'bar', data: data1})
         }
         return result
       },
@@ -311,7 +432,6 @@
           return {value: item.value, name: item.tag}
         })
         result.push(data, data2)
-        console.log(result)
         return result
       },
     },
@@ -324,6 +444,19 @@
   .fullContainer {
     height: 100%;
     width: 100%;
+  }
+  .text-container {
+    margin-bottom: 20px;
+  }
+  .bottom-container {
+    margin-top: 32px;
+  }
+  .text {
+    color: $color-text-1;
+    position: absolute;
+    bottom: 20px;
+    display: inline-block;
+    transform: translateX(-50%);
   }
   .margin3 {
     margin-right: 2.08%;
