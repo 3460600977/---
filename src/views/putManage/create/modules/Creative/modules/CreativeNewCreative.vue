@@ -19,18 +19,18 @@
               style="width: 102px"
               @click="switchFileType(item.value)"
               v-for="(item, index) in fileType" 
-              :type="formData1.fileType == item.value ? 'primary' : 'info'" 
+              :type="formData.fileType == item.value ? 'primary' : 'info'" 
               :key="index">
               {{item.name}}
             </el-button>
           </div>
           
           <!-- 视频 -->
-          <div v-if="formData1.fileType === 1">
+          <div v-if="formData.fileType === 1">
             <div class="mt-12 my-input-upload">
               <input 
                 ref="topVideo"
-                @change="uploadMedia($event, 'video')" 
+                @change="uploadMedia($event, 'topVideo')" 
                 type="file" 
                 accept=".avi, .mp4"
                 class="input-real"/>
@@ -43,7 +43,7 @@
           </div>
 
           <!-- 图片 -->
-          <div v-if="formData1.fileType === 2">
+          <div v-if="formData.fileType === 2">
             <div class="mt-12 my-input-upload">
               <input 
                 ref="topImage"
@@ -64,7 +64,7 @@
         <!-- 时长  -->
         <el-form-item prop="durationType" label="投放时长">
           <el-select class="width-100-p"
-            :disabled="formData1.fileType == 1 || this.createType !== 'single'"
+            :disabled="formData.fileType == 1 || this.createType !== 'single'"
             v-model="formData.durationType" 
             placeholder="请选择">
             <el-option
@@ -139,24 +139,24 @@
             autoplay
             loop
             muted
-            v-if="formData1.fileType === 1 && formData.top.base64 && formData.top.type === 'video/mp4'" 
-            :src="formData.top.base64"></video>
+            v-if="formData.fileType === 1 && formData.top && formData.top.type === 'video/mp4'" 
+            :src="$tools.fileToUrl(formData.top)"></video>
           <img 
-            v-else-if="formData1.fileType === 2 && formData.top.base64" 
+            v-else-if="formData.fileType === 2 && formData.top" 
             class="top" 
-            :src="formData.top.base64"/>
+            :src="$tools.fileToUrl(formData.top)"/>
 
           <div v-if="formData.top.type === 'video/avi'" class="top font-12 mid-center">
             avi不支持预览
           </div>
-          <div v-if="!formData.top.base64" class="top font-12 mid-center">
+          <div v-if="!formData.top" class="top font-12 mid-center">
             <!-- 请上传上屏素材 -->
           </div>
         </div>
 
         <!-- 下屏 -->
         <div>
-          <img v-if="formData.bottom880Image.base64" class="bottom" alt="请上传下屏" :src="formData.bottom880Image.base64">
+          <img v-if="formData.bottom880Image" class="bottom" alt="请上传下屏" :src="$tools.fileToUrl(formData.bottom880Image)">
           <div v-else class="bottom font-12 mid-center">
             <!-- 请上传下屏素材 -->
           </div>
@@ -179,7 +179,7 @@
           <el-select 
             :disabled="this.createType !== 'single'"
             class="width-100-p" 
-            v-model="formData1.industry" 
+            v-model="formData.industry" 
             placeholder="请选择">
             <el-option
               v-for="(item, index) in industryList"
@@ -194,16 +194,16 @@
         <el-form-item class="mt-12" label="广告创意资质">
           <div style="width: 1108px">
             <div class="aptitude-img" 
-              v-for="(item, index)  in formData1.industryImage"
+              v-for="(item, index)  in formData.industryImage"
               :key="index">
               <el-image
                 :preview-src-list="aptitudePreviewImgs"
                 style="width: 100px; height: 160px"
-                :src="item.base64"
+                :src="$tools.fileToUrl(item)"
                 fit="cover">
               </el-image>
               <!-- 删除 -->
-              <div class="del-third-monitor mid-center" @click="delAptitude(index)">
+              <div class="del-third-monitor mid-center" @click="$tools.removeArrayItemByIndex(formData.industryImage, index)">
                 <i class="el-icon-error color-main"></i>
               </div>
             </div>
@@ -226,9 +226,9 @@
         :label-position="'left'" 
         label-width="112px" class="put-form">
 
-        <div class="monitor-box" v-for="(monitor, index) in formData.thirdPartMonitor" :key="index">
+        <div class="monitor-box" v-for="(monitor, index) in formData.monitor" :key="index">
           <el-form-item label="监测模式">
-            <el-select class="width-100-p" v-model="formData.thirdPartMonitor[index].mode" placeholder="请选择">
+            <el-select class="width-100-p" v-model="formData.monitor[index].mode" placeholder="请选择">
               <el-option
                 v-for="item in MonitorData.mode"
                 :key="item"
@@ -238,9 +238,9 @@
             </el-select>
           </el-form-item>
 
-          <div v-show="formData.thirdPartMonitor[index].mode != 'SDK'">
+          <div v-show="formData.monitor[index].mode != 'SDK'">
             <el-form-item class="mt-10" label="第三方监测">
-              <el-select class="width-100-p" v-model="formData.thirdPartMonitor[index].thirdPartyMonitor" placeholder="请选择">
+              <el-select class="width-100-p" v-model="formData.monitor[index].thirdPartyMonitor" placeholder="请选择">
                 <el-option
                   v-for="(item, index) in MonitorData.thirdPartyMonitor"
                   :key="index"
@@ -251,12 +251,12 @@
             </el-form-item>
 
             <el-form-item class="mt-10" label="第三方监测地址">
-              <el-input v-model="formData.thirdPartMonitor[index].thirdPartyMonitorAddr" placeholder="请输入地址"></el-input>
+              <el-input v-model="formData.monitor[index].thirdPartyMonitorUrl" placeholder="多个地址英文逗号隔开"></el-input>
             </el-form-item>
           </div>
 
           <!-- 删除 -->
-          <div class="del-third-monitor" @click="delThirdPartMonitor(index)">
+          <div class="del-third-monitor" @click="$tools.removeArrayItemByIndex(formData.monitor, index)">
             <i class="el-icon-error color-main"></i>
           </div>
         </div>
@@ -281,7 +281,7 @@
         :label-position="'left'" 
         label-width="112px" class="put-form">
         <el-form-item prop="name" label="广告创意名称">
-          <el-input v-model.trim="formData1.name" clearable placeholder="请输入名称"></el-input>
+          <el-input v-model.trim="formData.name" clearable placeholder="请输入名称"></el-input>
         </el-form-item>
       </el-form>
     </PutMangeCard>
@@ -298,7 +298,7 @@
 
 <script>
 import PutMangeCard from '../../../../templates/PutMangeCard' 
-import { projectConst, MonitorData } from '../../../../../../utils/static'
+import { projectConst, MonitorData, fileType } from '../../../../../../utils/static'
 export default {
   props:{
     /**
@@ -319,75 +319,24 @@ export default {
     return {
       MonitorData,
       projectConst,
+      fileType,
       pageLoading: true,
       projectData: '', // 根据id查询的投放方案信息
-      
-      // 上屏文件类型，1：视频,2:图片
-      fileType: [
-        { name: '上传视频', value: 1},
-        { name: '上传图片', value: 2},
-      ],
-      mediaType: {
-        activeIndex: 0,
-        activeType: 'video',
-        values: [
-          { name: '上传视频', value: 'video'},
-          { name: '上传图片', value: 'image'},
-        ]
-      },
-      
-      formData: {
-        name: '',
-        creativeType: '003',
-        top: {
-          type: 'video/mp4',
-          name: '',
-          file: '',
-          base64: ''
-        },
-        bottom880Image: {
-          name: '',
-          file: '',
-          base64: ''
-        },
-        bottom720Image: {
-          name: '',
-          file: '',
-          base64: ''
-        },
-        durationType: '',
-        aptitude: {
-          industry: '',
-          images: [
-            // {
-            //   file: '',
-            //   base64: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
-            // }
-          ]
-        },
-        thirdPartMonitor: [
-          {
-            mode: MonitorData.mode[0],
-            thirdPartyMonitor: '',
-            thirdPartyMonitorAddr: ''
-          }
-        ]
-      },
 
-      formData1: {
+      formData: {
         projectId: '',
         name: '', //创意名称
         screenType: '',//屏幕类型，0联动，1上屏，2下屏
         fileType: 1,//上屏文件类型，1：视频,2:图片
         industry: '', // 广告创意行业
-        top: { type: 'video/mp4', name: '', file: '', base64: '' }, // 上屏
-        bottom720Image: { name: '', file: '', base64: '' },
-        bottom880Image: { name: '', file: '', base64: '' },
+        top: '', // 上屏
+        bottom720Image: '',
+        bottom880Image: '',
         durationType: '', //上屏或者联动上下屏需要上传，0 5s，1：10s，2：15s
         industryImage: [], //广告创意资质图片
         monitor: [
           { 
-            mode:0, 
+            mode: 'SDK', 
             thirdPartyMonitor: '',
             thirdPartyMonitorUrl: '',
           }
@@ -420,14 +369,14 @@ export default {
   
   beforeMount() {
     if (this.createType !== 'single') {
-      this.$api.CreateCreative.GetProjectDetailById(this.$route.query.projectId)
+      this.formData.projectId = this.$route.query.projectId;
+      this.$api.CreateCreative.GetProjectDetailById(this.formData.projectId)
         .then(res => {
           this.pageLoading = false;
           this.projectData = res.result;
-          this.formData1.industry = this.projectData.industry; // 行业回显
+          this.formData.industry = this.projectData.industry; // 行业回显
           this.formData.durationType = this.projectData.second;
-          console.log(this.projectData)
-          // $tools.getObjectItemFromArray(projectConst.putDuration, 'value', projectData.second).name
+          this.formData.screenType = this.projectData.type;
         })
         .catch(res => {
           this.pageLoading = false;
@@ -451,7 +400,7 @@ export default {
      */
     uploadMedia(event, mediaType) {
       let _file = event.target.files[0];
-      if (mediaType === 'video') {
+      if (mediaType === 'topVideo') {
         if (!this.$tools.checkSuffix(_file.name, ['mp4', 'avi'])) {
           return this.$notify({
             title: '错误',
@@ -462,12 +411,7 @@ export default {
         return this.$tools.checkVideoTimeAndSize(_file, 15000, 200, 1080, 1920)
           .then(res => {
             this.formData.durationType = res.durationType
-            this.formData.top = {
-              name: res.name,
-              type: res.type,
-              file: _file,
-              base64: res.base64
-            };
+            this.formData.top =  _file;
           })
           .catch(err => {
             this.clearTopFile();
@@ -495,18 +439,10 @@ export default {
         return this.$tools.checkImageSize(...param)
           .then(res => {
             if (mediaType === 'topImage') {
-              return this.formData.top = {
-                name: res.name,
-                file: _file,
-                base64: res.base64
-              }
+              return this.formData.top = _file;
             }
             if (mediaType === 'bottom880Image' || mediaType === 'bottom720Image'){
-              return this.formData[mediaType] = {
-                name: res.name,
-                file: _file,
-                base64: res.base64
-              }
+              return this.formData[mediaType] = _file;
             }
           })
           .catch(err => {
@@ -560,23 +496,17 @@ export default {
      * @param: index 选中类型的索引
      */
     switchFileType(value) {
-      if (this.formData1.fileType === value) return;
-      this.formData1.fileType = value;
+      if (this.formData.fileType === value) return;
+      this.formData.fileType = value;
       // if (this.createType === 'single') {
       //   this.formData.durationType = '';
       // }
-      this.formData.top = {
-        name: '请上传',
-        file: '',
-        base64: ''
-      };
+      this.formData.top = '';
     },
 
     // 添加资质
     addIndustry(event) {
-      let file = event.target.files[0];
-      let base64 = URL.createObjectURL(file);
-      this.formData1.industryImage.push({file, base64})
+      this.formData.industryImage.push(event.target.files[0])
       this.$refs.uploadAptitude.value = '';
     },
 
@@ -587,16 +517,11 @@ export default {
 
     // 添加第三方监测
     addThirdPartMonitor() {
-      this.formData.thirdPartMonitor.push({
+      this.formData.monitor.push({
         mode: 'SDK',
-        thirdPartyMonitor: '酷云',
-        thirdPartyMonitorAddr: ''
+        thirdPartyMonitor: '',
+        thirdPartyMonitorUrl: ''
       })
-    },
-
-    // 删除第三方监测
-    delThirdPartMonitor(index) {
-      this.formData.thirdPartMonitor.splice(index, 1)
     },
 
     // 保存
@@ -619,8 +544,11 @@ export default {
         });
       }
 
-      console.log(this.formData1)
-      alert('上传成功')
+      let param = this.$tools.convertToFormData(this.formData);
+      this.$api.CreateCreative.AddCreative(param)
+        .then(res => {
+          console.log(res)
+        })
     },
 
   },
@@ -629,8 +557,8 @@ export default {
     // 资质预览图片列表
     aptitudePreviewImgs() {
       let res = [];
-      this.formData.aptitude.images.forEach(item => {
-        res.push(item.base64)
+      this.formData.industryImage.forEach(item => {
+        res.push(this.$tools.fileToUrl(item))
       })
       return res;
     },
@@ -639,10 +567,10 @@ export default {
 
   watch: {
     // 创意名称
-    'formData.aptitude.industry': function() {
+    'formData.industry': function() {
       let type = this.projectData.type == '003' ? '联动' : this.projectData.type == '001' ? '上屏' : '下屏';
-      let industryName = this.$tools.getObjectItemFromArray(this.industryList, 'industryId', this.formData1.industry);
-      this.formData1.name = `${industryName.name }_${type}_${this.$tools.getFormatDate('mm_dd')}`;
+      let industryName = this.$tools.getObjectItemFromArray(this.industryList, 'industryId', this.formData.industry);
+      this.formData.name = `${industryName.name }_${type}_${this.$tools.getFormatDate('mm_dd')}`;
     }
   }
 }

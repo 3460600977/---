@@ -25,7 +25,7 @@ export const projectConst = {
   // 投放类型，0按周投放，1按天投放
   putType: [
     { name: '按周投放', value: 0},
-    { name: '按天投放', value: 1},
+    { name: '按天投放', value: 1}
   ],
 
   // 投放方式
@@ -44,16 +44,16 @@ export const projectConst = {
 
   // 投放时长，001-5s/次，002-10s/次，003-15s/次 依次类推
   putDuration: [
-    { name: '5 秒/次',  value: '001', time: 500 },
-    { name: '10 秒/次', value: '002', time: 1000 },
-    { name: '15 秒/次', value: '003', time: 1500 },
+    { name: '5 秒/次',  value: '001', creativeVal: 0 },
+    { name: '10 秒/次', value: '002', creativeVal: 1 },
+    { name: '15 秒/次', value: '003', creativeVal: 2 }
   ],
 
   // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
   screenType: [
-    { name: '联动', value: '003' },
-    { name: '上屏', value: '001' },
-    { name: '下屏', value: '002' },
+    { name: '上屏', value: '001', creativeVal: 0 },
+    { name: '下屏', value: '002', creativeVal: 1 },
+    { name: '联动', value: '003', creativeVal: 2 }
   ]
 }
 
@@ -63,6 +63,10 @@ export const MonitorData = {
   thirdPartyMonitor: ['酷云', 'admaster', '国双', '数字100', '秒针']
 }
 
-
+// 上屏文件类型，1：视频,2:图片
+export const fileType = [
+  { name: '上传视频', value: 1},
+  { name: '上传图片', value: 2},
+]
 
 export const PAGE_SIZE = [10, 20, 30, 40,50]
