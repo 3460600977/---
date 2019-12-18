@@ -33,9 +33,15 @@ export const tableMixin = {
           this.pageIndex = data.page.currentPage
           this.totalCount = data.page.totalCount
         } else {
-          this.resultData = []
-          this.totalCount = 0
-          this.pageIndex = 1
+          if (this.pageIndex > 1) {
+            this.pageIndex -= 1
+            this.filterData.pageIndex -= 1
+            this._loadData(this.filterData)
+          } else {
+            this.resultData = []
+            this.totalCount = 0
+            this.pageIndex = 1
+          }
         }
         this.loading = false
       })
