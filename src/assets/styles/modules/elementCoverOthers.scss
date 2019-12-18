@@ -165,9 +165,12 @@
   }
 }
 
+// el-form label颜色修改
 .el-form-item__label {
   color: $color-text;
 }
+
+// input设定宽度为200
 .el-input {
   width: 200px;
 }
