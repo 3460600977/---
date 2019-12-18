@@ -179,7 +179,7 @@
           <el-select 
             :disabled="this.createType !== 'single'"
             class="width-100-p" 
-            v-model="formData.aptitude.industry" 
+            v-model="formData1.industry" 
             placeholder="请选择">
             <el-option
               v-for="(item, index) in industryList"
@@ -194,7 +194,7 @@
         <el-form-item class="mt-12" label="广告创意资质">
           <div style="width: 1108px">
             <div class="aptitude-img" 
-              v-for="(item, index)  in formData.aptitude.images"
+              v-for="(item, index)  in formData1.industryImage"
               :key="index">
               <el-image
                 :preview-src-list="aptitudePreviewImgs"
@@ -281,7 +281,7 @@
         :label-position="'left'" 
         label-width="112px" class="put-form">
         <el-form-item prop="name" label="广告创意名称">
-          <el-input v-model.trim="formData.name" clearable placeholder="请输入名称"></el-input>
+          <el-input v-model.trim="formData1.name" clearable placeholder="请输入名称"></el-input>
         </el-form-item>
       </el-form>
     </PutMangeCard>
@@ -384,7 +384,7 @@ export default {
         bottom720Image: { name: '', file: '', base64: '' },
         bottom880Image: { name: '', file: '', base64: '' },
         durationType: '', //上屏或者联动上下屏需要上传，0 5s，1：10s，2：15s
-        industryImage: '', //广告创意资质图片
+        industryImage: [], //广告创意资质图片
         monitor: [
           { 
             mode:0, 
@@ -424,7 +424,7 @@ export default {
         .then(res => {
           this.pageLoading = false;
           this.projectData = res.result;
-          this.formData.aptitude.industry = this.projectData.industry; // 行业回显
+          this.formData1.industry = this.projectData.industry; // 行业回显
           this.formData.durationType = this.projectData.second;
           console.log(this.projectData)
           // $tools.getObjectItemFromArray(projectConst.putDuration, 'value', projectData.second).name
@@ -576,7 +576,7 @@ export default {
     addIndustry(event) {
       let file = event.target.files[0];
       let base64 = URL.createObjectURL(file);
-      this.formData.aptitude.images.push({file, base64})
+      this.formData1.industryImage.push({file, base64})
       this.$refs.uploadAptitude.value = '';
     },
 
@@ -619,6 +619,7 @@ export default {
         });
       }
 
+      console.log(this.formData1)
       alert('上传成功')
     },
 
@@ -639,10 +640,9 @@ export default {
   watch: {
     // 创意名称
     'formData.aptitude.industry': function() {
-      console.log(1)
       let type = this.projectData.type == '003' ? '联动' : this.projectData.type == '001' ? '上屏' : '下屏';
-      let industryName = this.$tools.getObjectItemFromArray(this.industryList, 'industryId', this.formData.aptitude.industry);
-      this.formData.name = `${industryName.name }_${type}_${this.$tools.getFormatDate('mm_dd')}`;
+      let industryName = this.$tools.getObjectItemFromArray(this.industryList, 'industryId', this.formData1.industry);
+      this.formData1.name = `${industryName.name }_${type}_${this.$tools.getFormatDate('mm_dd')}`;
     }
   }
 }
