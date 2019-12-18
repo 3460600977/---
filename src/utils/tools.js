@@ -1,3 +1,6 @@
+const SIGN_REGEXP = /([yMdhsm])(\1*)/g
+const DEFAULT_PATTERN = 'yyyy-MM-dd'
+
 let tools = {
   /**
    * @description: 验证视频时长, 宽高
@@ -144,13 +147,21 @@ let tools = {
   },
 
   /*
-  * 过略出对象数组里面的key属性形成一个新的数组
+  * 1, key存在 过略出对象数组里面的key属性形成一个新的数组
+  * 2，key不存在的话 相当于sum函数
   * */
-  FilterByKey(arr, key) {
-    let arrTotal = arr.reduce((total, item) => {
-      return total.concat(item[key])
-    }, [])
-    return arrTotal
+  operation(arr, key, type = 'concat') {
+    if (type === 'concat') {
+      let arrTotal = arr.reduce((total, item) => {
+        return total.concat(item[key])
+      }, [])
+      return arrTotal
+    } else if (type === 'sum') {
+      let result = arr.reduce((total, item) => {
+        return total += item[key]
+      }, 0)
+      return result
+    }
   },
   /**
    * TODO
@@ -159,6 +170,39 @@ let tools = {
    */
   localPagegation: () => {
 
+  },
+  padding(s, len) {
+    const l = len - (s + '').length
+    for (var i = 0; i < l; i++) {
+      s = '0' + s
+    }
+    return s
+  },
+  /**
+   * @description: 格式化时间
+   * @param: pageSize
+   */
+  formatDate: function(date, pattern) {
+    date = new Date(date)
+    pattern = pattern || DEFAULT_PATTERN
+    return pattern.replace(SIGN_REGEXP, function($0) {
+      switch ($0.charAt(0)) {
+        case 'y':
+          return tools.padding(date.getFullYear(), $0.length)
+        case 'M':
+          return tools.padding(date.getMonth() + 1, $0.length)
+        case 'd':
+          return tools.padding(date.getDate(), $0.length)
+        case 'w':
+          return date.getDay() + 1
+        case 'h':
+          return tools.padding(date.getHours(), $0.length)
+        case 'm':
+          return tools.padding(date.getMinutes(), $0.length)
+        case 's':
+          return tools.padding(date.getSeconds(), $0.length)
+      }
+    })
   },
 
   /**
@@ -236,6 +280,7 @@ let tools = {
     ;
     return fmt;
   },
+
   /**
    * @description: 获取当前月第一天
    * @param: fmt 格式
