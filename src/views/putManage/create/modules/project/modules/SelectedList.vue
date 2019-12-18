@@ -11,7 +11,7 @@
 
     </div>
 
-    <ul class="selected-list-data-box" v-if="buildsNumber > 0" v-loading='loading'>
+    <ul class="selected-list-data-box" v-loading='loading'>
       <li class="item mid" v-for="(item, index) in putProject.list" :key="index">
 
         <div class="left-info">
@@ -36,12 +36,9 @@
           :total="20">
         </el-pagination>
       </li> -->
+      <noData v-if="buildsNumber <= 0"/>
     </ul>
 
-    <div v-if="buildsNumber <= 0" v-loading='loading' style="padding: 30px; flex-direction: column;" class="mid-center">
-      <img width="70" :src="nodataImg" alt=""><br>
-      <div class="color-text-2">无数据</div>
-    </div>
   </div>
 </template>
 <script>

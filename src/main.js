@@ -10,6 +10,7 @@ import '@/assets/styles/index.scss';
 import api from '@/api/index'
 import tools from '@/utils/tools'
 import store from '@/store'
+import noData from './components/noData'
 
 Vue.use(ElementUI);
 
@@ -21,7 +22,7 @@ Vue.config.productionTip = false
 
 Vue.prototype.$api = api;
 Vue.prototype.$tools = tools;
-
+Vue.component('noData', noData )
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

@@ -524,6 +524,44 @@ export default {
       })
     },
 
+    // // 0 5s，1：10s，2：15s
+    // convertDurationType(data) {
+    //   let res;
+    //   switch (data) {
+    //     case '001':
+    //       res = 0;
+    //       break;
+    //     case '002':
+    //       res = 1;
+    //       break;
+    //     case '003':
+    //       res = 2;
+    //       break;
+    //     default:
+    //       break;
+    //   }
+    //   return res;
+    // },
+
+    // //屏幕类型，0联动，1上屏，2下屏
+    // convertScreenType(data) {
+    //   let res;
+    //   switch (data) {
+    //     case '001':
+    //       res = 0;
+    //       break;
+    //     case '002':
+    //       res = 1;
+    //       break;
+    //     case '003':
+    //       res = 2;
+    //       break;
+    //     default:
+    //       break;
+    //   }
+    //   return res;
+    // },
+
     // 保存
     saveCreative() {
       let isPassEnptyCheck = true;
