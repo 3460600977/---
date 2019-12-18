@@ -8,7 +8,7 @@
 .mid{
     display: flex !important;
     display:-webkit-box;
-    display:-webkit-flex; 
+    display:-webkit-flex;
     align-items: center;
     -webkit-box-align: center;
 }
@@ -29,6 +29,14 @@
     justify-content: center;
     -webkit-justify-content: center;
 }
+.mid-row {
+  display: flex;
+  flex-direction: row;
+}
+.mid-column {
+  display: flex;
+  flex-direction: column;
+}
 .mid-between{
     display: flex !important;
     display:-webkit-box;
@@ -40,7 +48,7 @@
 }
 .flex1{
   flex: 1;
-  -webkit-box-flex:1 
+  -webkit-box-flex:1
 }
 .flex-shrink {
   flex-shrink: 0
