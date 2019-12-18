@@ -3,7 +3,7 @@
     <div class="report-top-form">
       <div class="report-divider">
         <el-divider direction="vertical"></el-divider>
-        <span class="report-form-title">投放计划报表</span>
+        <span class="report-form-title">{{formatCentToYuan('formatCentToYuan')}}投放计划报表</span>
       </div>
       <el-form :inline="true" :model="reportFormInline" class="report-query-form">
         <el-form-item class="item-space-1">
@@ -28,11 +28,12 @@
         </el-form-item>
         <el-form-item class="item-space-end">
           <el-date-picker
-            v-model="reportDateValue"
+            v-model="getDefaultTime"
             type="daterange"
             range-separator="至"
             start-placeholder="开始日期"
-            end-placeholder="结束日期">
+            end-placeholder="结束日期"
+            value-format="yyyy-MM-dd">
           </el-date-picker>
         </el-form-item>
         <el-form-item>
@@ -82,36 +83,13 @@
         <el-table-column prop="name" label="投放方案" width="180">
           <router-link :to="{path:'/reportList/projectDetail'}" class="project-id">投放方案</router-link>
         </el-table-column>
-        <el-table-column
-          prop="date"
-          label="投放时间"
-          width="180">
+        <el-table-column prop="startTime" label="投放时间" width="180"></el-table-column>
+        <el-table-column prop="cost" label="花费数" sortable="custom">
         </el-table-column>
-        <el-table-column
-          prop="costNum"
-          label="花费数"
-          sortable="custom">
-        </el-table-column>
-        <el-table-column
-          prop="exposureNum"
-          label="曝光数"
-          sortable="custom">
-        </el-table-column>
-        <el-table-column
-          prop="deviceNum"
-          label="设备数"
-          sortable="custom">
-        </el-table-column>
-        <el-table-column
-          prop="watchAudiences"
-          label="受众人数"
-          sortable="custom">
-        </el-table-column>
-        <el-table-column
-          prop="watchNum"
-          label="受众观看次数"
-          sortable="custom">
-        </el-table-column>
+        <el-table-column prop="showTimes" label="曝光数" sortable="custom"></el-table-column>
+        <el-table-column prop="deviceNum" label="设备数" sortable="custom"></el-table-column>
+        <el-table-column prop="totalPeople" label="受众人数" sortable="custom"></el-table-column>
+        <el-table-column prop="watchedTimes" label="受众观看次数" sortable="custom"></el-table-column>
       </el-table>
     </div>
     <div class="report-page">
@@ -137,11 +115,12 @@
         components: {BarGraph},
         data() {
             return {
+                defaultIntervalTime: 7,
                 currentPage: 1,
                 barIndex: 0,
                 selectCardIndex: 0,
                 reportPlanValue: '',
-                reportDateValue: '',
+                reportDateValue: [],
                 reportPlanList: [
                     {
                         value: '选项1',
@@ -166,19 +145,19 @@
                 reportSelectCard:
                     [
                         {
-                            id: 0, name: '花费总数（元）', value: '100,000,0.00'
+                            id: 0, name: '花费总数（元）', value: '100,000,0.00', field: 'cost'
                         },
                         {
-                            id: 1, name: '曝光总数（次）', value: '100,000,0'
+                            id: 1, name: '曝光总数（次）', value: '100,000,0', field: 'showTimes'
                         },
                         {
-                            id: 2, name: '设备总数（个）', value: '100,000,0'
+                            id: 2, name: '设备总数（个）', value: '100,000,0', field: 'deviceNum'
                         },
                         {
-                            id: 3, name: '受众总人数（人）', value: '100,000,0'
+                            id: 3, name: '受众总人数（人）', value: '100,000,0', field: 'totalPeople'
                         },
                         {
-                            id: 4, name: '受众观看总次数（次）', value: '100,000,0'
+                            id: 4, name: '受众观看总次数（次）', value: '100,000,0', field: 'watchedTimes'
                         },
                     ],
                 barSelectOptions: {
@@ -251,6 +230,26 @@
                 }]
             }
         },
+        mounted() {
+            //获取方案的初始列表
+            //获取默认日期下的统计查询
+            let params = {
+                startTime: this.$tools.getMonthFirstDay(),//开始时间 require
+                endTime: this.$tools.getMonthLastDay(),//结束时间 require
+            }
+            this.getProjectTotal(params)
+            //获取方案报表的柱状图数据
+            this.getProjectBarChart(params)
+            // this.getProjectList()
+            // this.getProjectBarChart()
+            // this.getProjectDownloadList()
+            // this.getProjectTotal()
+        },
+        computed: {
+            getDefaultTime: function () {
+                return [this.$tools.getMonthFirstDay(), this.$tools.getMonthLastDay()]
+            }
+        },
         methods: {
             onSubmit() {
                 console.log('submit!');
@@ -269,6 +268,102 @@
             },
             handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);
+            },
+            formatCentToYuan(str) {
+                return str.slice(0, 5)
+            },
+            //方案报表的统计查询
+            getProjectTotal(param) {
+                //必须参数
+                let queryParam = {
+                    startTime: '2019-12-02',//开始时间 require
+                    endTime: '2019-12-31',//结束时间 require
+                }
+                //合并查询参数
+                Object.assign(queryParam, param);
+                console.log(queryParam)
+                //请求方案报表列表查询接口
+                this.$api.Report.getProjectTotal(queryParam)
+                    .then(res => {
+                        let cardList = res.result;
+                        this.reportSelectCard.forEach(item => {
+                            let property = item.field;
+                            if (cardList.hasOwnProperty(property)) {
+                                if (cardList[property] === '') {
+                                    item.value = 0
+                                } else if (property === 'cost') {
+                                    let costValue = cardList[property]
+                                    costValue = this.$tools.formatCentToYuan(costValue)
+                                    item.value = this.$tools.toThousands(costValue)
+                                } else {
+                                    item.value = this.$tools.toThousands(cardList[property], false)
+                                }
+                            }
+                        })
+                    })
+                    .catch(res => {
+                    })
+            },
+            //获取方案报表的柱状图数据
+            getProjectBarChart(param) {
+                //必须参数
+                let queryParam = {
+                    startTime: '2019-12-01',//开始时间 require
+                    endTime: '2019-12-31',//结束时间 require
+                    showStatus: 0,//柱状图排序 0花费总数 1曝光次数 2设备总个数 3受众总人数 4受众观看次数
+                    topStatus: 5//top数据类型 5 或者 10
+                }
+                //合并查询参数
+                Object.assign(queryParam, param);
+                //请求方案报表列表查询接口
+                this.$api.Report.getProjectChartBar(queryParam)
+                    .then(res => {
+                        console.log('柱状图数据', res.result)
+
+                    })
+                    .catch(res => {
+                        console.log(res.result)
+                    })
+            },
+            //获取方案报表的列表下载数据-默认500条
+            getProjectDownloadList(param) {
+                //必须参数
+                let queryParam = {
+                    startTime: '2019-12-01',//开始时间 require
+                    endTime: '2019-12-31',//结束时间 require
+                    formShowStatus: 0,//列表排序 0花费数正序 1花费数倒序 2曝光数正序 3曝光数倒序 4设备数正序 5设备数倒序 6受众人数正序 7受众人数倒序 8受众观看数正序 9受众观看数倒序
+                }
+                //合并查询参数
+                Object.assign(queryParam, param);
+                //请求方案报表列表查询接口
+                this.$api.Report.getProjectDownloadList(queryParam)
+                    .then(res => {
+                        console.log('下载数据', res)
+                    })
+                    .catch(res => {
+                        console.log(res.result)
+                    })
+            },
+            //获取方案报表的列表-默认每页10条
+            getProjectList(param) {
+                //必须参数
+                let queryParam = {
+                    startTime: '2019-12-01',//开始时间 require
+                    endTime: '2019-12-31',//结束时间 require
+                    formShowStatus: 0,//列表排序 0花费数正序 1花费数倒序 2曝光数正序 3曝光数倒序 4设备数正序 5设备数倒序 6受众人数正序 7受众人数倒序 8受众观看数正序 9受众观看数倒序
+                }
+                //合并查询参数
+                Object.assign(queryParam, param);
+                //请求方案报表列表查询接口
+                this.$api.Report.getProjectList(queryParam)
+                    .then(res => {
+                        console.log(res.result)
+                        let projectList = res.result
+                        this.tableData = projectList
+                    })
+                    .catch(res => {
+                        console.log(res.result)
+                    })
             },
         }
     }

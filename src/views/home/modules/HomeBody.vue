@@ -3,12 +3,12 @@
     <el-card class="box-card mid shadow">
       <div class="company-msg mid">
         <img width="48px" :src="images.grayHead" alt="头像">
-        <span class="company-name">成都新潮传媒集团有限公司媒集团有限公司</span>
+        <span class="company-name">{{company}}</span>
       </div>
       <!--  -->
       <div :style="`background-image:url('${images.moneyBg}')`" class="account-money-box color-white">
         <div class="accouint-title">现金账户</div>
-        <div class="account-val font-number">{{$tools.toThousands(10000.01)}}</div>
+        <div class="account-val font-number">{{$tools.toThousands(accountBalance)}}</div>
       </div>
       <el-button class="create-put" type="primary" icon="el-icon-plus">创建投放方案</el-button>
     </el-card>
@@ -26,72 +26,90 @@
 </template>
 
 <script>
-export default {
-  data(){
-    return {
-      images: {
-        userHead: require('../../../assets/images/icons/icon_tx.png'),
-        grayHead: require('../../../assets/images/icons/icon_head portrait.png'),
-        moneyBg: require('../../../assets/images/icon_money_bg.png'),
-        noData: require('../../../assets/images/icon_no_data.png')
-      }
+    import {getUserInfo} from '@/utils/auth';
+
+    export default {
+        data() {
+            return {
+                company: '',
+                accountBalance: '',
+                images: {
+                    userHead: require('../../../assets/images/icons/icon_tx.png'),
+                    grayHead: require('../../../assets/images/icons/icon_head portrait.png'),
+                    moneyBg: require('../../../assets/images/icon_money_bg.png'),
+                    noData: require('../../../assets/images/icon_no_data.png')
+                }
+            }
+        },
+        mounted() {
+            //请求验证码接口
+            let userInfo = getUserInfo()
+            this.company = userInfo.company
+            this.accountBalance = userInfo.accountBalance
+            console.log(userInfo)
+        },
     }
-  },
-  mounted() {
-  }
-}
 </script>
 
 <style lang="scss" scoped>
-.home-body{
-  width: 1200px;
-  margin: 0 auto;
-  .box-card{
-    position: relative;
-    .company-msg{
-      float: left;
-      height: 100px;
-      .company-name{
-        margin: 0 33px 0 14px;
-        width:168px;
-        font-size:14px;
-        color:rgba(24,24,25,1);
+  .home-body {
+    width: 1200px;
+    margin: 0 auto;
+
+    .box-card {
+      position: relative;
+
+      .company-msg {
+        float: left;
+        height: 100px;
+
+        .company-name {
+          margin: 0 33px 0 14px;
+          width: 168px;
+          font-size: 14px;
+          color: rgba(24, 24, 25, 1);
+        }
       }
-    }
-    .accouint-title{
-      height: 14px;
-      font-size: 14px;
-      line-height: 14px;
-    }
-    .account-money-box{
-      float: left;
-      padding: 28px 24px;
-      width:282px;
-      height:124px;
-      border-radius:2px;
-      background-size: cover;
-      .account-val{
-        margin-top: 19px;
-        height:26px;
-        line-height:26px;
-        font-size:26px;
-        font-weight:normal;
+
+      .accouint-title {
+        height: 14px;
+        font-size: 14px;
+        line-height: 14px;
       }
-    }
-    .create-put{
-      position: absolute;
-      top: 73px; 
-      right: 30px;
-      box-shadow:3px 4px 14px 0px rgba(44,98,253,0.3);
-    }
-    &.no-data{
-      height: calc(100vh - 305px);
-      .description{
-        font-size: 18px;
-        color: #979EBA;
+
+      .account-money-box {
+        float: left;
+        padding: 28px 24px;
+        width: 282px;
+        height: 124px;
+        border-radius: 2px;
+        background-size: cover;
+
+        .account-val {
+          margin-top: 19px;
+          height: 26px;
+          line-height: 26px;
+          font-size: 26px;
+          font-weight: normal;
+        }
+      }
+
+      .create-put {
+        position: absolute;
+        top: 73px;
+        right: 30px;
+        box-shadow: 3px 4px 14px 0px rgba(44, 98, 253, 0.3);
+      }
+
+      &.no-data {
+        height: calc(100vh - 305px);
+
+        .description {
+          font-size: 18px;
+          color: #979EBA;
+        }
       }
     }
   }
-}
-  
+
 </style>

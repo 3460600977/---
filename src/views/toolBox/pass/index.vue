@@ -2,20 +2,20 @@
   <div class="edit-pass">
     <h3 class="editPassTitle">修改密码</h3>
     <el-form style="width: 490px" ref="editForm" :model="editForm" class="editForm" label-position="left"
-             label-width="110px">
-      <el-form-item required label="原密码">
-        <el-input v-model="editForm.originalPass" show-password placeholder="请输入原密码"></el-input>
+             label-width="110px" :rules="rules">
+      <el-form-item label="原密码" prop="oldPwd">
+        <el-input v-model="editForm.oldPwd" show-password placeholder="请输入原密码"></el-input>
       </el-form-item>
-      <el-form-item label="新密码" class="new-pass">
-        <el-input v-model="editForm.newPass" show-password placeholder="请输入新密码"></el-input>
+      <el-form-item label="新密码" :class="{'new-pass':true,'hide-mess':hideMess}" class="new-pass" prop="newPwd">
+        <el-input v-model="editForm.newPwd" show-password placeholder="请输入新密码"></el-input>
         <span class="show-validate-message">* 8-18位，必须包含大写字母、小写字母、数字和符号四种形式</span>
       </el-form-item>
-      <el-form-item required label="新密码确认">
-        <el-input v-model="editForm.confirmPass" show-password placeholder="请再次输入新密码"></el-input>
+      <el-form-item label="新密码确认" prop="confirmNewPwd">
+        <el-input v-model="editForm.confirmNewPwd" show-password placeholder="请再次输入新密码"></el-input>
       </el-form-item>
       <el-form-item class="submit-login">
-        <el-button @click="resetForm">取 消</el-button>
-        <el-button type="primary" @click="submitConfirm">确 定</el-button>
+        <el-button @click="resetForm('editForm')">取 消</el-button>
+        <el-button type="primary" @click="submitConfirm('editForm')" v-loading="loading">确 定</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -25,20 +25,80 @@
     export default {
         name: "editPassIndex",
         data() {
+            const validatePass = (rule, value, callback) => {
+                let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[1-9])(?=.*[\W])(?=.*[\S])^[0-9A-Za-z\S]{8,18}$/;
+                if (value === '') {
+                    this.hideMess = true
+                    callback(new Error('请输入新密码'));
+                } else if (!reg.test(value)) {
+                    this.hideMess = true
+                    callback(new Error('8-18位，必须包含大写字母、小写字母、数字和符号四种形式'));
+                } else {
+                    this.hideMess = false
+                    callback();
+                }
+            }
+            const validateConfirmPass = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请再次输入新密码'));
+                } else if (value !== this.editForm.newPwd) {
+                    callback(new Error('两次输入密码不一致!'));
+                } else {
+                    callback();
+                }
+            }
             return {
+
+                loading: false,
+                hideMess: false,
                 editForm: {
-                    originalPass: '',
-                    newPass: '',
-                    confirmPass: ''
+                    oldPwd: '',
+                    newPwd: '',
+                    confirmNewPwd: '',
                 },
+                rules: {
+                    oldPwd: [
+                        {required: true, message: '请输入原密码', trigger: ['blur', 'change']}
+                    ],
+                    newPwd: [
+                        {trigger: ['blur', 'change'], validator: validatePass},
+                    ],
+                    confirmNewPwd: [
+                        {
+                            trigger: ['blur', 'change'],
+                            validator: validateConfirmPass
+                        }
+                    ],
+                }
             }
         },
         methods: {
-            resetForm() {
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
 
             },
-            submitConfirm() {
+            submitConfirm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (!valid) {
+                        console.log('error submit!!');
+                        return false;
+                    } else {
+                        let param = {
+                            newPwd: this.editForm.newPwd,
+                            oldPwd: this.editForm.oldPwd,
+                            confirmNewPwd: this.editForm.confirmNewPwd,
+                        }
+                        //请求登录接口
+                        this.loading = true;
+                        this.$api.Login.ChangePass(param)
+                            .then(res => {
 
+                            })
+                            .catch(res => {
+                                this.loading = false;
+                            })
+                    }
+                });
             }
         }
     }
@@ -101,14 +161,22 @@
         margin-bottom: 40px;
       }
 
-      .new-pass {
-        margin-bottom: 20px;
-      }
-
       .show-validate-message {
         font-size: 12px;
         font-weight: 400;
         color: $color-text-1;
+        line-height: 1;
+        padding-top: 4px;
+        position: absolute;
+        top: 100%;
+        left: 0;
+
+      }
+
+      .hide-mess {
+        .show-validate-message {
+          display: none;
+        }
       }
     }
   }
