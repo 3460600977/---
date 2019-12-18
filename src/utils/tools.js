@@ -145,8 +145,8 @@ let tools = {
   },
 
   /*
-  * 1, key存在 过略出对象数组里面的key属性形成一个新的数组
-  * 2，key不存在的话 相当于sum函数
+  * concat: 将一个数组对象按key结合成一个新的数组
+  * sum： 将一个数组对象的key项相加返回加之后的结果
   * */
   operation(arr, key, type = 'concat') {
     if (type === 'concat') {
@@ -169,6 +169,7 @@ let tools = {
   localPagegation: () => {
 
   },
+  // 数据补零
   padding(s, len) {
     const l = len - (s + '').length
     for (var i = 0; i < l; i++) {
