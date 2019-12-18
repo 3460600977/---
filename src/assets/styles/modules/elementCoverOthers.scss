@@ -144,3 +144,30 @@
     color: $color-text;
   }
 }
+
+//dialog样式覆盖
+.my-dialog {
+  .el-dialog__footer {
+    text-align: center;
+    padding-bottom: 40px;
+  }
+  .el-dialog__header {
+    border-bottom: 1px solid $color-border;
+    padding: 24px 0 21px 30px;
+    .el-dialog__title {
+      font-size: 16px;
+      color: $color-text;
+    }
+  }
+  .el-dialog__body {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+}
+
+.el-form-item__label {
+  color: $color-text;
+}
+.el-input {
+  width: 200px;
+}
