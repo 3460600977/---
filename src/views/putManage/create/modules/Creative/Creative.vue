@@ -5,7 +5,7 @@
           <CreativeNewCreative/>
         </el-tab-pane>
         <el-tab-pane name="exist" label="选择已有广告创意">
-          <ExistCreativeList/>
+          <ExistCreativeList :isShow="activeName==='exist'"/>
         </el-tab-pane>
       </el-tabs>
   </div>
@@ -22,7 +22,7 @@ export default {
   },
   data() {
     return{
-      activeName: 'create'
+      activeName: 'exist'
     }
   },
   
