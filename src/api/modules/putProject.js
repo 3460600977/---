@@ -47,7 +47,6 @@ const DowloadBuildsTemplate = () => {
     method: "get",
     responseType: 'blob', //一定要写
   });
-  // window.location.href = process.env.BASE_API + "/dpapi/project/premises/template";
 }
 
 // 前端传楼盘信息进行导出 

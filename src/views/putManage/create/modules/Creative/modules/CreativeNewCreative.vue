@@ -2,72 +2,73 @@
 <template>
   <div class="upload-creative">
     <!-- 上传素材 -->
-    <PutMangeCard class="form-box creative" :title="'制作创意'">
-      <el-form 
+    <PutMangeCard class="form-box creative" v-loading="pageLoading" :title="'制作创意'">
+      <!-- 上屏 -->
+      <el-form  
+        v-if="projectData.type !== '002'"
         ref="creativeFormMaterialTop"
         :model="formData"
         :rules="formDataRules"
         :label-position="'left'" 
         label-width="112px" class="put-form">
-        <!-- 上屏 -->
-        <el-form-item prop="top.name" v-if="creativeType === 'both' || creativeType === 'top'" class="top-box" label="上屏内容">
+        
+        <el-form-item prop="top.name" class="top-box" label="上屏内容">
           <!-- 类型 -->
           <div class="mid-between">
             <el-button 
               style="width: 102px"
-              @click="switchMediaType(index)"
-              v-for="(mtype, index) in mediaType.values" 
-              :type="index == mediaType.activeIndex ? 'primary' : 'info'" 
+              @click="switchFileType(item.value)"
+              v-for="(item, index) in fileType" 
+              :type="formData.fileType == item.value ? 'primary' : 'info'" 
               :key="index">
-              {{mtype.name}}
+              {{item.name}}
             </el-button>
           </div>
           
           <!-- 视频 -->
-          <div v-if="mediaType.activeType === 'video'">
+          <div v-if="formData.fileType === 1">
             <div class="mt-12 my-input-upload">
               <input 
                 ref="topVideo"
-                @change="uploadMedia($event, 'video')" 
-                suffix-icon="el-icon-upload2"
+                @change="uploadMedia($event, 'topVideo')" 
                 type="file" 
                 accept=".avi, .mp4"
                 class="input-real"/>
               <el-input
-                suffix-icon="el-icon-upload2"
+                suffix-icon="iconfont icon-uploading1"
                 placeholder="请上传"
                 v-model="formData.top.name" class="input-fake"></el-input>
             </div>
-            <p class="decription color-text-1 font-12 mt-12"><span class="color-red">*</span>上传1080X1920的视频，仅支持avi、mp4格式 仅支持5s、10s、15s的视频</p>
+            <p class="decription color-text-1 font-12"><span class="color-red">*</span>上传1080X1920的视频，仅支持avi、mp4格式 仅支持5s、10s、15s的视频</p>
           </div>
 
           <!-- 图片 -->
-          <div v-if="mediaType.activeType === 'image'">
+          <div v-if="formData.fileType === 2">
             <div class="mt-12 my-input-upload">
               <input 
                 ref="topImage"
                 @change="uploadMedia($event, 'topImage')"
-                suffix-icon="el-icon-upload2"
                 type="file" 
                 accept=".jpg"
                 class="input-real"/>
               <el-input
-                suffix-icon="el-icon-upload2"
+                suffix-icon="iconfont icon-uploading1"
                 placeholder="请上传"
                 v-model="formData.top.name" class="input-fake"></el-input>
             </div>
-            <p class="decription color-text-1 font-12 mt-12"><span class="color-red">*</span>上传1080X1920的图片，仅支持jpg格式</p>
+            <p class="decription color-text-1 font-12"><span class="color-red">*</span>上传1080X1920的图片，仅支持jpg格式</p>
           </div>
 
         </el-form-item>
 
-        <!-- 时长 -->
+        <!-- 时长  -->
         <el-form-item prop="durationType" label="投放时长">
-          <el-select :disabled="mediaType.activeType == 'video'" class="width-100-p" 
+          <el-select class="width-100-p"
+            :disabled="formData.fileType == 1 || this.createType !== 'single'"
             v-model="formData.durationType" 
-            :placeholder="mediaType.activeType == 'video' ? '上传视频后自动获取' : '请选择'">
+            placeholder="请选择">
             <el-option
-              v-for="(item, index) in duration"
+              v-for="(item, index) in projectConst.putDuration"
               :key="index"
               :label="item.name"
               :value="item.value">
@@ -78,7 +79,7 @@
       </el-form>
 
       <!--下屏 -->
-      <div v-if="creativeType === 'both' || creativeType === 'bottom'">
+      <div v-if="projectData.type !== '001'">
         <!-- 1080 880 -->
         <el-form
           ref="creativeFormMaterialBottom880"
@@ -91,16 +92,15 @@
               <input 
                 ref="bottom880"
                 @change="uploadMedia($event, 'bottom880Image')"
-                suffix-icon="el-icon-upload2"
                 type="file" 
                 accept=".jpg"
                 class="input-real"/>
               <el-input
-                suffix-icon="el-icon-upload2"
+                suffix-icon="iconfont icon-uploading1"
                 placeholder="请上传"
                 v-model="formData.bottom880Image.name" class="input-fake"></el-input>
             </div>
-            <p class="decription color-text-1 font-12 mt-12"><span class="color-red">*</span>上传1080x880的图片，仅支持jpg格式</p>
+            <p class="decription color-text-1 font-12"><span class="color-red">*</span>上传1080x880的图片，仅支持jpg格式</p>
           </el-form-item>
         </el-form>
 
@@ -116,16 +116,15 @@
               <input 
                 ref="bottom720"
                 @change="uploadMedia($event, 'bottom720Image')"
-                suffix-icon="el-icon-upload2"
                 type="file" 
                 accept=".jpg"
                 class="input-real"/>
               <el-input
-                suffix-icon="el-icon-upload2"
+                suffix-icon="iconfont icon-uploading1"
                 placeholder="请上传"
                 v-model="formData.bottom720Image.name" class="input-fake"></el-input>
             </div>
-            <p class="decription color-text-1 font-12 mt-12"><span class="color-red">*</span>上传1280x720的图片，仅支持jpg格式</p>
+            <p class="decription color-text-1 font-12"><span class="color-red">*</span>上传1280x720的图片，仅支持jpg格式</p>
           </el-form-item>
         </el-form>
       </div>
@@ -134,61 +133,77 @@
       <div class="material-preview-box">
         <!-- 上屏 -->
         <div>
-          <video controls 
+          <video 
             class="top"
+            controls 
             autoplay
             loop
             muted
-            v-if="mediaType.activeType === 'video' && formData.top.base64" 
-            :src="formData.top.base64"></video>
+            v-if="formData.fileType === 1 && formData.top && formData.top.type === 'video/mp4'" 
+            :src="$tools.fileToUrl(formData.top)"></video>
           <img 
-            v-else-if="mediaType.activeType === 'image' && formData.top.base64" 
+            v-else-if="formData.fileType === 2 && formData.top" 
             class="top" 
-            :src="formData.top.base64"/>
+            :src="$tools.fileToUrl(formData.top)"/>
 
-          <div v-else class="top font-12 mid-center">请上传上屏素材</div>
+          <div v-if="formData.top.type === 'video/avi'" class="top font-12 mid-center">
+            avi不支持预览
+          </div>
+          <div v-if="!formData.top" class="top font-12 mid-center">
+            <!-- 请上传上屏素材 -->
+          </div>
         </div>
 
         <!-- 下屏 -->
         <div>
-          <img v-if="formData.bottom880Image.base64" class="bottom" alt="请上传下屏" :src="formData.bottom880Image.base64">
-          <div v-else class="bottom font-12 mid-center">请上传下屏素材</div>
+          <img v-if="formData.bottom880Image" class="bottom" alt="请上传下屏" :src="$tools.fileToUrl(formData.bottom880Image)">
+          <div v-else class="bottom font-12 mid-center">
+            <!-- 请上传下屏素材 -->
+          </div>
         </div>
         <p style="margin-top: 40px" class="decription color-text-1 font-12"><span class="color-red">*</span>AVI格式暂不支持预览</p>
       </div>
     </PutMangeCard>
 
     <!-- 广告资质 -->
-    <PutMangeCard :title="'广告创意资质'" class="form-box aptitude">
+    <PutMangeCard :title="'广告创意资质'" v-loading="pageLoading" class="form-box aptitude">
       <el-form
         ref="creativeForm"
         :label-position="'left'"
         :model="formData"
         :rules="formDataRules" 
         label-width="112px" class="put-form">
+
+        <!-- 行业列表 -->
         <el-form-item prop="name" label="广告创意行业">
-          <el-select class="width-100-p" v-model="formData.aptitude.industry" placeholder="请选择">
+          <el-select 
+            :disabled="this.createType !== 'single'"
+            class="width-100-p" 
+            v-model="formData.industry" 
+            placeholder="请选择">
             <el-option
-              v-for="(item, index) in creativeIndustry"
+              v-for="(item, index) in industryList"
               :key="index"
-              :label="item"
-              :value="item">
+              :label="item.name"
+              :value="item.industryId">
             </el-option>
           </el-select>
         </el-form-item>
         
+        <!-- 资质图片 -->
         <el-form-item class="mt-12" label="广告创意资质">
           <div style="width: 1108px">
             <div class="aptitude-img" 
-              v-for="(item, index)  in formData.aptitude.images"
+              v-for="(item, index)  in formData.industryImage"
               :key="index">
               <el-image
+                :preview-src-list="aptitudePreviewImgs"
                 style="width: 100px; height: 160px"
-                :src="item.base64"
+                :src="$tools.fileToUrl(item)"
                 fit="cover">
               </el-image>
               <!-- 删除 -->
-              <div class="del-third-monitor mid-center" @click="delAptitude(index)">
+              <div class="del-third-monitor mid-center" @click="$tools.removeArrayItemByIndex(formData.industryImage, index)">
                 <i class="el-icon-error color-main"></i>
               </div>
             </div>
@@ -203,7 +218,7 @@
     </PutMangeCard>
 
     <!-- 第三方监测 -->
-    <PutMangeCard :title="'第三方监测'" class="form-box aptitude">
+    <PutMangeCard :title="'第三方监测'" v-loading="pageLoading" class="form-box aptitude">
       <el-form
         ref="creativeForm"
         :model="formData"
@@ -211,11 +226,11 @@
         :label-position="'left'" 
         label-width="112px" class="put-form">
 
-        <div class="monitor-box" v-for="(monitor, index) in formData.thirdPartMonitor" :key="index">
+        <div class="monitor-box" v-for="(monitor, index) in formData.monitor" :key="index">
           <el-form-item label="监测模式">
-            <el-select class="width-100-p" v-model="formData.thirdPartMonitor[index].mode" placeholder="请选择">
+            <el-select class="width-100-p" v-model="formData.monitor[index].mode" placeholder="请选择">
               <el-option
-                v-for="item in monitorData.mode"
+                v-for="item in MonitorData.mode"
                 :key="item"
                 :label="item"
                 :value="item">
@@ -223,11 +238,11 @@
             </el-select>
           </el-form-item>
 
-          <div v-show="formData.thirdPartMonitor[index].mode != 'SDK'">
+          <div v-show="formData.monitor[index].mode != 'SDK'">
             <el-form-item class="mt-10" label="第三方监测">
-              <el-select class="width-100-p" v-model="formData.thirdPartMonitor[index].thirdPardMonitor" placeholder="请选择">
+              <el-select class="width-100-p" v-model="formData.monitor[index].thirdPartyMonitor" placeholder="请选择">
                 <el-option
-                  v-for="(item, index) in monitorData.thirdPardMonitor"
+                  v-for="(item, index) in MonitorData.thirdPartyMonitor"
                   :key="index"
                   :label="item"
                   :value="item">
@@ -236,13 +251,12 @@
             </el-form-item>
 
             <el-form-item class="mt-10" label="第三方监测地址">
-              <el-input v-model="formData.thirdPartMonitor[index].thirdPardMonitorAddr" placeholder="请输入地址"></el-input>
+              <el-input v-model="formData.monitor[index].thirdPartyMonitorUrl" placeholder="多个地址英文逗号隔开"></el-input>
             </el-form-item>
           </div>
 
-          
           <!-- 删除 -->
-          <div class="del-third-monitor" @click="delThirdPartMonitor(index)">
+          <div class="del-third-monitor" @click="$tools.removeArrayItemByIndex(formData.monitor, index)">
             <i class="el-icon-error color-main"></i>
           </div>
         </div>
@@ -259,7 +273,7 @@
     </PutMangeCard>
 
     <!-- 广告创意名称 -->
-    <PutMangeCard :title="'广告创意名称'" class="form-box aptitude">
+    <PutMangeCard :title="'广告创意名称'" v-loading="pageLoading" class="form-box aptitude">
       <el-form
         ref="creativeFormName"
         :model="formData"
@@ -273,7 +287,7 @@
     </PutMangeCard>
 
     <!-- 保存 取消 -->
-    <PutMangeCard class="save-box">
+    <PutMangeCard class="save-box" v-loading="pageLoading">
       <div class="float-right">
         <el-button  style="width: 136px">取消</el-button>
         <el-button  style="width: 136px" @click="saveCreative" type="primary">新建并关闭</el-button>
@@ -284,80 +298,49 @@
 
 <script>
 import PutMangeCard from '../../../../templates/PutMangeCard' 
+import { projectConst, MonitorData, fileType } from '../../../../../../utils/static'
 export default {
   props:{
-    /**
-     * 创意类型
-     * both => 联动 top => 上屏 bottom => 下屏
-     */
-    creativeType: {
-      type: String,
-      default: 'both'
-    },
     /**
      * 创建类型
      * single => 单独创建 step => 按步骤创建 edit => 编辑
      */
     createType: {
       type: String,
-      default: 'single'
+      default: 'step'
     }
   },
+
   components: {
     PutMangeCard
   },
+
   data() {
     return {
-      mediaType: {
-        activeIndex: 0,
-        activeType: 'video',
-        values: [
-          { name: '上传视频', value: 'video'},
-          { name: '上传图片', value: 'image'},
-        ]
-      },
+      MonitorData,
+      projectConst,
+      fileType,
+      pageLoading: true,
+      projectData: '', // 根据id查询的投放方案信息
 
-      duration: [
-        { name: '5秒',  value: 0 },
-        { name: '10秒', value: 1 },
-        { name: '15秒', value: 2 },
-      ],
-      
       formData: {
-        name: '',
-        creativeType: 'both',
-        top: {
-          name: '',
-          file: '',
-          base64: ''
-        },
-        bottom880Image: {
-          name: '',
-          file: '',
-          base64: ''
-        },
-        bottom720Image: {
-          name: '',
-          file: '',
-          base64: ''
-        },
-        durationType: '',
-        aptitude: {
-          industry: '餐饮',
-          images: [
-            {
-              file: '',
-              base64: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
-            }
-          ]
-        },
-        thirdPartMonitor: [
-          {
-            mode: 'SDK',
-            thirdPardMonitor: '酷云',
-            thirdPardMonitorAddr: ''
+        projectId: '',
+        name: '', //创意名称
+        screenType: '',//屏幕类型，0联动，1上屏，2下屏
+        fileType: 1,//上屏文件类型，1：视频,2:图片
+        industry: '', // 广告创意行业
+        top: '', // 上屏
+        bottom720Image: '',
+        bottom880Image: '',
+        durationType: '', //上屏或者联动上下屏需要上传，0 5s，1：10s，2：15s
+        industryImage: [], //广告创意资质图片
+        monitor: [
+          { 
+            mode: 'SDK', 
+            thirdPartyMonitor: '',
+            thirdPartyMonitorUrl: '',
           }
-        ]
+        ], // 第三方监测
       },
       
       formDataRules: {
@@ -369,76 +352,97 @@ export default {
           { required: true, message: '请选择投放时长!', trigger: 'blur' },
         ],
         'top.name': [
-          { required: true, message: '请上传创意!', trigger: 'blur' },
+          { required: true, message: '请上传创意!', trigger: 'change' },
         ],
         'bottom720Image.name': [
-          { required: true, message: '请上传创意!', trigger: 'blur' },
+          { required: true, message: '请上传创意!', trigger: 'change' },
         ],
         'bottom880Image.name': [
-          { required: true, message: '请上传创意!', trigger: 'blur' },
+          { required: true, message: '请上传创意!', trigger: 'change' },
         ],
-      },
-
-      // 默认第三方检测
-      monitorData: {
-        mode: ['SDK', 'C2S', 'S2S'],
-        thirdPardMonitor: ['酷云', 'admaster', '国双', '数字100', '秒针']
       },
 
       // 广告创意行业
-      creativeIndustry: [
-        '餐饮',
-        '餐饮2',
-        '餐饮3',
-        '餐饮4'
-      ],
+      industryList: [],
     }
   },
+  
+  beforeMount() {
+    if (this.createType !== 'single') {
+      this.formData.projectId = this.$route.query.projectId;
+      this.$api.CreateCreative.GetProjectDetailById(this.formData.projectId)
+        .then(res => {
+          this.pageLoading = false;
+          this.projectData = res.result;
+          this.formData.industry = this.projectData.industry; // 行业回显
+          this.formData.durationType = this.projectData.second;
+          this.formData.screenType = this.projectData.type;
+        })
+        .catch(res => {
+          this.pageLoading = false;
+        })
+    } else {
+
+    }
+
+    // 行业列表
+    this.$api.IndustryList.AllList()
+      .then(res => {
+        this.industryList = res.result;
+      })
+    
+  },
+
   methods: {
     /**
      * @description: 上传图片 视频
      * @param: mediaType 视频 图片(上, 880 720)
      */
     uploadMedia(event, mediaType) {
-      if (mediaType === 'video') {
-        return this.$tools.checkVideoTimeAndSize(event.target.files[0], 15000, 200, 1080, 1920)
+      let _file = event.target.files[0];
+      if (mediaType === 'topVideo') {
+        if (!this.$tools.checkSuffix(_file.name, ['mp4', 'avi'])) {
+          return this.$notify({
+            title: '错误',
+            message: '请上传MP4、AVI格式的视频',
+            type: 'error'
+          })
+        }
+        return this.$tools.checkVideoTimeAndSize(_file, 15000, 200, 1080, 1920)
           .then(res => {
-            // this.$message.success(res.msg);
             this.formData.durationType = res.durationType
-            this.formData.top = {
-              name: res.name,
-              file: event.target.files[0],
-              base64: res.base64
-            };
+            this.formData.top =  _file;
           })
           .catch(err => {
             this.clearTopFile();
-            this.$message.error(err.msg);
+            this.$notify({
+              title: '错误',
+              message: err.msg,
+              type: 'error'
+            })
           })
       }
 
       if (mediaType === 'topImage' || mediaType === 'bottom880Image' || mediaType === 'bottom720Image') {
+        if (!this.$tools.checkSuffix(_file.name, ['jpg'])) {
+          return this.$notify({
+            title: '错误',
+            message: '请上传MP4、AVI格式的视频',
+            type: 'error'
+          })
+        }
         let param = [
-          event.target.files[0], 
+          _file, 
           mediaType === 'bottom720Image' ? 1280 : 1080, 
           mediaType === 'topImage' ? 1920 : mediaType === 'bottom880Image' ? 880 : 720,
         ]
         return this.$tools.checkImageSize(...param)
           .then(res => {
-            // this.$message.success(res.msg);
             if (mediaType === 'topImage') {
-              return this.formData.top = {
-                name: res.name,
-                file: event.target.files[0],
-                base64: res.base64
-              }
+              return this.formData.top = _file;
             }
             if (mediaType === 'bottom880Image' || mediaType === 'bottom720Image'){
-              return this.formData[mediaType] = {
-                name: res.name,
-                file: event.target.files[0],
-                base64: res.base64
-              }
+              return this.formData[mediaType] = _file;
             }
           })
           .catch(err => {
@@ -451,7 +455,11 @@ export default {
             if (mediaType === 'bottom720Image') {
               this.clearBottom720File();
             }
-            this.$message.error(err.msg);
+            this.$notify({
+              title: '错误',
+              message: err.msg,
+              type: 'error'
+            })
           })
       }
     },
@@ -487,23 +495,18 @@ export default {
      * @description: 切换图片 视频
      * @param: index 选中类型的索引
      */
-    switchMediaType(index) {
-      if (this.mediaType.activeIndex === index) return;
-      this.mediaType.activeIndex = index;
-      this.mediaType.activeType = this.mediaType.values[index].value;
-      this.formData.durationType = '';
-      this.formData.top = {
-        name: '请上传',
-        file: '',
-        base64: ''
-      };
+    switchFileType(value) {
+      if (this.formData.fileType === value) return;
+      this.formData.fileType = value;
+      // if (this.createType === 'single') {
+      //   this.formData.durationType = '';
+      // }
+      this.formData.top = '';
     },
 
     // 添加资质
     addIndustry(event) {
-      let file = event.target.files[0];
-      let base64 = URL.createObjectURL(file);
-      this.formData.aptitude.images.push({file, base64})
+      this.formData.industryImage.push(event.target.files[0])
       this.$refs.uploadAptitude.value = '';
     },
 
@@ -514,16 +517,11 @@ export default {
 
     // 添加第三方监测
     addThirdPartMonitor() {
-      this.formData.thirdPartMonitor.push({
+      this.formData.monitor.push({
         mode: 'SDK',
-        thirdPardMonitor: '酷云',
-        thirdPardMonitorAddr: ''
+        thirdPartyMonitor: '',
+        thirdPartyMonitorUrl: ''
       })
-    },
-
-    // 删除第三方监测
-    delThirdPartMonitor(index) {
-      this.formData.thirdPartMonitor.splice(index, 1)
     },
 
     // 保存
@@ -546,22 +544,33 @@ export default {
         });
       }
 
-      alert('上传成功')
+      let param = this.$tools.convertToFormData(this.formData);
+      this.$api.CreateCreative.AddCreative(param)
+        .then(res => {
+          console.log(res)
+        })
+    },
+
+  },
+
+  computed: {
+    // 资质预览图片列表
+    aptitudePreviewImgs() {
+      let res = [];
+      this.formData.industryImage.forEach(item => {
+        res.push(this.$tools.fileToUrl(item))
+      })
+      return res;
     },
 
   },
 
   watch: {
-    // 监听资质行业和上下屏类型生成名字
-    'formData.aptitude.industry': function() {
-      let date = new Date();
-      let type = this.creativeType == 'both' ? '联动' : this.creativeType == 'top' ? '上屏' : '下屏';
-      this.formData.name = `${this.formData.aptitude.industry}_${type}_${date.getMonth()+1}_${date.getDate()}`
-    },
-    creativeType: function() {
-      let date = new Date();
-      let type = this.creativeType == 'both' ? '联动' : this.creativeType == 'top' ? '上屏' : '下屏';
-      this.formData.name = `${this.formData.aptitude.industry}_${type}_${date.getMonth()+1}_${date.getDate()}`
+    // 创意名称
+    'formData.industry': function() {
+      let type = this.projectData.type == '003' ? '联动' : this.projectData.type == '001' ? '上屏' : '下屏';
+      let industryName = this.$tools.getObjectItemFromArray(this.industryList, 'industryId', this.formData.industry);
+      this.formData.name = `${industryName.name }_${type}_${this.$tools.getFormatDate('mm_dd')}`;
     }
   }
 }
@@ -570,11 +579,8 @@ export default {
 <style lang="scss">
 .upload-creative{
   position: relative;
-  .mt-12{
-    margin-top: 12px !important;
-  }
-  .mt-10{
-    margin-top: 10px;
+  .el-image-viewer__close{
+    color: #fff;
   }
   .el-form-item{
     margin-bottom: 0;
@@ -590,7 +596,7 @@ export default {
     }
     .put-form{
       width: 352px;
-      margin-top: 18px;
+      margin-top: 12px;
       .decription{
         width:256px;
         line-height:18px;
