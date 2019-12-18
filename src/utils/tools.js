@@ -3,7 +3,7 @@ const DEFAULT_PATTERN = 'yyyy-MM-dd'
 
 let tools = {
   /**
-   * @description: 验证视频时长, 宽高
+   * @description: 验证MP4视频时长, 宽高
    * @param file: input->file
    * @param limitTime: 时间 毫秒
    * @param timeRange: 时间误差
@@ -18,8 +18,16 @@ let tools = {
       let url = URL.createObjectURL(file);
       let video = document.createElement('video');
 
+      if (file.type !== 'video/mp4') {
+        console.log('avi格式不支持前端校验')
+        return resolve({
+          msg: '添加视频成功',
+          durationType: '003'
+        });
+      }
+
       video.src = url;
-      video.style="position: relative; z-index: -1; opacity: 0;"
+      video.setAttribute('style', "position: absolute; z-index: -100; top: 0; opacity: 0; width: 200px");
       document.getElementById('app').appendChild(video)
 
       video.addEventListener('canplay', (e) => {
@@ -27,9 +35,12 @@ let tools = {
         let videoWidth  = e.target.videoWidth;
         let videoHeight = e.target.videoHeight;
         let durationToSecondes = (videoTime / 1000).toFixed(0);
-        let durationType = durationToSecondes == 15 ? 2
-          : durationToSecondes == 10 ? 1 : 0; // 0 => 5s 1 => 10s 2=> 15s
+        // 001-5s/次，002-10s/次，003-15s/次 依次类推
+        let durationType = durationToSecondes == 15 ? '003'
+          : durationToSecondes == 10 ? '002' : '001'; 
+
         video.remove()
+
         if (limitTime - timeRange > videoTime || limitTime + timeRange < videoTime) {
           return reject({msg: '视频时间长度不符合要求！'});
         }
@@ -40,13 +51,11 @@ let tools = {
           return reject({msg: '视频高度不符合要求！'});
         }
         return resolve({
-          name: file.name,
           msg: '添加视频成功',
-          base64: url,
           durationType: durationType
         });
       })
-    } )
+    })
   },
 
   /**
@@ -72,9 +81,7 @@ let tools = {
           return reject({msg: '图片高度不符合要求'});
         }
         return resolve({
-          name: file.name,
           msg: '添加图片成功！',
-          base64: img.src
         });
       }
 
@@ -115,6 +122,7 @@ let tools = {
     }
     return map[toString.call(obj)]
   },
+
   /**
    * @description: 深度克隆
    * @param:
@@ -161,6 +169,7 @@ let tools = {
       return result
     }
   },
+
   /**
    * TODO
    * @description: 前端分页
@@ -227,7 +236,7 @@ let tools = {
    * @param: index
    */
   removeArrayItemByIndex(arrData, index) {
-    return arrData.splice(index, 1);
+    arrData.splice(index, 1);
   },
 
   /**
@@ -253,7 +262,7 @@ let tools = {
   },
 
   /**
-   * @description: 获取当前年月日
+   * @description: 时间格式化
    * @param: fmt 格式
    * @param: date 时间戳, 不传默认返回发当前
    */
@@ -279,6 +288,75 @@ let tools = {
   },
 
 
+  /**
+   * @description: 根据数组中对象属性返回第一个匹配数组项
+   * @param: arr 源数据
+   * @param: key
+   * @param: val
+   */
+  getObjectItemFromArray(arr, key, val) {
+    let res = {};
+    for(let i=0; i<arr.length; i++) {
+      if (arr[i][key] == val) {
+        res = arr[i];
+        break;
+      }
+    }
+    return res
+  },
+
+
+  /**
+   * @description: 对象数据转化为form表单格式
+   * @param: val
+   */
+  convertToFormData(val) {
+    let formData = new FormData();
+    for (let i in val) {
+      isArray(val[i], i);
+    }
+    function isArray(array, key) {
+      if (array == undefined || typeof array == "function") {
+        return false;
+      }
+      if (typeof array != "object") {
+        formData.append(key, array);
+      } else if (array instanceof Array) {
+        if (array.length == 0) {
+          formData.append(`${key}`, "");
+        } else {
+          for (let i in array) {
+            for (let j in array[i]) {
+              isArray(array[i][j], `${key}[${i}].${j}`);
+            }
+          }
+        }
+      } else {
+        let arr = Object.keys(array);
+        if (arr.indexOf("uid") == -1) {
+          for (let j in array) {
+            isArray(array[j], `${key}.${j}`);
+          }
+        } else {
+          formData.append(`${key}`, array);
+        }
+      }
+    }
+    return formData;
+  },
+
+  /**
+   * @description: file转预览url
+   * @param: file
+   */
+  fileToUrl(file) {
+    if (!file) return '';
+    return URL.createObjectURL(file);
+  },
+  
+
+  
+  
 
 }
 

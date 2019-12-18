@@ -183,6 +183,7 @@ export default {
       }
     }
   },
+
   mounted() {
     this.formData.goal = this.goal.content[this.goal.activeIndex].value;
   },

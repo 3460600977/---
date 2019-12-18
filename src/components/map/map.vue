@@ -102,24 +102,14 @@
       this.mapBindEvent()
     },
     methods:{
-      filtersChange() {
-        this.loading = true
-        this.$api.cityInsight.getPremisesByCity({cityCode: '510100', tag: this.filters}).then((data) => {
-          if (data.result) {
-            this.points = this.normalizePointsAll(data.result)
-            this.drawDevicePoints()
-          } else {
-            this.clearPoints()
-          }
-          this.loading = false
-        })
-      },
       loadData() {
         this.loading = true
         this.$api.cityInsight.getPremisesByCity({cityCode: '510100', tag: this.filters}).then((data) => {
           console.log(data.result)
           if (data.result) {
             this.points = this.normalizePointsAll(data.result)
+            // console.log(this.points)
+            // this.drawHotMap(this.points)
             if (Object.keys(this.pathArr).length) {
               for(let key in this.pathArr) {
                 this.pathArr[key].buildings = this.isInArea(this.pathArr[key])
@@ -459,6 +449,7 @@
         this.map.addOverlay(marker);
         return marker
       },
+      // 热力图
       drawHotMap(arr) {
         this.heatmapOverlay = new BMapLib.HeatmapOverlay({"radius":15});
         this.map.addOverlay(this.heatmapOverlay);

@@ -1,10 +1,7 @@
 <template>
   <div class="creative-list">
     <div class="report-top-form">
-      <div class="report-divider">
-        <el-divider direction="vertical"></el-divider>
-        <span class="report-form-title">资源包管理</span>
-      </div>
+      <p class="db-title">资源包管理</p>
       <el-form :inline="true" :model="checkFormInline" class="report-query-form" label-width="82px">
         <el-form-item class="item-space-1" label="资源包管理">
           <el-input v-model="checkFormInline.name" clearable></el-input>
@@ -46,7 +43,7 @@
     <el-dialog title="删除城市洞察包"
                :visible.sync="dialogShowContent"
                width="568px"
-               class="dialog-1"
+               class="my-dialog"
     >
       <p>是否确认删除资源包 <span class="color-main">【{{currentItem && currentItem.name}}】？</span></p>
       <span slot="footer">
@@ -100,24 +97,13 @@
 </script>
 
 <style lang="scss">
-  .dialog-1 /deep/ {
+  .my-dialog /deep/ {
     .el-dialog__body {
-        padding: 57px 30px 105px;
-    }
-    .el-dialog__footer {
-      text-align: center;
-      padding-bottom: 40px;
+        padding-top: 57px;
+        padding-bottom: 105px;
     }
     .el-button + .el-button {
       margin-left: 60px;
-    }
-    .el-dialog__header {
-      border-bottom: 1px solid $color-border;
-      padding: 24px 0 21px 30px;
-      .el-dialog__title {
-        font-size: 16px;
-        color: $color-text;
-      }
     }
   }
   .btn1 {
@@ -135,6 +121,7 @@
           background-color: $color-blue;
           border-radius: 2px;
           width: 3px;
+          height: 16px;
           margin: 0 5px 0 0;
         }
 
@@ -146,14 +133,6 @@
       }
 
       .report-query-form {
-        margin-top: 41px;
-        & /deep/ .el-form-item__label {
-          color: $color-text;
-        }
-
-        .el-input {
-          width: 200px;
-        }
 
         .el-range-separator {
           width: 10%;

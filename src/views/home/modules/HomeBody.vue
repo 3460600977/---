@@ -13,13 +13,12 @@
       <el-button class="create-put" type="primary" icon="el-icon-plus">创建投放方案</el-button>
     </el-card>
     <el-card class="box-card no-data mid-center shadow">
-      <div>
-        <img :src="images.noData" alt="无数据">
+      <noData :imgWidth="163">
         <div class="description text-center">
           <p>更多功能即将上线</p>
           <p>敬请期待</p>
         </div>
-      </div>
+      </noData>
     </el-card>
 
   </div>
