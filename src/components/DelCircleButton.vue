@@ -1,6 +1,6 @@
 <template>
   <div class="del-circle-button mid-center">
-    <i class="el-icon-error"></i>
+    <i class="iconfont icon-error"></i>
   </div>
 </template>
 

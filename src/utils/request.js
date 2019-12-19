@@ -3,7 +3,7 @@
  * CAS-RMS ->  beike-rms
  */
 import axios from 'axios'
-import { Message, MessageBox, Notification  } from 'element-ui'
+import {Message, MessageBox, Notification} from 'element-ui'
 import store from '@/store'
 // import { getToken } from '@/utils/auth'
 // create an axios instance
@@ -19,7 +19,7 @@ service.interceptors.request.use(
     //   // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
     //   config.headers['token'] = getToken();
     // }
-    config.headers['token'] = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJrYWtheGkiLCJleHAiOjE1NzYyMjg3NTh9.VMikBL6ut6hHNp0PM8JCeFgtvYwEdThbJruKnn0hbkU';
+    config.headers['token'] = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJrYWtheGkiLCJleHAiOjE1NzcwODkyODh9.wNNEK6JAxcBHgsKpRwDJ46-NR1z0SvChOXj1ERcJdRo';
     return config
   },
   error => {
@@ -40,10 +40,10 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data;
-    
+    console.log(response)
     // 下载 csv xls
-    if (response.headers['content-type'] === 'application/xls;charset=UTF-8' || 
-        response.headers['content-type'] ==='application/vnd.ms-excel;charset=UTF-8') {
+    if (response.headers['content-type'].toLowerCase() === 'application/xls;charset=utf-8' ||
+      response.headers['content-type'].toLowerCase() === 'application/vnd.ms-excel;charset=utf-8') {
       return res;
     }
     if (res.code !== 100001) {

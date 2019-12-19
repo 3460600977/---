@@ -3,37 +3,42 @@
     <div class="report-top-form">
       <div class="report-divider">
         <el-divider direction="vertical"></el-divider>
-        <span class="report-form-title">{{formatCentToYuan('formatCentToYuan')}}投放计划报表</span>
+        <span class="report-form-title">投放计划报表</span>
       </div>
-      <el-form :inline="true" :model="reportFormInline" class="report-query-form">
+      <el-form :inline="true" :model="projectList" class="report-query-form">
         <el-form-item class="item-space-1">
-          <el-select v-model="reportPlanValue" placeholder="输入投放计划名称">
+          <el-select v-model="projectList.campaignId" placeholder="输入投放计划名称"
+                     :loading="reportPlanList.loading"
+                     @change="changePlanValue" clearable filterable>
             <el-option
-              v-for="item in reportPlanList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              v-for="item in reportPlanList.data"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item class="item-space-1">
-          <el-select v-model="reportPlanValue" placeholder="输入投放方案名称">
+          <el-select v-model="projectList.id" placeholder="输入投放方案名称"
+                     :loading="reportProjectList.loading"
+                     clearable filterable>
             <el-option
-              v-for="item in reportPlanList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              v-for="item in reportProjectList.data"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item class="item-space-end">
           <el-date-picker
-            v-model="getDefaultTime"
+            v-model="projectList.selectTime"
             type="daterange"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            value-format="yyyy-MM-dd">
+            value-format="yyyy-MM-dd"
+            @change="chooseReportTime">
           </el-date-picker>
         </el-form-item>
         <el-form-item>
@@ -42,8 +47,8 @@
       </el-form>
     </div>
     <div class="report-select-card">
-      <el-card :class="{'box-card':true,'select-box':selectCardIndex===itemCard.id}"
-               v-for="(itemCard,key) in reportSelectCard" :cardIndex="itemCard.id"
+      <el-card :class="{'box-card':true,'select-box':reportSelectCard.selectCardIndex===itemCard.id}"
+               v-for="(itemCard,key) in reportSelectCard.data" :cardIndex="itemCard.id"
                :key="key">
         <div class="card-center">
           <div class="card_name">
@@ -66,26 +71,31 @@
         </el-option>
       </el-select>
       <div class="report-bar-graph-data">
-        <BarGraph :axisData="barGraphData" :barIndex="barIndex"></BarGraph>
+        <BarGraph :axisData="barGraphData.data" :barIndex="barIndex"></BarGraph>
       </div>
     </div>
     <div class="report-result-list">
       <div class="report-head">
         <h3 class="table-title">数据明细</h3>
-        <el-button type="info" plain class="download-data">下载</el-button>
+        <el-button type="info" plain class="download-data" :loading="reportDownload.loading"
+                   @click="downloadProjectList">下载
+        </el-button>
       </div>
       <el-table
-        :data="tableData"
-        @sort-change="getReportPlan"
+        :data="resultData"
+        @sort-change="tableSort"
         :default-sort="{prop: 'costNum', order: 'ascending'}"
         style="width: 100%"
         class="report-table">
-        <el-table-column prop="name" label="投放方案" width="180">
-          <router-link :to="{path:'/reportList/projectDetail'}" class="project-id">投放方案</router-link>
+        <el-table-column prop="projectName" label="投放方案">
+          <template slot-scope="scope">
+            <router-link :to="{path:'/reportList/projectDetail?projectId='+scope.row['projectId']}" class="project-id">
+              {{scope.row[scope.column.property]}}
+            </router-link>
+          </template>
         </el-table-column>
-        <el-table-column prop="startTime" label="投放时间" width="180"></el-table-column>
-        <el-table-column prop="cost" label="花费数" sortable="custom">
-        </el-table-column>
+        <el-table-column prop="startTime" label="投放时间"></el-table-column>
+        <el-table-column prop="cost" label="花费数" sortable="custom"></el-table-column>
         <el-table-column prop="showTimes" label="曝光数" sortable="custom"></el-table-column>
         <el-table-column prop="deviceNum" label="设备数" sortable="custom"></el-table-column>
         <el-table-column prop="totalPeople" label="受众人数" sortable="custom"></el-table-column>
@@ -109,58 +119,42 @@
 
 <script>
     import BarGraph from "../../../../../components/echarts/BarGraph";
+    //import {tableMixin} from '../../../mixins/tableMixin'
 
     export default {
         name: "reportProjectList",
+        //mixins: [tableMixin],
         components: {BarGraph},
         data() {
             return {
-                defaultIntervalTime: 7,
-                currentPage: 1,
                 barIndex: 0,
-                selectCardIndex: 0,
-                reportPlanValue: '',
-                reportDateValue: [],
-                reportPlanList: [
-                    {
-                        value: '选项1',
-                        label: '黄金糕'
-                    }, {
-                        value: '选项2',
-                        label: '双皮奶'
-                    }, {
-                        value: '选项3',
-                        label: '蚵仔煎'
-                    }, {
-                        value: '选项4',
-                        label: '龙须面'
-                    }, {
-                        value: '选项5',
-                        label: '北京烤鸭'
-                    }],
-                reportFormInline: {
-                    user: '',
-                    region: ''
-                },
-                reportSelectCard:
-                    [
+                currentPage: 1,
+                reportPlanList: {data: [], loading: false},
+                reportProjectList: {data: [], loading: false},
+                reportSelectCard: {
+                    data: [
                         {
-                            id: 0, name: '花费总数（元）', value: '100,000,0.00', field: 'cost'
+                            id: 0, name: '花费总数（元）', value: '', field: 'cost'
                         },
                         {
-                            id: 1, name: '曝光总数（次）', value: '100,000,0', field: 'showTimes'
+                            id: 1, name: '曝光总数（次）', value: '', field: 'showTimes'
                         },
                         {
-                            id: 2, name: '设备总数（个）', value: '100,000,0', field: 'deviceNum'
+                            id: 2, name: '设备总数（个）', value: '', field: 'deviceNum'
                         },
                         {
-                            id: 3, name: '受众总人数（人）', value: '100,000,0', field: 'totalPeople'
+                            id: 3, name: '受众总人数（人）', value: '', field: 'totalPeople'
                         },
                         {
-                            id: 4, name: '受众观看总次数（次）', value: '100,000,0', field: 'watchedTimes'
+                            id: 4, name: '受众观看总次数（次）', value: '', field: 'watchedTimes'
                         },
                     ],
+                    loading: false,
+                    selectCardIndex: 0,
+                },
                 barSelectOptions: {
+                    loading: false,
+                    data: [],
                     default: {
                         label: 'top 5',
                         value: 'get_five'
@@ -176,79 +170,64 @@
                         }
                     ],
                 },
-
                 barGraphData: {
-                    xAxis: {
-                        data: [
-                            '投放计划1', '投放计划2', '投放计划3', '投放计划4', '投放计划5',
-                            '投放计划6', '投放计划7', '投放计划8', '投放计划9', '投放计划10'
-                        ]
-                    },
-                    yAxis: {
-                        name: '花费数',
-                        max: 1250,
-                        // data: [250, 500, 750, 1000, 1250]
-                    },
-                    series: {
-                        barWidth: 56,
-                        data: [1000, 500, 750, 600, 600, 750, 600, 600, 750, 750],
-                        dataShadow: [1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250]
-                    },
+                    loading: false,
+                    data: {
+                        xAxis: {
+                            data: [
+                                '投放计划1', '投放计划2', '投放计划3', '投放计划4', '投放计划5',
+                                '投放计划6', '投放计划7', '投放计划8', '投放计划9', '投放计划10'
+                            ]
+                        },
+                        yAxis: {
+                            name: '花费数',
+                            max: 1250,
+                            // data: [250, 500, 750, 1000, 1250]
+                        },
+                        series: {
+                            barWidth: 56,
+                            data: [1000, 500, 750, 600, 600, 750, 600, 600, 750, 750],
+                            dataShadow: [1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250]
+                        },
+                    }
                 },
-                tableData: [{
-                    date: '2016-05-02',
-                    name: '投放计划1',
-                    costNum: '100',
-                    exposureNum: '900',
-                    deviceNum: '1200',
-                    watchAudiences: '102000',
-                    watchNum: '102000'
-                }, {
-                    date: '2016-05-02',
-                    name: '投放计划2',
-                    costNum: '100',
-                    exposureNum: '900',
-                    deviceNum: '1200',
-                    watchAudiences: '102000',
-                    watchNum: '102000'
-                }, {
-                    date: '2016-05-02',
-                    name: '投放计划3',
-                    costNum: '100',
-                    exposureNum: '900',
-                    deviceNum: '1200',
-                    watchAudiences: '102000',
-                    watchNum: '102000'
-                }, {
-                    date: '2016-05-02',
-                    name: '投放计划4',
-                    costNum: '100',
-                    exposureNum: '900',
-                    deviceNum: '1200',
-                    watchAudiences: '102000',
-                    watchNum: '102000'
-                }]
+                reportDownload: {
+                    data: [],
+                    loading: false
+                },
+                resultData: null,
+                loading: false,
+                projectList: {
+                    selectTime: [],
+                    startTime: '',//开始时间
+                    endTime: '',//结束时间
+                    formShowStatus: 0,//列表排序 0花费数正序 1花费数倒序 2曝光数正序 3曝光数倒序 4设备数正序 5设备数倒序 6受众人数正序 7受众人数倒序 8受众观看数正序 9受众观看数倒序
+                    sortField: 'cost',
+                    sortType: 0,
+                    topStatus: 5,//top数据类型 5 或者 10
+                    campaignId: '',//计划id
+                    id: '',//方案id
+                    pageIndex: 0,//pageIndex
+                    pageSize: 0,//pageSize
+                },
             }
         },
         mounted() {
-            //获取方案的初始列表
-            //获取默认日期下的统计查询
-            let params = {
-                startTime: this.$tools.getMonthFirstDay(),//开始时间 require
-                endTime: this.$tools.getMonthLastDay(),//结束时间 require
-            }
-            this.getProjectTotal(params)
-            //获取方案报表的柱状图数据
-            this.getProjectBarChart(params)
-            // this.getProjectList()
-            // this.getProjectBarChart()
-            // this.getProjectDownloadList()
-            // this.getProjectTotal()
+            this.projectList.startTime = this.$tools.getMonthFirstDay()
+            this.projectList.endTime = this.$tools.getMonthLastDay()
         },
-        computed: {
-            getDefaultTime: function () {
-                return [this.$tools.getMonthFirstDay(), this.$tools.getMonthLastDay()]
-            }
+        created() {
+            this.projectList.startTime = this.$tools.getMonthFirstDay()
+            this.projectList.endTime = this.$tools.getMonthLastDay()
+            this.projectList.selectTime = [this.projectList.startTime, this.projectList.endTime]
+            //获取计划名称列表
+            this.getPlanNameList()
+            //获取方案名称列表
+            this.getProjectNameList()
+            //获取默认状态下的卡片数据
+            this.getProjectTotal()
+            //获取默认状态下的列表数据
+            this.getProjectList()
         },
         methods: {
             onSubmit() {
@@ -272,21 +251,81 @@
             formatCentToYuan(str) {
                 return str.slice(0, 5)
             },
+            //触发改变时间选择器的值
+            chooseReportTime(changeVal) {
+                this.projectList.startTime = changeVal[0]
+                this.projectList.endTime = changeVal[1]
+            },
+            //触发改变投放计划事件
+            changePlanValue(selVal) {
+                this.getProjectListInPlan(selVal)
+            },
+            //触发下载事件
+            downloadProjectList() {
+                let param = {}
+                this.getProjectDownloadList(param)
+            },
+            //获取计划名称列表
+            getPlanNameList() {
+                //该接口没有必须参数，可选参数
+                //请求获取计划名称列表
+                this.reportPlanList.loading = true
+                this.$api.PutPlan.PlanNameList()
+                    .then(res => {
+                        this.reportPlanList.data = res.result
+                        this.reportPlanList.loading = false
+                    })
+                    .catch(res => {
+                        this.reportPlanList.loading = false
+                    })
+            },
+            //获取方案名称列表
+            getProjectNameList() {
+                //该接口没有必须参数，可选参数
+                //请求获取方案名称列表
+                this.reportProjectList.loading = true
+                this.$api.PutProject.ProjectNameList()
+                    .then(res => {
+                        this.reportProjectList.data = res.result
+                        this.reportProjectList.loading = false
+                    })
+                    .catch(res => {
+                        this.reportProjectList.loading = false
+                    })
+            },
+            //获取计划下的名称列表
+            getProjectListInPlan(camId) {
+                //请求获取计划下的名称列表
+                this.reportProjectList.loading = true
+                this.$api.PutProject.ProjectNameListByCamId(camId)
+                    .then(res => {
+                        this.reportProjectList.data = res.result
+                        this.reportProjectList.loading = false
+                    })
+                    .catch(res => {
+                        this.reportProjectList.loading = false
+                    })
+            },
             //方案报表的统计查询
             getProjectTotal(param) {
                 //必须参数
                 let queryParam = {
-                    startTime: '2019-12-02',//开始时间 require
-                    endTime: '2019-12-31',//结束时间 require
+                    startTime: this.projectList.startTime,
+                    endTime: this.projectList.endTime,
+                    campaignId: this.projectList.campaignId,
+                    id: this.projectList.id,
+                    pageIndex: this.projectList.pageIndex,
+                    pageSize: this.projectList.pageSize,
                 }
                 //合并查询参数
                 Object.assign(queryParam, param);
-                console.log(queryParam)
                 //请求方案报表列表查询接口
+                this.reportSelectCard.loading = true
                 this.$api.Report.getProjectTotal(queryParam)
                     .then(res => {
+                        this.reportSelectCard.loading = false
                         let cardList = res.result;
-                        this.reportSelectCard.forEach(item => {
+                        this.reportSelectCard.data.forEach(item => {
                             let property = item.field;
                             if (cardList.hasOwnProperty(property)) {
                                 if (cardList[property] === '') {
@@ -302,16 +341,21 @@
                         })
                     })
                     .catch(res => {
+                        this.reportSelectCard.loading = false
                     })
             },
             //获取方案报表的柱状图数据
             getProjectBarChart(param) {
                 //必须参数
                 let queryParam = {
-                    startTime: '2019-12-01',//开始时间 require
-                    endTime: '2019-12-31',//结束时间 require
-                    showStatus: 0,//柱状图排序 0花费总数 1曝光次数 2设备总个数 3受众总人数 4受众观看次数
-                    topStatus: 5//top数据类型 5 或者 10
+                    startTime: this.projectList.startTime,
+                    endTime: this.projectList.endTime,
+                    formShowStatus: this.projectList.formShowStatus,
+                    topStatus: this.projectList.topStatus,
+                    campaignId: this.projectList.campaignId,
+                    id: this.projectList.id,
+                    pageIndex: this.projectList.pageIndex,
+                    pageSize: this.projectList.pageSize,
                 }
                 //合并查询参数
                 Object.assign(queryParam, param);
@@ -319,7 +363,6 @@
                 this.$api.Report.getProjectChartBar(queryParam)
                     .then(res => {
                         console.log('柱状图数据', res.result)
-
                     })
                     .catch(res => {
                         console.log(res.result)
@@ -327,44 +370,77 @@
             },
             //获取方案报表的列表下载数据-默认500条
             getProjectDownloadList(param) {
-                //必须参数
                 let queryParam = {
-                    startTime: '2019-12-01',//开始时间 require
-                    endTime: '2019-12-31',//结束时间 require
-                    formShowStatus: 0,//列表排序 0花费数正序 1花费数倒序 2曝光数正序 3曝光数倒序 4设备数正序 5设备数倒序 6受众人数正序 7受众人数倒序 8受众观看数正序 9受众观看数倒序
+                    startTime: this.projectList.startTime,
+                    endTime: this.projectList.endTime,
+                    sortList: [
+                        {
+                            sortField: this.projectList.sortField,
+                            sortType: this.projectList.sortType
+                        }
+                    ],
+                    campaignId: this.projectList.campaignId,
+                    id: this.projectList.id,
+                    pageIndex: this.projectList.pageIndex,
+                    pageSize: this.projectList.pageSize,
                 }
                 //合并查询参数
-                Object.assign(queryParam, param);
+                Object.assign(queryParam, param)
                 //请求方案报表列表查询接口
+                console.log('getProjectDownloadList', queryParam)
+                this.reportDownload.loading = true
                 this.$api.Report.getProjectDownloadList(queryParam)
                     .then(res => {
-                        console.log('下载数据', res)
+                        this.reportDownload.loading = false
+                        this.$tools.downLoadFileFlow(res, `投放方案列表${this.$tools.getFormatDate("YYmmdd")}.xsl`)
                     })
                     .catch(res => {
-                        console.log(res.result)
+                        this.reportDownload.loading = false
                     })
             },
             //获取方案报表的列表-默认每页10条
             getProjectList(param) {
                 //必须参数
                 let queryParam = {
-                    startTime: '2019-12-01',//开始时间 require
-                    endTime: '2019-12-31',//结束时间 require
-                    formShowStatus: 0,//列表排序 0花费数正序 1花费数倒序 2曝光数正序 3曝光数倒序 4设备数正序 5设备数倒序 6受众人数正序 7受众人数倒序 8受众观看数正序 9受众观看数倒序
+                    startTime: this.projectList.startTime,
+                    endTime: this.projectList.endTime,
+                    sortList: [
+                        {
+                            sortField: this.projectList.sortField,
+                            sortType: this.projectList.sortType
+                        }
+                    ],
+                    campaignId: this.projectList.campaignId,
+                    id: this.projectList.id,
+                    pageIndex: this.projectList.pageIndex,
+                    pageSize: this.projectList.pageSize,
                 }
                 //合并查询参数
-                Object.assign(queryParam, param);
+                Object.assign(queryParam, param)
                 //请求方案报表列表查询接口
+                this.loading = true
                 this.$api.Report.getProjectList(queryParam)
                     .then(res => {
-                        console.log(res.result)
-                        let projectList = res.result
-                        this.tableData = projectList
+                        this.loading = false
+                        this.resultData = res.result
                     })
                     .catch(res => {
-                        console.log(res.result)
+                        this.loading = false
                     })
             },
+            loadFunction(param) {
+                const data = {...this.projectList, ...param}
+                return new Promise((resolve, reject) => {
+                    this.$api.toolBox.getResourceBundle(data).then(res => {
+                        resolve(res);
+                    }).catch((res) => {
+                        reject(res)
+                    })
+                });
+            },
+            tableSort() {
+
+            }
         }
     }
 </script>

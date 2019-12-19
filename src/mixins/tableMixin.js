@@ -10,12 +10,11 @@ export const tableMixin = {
       pageSize: 10,
       filterData: {
         pageIndex: 1,
-        sortField: '',
-        sortType: ''
+        sortList: []
       },
       sortOrderMap: {
-        ascending: 'UP',
-        descending: 'DOWN'
+        ascending: 1,
+        descending: 0
       }
     }
   },
@@ -53,14 +52,13 @@ export const tableMixin = {
     },
     tableSort({ column, prop, order }) {
       if (column) {
-        this.filterData.sortField = column.sortable;
         this.filterData.pageIndex = 1
         this.pageIndex = 1
-        this.filterData.sortType = this.sortOrderMap[order];
+        this.filterData.sortList = []
+        this.filterData.sortList.push({sortField: prop, sortType: this.sortOrderMap[order]})
         this._loadData(this.filterData)
       } else {
-        this.filterData.sortField = '';
-        this.filterData.sortType = '';
+        this.filterData.sortList = []
         this.filterData.pageIndex = 1
         this.pageIndex = 1
         this._loadData(this.filterData)
