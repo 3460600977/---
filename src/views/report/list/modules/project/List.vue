@@ -106,11 +106,11 @@
       <el-pagination
         background
         layout="total, sizes, prev, pager, next, jumper"
-        :total="1000"
-        :page-sizes="[10, 20, 30, 40,50]"
+        :total="totalCount"
+        :page-sizes="pageSizeSelectable"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="currentPage"
+        :current-page="pageIndex"
         class="list-page"
       ></el-pagination>
     </div>
@@ -120,7 +120,7 @@
 <script>
     import BarGraph from "../../../../../components/echarts/BarGraph";
     //import {tableMixin} from '../../../mixins/tableMixin'
-
+    const PAGE_SIZE = [10, 20, 30, 40, 50]
     export default {
         name: "reportProjectList",
         //mixins: [tableMixin],
@@ -195,7 +195,11 @@
                     data: [],
                     loading: false
                 },
+                totalCount: 0, // 总共条数
+                pageSizeSelectable: PAGE_SIZE,
                 resultData: null,
+                pageIndex: 1,
+                pageSize: 10,
                 loading: false,
                 projectList: {
                     selectTime: [],
@@ -207,8 +211,6 @@
                     topStatus: 5,//top数据类型 5 或者 10
                     campaignId: '',//计划id
                     id: '',//方案id
-                    pageIndex: 0,//pageIndex
-                    pageSize: 0,//pageSize
                 },
             }
         },
@@ -226,6 +228,8 @@
             this.getProjectNameList()
             //获取默认状态下的卡片数据
             this.getProjectTotal()
+            //获取默认状态下的柱状图数据
+            this.getProjectBarChart()
             //获取默认状态下的列表数据
             this.getProjectList()
         },
@@ -239,14 +243,14 @@
                 this.barIndex = 3;
                 console.log('getSelectData:', this.barGraphData.xAxis, this.barIndex)
             },
-            getReportPlan() {
-                console.log('get plan report data')
+            handleSizeChange(size) {
+                this.pageSize = size
+                //console.log(`每页 ${size} 条`);
             },
-            handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
-            },
-            handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
+            handleCurrentChange(currentPage) {
+                //console.log(`当前页: ${currentPage}`);
+                this.pageIndex = currentPage
+                this.getProjectList()
             },
             formatCentToYuan(str) {
                 return str.slice(0, 5)
@@ -314,8 +318,8 @@
                     endTime: this.projectList.endTime,
                     campaignId: this.projectList.campaignId,
                     id: this.projectList.id,
-                    pageIndex: this.projectList.pageIndex,
-                    pageSize: this.projectList.pageSize,
+                    pageIndex: this.pageIndex,
+                    pageSize: this.pageSize,
                 }
                 //合并查询参数
                 Object.assign(queryParam, param);
@@ -350,12 +354,17 @@
                 let queryParam = {
                     startTime: this.projectList.startTime,
                     endTime: this.projectList.endTime,
-                    formShowStatus: this.projectList.formShowStatus,
+                    sortList: [
+                        {
+                            sortField: this.projectList.sortField,
+                            sortType: 1
+                        }
+                    ],
                     topStatus: this.projectList.topStatus,
                     campaignId: this.projectList.campaignId,
                     id: this.projectList.id,
-                    pageIndex: this.projectList.pageIndex,
-                    pageSize: this.projectList.pageSize,
+                    pageIndex: this.pageIndex,
+                    pageSize: this.pageSize,
                 }
                 //合并查询参数
                 Object.assign(queryParam, param);
@@ -381,8 +390,8 @@
                     ],
                     campaignId: this.projectList.campaignId,
                     id: this.projectList.id,
-                    pageIndex: this.projectList.pageIndex,
-                    pageSize: this.projectList.pageSize,
+                    pageIndex: this.pageIndex,
+                    pageSize: this.pageSize,
                 }
                 //合并查询参数
                 Object.assign(queryParam, param)
@@ -412,8 +421,8 @@
                     ],
                     campaignId: this.projectList.campaignId,
                     id: this.projectList.id,
-                    pageIndex: this.projectList.pageIndex,
-                    pageSize: this.projectList.pageSize,
+                    pageIndex: this.pageIndex,
+                    pageSize: this.pageSize,
                 }
                 //合并查询参数
                 Object.assign(queryParam, param)
@@ -423,6 +432,8 @@
                     .then(res => {
                         this.loading = false
                         this.resultData = res.result
+                        this.totalCount = res.page.totalCount
+                        this.pageIndex = res.page.currentPage
                     })
                     .catch(res => {
                         this.loading = false
@@ -438,8 +449,16 @@
                     })
                 });
             },
-            tableSort() {
-
+            tableSort(column) {
+                this.pageIndex = 1
+                this.projectList.sortField = column.prop
+                if (column.order === 'descending') {
+                    this.projectList.sortType = 1
+                }
+                if (column.order === 'ascending') {
+                    this.projectList.sortType = 0
+                }
+                this.getProjectList()
             }
         }
     }

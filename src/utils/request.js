@@ -40,7 +40,6 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data;
-    console.log(response)
     // 下载 csv xls
     if (response.headers['content-type'].toLowerCase() === 'application/xls;charset=utf-8' ||
       response.headers['content-type'].toLowerCase() === 'application/vnd.ms-excel;charset=utf-8') {
