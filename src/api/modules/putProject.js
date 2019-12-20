@@ -13,7 +13,7 @@ const AddProject = (data) => {
   });
 }
 
-// 取消方案接口 
+// 取消方案接口
 const CancelProject = (data) => {
   return request({
     url: "/dpapi/project/projectCancel",
@@ -31,7 +31,7 @@ const BuildsAvailableByCityInsignt = (data) => {
   });
 }
 
-// 上传楼盘数据查询余量 
+// 上传楼盘数据查询余量
 const BuildsAvailableByImport = (data) => {
   return request({
     url: "/dpapi/project/premises/upload",
@@ -40,7 +40,7 @@ const BuildsAvailableByImport = (data) => {
   });
 }
 
-// 投放方案楼盘数据导入模板下载接口 
+// 投放方案楼盘数据导入模板下载接口
 const DowloadBuildsTemplate = () => {
   return request({
     url: "/dpapi/project/premises/template",
@@ -49,13 +49,29 @@ const DowloadBuildsTemplate = () => {
   });
 }
 
-// 前端传楼盘信息进行导出 
+// 前端传楼盘信息进行导出
 const ExportBuildsByMsg = (data) => {
   return request({
     url: "/dpapi/project/csv",
     method: "post",
     responseType: 'blob', //一定要写
     data
+  });
+}
+// 获取方案名称
+const ProjectNameList = (data) => {
+  return request({
+    url: "/dpapi/project/name",
+    method: "GET",
+    data
+  });
+}
+
+// 依据计划Id获取方案名称
+const ProjectNameListByCamId = (data) => {
+  return request({
+    url: "/dpapi/project/nameByCampaignId?campaignId=" + data,
+    method: "GET",
   });
 }
 
@@ -66,5 +82,7 @@ export const PutProject = {
   DowloadBuildsTemplate,
   AddProject,
   ExportBuildsByMsg,
-  CancelProject
+  CancelProject,
+  ProjectNameList,
+  ProjectNameListByCamId
 }

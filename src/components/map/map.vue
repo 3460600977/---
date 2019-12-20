@@ -91,8 +91,21 @@
     mounted() {
       let map = new BMap.Map(this.$refs.container, {enableMapClick: false});
       this.map = map
+      // var geolocation = new BMap.Geolocation();
+      // geolocation.getCurrentPosition(function(r){
+      //   if(this.getStatus() == BMAP_STATUS_SUCCESS){
+      //     console.log(r)
+      //     var mk = new BMap.Marker(r.point);
+      //     map.addOverlay(mk);
+      //     map.panTo(r.point);
+      //   }
+      //   else {
+      //     alert('failed'+this.getStatus());
+      //   }
+      // });
       var myCity = new BMap.LocalCity();
       myCity.get((result) => {
+        console.log(result)
         map.centerAndZoom(result.name,10);
         this.initMouse()
         this.loadData()
@@ -102,24 +115,14 @@
       this.mapBindEvent()
     },
     methods:{
-      filtersChange() {
-        this.loading = true
-        this.$api.cityInsight.getPremisesByCity({cityCode: '510100', tag: this.filters}).then((data) => {
-          if (data.result) {
-            this.points = this.normalizePointsAll(data.result)
-            this.drawDevicePoints()
-          } else {
-            this.clearPoints()
-          }
-          this.loading = false
-        })
-      },
       loadData() {
         this.loading = true
         this.$api.cityInsight.getPremisesByCity({cityCode: '510100', tag: this.filters}).then((data) => {
           console.log(data.result)
           if (data.result) {
             this.points = this.normalizePointsAll(data.result)
+            // console.log(this.points)
+            // this.drawHotMap(this.points)
             if (Object.keys(this.pathArr).length) {
               for(let key in this.pathArr) {
                 this.pathArr[key].buildings = this.isInArea(this.pathArr[key])
@@ -459,6 +462,7 @@
         this.map.addOverlay(marker);
         return marker
       },
+      // 热力图
       drawHotMap(arr) {
         this.heatmapOverlay = new BMapLib.HeatmapOverlay({"radius":15});
         this.map.addOverlay(this.heatmapOverlay);

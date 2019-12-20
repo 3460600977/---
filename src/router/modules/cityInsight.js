@@ -6,5 +6,9 @@ export const cityInsightRouter = [
   {
     path: '/buildingDetail/:id',
     component: () => import('@/views/cityInsight/buildingDetail/')
+  },
+  {
+    path: '/chinaMap',
+    component: () => import('@/views/cityInsight/chinaMap/')
   }
 ]

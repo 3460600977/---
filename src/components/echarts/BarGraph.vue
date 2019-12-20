@@ -9,45 +9,44 @@
         name: "BarGraph",
         components: {echarts},
         props: {
-            title: {
-                type: String,
-                default: '投放报告'
-            },
             axisData: {
                 type: Object,
                 required: true
             },
-            barIndex: {
-                type: Number,
-                default: 2
-            }
         },
         data() {
             return {
-                chart: null
+                chart: null,
+                myChart: '',
+                localData: {
+                    title: '花费数',
+                    xAxis: {
+                        data: [
+                            '投放计划1', '投放计划2', '投放计划3', '投放计划4', '投放计划5',
+                            '投放计划6', '投放计划7', '投放计划8', '投放计划9', '投放计划10'
+                        ]
+                    },
+                    yAxis: {
+                        splitNumber: 8,
+                        max: 1200,
+                    },
+                    series: {
+                        //barWidth: 56,
+                        data: [1000, 500, 750, 600, 600, 750, 600, 600, 750, 750],
+                        dataShadow: [1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250, 1250]
+                    },
+                }
             }
         },
         mounted() {
-            this.initChart()
-        },
-        updated() {
-            console.log('child:updated:', this.title, this.barIndex);
-        },
-        computed: {
-            testXData: function () {
-                console.log('child:testXData：', this.axisData.xAxis.data)
-                return this.axisData.xAxis.data
-            },
-            testIndex: function () {
-                console.log('child:testIndex：', this.barIndex)
-            }
+            this.initChart(this.localData)
         },
         methods: {
-            initChart() {
-                let myChart = echarts.init(this.$refs.chartBox);
+            initChart(chartParam) {
+                this.myChart = this.myChart ? this.myChart : echarts.init(this.$refs.chartBox);
                 let option = {
                     title: {
-                        text: '花费数',
+                        text: chartParam.title,
                         textStyle: {
                             fontSize: '14',
                             fontWeight: '400',
@@ -66,9 +65,10 @@
                     xAxis: {
                         axisLine: {show: false},
                         type: 'category',
-                        data: this.testXData,
+                        data: chartParam.xAxis.data,
                         axisTick: {show: false},
                         axisLabel: {
+                            interval: 0,
                             color: '#999999',
                             fontSize: 14,
                             fontWeight: 400,
@@ -78,9 +78,9 @@
                     yAxis: {
                         axisLine: {show: false},
                         type: 'value',
-                        max: this.axisData.yAxis.max,
-                        data: this.axisData.yAxis.data,
-                        interval: 250,
+                        max: chartParam.yAxis.max,
+                        data: chartParam.yAxis.data,
+                        splitNumber: chartParam.yAxis.splitNumber,
                         axisTick: {show: false},
                         axisLabel: {
                             color: '#999999',
@@ -99,7 +99,7 @@
                             },
                             barGap: '-100%',
                             barCategoryGap: 56,
-                            data: this.axisData.series.dataShadow,
+                            data: chartParam.series.dataShadow,
                             animation: false,
                             barWidth: 56,
                             legendHoverLink: false,
@@ -114,22 +114,29 @@
                             },
                             legendHoverLink: false,
                             barWidth: 56,
-                            data: this.axisData.series.data,
+                            data: chartParam.series.data,
                             animation: false,
                             markLine: {
                                 lineStyle: {color: '#F5F6F8'}
                             }
                         }]
                 };
-                myChart.setOption(option);
-            }
+                this.myChart.setOption(option);
+            },
+            getBarData() {
+                console.log('submit!');
+            },
         },
         watch: {
-            // 如果 `question` 发生改变，这个函数就会运行
-            barIndex: function (newQuestion, oldQuestion) {
-                console.log('child:watch,testIndex：', this.barIndex)
+            axisData: {
+                handler: function (newVal, oldVal) {
+                    this.initChart(newVal)
+                }
+                ,
+                deep: true
             }
-        },
+        }
+        ,
     }
 </script>
 

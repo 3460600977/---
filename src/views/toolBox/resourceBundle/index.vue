@@ -1,18 +1,20 @@
 <template>
   <div class="creative-list">
     <div class="report-top-form">
-      <div class="report-divider">
-        <el-divider direction="vertical"></el-divider>
-        <span class="report-form-title">资源包管理</span>
-      </div>
-      <el-form :inline="true" :model="checkFormInline" class="report-query-form" label-width="82px">
-        <el-form-item class="item-space-1" label="资源包管理">
-          <el-input v-model="checkFormInline.name" clearable></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" plain @click="resetLoad">查询</el-button>
-        </el-form-item>
-      </el-form>
+      <p class="db-title">资源包管理</p>
+      <query-item :queryItems="queryItems" :queryFilters="checkFormInline" @handleReturnData="handleReturnData">
+        <template #btn>
+          <el-button type="primary">主要按钮</el-button>
+        </template>
+      </query-item>
+<!--      <el-form :inline="true" :model="checkFormInline" class="report-query-form" label-width="82px">-->
+<!--        <el-form-item class="item-space-1" label="资源包管理">-->
+<!--          <el-input v-model="checkFormInline.name" clearable></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item>-->
+<!--          <el-button type="primary" plain @click="resetLoad">查询</el-button>-->
+<!--        </el-form-item>-->
+<!--      </el-form>-->
     </div>
     <div class="query_result" v-if="resultData !== null">
       <el-table :data="resultData" class="list_table">
@@ -46,7 +48,7 @@
     <el-dialog title="删除城市洞察包"
                :visible.sync="dialogShowContent"
                width="568px"
-               class="dialog-1"
+               class="my-dialog"
     >
       <p>是否确认删除资源包 <span class="color-main">【{{currentItem && currentItem.name}}】？</span></p>
       <span slot="footer">
@@ -59,20 +61,41 @@
 
 <script>
   import {tableMixin} from '../../../mixins/tableMixin'
+  import QueryItem from "../../../components/QueryItem";
   export default {
     name: "auditList",
     mixins: [tableMixin],
+    components: {
+      QueryItem
+    },
     data() {
       return {
         currentPage: 50,
         currentItem: null,
         dialogShowContent: false,
+        queryItems: [
+          {
+            type: 'input',
+            key: 'name',
+            label: '资源包管理'
+          },
+          {
+            type: 'actions',
+            actions: [
+              {label: '查询', key: 'search', type: 'primary', plain: true}
+            ]
+          }
+        ],
         checkFormInline: {
           name: '',
         }
       }
     },
     methods: {
+      handleReturnData(val) {
+        this.checkFormInline = val
+        this.resetLoad()
+      },
       loadFunction(param) {
         const data = { ...this.checkFormInline, ...param }
         return new Promise((resolve, reject) => {
@@ -100,32 +123,24 @@
 </script>
 
 <style lang="scss">
-  .dialog-1 /deep/ {
+  .my-dialog /deep/ {
     .el-dialog__body {
-        padding: 57px 30px 105px;
-    }
-    .el-dialog__footer {
-      text-align: center;
-      padding-bottom: 40px;
+        padding-top: 57px;
+        padding-bottom: 105px;
     }
     .el-button + .el-button {
       margin-left: 60px;
-    }
-    .el-dialog__header {
-      border-bottom: 1px solid $color-border;
-      padding: 24px 0 21px 30px;
-      .el-dialog__title {
-        font-size: 16px;
-        color: $color-text;
-      }
     }
   }
   .btn1 {
     width: 100px;
   }
   .creative-list {
+    & /deep/ .actions {
+      margin-left: 50px;
+    }
     .report-top-form {
-      height: 160px;
+      /*height: 160px;*/
       border-radius: 4px;
       background-color: $color-bg-3;
       padding: 30px 0 37px 38px;
@@ -135,6 +150,7 @@
           background-color: $color-blue;
           border-radius: 2px;
           width: 3px;
+          height: 16px;
           margin: 0 5px 0 0;
         }
 
@@ -146,21 +162,9 @@
       }
 
       .report-query-form {
-        margin-top: 41px;
-        & /deep/ .el-form-item__label {
-          color: $color-text;
-        }
-
-        .el-input {
-          width: 200px;
-        }
 
         .el-range-separator {
           width: 10%;
-        }
-
-        .item-space-1 {
-          margin: 0 50px 0 0;
         }
 
         .el-select .el-input .el-select__caret {

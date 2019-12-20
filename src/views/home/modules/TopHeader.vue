@@ -58,7 +58,7 @@
                 <ul>
                   <li class="o-item center" @click="handleToAccount">账号管理</li>
                   <li class="o-item center" @click="handleToPass">修改密码</li>
-                  <li class="o-item center color-red" @click="handleToLogout">退出登录</li>
+                  <li class="o-item center color-red" @click="handleToLogout" :loading="loading">退出登录</li>
                 </ul>
               </div>
             </transition>
@@ -76,6 +76,7 @@
         name: 'TopHeader',
         data() {
             return {
+                loading: false,
                 images: {
                     logo: require('../../../assets/images/icon_logo.png'),
                     money: require('../../../assets/images/icons/icon_money.png'),
@@ -179,10 +180,26 @@
                 this.$router.replace('/toolBox/editPass')
             },
             handleToLogout() {
-
+                this.$api.Login.LoginOut()
+                    .then(res => {
+                        this.$router.replace({
+                            path: '/login',
+                            query: {}
+                        })
+                        this.loading = false;
+                    })
+                    .catch(res => {
+                        this.loading = false;
+                    })
             },
         },
-
+        mounted() {
+            //请求验证码接口
+            // let userInfo = getUserInfo()
+            // if (!userInfo.avatar || userInfo.avatar.match(/^[ ]*$/)) { // "",null,undefined,NaN
+            //     this.images.up = userInfo.avatar
+            // }
+        },
         beforeMount() {
             this.setActiveTopMenu()
         }
@@ -190,35 +207,41 @@
 </script>
 <style scoped lang="scss">
   $headerHeight: 76px;
-  .top-header{
+  .top-header {
     width: 100%;
     flex-shrink: 0;
     min-height: $headerHeight;
     background-color: #2A2F4D;
-    .logo{
+
+    .logo {
       float: left;
       height: $headerHeight;
       margin-left: 30px;
       cursor: pointer;
       user-select: none;
-      .logo-xinchao{
+
+      .logo-xinchao {
         width: 124px;
       }
-      .logo-split{
-        width:1px;
-        height:20px;
+
+      .logo-split {
+        width: 1px;
+        height: 20px;
         margin: 0 12px;
-        background:rgba(87,94,135,1);
+        background: rgba(87, 94, 135, 1);
       }
-      .company-name{
+
+      .company-name {
         margin-right: 50px;
       }
     }
-    .my-menu{
+
+    .my-menu {
       height: $headerHeight;
       float: left;
       color: #D4D4D4;
-      .item{
+
+      .item {
         position: relative;
         z-index: 2;
         float: left;
@@ -231,20 +254,23 @@
         // &:hover{
         //   background: #333A61;
         // }
-        &.active{
+        &.active {
           background: #242945;
           color: #fff;
         }
-        .menu-text{
+
+        .menu-text {
           height: $headerHeight - 4px;
           user-select: none;
           padding-bottom: $headerHeight - 4px;
-          &.active{
-            border-bottom: 4px solid rgba(45,90,255,1);
+
+          &.active {
+            border-bottom: 4px solid rgba(45, 90, 255, 1);
           }
         }
       }
-      .hover-move-block{
+
+      .hover-move-block {
         position: absolute;
         z-index: 1;
         top: 0;
@@ -253,11 +279,13 @@
         background: #333A61;
       }
     }
-    .user-msg{
+
+    .user-msg {
       float: right;
       height: $headerHeight;
       margin-right: 28px;
-      .item{
+
+      .item {
         position: relative;
         z-index: 2;
         height: 100%;
@@ -267,48 +295,56 @@
         // &:hover{
         //   background: #333A61;
         // }
-        .user-head{
+        .user-head {
           height: 100%;
-          .head{
+
+          .head {
             float: left;
           }
-          .operation-box{
+
+          .operation-box {
             float: left;
             height: $headerHeight;
-            .user-name{
+
+            .user-name {
               margin: 0 10px;
               color: #979EBA;
             }
-            .up-icon,.drop-box{
+
+            .up-icon, .drop-box {
               transition: 0.3s;
             }
-            &:hover{
+
+            &:hover {
               // .drop-box{
               //   display: block;
               // }
-              .up-icon{
+              .up-icon {
                 transform: rotate(180deg);
               }
             }
-            .drop-box{
+
+            .drop-box {
               // display: none;
               top: $headerHeight;
               right: 0;
               z-index: 10000;
-              width:100px;
-              background:rgba(255,255,255,1);
-              border:1px solid rgba(233,233,233,1);
-              border-radius:4px;
-              .o-item{
+              width: 100px;
+              background: rgba(255, 255, 255, 1);
+              border: 1px solid rgba(233, 233, 233, 1);
+              border-radius: 4px;
+
+              .o-item {
                 padding: 18px 0;
                 color: #999999;
-                border-bottom: 1px solid rgba(233,233,233,1);
+                border-bottom: 1px solid rgba(233, 233, 233, 1);
               }
             }
           }
         }
       }
-      .hover-move-block{
+
+      .hover-move-block {
         position: absolute;
         z-index: 1;
         top: 0;
@@ -318,8 +354,9 @@
       }
     }
   }
+
   @media screen and (max-width: 1280px) {
-    .logo-split,.company-name{
+    .logo-split, .company-name {
       display: none;
     }
   }
