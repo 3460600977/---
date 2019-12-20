@@ -89,6 +89,8 @@
 </template>
 
 <script>
+    //import {tableMixin} from '../../../mixins/tableMixin'
+    const PAGE_SIZE = [10, 20, 30, 40, 50]
     export default {
         name: "projectDetail",
         data() {
