@@ -159,8 +159,8 @@ let tools = {
   },
 
   /*
-  * 1, key存在 过略出对象数组里面的key属性形成一个新的数组
-  * 2，key不存在的话 相当于sum函数
+  * concat: 将一个数组对象按key结合成一个新的数组
+  * sum： 将一个数组对象的key项相加返回加之后的结果
   * */
   operation(arr, key, type = 'concat') {
     if (type === 'concat') {
@@ -184,6 +184,7 @@ let tools = {
   localPagegation: () => {
 
   },
+  // 数据补零
   padding(s, len) {
     const l = len - (s + '').length
     for (var i = 0; i < l; i++) {
@@ -418,6 +419,18 @@ let tools = {
     if (!file) return '';
     return URL.createObjectURL(file);
   },
+
+  // 返回date前days天的时间 到 date时间的数据
+  calcShortCuts(days, date = null) {
+    const now = date ? new Date(date) : new Date()
+    const end = new Date(now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate() + ' 23:59:00');
+    now.setTime(now.getTime() - 3600 * 1000 * 24 * days);
+    const start = new Date(now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate() + ' 00:00:00');
+    return [start, end];
+  },
+
+
+
 }
 
 export default tools;

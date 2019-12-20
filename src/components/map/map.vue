@@ -91,8 +91,21 @@
     mounted() {
       let map = new BMap.Map(this.$refs.container, {enableMapClick: false});
       this.map = map
+      // var geolocation = new BMap.Geolocation();
+      // geolocation.getCurrentPosition(function(r){
+      //   if(this.getStatus() == BMAP_STATUS_SUCCESS){
+      //     console.log(r)
+      //     var mk = new BMap.Marker(r.point);
+      //     map.addOverlay(mk);
+      //     map.panTo(r.point);
+      //   }
+      //   else {
+      //     alert('failed'+this.getStatus());
+      //   }
+      // });
       var myCity = new BMap.LocalCity();
       myCity.get((result) => {
+        console.log(result)
         map.centerAndZoom(result.name,10);
         this.initMouse()
         this.loadData()

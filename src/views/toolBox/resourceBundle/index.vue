@@ -2,14 +2,19 @@
   <div class="creative-list">
     <div class="report-top-form">
       <p class="db-title">资源包管理</p>
-      <el-form :inline="true" :model="checkFormInline" class="report-query-form" label-width="82px">
-        <el-form-item class="item-space-1" label="资源包管理">
-          <el-input v-model="checkFormInline.name" clearable></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" plain @click="resetLoad">查询</el-button>
-        </el-form-item>
-      </el-form>
+      <query-item :queryItems="queryItems" :queryFilters="checkFormInline" @handleReturnData="handleReturnData">
+        <template #btn>
+          <el-button type="primary">主要按钮</el-button>
+        </template>
+      </query-item>
+<!--      <el-form :inline="true" :model="checkFormInline" class="report-query-form" label-width="82px">-->
+<!--        <el-form-item class="item-space-1" label="资源包管理">-->
+<!--          <el-input v-model="checkFormInline.name" clearable></el-input>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item>-->
+<!--          <el-button type="primary" plain @click="resetLoad">查询</el-button>-->
+<!--        </el-form-item>-->
+<!--      </el-form>-->
     </div>
     <div class="query_result" v-if="resultData !== null">
       <el-table :data="resultData" class="list_table">
@@ -56,20 +61,41 @@
 
 <script>
   import {tableMixin} from '../../../mixins/tableMixin'
+  import QueryItem from "../../../components/QueryItem";
   export default {
     name: "auditList",
     mixins: [tableMixin],
+    components: {
+      QueryItem
+    },
     data() {
       return {
         currentPage: 50,
         currentItem: null,
         dialogShowContent: false,
+        queryItems: [
+          {
+            type: 'input',
+            key: 'name',
+            label: '资源包管理'
+          },
+          {
+            type: 'actions',
+            actions: [
+              {label: '查询', key: 'search', type: 'primary', plain: true}
+            ]
+          }
+        ],
         checkFormInline: {
           name: '',
         }
       }
     },
     methods: {
+      handleReturnData(val) {
+        this.checkFormInline = val
+        this.resetLoad()
+      },
       loadFunction(param) {
         const data = { ...this.checkFormInline, ...param }
         return new Promise((resolve, reject) => {
@@ -110,8 +136,11 @@
     width: 100px;
   }
   .creative-list {
+    & /deep/ .actions {
+      margin-left: 50px;
+    }
     .report-top-form {
-      height: 160px;
+      /*height: 160px;*/
       border-radius: 4px;
       background-color: $color-bg-3;
       padding: 30px 0 37px 38px;
@@ -136,10 +165,6 @@
 
         .el-range-separator {
           width: 10%;
-        }
-
-        .item-space-1 {
-          margin: 0 50px 0 0;
         }
 
         .el-select .el-input .el-select__caret {
