@@ -278,7 +278,7 @@
                         this.reportSelectCard.data.forEach(item => {
                             let property = item.field;
                             if (cardList.hasOwnProperty(property)) {
-                                if (cardList[property] === '') {
+                                if (cardList[property] === '' || cardList[property] === null) {
                                     item.value = 0
                                 } else if (property === 'cost') {
                                     let costValue = cardList[property]
