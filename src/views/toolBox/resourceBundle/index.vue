@@ -2,6 +2,7 @@
   <div class="creative-list">
     <div class="report-top-form">
       <p class="db-title">资源包管理</p>
+      <query-item :queryItems="queryItems" :filters="queryFilter"></query-item>
       <el-form :inline="true" :model="checkFormInline" class="report-query-form" label-width="82px">
         <el-form-item class="item-space-1" label="资源包管理">
           <el-input v-model="checkFormInline.name" clearable></el-input>
@@ -56,14 +57,43 @@
 
 <script>
   import {tableMixin} from '../../../mixins/tableMixin'
+  import QueryItem from "../../../components/QueryItem";
   export default {
     name: "auditList",
     mixins: [tableMixin],
+    components: {
+      QueryItem
+    },
     data() {
       return {
         currentPage: 50,
         currentItem: null,
         dialogShowContent: false,
+        queryFilter: {
+          orderNumber: '',
+          merchantName: ''
+        },
+        queryItems: [
+          {
+            type: 'input',
+            key: 'orderNumber',
+            model: {key: 'orderNumber', value: ''},
+            label: '订单编号:'
+          },
+          {
+            type: 'input',
+            key: 'merchantName',
+            model: {key: 'merchantName', value: ''},
+            label: '门店名称:'
+          },
+          {
+            type: 'actions',
+            actions: [
+              {label: '查询', key: 'search', type: 'primary'},
+              {label: '重置', key: 'reset'}
+            ]
+          }
+        ],
         checkFormInline: {
           name: '',
         }

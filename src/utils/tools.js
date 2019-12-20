@@ -37,7 +37,7 @@ let tools = {
         let durationToSecondes = (videoTime / 1000).toFixed(0);
         // 001-5s/次，002-10s/次，003-15s/次 依次类推
         let durationType = durationToSecondes == 15 ? '003'
-          : durationToSecondes == 10 ? '002' : '001'; 
+          : durationToSecondes == 10 ? '002' : '001';
 
         video.remove()
 
@@ -353,10 +353,17 @@ let tools = {
     if (!file) return '';
     return URL.createObjectURL(file);
   },
-  
 
-  
-  
+  // 返回date前days天的时间 到 date时间的数据
+  calcShortCuts(days, date = null) {
+    const now = date ? new Date(date) : new Date()
+    const end = new Date(now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate() + ' 23:59:00');
+    now.setTime(now.getTime() - 3600 * 1000 * 24 * days);
+    const start = new Date(now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate() + ' 00:00:00');
+    return [start, end];
+  },
+
+
 
 }
 
