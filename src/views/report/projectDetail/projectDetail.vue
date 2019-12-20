@@ -44,23 +44,24 @@
         </div>
         <div class="show_location_num">
           <el-button slot="reference" class="show-build-list">
-            <div class="show-build">{{putNum.name}}{{putNum.value}}</div>
-            <div class="show-click" @click="dialogVisible = true">查看<i class="el-icon-arrow-right"></i></div>
+            <div class="show-build">{{premiseList.deviceNum.label}}{{premiseList.deviceNum.value}}</div>
+            <div class="show-click" @click="dialogVisible = true" @open="getProjectDeviceList"> 查看<i
+              class="el-icon-arrow-right"></i></div>
           </el-button>
           <el-dialog class="dialog-build-list"
                      :visible.sync="dialogVisible"
                      width="70%">
-            <div slot="title">新潮幸福小区</div>
+            <div slot="title">{{deviceInfo.name.value}}</div>
             <div class="info-body">
               <div class="info-time">
-                <label class="put-time" v-for="(infoItem,infoIndex) in build_time_Info"
+                <label class="put-time" v-for="(infoItem,infoIndex) in deviceInfo.time"
                        :key="infoIndex">
-                  <span>{{infoItem.label}}</span>
+                  <span>{{infoItem.title}}</span>
                   <span>{{infoItem.value}}</span>
                 </label>
               </div>
               <div class="info-table">
-                <el-table max-height="450" :data="resultData" class="info-el-table">
+                <el-table max-height="450" :data="resultData" :load="loading" class="info-el-table">
                   <el-table-column
                     :min-width="getColumnWidth(colIndex)"
                     :prop="col.prop" :label="col.label"
@@ -68,11 +69,11 @@
                     :key="colIndex">
                     <template slot-scope="scope">
                       <div v-if="col.prop === 'status'">
-                        <span v-if="scope.row[scope.column.property] === '正常'" class="normal info-status">正常</span>
-                        <span v-if="scope.row[scope.column.property] === '停用'" class="stop info-status">停用</span>
+                        <span v-if="scope.row[scope.column.property] === 1" class="normal info-status">正常</span>
+                        <span v-if="scope.row[scope.column.property] === 0" class="stop info-status">正在维护中</span>
                       </div>
                       <div v-else-if="col.prop === 'action'">
-                        <a class="preview" href="#">预览</a>
+                        <a class="preview" href="#" @click="getProjectPlayList(scope.row['deviceCode'])">预览</a>
                       </div>
                       <div v-else>
                         {{scope.row[scope.column.property]}}
@@ -94,204 +95,248 @@
     //import {tableMixin} from '../../../mixins/tableMixin'
     const PAGE_SIZE = [10, 20, 30, 40, 50]
     export default {
-      name: "projectDetail",
+        name: "projectDetail",
       components: {
         ponitMap
       },
-      data() {
-          return {
-              projectId: 0,
-              reportSelectCard: {
-                  loading: false,
-                  data: [
-                      {
-                          id: 0, name: '花费总数（元）', value: '0', field: 'cost', title: '花费总数'
-                      },
-                      {
-                          id: 1, name: '曝光总数（次）', value: '0', field: 'showTimes', title: '曝光总数'
-                      },
-                      {
-                          id: 2, name: '设备总数（个）', value: '0', field: 'deviceNum', title: '设备总数'
-                      },
-                      {
-                          id: 3, name: '受众总人数（人）', value: '0', field: 'totalPeople', title: '受众总人数'
-                      },
-                      {
-                          id: 4, name: '受众观看总次数（次）', value: '0', field: 'watchedTimes', title: '受众观看总次数'
-                      },
-                  ],
-              },
-              dialogVisible: false,
-              putProject: {
-                  loading: false,
-                  data: [
-                      {label: '投放方案', value: '投放方案1', field: 'name'},
-                      {label: '投放时间', value: '2019-11-08~2019-11-15', field: 'startTime'},
-                      {label: '投放城市', value: '重庆', field: 'cityName'},
-                      {label: '数据截止时间', value: '2019-11-08 17:00:00', field: 'dataEndTime'}
-                  ]
-              },
-              premiseList: {
-                  loading: false,
-                  default: [
-                      {label: '楼盘名称:', title: '新潮小区', icon: 'el-icon-office-building', field: 'premiseName'},
-                      {label: '详细地址:', title: '成都市武侯区茂业大厦', icon: 'el-icon-location-outline', field: 'name'},
-                      {label: '曝光次数:', title: 89895, icon: 'el-icon-video-camera', field: 'premiseShowTimes'}
-                  ],
-                  data: []
-              },
-              playList: {
-                  loading: false,
-                  data: []
-              },
-              putNum: {name: '投放点位数:', value: '281'},
-              map_img: require('../../../assets/images/report_map.png'),
-              totalCount: 0, // 总共条数
-              pageSizeSelectable: PAGE_SIZE,
-              resultData: null,
-              resultCol: null,
-              pageIndex: 1,
-              pageSize: 10,
-              loading: false,
-              projectList: {
-                  startTime: '',//开始时间
-                  endTime: '',//结束时间
-                  campaignId: '',//计划id
-                  id: '',//方案id
-              },
-          }
-      },
-      created() {
-          this.projectId = this.$route.query.projectId
-          this.getProjectPremiseList()
-      },
-      computed: {
-          // 计算属性的 小区信息
-          build_time_Info: function () {
-              let time_info = [];
-              for (let i = 0, j = 0; i < this.putProject.length; i++) {
-                  if (this.putProject[i].name === 'time') {
-                      time_info[j] = this.putProject[i]
-                      j++
-                  }
-                  if (this.putProject[i].name === 'deadline') {
-                      time_info[j] = this.putProject[i]
-                      j++
-                  }
-              }
-              return time_info;
-          }
+        data() {
+            return {
+                projectId: null,
+                premiseId: null,
+                reportSelectCard: {
+                    loading: false,
+                    data: [
+                        {
+                            id: 0, name: '花费总数（元）', value: '0', field: 'cost', title: '花费总数'
+                        },
+                        {
+                            id: 1, name: '曝光总数（次）', value: '0', field: 'showTimes', title: '曝光总数'
+                        },
+                        {
+                            id: 2, name: '设备总数（个）', value: '0', field: 'deviceNum', title: '设备总数'
+                        },
+                        {
+                            id: 3, name: '受众总人数（人）', value: '0', field: 'totalPeople', title: '受众总人数'
+                        },
+                        {
+                            id: 4, name: '受众观看总次数（次）', value: '0', field: 'watchedTimes', title: '受众观看总次数'
+                        },
+                    ],
+                },
+                dialogVisible: false,
+                putProject: {
+                    loading: false,
+                    data: [
+                        {label: '投放方案', value: '投放方案1', field: 'name'},
+                        {label: '投放时间', value: '2019-11-08~2019-11-15', field: 'startTime'},
+                        {label: '投放城市', value: '重庆', field: 'cityName'},
+                        {label: '数据截止时间', value: '2019-11-08 17:00:00', field: 'dataEndTime'}
+                    ]
+                },
+                premiseList: {
+                    loading: false,
+                    deviceNum: {label: '投放点位数:', value: 288, field: 'deviceNum'},
+                    premiseId: {label: '楼盘id', value: 288, field: 'premiseId'},
+                    default: [
+                        {label: '楼盘名称:', title: '新潮小区', icon: 'el-icon-office-building', field: 'premiseName'},
+                        {
+                            label: '详细地址:',
+                            title: '成都市武侯区茂业大厦',
+                            icon: 'el-icon-location-outline',
+                            field: 'premiseAddress'
+                        },
+                        {label: '曝光次数:', title: 89895, icon: 'el-icon-video-camera', field: 'premiseShowTimes'}
+                    ],
+                    data: []
+                },
+                deviceInfo: {
+                    time: [
+                        {
+                            value: '', field: 'startTime', title: '方案投放周期'
+                        },
+                        {
+                            value: '', field: 'dataEndTime', title: '数据截止时间'
+                        }
+                    ],
+                    name:
+                        {
+                            value: '', field: 'name', title: '楼盘名称'
+                        },
+                },
+                map_img: require('../../../assets/images/report_map.png'),
+                totalCount: 0, // 总共条数
+                pageSizeSelectable: PAGE_SIZE,
+                resultData: null,
+                resultCol: [
+                    {prop: 'deviceCode', label: '点位编码'},
+                    {prop: 'buildName', label: '楼栋'},
+                    {prop: 'unitName', label: '单元'},
+                    {prop: 'elevatorName', label: '电梯名'},
+                    {prop: 'avgTimes', label: '总次数/平均日次/今日次数'},
+                    {prop: 'status', label: '状态'},
+                    {prop: 'action', label: '操作'},
+                ],
+                pageIndex: 1,
+                pageSize: 10,
+                loading: false,
+                projectList: {
+                    startTime: '',//开始时间
+                    endTime: '',//结束时间
+                    campaignId: '',//计划id
+                    id: '',//方案id
+                },
+                playList: {
+                    data: [],
+                    loading: false,
+                }
+            }
+        },
+        created() {
+            this.projectId = this.$route.query.projectId
+            this.getProjectPremiseList()
+        },
+        methods: {
+            //查询方案楼盘列表
+            getProjectPremiseList(param) {
+                let queryParam = {
+                    projectId: this.projectId,
+                }
+                //合并查询参数
+                Object.assign(queryParam, param);
+                this.putProject.loading = true
+                this.reportSelectCard.loading = true
+                this.$api.Report.getProjectPremiseList(queryParam)
+                    .then(res => {
+                        console.log(res.result)
+                        this.reportSelectCard.loading = false
+                        this.putProject.loading = false
+                        let premiseList = res.result;
+                        this.reportSelectCard.data.forEach(item => {
+                            let property = item.field;
+                            if (premiseList.hasOwnProperty(property)) {
+                                if (premiseList[property] === '' || premiseList[property] === null) {
+                                    item.value = 0
+                                } else if (property === 'cost') {
+                                    let costValue = premiseList[property]
+                                    costValue = this.$tools.formatCentToYuan(costValue)
+                                    item.value = this.$tools.toThousands(costValue)
+                                } else {
+                                    item.value = this.$tools.toThousands(premiseList[property], false)
+                                }
+                            }
+                        })
+                        this.putProject.data.forEach(item => {
+                            let property = item.field;
+                            if (premiseList.hasOwnProperty(property)) {
+                                if (premiseList[property] === '') {
+                                    item.value = 0
+                                } else if (property === 'startTime') {
+                                    item.value = premiseList['startTime'] + '~' + premiseList['endTime']
+                                } else {
+                                    item.value = premiseList[property]
+                                }
+                            }
+                        })
+                        //楼板列表数据
+                        if (premiseList.premiseList.length === 0) {
 
-      },
-      methods: {
-          //查询方案楼盘列表
-          getProjectPremiseList(param) {
-              let queryParam = {
-                  projectId: this.projectId,
-              }
-              //合并查询参数
-              Object.assign(queryParam, param);
-              this.putProject.loading = true
-              this.reportSelectCard.loading = true
-              this.$api.Report.getProjectPremiseList(queryParam)
-                  .then(res => {
-                      console.log(res.result)
-                      this.reportSelectCard.loading = false
-                      this.putProject.loading = false
-                      let premiseList = res.result;
-                      this.reportSelectCard.data.forEach(item => {
-                          let property = item.field;
-                          if (premiseList.hasOwnProperty(property)) {
-                              if (premiseList[property] === '') {
-                                  item.value = 0
-                              } else if (property === 'cost') {
-                                  let costValue = premiseList[property]
-                                  costValue = this.$tools.formatCentToYuan(costValue)
-                                  item.value = this.$tools.toThousands(costValue)
-                              } else {
-                                  item.value = this.$tools.toThousands(premiseList[property], false)
-                              }
-                          }
-                      })
-                      this.putProject.data.forEach(item => {
-                          let property = item.field;
-                          if (premiseList.hasOwnProperty(property)) {
-                              if (premiseList[property] === '') {
-                                  item.value = 0
-                              } else if (property === 'startTime') {
-                                  item.value = premiseList['startTime'] + '~' + premiseList['endTime']
-                              } else {
-                                  item.value = premiseList[property]
-                              }
-                          }
-                      })
-                      //楼板列表数据
-                      this.premiseList.default = premiseList.premiseList[0]//默认数据
-                      this.premiseList.data = premiseList.premiseList
-                  })
-                  .catch(res => {
-                      console.log(res.result)
-                      this.putProject.loading = false
-                      this.reportSelectCard.loading = false
-                  })
-          },
-          //查询方案楼盘设备信息
-          getProjectDeviceList(param) {
-              let queryParam = {
-                  projectId: this.projectId,
-                  premiseId: this.premiseId,
-              }
-              //合并查询参数
-              Object.assign(queryParam, param);
-              this.loading = true
-              this.$api.Report.getProjectDeviceList(queryParam)
-                  .then(res => {
-                      this.resultData = res.result
-                      console.log(res.result)
-                      this.loading = false
-                  })
-                  .catch(res => {
-                      console.log(res.result)
-                      this.loading = false
-                  })
-          },
-          //查询方案楼盘设备播放列表
-          getProjectPlayList() {
-              let queryParam = {
-                  deviceCode: this.deviceCode,
-                  deviceDate: this.deviceDate,
-              }
-              //合并查询参数
-              Object.assign(queryParam, param);
-              this.playList.loading = true
-              this.$api.Report.getProjectPlayList(queryParam)
-                  .then(res => {
-                      this.playList.data = res.result
-                      this.playList.loading = false
-                      console.log(res.result)
-                  })
-                  .catch(res => {
-                      console.log(res.result)
-                      this.playList.loading = false
-                  })
-          },
-          //获取楼盘名称
-          getPremiseDetail() {
+                        } else {
+                            let showPremise = premiseList.premiseList[1]//默认数据
+                            this.premiseList.default.forEach(item => {
+                                let property = item.field;
+                                if (showPremise.hasOwnProperty(property)) {
+                                    if (showPremise[property] === '' || showPremise[property] === null) {
+                                        item.value = 0
+                                    } else {
+                                        item.title = showPremise[property]
+                                    }
+                                }
+                            })
+                            this.premiseList.deviceNum.value = showPremise.deviceNum
+                            this.premiseList.premiseId.value = showPremise.premiseId
+                            this.premiseId = showPremise.premiseId
+                            //所有楼盘数据
+                            this.premiseList.data = premiseList.premiseList
+                            console.log('this.premiseList.data', this.premiseList.data)
+                        }
+                    })
+                    .catch(res => {
+                        console.log(res.result, res)
+                        this.putProject.loading = false
+                        this.reportSelectCard.loading = false
+                    })
+            },
+            //查询方案楼盘设备信息
+            getProjectDeviceList(param) {
+                let queryParam = {
+                    projectId: this.projectId,
+                    premiseId: this.premiseId,
+                }
+                //合并查询参数
+                Object.assign(queryParam, param);
+                this.loading = true
+                this.$api.Report.getProjectDeviceList(queryParam)
+                    .then(res => {
+                        this.resultData = res.result
+                        this.deviceInfo.time.forEach(item => {
+                            let property = item.field;
+                            if (this.resultData[property] === '') {
+                                item.value = 0
+                            } else if (this.resultData === 'startTime') {
+                                item.value = this.resultData['startTime'] + '~' + this.resultData['endTime']
+                            } else {
+                                item.value = this.resultData[property]
+                            }
+                        })
+                        this.deviceInfo.name.value = this.resultData.name
+                        console.log('getProjectDeviceList', res.result)
+                        this.loading = false
+                    })
+                    .catch(res => {
+                        console.log(res.result)
+                        this.loading = false
+                    })
+            },
+            //查询方案楼盘设备播放列表
+            getProjectPlayList(deviceCode) {
+                let param = {}
+                let queryParam = {
+                    deviceCode: this.deviceCode,
+                    deviceDate: this.deviceDate,
+                }
+                if (deviceCode.toString().length > 0) {
+                    param = {
+                        deviceCode: deviceCode,
+                    }
+                }
+                //合并查询参数
+                Object.assign(queryParam, param);
+                this.playList.loading = true
+                this.$api.Report.getProjectPlayList(queryParam)
+                    .then(res => {
+                        this.playList.data = res.result
+                        this.playList.loading = false
+                        console.log('getProjectPlayList', res.result)
+                    })
+                    .catch(res => {
+                        console.log(res.result)
+                        this.playList.loading = false
+                    })
+            },
 
-          },
-          getColumnWidth(index) {
-              let width;
-              switch (index) {
-                  case  4:
-                      width = 200;
-                      break;
-                  default:
-                      width = 130;
-                      break;
-              }
-              return width;
-          }
-      }
+            getColumnWidth(index) {
+                let width;
+                switch (index) {
+                    case  4:
+                        width = 200;
+                        break;
+                    default:
+                        width = 130;
+                        break;
+                }
+                return width;
+            }
+        }
     }
 </script>
 
