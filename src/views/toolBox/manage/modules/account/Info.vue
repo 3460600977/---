@@ -22,19 +22,35 @@
 </template>
 
 <script>
+    import {getUserInfo} from '@/utils/auth';
+
     export default {
         name: "toolAccountInfo",
         data() {
             return {
                 accountInfoList: [
-                    {name: '公司全称', label: '成都新潮传媒集团有限公司', icon: 'el-icon-office-building'},
-                    {name: '公司行业', label: '专业服务', icon: 'el-icon-s-marketing'},
-                    {name: '联系人', label: '联系人姓名', icon: 'el-icon-s-custom'},
-                    {name: '联系电话', label: '13545892664', icon: 'el-icon-phone'},
-                    {name: '联系邮箱', label: '邮箱账号显示', icon: 'el-icon-message'},
-                    {name: '公司地址', label: '四川省成都市茂业中心C座1205', icon: 'el-icon-location'},
+                    {name: '公司全称', label: '', icon: 'el-icon-office-building', field: 'company'},
+                    {name: '公司行业', label: '', icon: 'el-icon-s-marketing', field: 'industryName'},
+                    {name: '联系人', label: '', icon: 'el-icon-s-custom', field: 'contacts'},
+                    {name: '联系电话', label: '', icon: 'el-icon-phone', field: 'contactNumber'},
+                    {name: '联系邮箱', label: '', icon: 'el-icon-message', field: 'mail'},
+                    {name: '公司地址', label: '', icon: 'el-icon-location', field: 'address'},
                 ]
             }
+        },
+        mounted() {
+            //请求验证码接口
+            let userInfo = getUserInfo()
+            this.accountInfoList.forEach(function (item) {
+                let property = item.field;
+                if (userInfo.hasOwnProperty(property)) {
+                    if (!userInfo[property] || userInfo[property].match(/^[ ]*$/)) { // "",null,undefined,NaN
+                        item.label = '未填写'
+                    } else {
+                        item.label = userInfo[property]
+                    }
+                }
+            })
         },
         methods: {
             // 计算属性的 getter

@@ -11,7 +11,7 @@ let tools = {
    * @param limitHeight:
    */
   checkVideoTimeAndSize: (file, limitTime, timeRange = 0, limitWidth, limitHeight) => {
-    return new Promise( (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       if (!file) {
         return reject({msg: '未选择任何文件'});
       }
@@ -27,12 +27,16 @@ let tools = {
       }
 
       video.src = url;
+
+      video.style = "position: relative; z-index: -1; opacity: 0;"
+
       video.setAttribute('style', "position: absolute; z-index: -100; top: 0; opacity: 0; width: 200px");
+
       document.getElementById('app').appendChild(video)
 
       video.addEventListener('canplay', (e) => {
-        let videoTime   = e.target.duration * 1000;
-        let videoWidth  = e.target.videoWidth;
+        let videoTime = e.target.duration * 1000;
+        let videoWidth = e.target.videoWidth;
         let videoHeight = e.target.videoHeight;
         let durationToSecondes = (videoTime / 1000).toFixed(0);
         // 001-5s/次，002-10s/次，003-15s/次 依次类推
@@ -65,7 +69,7 @@ let tools = {
    * @param limitHeight:
    */
   checkImageSize: (file, limitWidth, limitHeight) => {
-    return new Promise( (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       if (!file) {
         return reject({msg: '未选择任何文件'});
       }
@@ -85,7 +89,7 @@ let tools = {
         });
       }
 
-    } )
+    })
   },
 
   /**
@@ -101,7 +105,9 @@ let tools = {
       result = ',' + prefixInt.slice(-3) + result;
       prefixInt = num.slice(0, prefixInt.length - 3);
     }
-    if (prefixInt) { result = prefixInt + result; }
+    if (prefixInt) {
+      result = prefixInt + result;
+    }
     if (hasZero) return result + '.' + suffixDecimal;
     else return result
   },
@@ -190,10 +196,10 @@ let tools = {
    * @description: 格式化时间
    * @param: pageSize
    */
-  formatDate: function(date, pattern) {
+  formatDate: function (date, pattern) {
     date = new Date(date)
     pattern = pattern || DEFAULT_PATTERN
-    return pattern.replace(SIGN_REGEXP, function($0) {
+    return pattern.replace(SIGN_REGEXP, function ($0) {
       switch ($0.charAt(0)) {
         case 'y':
           return tools.padding(date.getFullYear(), $0.length)
@@ -221,7 +227,7 @@ let tools = {
   checkSuffix: (str, suffix) => {
     let result = false;
     let strSuffix = str.substr(str.lastIndexOf(".") + 1);
-    for (let i=0; i<suffix.length; i++) {
+    for (let i = 0; i < suffix.length; i++) {
       if (strSuffix === suffix[i]) {
         result = true;
         break;
@@ -279,14 +285,72 @@ let tools = {
       // 有其他格式化字符需求可以继续添加，必须转化成字符串
     };
     for (let k in opt) {
-        ret = new RegExp("(" + k + ")").exec(fmt);
-        if (ret) {
-            fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
-        };
-    };
+      ret = new RegExp("(" + k + ")").exec(fmt);
+      if (ret) {
+        fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+      }
+      ;
+    }
+    ;
     return fmt;
   },
 
+
+  /**
+   * @description: 获取当前月第一天
+   * @param: fmt 格式
+   *
+   */
+  getMonthFirstDay(fmt) {
+    if (!fmt || fmt.match(/^[ ]*$/)) {
+      fmt = 'YYYY-mm-dd'
+    }
+    let startTime = new Date()
+    startTime.setDate(1)
+    return this.getFormatDate(fmt, startTime)
+  },
+  /**
+   * @description: 获取当前月第一天
+   * @param: fmt 格式
+   *
+   */
+  getMonthLastDay(fmt) {
+    if (!fmt || fmt.match(/^[ ]*$/)) {
+      fmt = 'YYYY-mm-dd'
+    }
+    let endTime = new Date()
+    endTime = new Date(endTime.getFullYear(), endTime.getMonth() + 1, 0)
+    return this.getFormatDate(fmt, endTime)
+  },
+  /**
+   * @description: 获取当前星期一,星期天
+   * @param: fmt 格式
+   *
+   */
+  getWeekFirstLastDay(fmt) {
+    if (!fmt || fmt.match(/^[ ]*$/)) {
+      fmt = 'YYYY-mm-dd'
+    }
+    let curr = new Date() // get current date
+    let first = curr.getDate() - curr.getDay() + 1 // First day is the day of the month - the day of the week
+    let last = first + 6 // last day is the first day + 6
+    let firstDay = new Date(curr.setDate(first))
+    let lastDay = new Date(curr.setDate(last))
+    firstDay = this.getFormatDate(fmt, firstDay)
+    lastDay = this.getFormatDate(fmt, lastDay)
+    return {firstWeekDay: firstDay, lastWeekDay: lastDay}
+  },
+  /**
+   * @description: 把分变成元
+   * @param: str
+   *
+   */
+  formatCentToYuan(value) {
+    value = value.toString()
+    let cent = value.substr(-2)
+    let leftValue = value.substr(0, value.length - 2)
+    return leftValue + '.' + cent
+  },
 
   /**
    * @description: 根据数组中对象属性返回第一个匹配数组项
@@ -296,7 +360,7 @@ let tools = {
    */
   getObjectItemFromArray(arr, key, val) {
     let res = {};
-    for(let i=0; i<arr.length; i++) {
+    for (let i = 0; i < arr.length; i++) {
       if (arr[i][key] == val) {
         res = arr[i];
         break;
@@ -315,6 +379,7 @@ let tools = {
     for (let i in val) {
       isArray(val[i], i);
     }
+
     function isArray(array, key) {
       if (array == undefined || typeof array == "function") {
         return false;
@@ -342,6 +407,7 @@ let tools = {
         }
       }
     }
+
     return formData;
   },
 
