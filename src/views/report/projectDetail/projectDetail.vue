@@ -43,23 +43,24 @@
         </div>
         <div class="show_location_num">
           <el-button slot="reference" class="show-build-list">
-            <div class="show-build">{{putNum.name}}{{putNum.value}}</div>
-            <div class="show-click" @click="dialogVisible = true">查看<i class="el-icon-arrow-right"></i></div>
+            <div class="show-build">{{premiseList.deviceNum.label}}{{premiseList.deviceNum.value}}</div>
+            <div class="show-click" @click="dialogVisible = true" @open="getProjectDeviceList"> 查看<i
+              class="el-icon-arrow-right"></i></div>
           </el-button>
           <el-dialog class="dialog-build-list"
                      :visible.sync="dialogVisible"
                      width="70%">
-            <div slot="title">新潮幸福小区</div>
+            <div slot="title">{{deviceInfo.name.value}}</div>
             <div class="info-body">
               <div class="info-time">
-                <label class="put-time" v-for="(infoItem,infoIndex) in build_time_Info"
+                <label class="put-time" v-for="(infoItem,infoIndex) in deviceInfo.time"
                        :key="infoIndex">
-                  <span>{{infoItem.label}}</span>
+                  <span>{{infoItem.title}}</span>
                   <span>{{infoItem.value}}</span>
                 </label>
               </div>
               <div class="info-table">
-                <el-table max-height="450" :data="resultData" class="info-el-table">
+                <el-table max-height="450" :data="resultData" :load="loading" class="info-el-table">
                   <el-table-column
                     :min-width="getColumnWidth(colIndex)"
                     :prop="col.prop" :label="col.label"
@@ -67,11 +68,11 @@
                     :key="colIndex">
                     <template slot-scope="scope">
                       <div v-if="col.prop === 'status'">
-                        <span v-if="scope.row[scope.column.property] === '正常'" class="normal info-status">正常</span>
-                        <span v-if="scope.row[scope.column.property] === '停用'" class="stop info-status">停用</span>
+                        <span v-if="scope.row[scope.column.property] === 1" class="normal info-status">正常</span>
+                        <span v-if="scope.row[scope.column.property] === 0" class="stop info-status">正在维护中</span>
                       </div>
                       <div v-else-if="col.prop === 'action'">
-                        <a class="preview" href="#">预览</a>
+                        <a class="preview" href="#" @click="getProjectPlayList(scope.row['deviceCode'])">预览</a>
                       </div>
                       <div v-else>
                         {{scope.row[scope.column.property]}}
@@ -95,7 +96,8 @@
         name: "projectDetail",
         data() {
             return {
-                projectId: 0,
+                projectId: null,
+                premiseId: null,
                 reportSelectCard: {
                     loading: false,
                     data: [
@@ -128,23 +130,47 @@
                 },
                 premiseList: {
                     loading: false,
+                    deviceNum: {label: '投放点位数:', value: 288, field: 'deviceNum'},
+                    premiseId: {label: '楼盘id', value: 288, field: 'premiseId'},
                     default: [
                         {label: '楼盘名称:', title: '新潮小区', icon: 'el-icon-office-building', field: 'premiseName'},
-                        {label: '详细地址:', title: '成都市武侯区茂业大厦', icon: 'el-icon-location-outline', field: 'name'},
+                        {
+                            label: '详细地址:',
+                            title: '成都市武侯区茂业大厦',
+                            icon: 'el-icon-location-outline',
+                            field: 'premiseAddress'
+                        },
                         {label: '曝光次数:', title: 89895, icon: 'el-icon-video-camera', field: 'premiseShowTimes'}
                     ],
                     data: []
                 },
-                playList: {
-                    loading: false,
-                    data: []
+                deviceInfo: {
+                    time: [
+                        {
+                            value: '', field: 'startTime', title: '方案投放周期'
+                        },
+                        {
+                            value: '', field: 'dataEndTime', title: '数据截止时间'
+                        }
+                    ],
+                    name:
+                        {
+                            value: '', field: 'name', title: '楼盘名称'
+                        },
                 },
-                putNum: {name: '投放点位数:', value: '281'},
                 map_img: require('../../../assets/images/report_map.png'),
                 totalCount: 0, // 总共条数
                 pageSizeSelectable: PAGE_SIZE,
                 resultData: null,
-                resultCol: null,
+                resultCol: [
+                    {prop: 'deviceCode', label: '点位编码'},
+                    {prop: 'buildName', label: '楼栋'},
+                    {prop: 'unitName', label: '单元'},
+                    {prop: 'elevatorName', label: '电梯名'},
+                    {prop: 'avgTimes', label: '总次数/平均日次/今日次数'},
+                    {prop: 'status', label: '状态'},
+                    {prop: 'action', label: '操作'},
+                ],
                 pageIndex: 1,
                 pageSize: 10,
                 loading: false,
@@ -154,29 +180,15 @@
                     campaignId: '',//计划id
                     id: '',//方案id
                 },
+                playList: {
+                    data: [],
+                    loading: false,
+                }
             }
         },
         created() {
             this.projectId = this.$route.query.projectId
             this.getProjectPremiseList()
-        },
-        computed: {
-            // 计算属性的 小区信息
-            build_time_Info: function () {
-                let time_info = [];
-                for (let i = 0, j = 0; i < this.putProject.length; i++) {
-                    if (this.putProject[i].name === 'time') {
-                        time_info[j] = this.putProject[i]
-                        j++
-                    }
-                    if (this.putProject[i].name === 'deadline') {
-                        time_info[j] = this.putProject[i]
-                        j++
-                    }
-                }
-                return time_info;
-            }
-
         },
         methods: {
             //查询方案楼盘列表
@@ -197,7 +209,7 @@
                         this.reportSelectCard.data.forEach(item => {
                             let property = item.field;
                             if (premiseList.hasOwnProperty(property)) {
-                                if (premiseList[property] === '') {
+                                if (premiseList[property] === '' || premiseList[property] === null) {
                                     item.value = 0
                                 } else if (property === 'cost') {
                                     let costValue = premiseList[property]
@@ -221,11 +233,30 @@
                             }
                         })
                         //楼板列表数据
-                        this.premiseList.default = premiseList.premiseList[0]//默认数据
-                        this.premiseList.data = premiseList.premiseList
+                        if (premiseList.premiseList.length === 0) {
+
+                        } else {
+                            let showPremise = premiseList.premiseList[1]//默认数据
+                            this.premiseList.default.forEach(item => {
+                                let property = item.field;
+                                if (showPremise.hasOwnProperty(property)) {
+                                    if (showPremise[property] === '' || showPremise[property] === null) {
+                                        item.value = 0
+                                    } else {
+                                        item.title = showPremise[property]
+                                    }
+                                }
+                            })
+                            this.premiseList.deviceNum.value = showPremise.deviceNum
+                            this.premiseList.premiseId.value = showPremise.premiseId
+                            this.premiseId = showPremise.premiseId
+                            //所有楼盘数据
+                            this.premiseList.data = premiseList.premiseList
+                            console.log('this.premiseList.data', this.premiseList.data)
+                        }
                     })
                     .catch(res => {
-                        console.log(res.result)
+                        console.log(res.result, res)
                         this.putProject.loading = false
                         this.reportSelectCard.loading = false
                     })
@@ -242,7 +273,18 @@
                 this.$api.Report.getProjectDeviceList(queryParam)
                     .then(res => {
                         this.resultData = res.result
-                        console.log(res.result)
+                        this.deviceInfo.time.forEach(item => {
+                            let property = item.field;
+                            if (this.resultData[property] === '') {
+                                item.value = 0
+                            } else if (this.resultData === 'startTime') {
+                                item.value = this.resultData['startTime'] + '~' + this.resultData['endTime']
+                            } else {
+                                item.value = this.resultData[property]
+                            }
+                        })
+                        this.deviceInfo.name.value = this.resultData.name
+                        console.log('getProjectDeviceList', res.result)
                         this.loading = false
                     })
                     .catch(res => {
@@ -251,10 +293,16 @@
                     })
             },
             //查询方案楼盘设备播放列表
-            getProjectPlayList() {
+            getProjectPlayList(deviceCode) {
+                let param = {}
                 let queryParam = {
                     deviceCode: this.deviceCode,
                     deviceDate: this.deviceDate,
+                }
+                if (deviceCode.toString().length > 0) {
+                    param = {
+                        deviceCode: deviceCode,
+                    }
                 }
                 //合并查询参数
                 Object.assign(queryParam, param);
@@ -263,17 +311,14 @@
                     .then(res => {
                         this.playList.data = res.result
                         this.playList.loading = false
-                        console.log(res.result)
+                        console.log('getProjectPlayList', res.result)
                     })
                     .catch(res => {
                         console.log(res.result)
                         this.playList.loading = false
                     })
             },
-            //获取楼盘名称
-            getPremiseDetail() {
 
-            },
             getColumnWidth(index) {
                 let width;
                 switch (index) {
