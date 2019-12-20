@@ -1,0 +1,112 @@
+<template>
+  <div class="material-preview-box">
+    <!-- 上屏 -->
+    <div class="top-box" 
+      :style="{width: `${innerWidth}px`, 
+        height: `${innerWidth / 1080 * 1920}px`, 
+        margin: `${innerWidth / 10}px`}">
+        <video 
+          v-if="top.type === 'video/mp4'"
+          class="top"
+          controls 
+          autoplay
+          loop
+          :src="top.url"></video>
+
+        <img 
+          v-if="top.type === 'image/jpeg'"
+          class="top" 
+          :src="top.url"/>
+
+        <div v-if="top.type === 'video/avi'" class="top font-12 mid-center">
+          AVI不支持预览
+        </div>
+    </div>
+
+    <!-- 下屏 -->
+    <div class="bottom-box" 
+      :style="{width: `${innerWidth}px`, 
+      height: `${innerWidth / 1080 * 880}px`, 
+      margin: `${innerWidth / 10}px`}">
+        <div>
+          <video 
+            v-if="bottom.type === 'video/mp4'"
+            class="bottom"
+            controls 
+            autoplay
+            loop
+            muted
+            :src="bottom.url"></video>
+
+          <img 
+            v-if="bottom.type === 'image/jpeg'"
+            class="bottom" 
+            :src="bottom.url"/>
+
+          <div v-if="bottom.type === 'video/avi'" class="top font-12 mid-center">
+            AVI不支持预览
+          </div>
+        </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    innerWidth: {
+      type: Number,
+      default: 100
+    },
+
+    top: {
+      type: Object,
+      default: [
+        {
+          interval: 0, 
+          type: '', 
+          url: ''
+        }
+      ]
+    },
+
+    bottom: {
+      type: Object,
+      default: [
+        {
+          interval: 0, 
+          type: '', 
+          url: ''
+        }
+      ]
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+.material-preview-box{
+  position: absolute;
+  bottom: 0;
+  margin:0 0 80px 558px;
+  background:rgba(236,235,233,1);
+  border:1px solid rgba(196, 196, 196, 0.8);
+  box-shadow:0px 6px 9px 1px rgba(19,18,18,0.14);
+  border-radius:6px;
+  .top-box{
+    background:rgb(0, 0, 0);
+    .top{
+      width:100%;
+      height:100%;
+    }
+  }
+  .bottom-box{
+    background:rgb(0, 0, 0);
+    .bottom{
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+</style>

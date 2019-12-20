@@ -19,6 +19,7 @@ export default {
 
 <style lang="scss">
   .put-manage-card{
+    overflow: hidden;
     padding: 30px 38px;
     border-radius:4px;
     background-color: #fff;

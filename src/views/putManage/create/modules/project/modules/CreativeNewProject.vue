@@ -768,38 +768,6 @@ export default {
     position: relative;
     .put-form{
       margin-top: 18px;
-      .screen-type-preview-box{
-        overflow: hidden;
-        .screen-type-preview-content{
-          margin-top: -100px;
-          .screen-preview {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-left: 10px;
-            margin-top: 100px;
-            width:78px;
-            height:180px;
-            background:rgba(255,255,255,1);
-            border:1px solid rgba(229,231,233,1);
-            .bg-gray{
-              background:rgba(249,250,255,1) !important;
-            }
-            .top{
-              width:76px;
-              height:139px;
-              background:rgba(255,255,255,1);
-            }
-            .bottom{
-              width:76px;
-              height:44px;
-              background:rgba(255,255,255,1);
-              border-top:1px solid rgba(229,231,233,1);
-            }
-          }
-        }
-      }
       .week-picker-box{
         .week-item{
           width: 262px; 
