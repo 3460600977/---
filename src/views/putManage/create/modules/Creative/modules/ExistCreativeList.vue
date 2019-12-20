@@ -1,30 +1,51 @@
 <template>
   <div class="exist-creative-list">
     <div class="search-box mid">
-      <el-input class="search-text" v-model="search" placeholder="输入投广告创意名称"></el-input>
-      <el-button type="primary" plain>查询</el-button>
+      <el-input class="search-text" v-model="searchVal" placeholder="输入投广告创意名称"></el-input>
+      <el-button @click="search(searchVal)" type="primary" plain>查询</el-button>
     </div>
 
     <div class="list-box">
       <div class="title">列表</div>
       <ul v-loading="list.loading">
-        <li class="item" v-for="(item, index) in list.data" :key="index">投放计划</li>
-        <!-- <li class="item page-box clearfix">
+        <li class="item" 
+        v-for="(item, index) in list.data" 
+        @click="listActiveId = item.id"
+        :class="{'active': listActiveId == item.id}" 
+        :key="index">{{item.name}}</li>
+        <!-- 分页 -->
+        <li v-if="list.data.length !== 0" class="item page-box clearfix">
           <el-pagination
             class="float-right"
             background
             layout="total, sizes, prev, pager, next"
-            :total="20">
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="list.page.currentPage"
+            :total="list.page.totalCount">
           </el-pagination>
-        </li> -->
-        <noData v-show="list.data.length <= 0"/>
+        </li>
+        <noData v-if="list.data.length === 0"/>
       </ul>
     </div>
+
+    
+    <!-- 保存 取消 -->
+    <PutMangeCard class="save-box creative-list-save">
+      <div class="float-right">
+        <el-button :disabled="listActiveId < 0" :loading="saving" style="width: 136px" @click="saveCreative" type="primary">确认</el-button>
+      </div>
+    </PutMangeCard>
   </div>
 </template>
 
 <script>
+import PutMangeCard from '../../../../templates/PutMangeCard' 
+import { mapState } from 'vuex'
 export default {
+  components: {
+    PutMangeCard
+  },
   props: {
     isShow: {
       type: Boolean,
@@ -34,46 +55,92 @@ export default {
   name: 'existCreativeList',
   data() {
     return {
-      search: '',
+      searchVal: '',
+      saving: false,
+      listActiveId: -1,
       list: {
         loading: false,
-        data: []
-      }
+        data: [],
+        page: ''
+      },
     }
   },
 
   methods: {
-    getExistPlanList() {
-      if (list.data.length > 0) return;
-      let param = {
-        "durationType": 0,
-        "industry": "",
-        "name": "",
-        "pageIndex": 0,
-        "pageSize": 0,
-        "screenType": 0
-      };
+    // 获取创意列表
+    getExistPlanList(durationType, industry, name, pageIndex, pageSize, screenType) {
       this.list.loading = true;
-      this.$api.CreateCreative.ExistCreative(param)
+      this.$api.CreateCreative.ExistCreative({durationType, industry, name, pageIndex, pageSize, screenType})
         .then(res => {
           this.list = {
             loading: false,
-            data: res.result
+            data: res.result,
+            page: res.page
           }
         })
         .catch(res => {
           this.list = {
             loading: false,
-            data: []
+            data: [],
+            page: ''
           }
         })
+    },
+
+    // 翻页
+    handleCurrentChange(pageIndex) {
+      this.listActiveId = -1;
+      this.getExistPlanList(this.projectData.second, this.projectData.industry, '', pageIndex, 10, this.projectData.type)
+    },
+
+    // 分页大小
+    handleSizeChange(pageSize) {
+      this.getExistPlanList(this.projectData.second, this.projectData.industry, '', 0, pageSize, this.projectData.type)
+    },
+
+    // 手动搜索
+    search(searchVal) {
+      this.getExistPlanList(this.projectData.second, this.projectData.industry, searchVal, 0, 10, this.projectData.type)
+    },
+     
+    // 保存
+    saveCreative() {
+      let param = {
+        "creativeId": this.listActiveId,
+	      "projectId": this.projectData.projectId
+      }
+      this.saving = true;
+      this.$api.CreateCreative.BindCreativeProject(param)
+        .then(res => {
+          this.saving = false;
+          this.$router.push({
+            path: '/putManage',
+            query: {
+              'active': 'project'
+            }
+          })
+          return this.$notify({
+            title: '成功',
+            message: '创建创意成功',
+            type: 'success'
+          })
+        })
+        .catch(res => {
+          this.saving = false;
+        })
     }
+  },
+
+  computed: {
+    ...mapState({
+      projectData: state => state.putCreative.projectData
+    })
   },
 
   watch: {
     isShow: function(newVal, oldVal) {
       if (newVal) {
-        this.getExistPlanList()
+        this.getExistPlanList(this.projectData.second, this.projectData.industry, '', 0, 10, this.projectData.type)
       }
     }
   }
@@ -109,8 +176,14 @@ export default {
       &.page-box{
         padding: 20px 40px;
       }
+      &.active{
+        background-color: $color-bg;
+      }
     }
   }
+  .creative-list-save{
+    border-top: 60px solid $color-bg;
+    margin: 60px -38px 0;
+  }
 }
-  
 </style>

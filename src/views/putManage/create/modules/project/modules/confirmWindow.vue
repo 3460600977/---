@@ -113,7 +113,8 @@ export default {
       this.$router.push({
         path: '/putManage/create/creative',
         query: {
-          'projectId': this.confirmWindowMsg.resData.projectId
+          projectId: this.confirmWindowMsg.resData.projectId,
+          createType: 'step'
         }
       })
     }
