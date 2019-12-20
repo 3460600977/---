@@ -1,49 +1,50 @@
 <template>
   <div>
-    <el-form :model="filters" :inline="true">
+    <el-form :model="filters" :inline="true" :label-width="labelWidth">
       <template v-for="(val, index) in queryItems">
         <el-form-item v-if="val.type === 'input'" :label="val.label">
           <el-input
-            v-model.trim="filters[val.model.key]"
+            v-model.trim="filters[val.key]"
             clearable
+            placeholder="请输入"
             @keyup.enter.native="handleTransfer"
           ></el-input>
         </el-form-item>
         <el-form-item v-if="val.type === 'select'" :label="val.label">
           <el-select
             ref="select"
-            v-model="filters[val.model.key]"
-            :filterable="val.filterable"
-            style="margin-right: 10px"
+            v-model="filters[val.key]"
             placeholder="请选择"
+            :value-key="val.seriseValue"
             @change="handleTransfer(val)">
             <el-option
-              v-for="(item, index) in treeData[val.model.key]"
+              v-for="(item, index) in treeData[val.key]"
               :key="index"
-              :label="item.label"
-              :value="item.value"
+              :label="item[val.seriseLabel]"
+              :value="item"
             >
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-if="val.type === 'date'" :label="val.label">
           <el-date-picker
-            v-model="filters[val.model.key]"
+            v-model="filters[val.key]"
             :picker-options="val.options?val.options:reportTimePicker"
             type="daterange"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             align="center"
-            format="yyyy/MM/dd"
-            value-format="yyyy/MM/dd"
-            @change="handleDateChange(val.model.key)"
+            format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd"
+            @change="handleDateChange(val.key)"
           >
           </el-date-picker>
         </el-form-item>
-        <el-form-item v-if="val.type === 'actions'">
+        <el-form-item v-if="val.type === 'actions'" class="actions">
           <template v-for="(v, i) in val.actions">
-            <el-button :type="v.type" size="small" @click="handleSearch(v)"> {{v.label}}</el-button>
+            <el-button v-if="v.type !== 'slot'" :type="v.type" size="small" :plain="v.plain" @click="handleSearch(v)"> {{v.label}}</el-button>
+            <slot v-else :name="v.name"></slot>
           </template>
         </el-form-item>
       </template>
@@ -55,28 +56,31 @@ export default {
   props: {
     isEmitByButton: { // 根据点击查询按钮才给出当前选择数据 而不是选择就给出数据
       type: Boolean,
-      default: false
+      default: true
     },
     queryItems: {
       type: Array,
       required: true
     },
-    filters: {
+    labelWidth: {
+      type: String,
+      default: '82px'
+    },
+    queryFilters: {
       type: Object,
       required: true
     },
   },
   data() {
     return {
-      currentSelect: null,
-      selectFocusData: {},
       treeData: {},
+      filters: {},
       initData: {},
       reportTimePicker: {
         shortcuts: [
           {
             text: '今日',
-            onClick(picker) {
+            onClick:(picker) => {
               const now = new Date();
               const end = new Date(now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate() + ' 23:59:00');
               const start = new Date(now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate() + ' 00:00:00');
@@ -85,17 +89,17 @@ export default {
           },
           {
             text: '最近一周',
-            onClick(picker) {
+            onClick:(picker) => {
               picker.$emit('pick', this.$tools.calcShortCuts(7));
             }
           }, {
             text: '最近一个月',
-            onClick(picker) {
+            onClick:(picker) => {
               picker.$emit('pick', this.$tools.calcShortCuts(30));
             }
           }, {
             text: '最近三个月',
-            onClick(picker) {
+            onClick:(picker) => {
               picker.$emit('pick', this.$tools.calcShortCuts(90));
             }
           }]
@@ -103,106 +107,30 @@ export default {
     }
   },
   created() {
-    this.initData = this.$tools.deepCopy(this.queryFilter)
-    // this._renderFilters()
-  },
-  mounted() {
-    if (this.isEmitByButton) this.handleEmit()
+    this.filters = this.$tools.deepCopy(this.queryFilters)
+    this.initData = this.$tools.deepCopy(this.queryFilters)
+    this.getOptions()
   },
   methods: {
-    selectClear(val) {
-      this.treeData[val.model.key] = this.selectFocusData[val.model.key]
-    },
-    remoteMethod(query) {
-      if (this.currentSelect.remoteMethod) {
-        if (query !== '') {
-          const val = this.currentSelect
-          this.treeData[val.model.key + 'Loading'] = true
-          const data = {}
-          if (val.parentKey && val.parentKey.length > 0) {
-            val.parentKey.forEach((v) => {
-              data[v] = this.filters[v]
-            })
-          }
-          data.query = query
-          val.remoteMethod(data).then((v) => {
-            this.treeData[val.model.key + 'Loading'] = false
-            this.treeData[val.model.key] = v
-          });
-        } else {
-          this.selectClear(this.currentSelect)
-        }
-      }
-    },
-    // 下拉选择框获取焦点执行事件
-    handleSelectFocus(val) {
-      this.currentSelect = val
-      if (this.treeData[val.model.key] === null) {
-        if (this.$tools.type(val.data) === 'function') {
-          this.treeData[val.model.key + 'Loading'] = true
-          const data = {}
-          if (val.parentKey && val.parentKey.length > 0) {
-            val.parentKey.forEach((v) => {
-              data[v] = this.filters[v]
-            })
-          }
-          val.data(data).then((data) => {
-            this.treeData[val.model.key + 'Loading'] = false
-            this.treeData[val.model.key] = data
-            this.selectFocusData[val.model.key] = data
-          });
-        }
-      }
-    },
     handleTransfer(val) {
-      if (val.childKey && val.childKey.length > 0) {
-        val.childKey.forEach((key) => {
-          this.filters[key] = this.initData[key]
-          this.treeData[key] = null
-        })
-      }
       if (!this.isEmitByButton) this.handleEmit()
     },
     handleDateChange(key) {
       if (!this.isEmitByButton) this.handleEmit()
     },
-    // 将queryItems的model字段映射成filters的model
-    // _renderFilters() {
-    //   this.queryItems.forEach((val) => {
-    //     if (val.model) {
-    //       this.$set(this.filters, val.model.key, val.model.value)
-    //       if (this.$tools.type(val.data) === 'function' && !val.loadNow) {
-    //         this.$set(this.treeData, val.model.key, null)
-    //         this.$set(this.treeData, val.model.key + 'Loading', false)
-    //       } else if (this.$tools.type(val.data) === 'function' && val.loadNow) {
-    //         val.data().then((data) => {
-    //           this.$set(this.treeData, val.model.key, data)
-    //         });
-    //       } else {
-    //         this.$set(this.treeData, val.model.key, val.data)
-    //       }
-    //     }
-    //   })
-    //   this.initData = Object.assign({}, this.filters)
-    // },
-    // filtersReset() {
-    //   this.queryItems.forEach((val) => {
-    //     if (val.model) {
-    //       this.$set(this.filters, val.model.key, val.model.haveResetValue ? val.model.resetValue : val.model.value)
-    //       if (this.$tools.type(val.data) === 'function' && !val.loadNow) {
-    //         this.$set(this.treeData, val.model.key, null)
-    //         this.$set(this.treeData, val.model.key + 'Loading', false)
-    //       } else if (this.$tools.type(val.data) === 'function' && val.loadNow) {
-    //         val.data().then((data) => {
-    //           this.$set(this.treeData, val.model.key, data)
-    //         });
-    //       } else {
-    //         this.$set(this.treeData, val.model.key, val.data)
-    //       }
-    //     }
-    //   })
-    //   this.initData = Object.assign({}, this.filters)
-    // },
+    // 加载可选项
+    getOptions() {
+      this.queryItems.forEach((val) => {
+        if (this.$tools.type(val.data) === 'function') {
+          val.data().then((data) => {
+            this.$set(this.treeData, val.key, data)
+          });
+        }
+      })
+    },
+    filtersReset() {
+      this.filters = this.initData
+    },
     // 按钮的事件
     handleSearch(val) {
       if (val.key === 'search') {
@@ -224,56 +152,66 @@ export default {
 <style type="text/css" scoped lang="scss">
 
 </style>
-<!--//            queryItems: [  // 从外面传入的queryItems各种类型例子-->
-<!--//                {-->
-<!--//                    type: 'input',-->
-<!--//                    model: {key: 'name', value: ''},-->
-<!--//                    label: '医生账户名:'-->
-<!--//                },-->
-<!--//                {-->
-<!--//                    type: 'tree',-->
-<!--//                    model: {key: 'treeData', value: {}},-->
-<!--//                    label: '所属医院',-->
-<!--//                    data: () => {-->
-<!--//                        return  new Promise((resolve, reject) => {-->
-<!--//                            API.getInstitutions({-->
-<!--//                                showReportCount: false-->
-<!--//                            }).then(res => {-->
-<!--//                                resolve(res);-->
-<!--//                            })-->
-<!--//                        });-->
-<!--//                    }-->
-<!--//                },-->
-                <!--{-->
-                <!--type: 'checkBox',-->
-                <!--model: {key: 'sumRecursive', value: []},-->
-                <!--data: [{-->
-                <!--value: 1,-->
-                <!--label: '只看本院'-->
-                <!--}]-->
-                <!--},-->
-<!--//                {-->
-<!--//                    type: 'select',-->
-<!--//                    model: {key: 'statu', value: ''},-->
-<!--//                    data: [{-->
-<!--//                        value: false,-->
-<!--//                        label: '正常'-->
-<!--//                    }, {-->
-<!--//                        value: true,-->
-<!--//                        label: '禁用'-->
-<!--//                    }],-->
-<!--//                    label:  '状态'-->
-<!--//                },-->
-<!--//                {-->
-<!--//                    type: 'date',-->
-<!--//                    model: {key: 'date', value: []},-->
-<!--//                },-->
-<!--//                {-->
-<!--//                    type: 'actions',-->
-<!--//                    actions: [-->
-<!--//                        {label: '查询', type: 'primary', key:'search'},-->
-<!--//                        {label: '重置', key:'reset'},-->
-<!--//                        {label: '新建', type: 'success', key:'add'}-->
-<!--//                    ]-->
-<!--//                }-->
-<!--//            ],-->
+
+<!--
+  目前支持：
+    input,
+    单选的select,
+    date类型
+  按钮：search会emit出当前数据 reset会将数据重置到初始状态
+  queryItems: [ // 配置项
+    {
+      type: 'input',
+      key: 'orderNumber',
+      label: '订单编号:'
+    },
+    {
+      type: 'date',
+      key: 'date',
+      label: '订单编号:'
+    },
+    { // select最后会返回整个item
+      type: 'select',
+      key: 'select',
+      seriseLabel: 'id', // select-option显示的字段
+      seriseValue: 'name', // select-option作为value的字段
+      label: '门店名称:',
+      data: () => { // select-option可选项数据，必须是一个promise函数
+        return new Promise((resolve, reject) => {
+          let roleData = [
+            {name: '全部角色', id: ''},
+            {name: '上传医生', id: 'ROLE_UPLOADER'},
+            {name: '标注医生', id: 'ROLE_EDITOR'},
+            {name: '审核医生', id: 'ROLE_AUDITOR'},
+            {name: '数据管理员', id: 'ROLE_ADMINISTRATOR'},
+          ]
+          resolve(roleData);
+        });
+      },
+    },
+    {
+      type: 'actions',
+      actions: [
+        {label: '查询', key: 'search', type: 'primary', plain: true},
+        {label: '重置', key: 'reset'},
+        {type: 'slot', name: 'btn'} // 渲染在按钮中的slot, name为slot的name
+      ]
+    }
+  ],
+-->
+<!--
+queryFilter字段名必须对应queryItems中每一项key的值，字段名后的值为那个item的初始化值
+queryFilter: {
+  orderNumber: '',
+  select:  {name: '上传医生', id: 'ROLE_UPLOADER'},
+  date: [this.$tools.formatDate(new Date(),  'yy-MM-dd'), this.$tools.formatDate(new Date(),  'yy-MM-dd')],
+},
+-->
+<!--
+handleReturnData：emit出的当前所有字段的值 会在点击查询，重置，及选择时调用
+<query-item :queryItems="queryItems" :queryFilters="queryFilter" @handleReturnData="handleReturnData">
+  <template #btn>
+    <el-button type="primary">主要按钮</el-button>
+  </template>
+</query-item>
+-->
