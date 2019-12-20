@@ -29,63 +29,63 @@
     <div class="detail-bottom-map">
       <div class="left-map">
         <!--        暂时用图片代替-->
-        <ponit-map :data="premiseList.data"></ponit-map>
+        <ponit-map :points="premiseList.data"></ponit-map>
 <!--        <img class="map_img" :src="map_img" :data="premiseList.data">-->
       </div>
-      <div class="right-list">
-        <div class="right-detail-box">
-          <div class="detail-list"
-               v-for="(itemLabel,index_label) in premiseList.default"
-               :key="index_label">
-            <i :class="itemLabel.icon"></i>
-            <span class="detail-list-label">{{itemLabel.label}}</span>
-            <span class="detail-list-title">{{itemLabel.title}}</span>
-          </div>
-        </div>
-        <div class="show_location_num">
-          <el-button slot="reference" class="show-build-list">
-            <div class="show-build">{{premiseList.deviceNum.label}}{{premiseList.deviceNum.value}}</div>
-            <div class="show-click" @click="dialogVisible = true" @open="getProjectDeviceList"> 查看<i
-              class="el-icon-arrow-right"></i></div>
-          </el-button>
-          <el-dialog class="dialog-build-list"
-                     :visible.sync="dialogVisible"
-                     width="70%">
-            <div slot="title">{{deviceInfo.name.value}}</div>
-            <div class="info-body">
-              <div class="info-time">
-                <label class="put-time" v-for="(infoItem,infoIndex) in deviceInfo.time"
-                       :key="infoIndex">
-                  <span>{{infoItem.title}}</span>
-                  <span>{{infoItem.value}}</span>
-                </label>
-              </div>
-              <div class="info-table">
-                <el-table max-height="450" :data="resultData" :load="loading" class="info-el-table">
-                  <el-table-column
-                    :min-width="getColumnWidth(colIndex)"
-                    :prop="col.prop" :label="col.label"
-                    v-for="(col,colIndex) in resultCol"
-                    :key="colIndex">
-                    <template slot-scope="scope">
-                      <div v-if="col.prop === 'status'">
-                        <span v-if="scope.row[scope.column.property] === 1" class="normal info-status">正常</span>
-                        <span v-if="scope.row[scope.column.property] === 0" class="stop info-status">正在维护中</span>
-                      </div>
-                      <div v-else-if="col.prop === 'action'">
-                        <a class="preview" href="#" @click="getProjectPlayList(scope.row['deviceCode'])">预览</a>
-                      </div>
-                      <div v-else>
-                        {{scope.row[scope.column.property]}}
-                      </div>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
-            </div>
-          </el-dialog>
-        </div>
-      </div>
+<!--      <div class="right-list">-->
+<!--        <div class="right-detail-box">-->
+<!--          <div class="detail-list"-->
+<!--               v-for="(itemLabel,index_label) in premiseList.default"-->
+<!--               :key="index_label">-->
+<!--            <i :class="itemLabel.icon"></i>-->
+<!--            <span class="detail-list-label">{{itemLabel.label}}</span>-->
+<!--            <span class="detail-list-title">{{itemLabel.title}}</span>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="show_location_num">-->
+<!--          <el-button slot="reference" class="show-build-list">-->
+<!--            <div class="show-build">{{premiseList.deviceNum.label}}{{premiseList.deviceNum.value}}</div>-->
+<!--            <div class="show-click" @click="dialogVisible = true" @open="getProjectDeviceList"> 查看<i-->
+<!--              class="el-icon-arrow-right"></i></div>-->
+<!--          </el-button>-->
+<!--          <el-dialog class="dialog-build-list"-->
+<!--                     :visible.sync="dialogVisible"-->
+<!--                     width="70%">-->
+<!--            <div slot="title">{{deviceInfo.name.value}}</div>-->
+<!--            <div class="info-body">-->
+<!--              <div class="info-time">-->
+<!--                <label class="put-time" v-for="(infoItem,infoIndex) in deviceInfo.time"-->
+<!--                       :key="infoIndex">-->
+<!--                  <span>{{infoItem.title}}</span>-->
+<!--                  <span>{{infoItem.value}}</span>-->
+<!--                </label>-->
+<!--              </div>-->
+<!--              <div class="info-table">-->
+<!--                <el-table max-height="450" :data="resultData" :load="loading" class="info-el-table">-->
+<!--                  <el-table-column-->
+<!--                    :min-width="getColumnWidth(colIndex)"-->
+<!--                    :prop="col.prop" :label="col.label"-->
+<!--                    v-for="(col,colIndex) in resultCol"-->
+<!--                    :key="colIndex">-->
+<!--                    <template slot-scope="scope">-->
+<!--                      <div v-if="col.prop === 'status'">-->
+<!--                        <span v-if="scope.row[scope.column.property] === 1" class="normal info-status">正常</span>-->
+<!--                        <span v-if="scope.row[scope.column.property] === 0" class="stop info-status">正在维护中</span>-->
+<!--                      </div>-->
+<!--                      <div v-else-if="col.prop === 'action'">-->
+<!--                        <a class="preview" href="#" @click="getProjectPlayList(scope.row['deviceCode'])">预览</a>-->
+<!--                      </div>-->
+<!--                      <div v-else>-->
+<!--                        {{scope.row[scope.column.property]}}-->
+<!--                      </div>-->
+<!--                    </template>-->
+<!--                  </el-table-column>-->
+<!--                </el-table>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </el-dialog>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
   </div>
 </template>
