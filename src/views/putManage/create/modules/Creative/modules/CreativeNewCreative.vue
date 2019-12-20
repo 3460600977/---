@@ -17,8 +17,8 @@
           <div class="screen-type-preview-content">
             <MyRadio
               v-for="(item, index) in projectConst.screenType"
-              @click.native="formData.type = item"
-              :active="formData.type === item"
+              @click.native="formData.screenType = item"
+              :active="formData.screenType === item"
               :key="index">
               <span class="float-left">{{item.name}}</span>
               <div class="float-left screen-preview">
@@ -151,39 +151,11 @@
       </div>
 
       <!-- 预览 -->
-      <div class="material-preview-box">
-        <!-- 上屏 -->
-        <div>
-          <video 
-            class="top"
-            controls 
-            autoplay
-            loop
-            muted
-            v-if="formData.fileType === 1 && formData.top && formData.top.type === 'video/mp4'" 
-            :src="$tools.fileToUrl(formData.top)"></video>
-          <img 
-            v-else-if="formData.fileType === 2 && formData.top" 
-            class="top" 
-            :src="$tools.fileToUrl(formData.top)"/>
-
-          <div v-if="formData.top.type === 'video/avi'" class="top font-12 mid-center">
-            avi不支持预览
-          </div>
-          <div v-if="!formData.top" class="top font-12 mid-center">
-            <!-- 请上传上屏素材 -->
-          </div>
-        </div>
-
-        <!-- 下屏 -->
-        <div>
-          <img v-if="formData.bottom880Image" class="bottom" alt="请上传下屏" :src="$tools.fileToUrl(formData.bottom880Image)">
-          <div v-else class="bottom font-12 mid-center">
-            <!-- 请上传下屏素材 -->
-          </div>
-        </div>
-        <p style="margin-top: 40px" class="decription color-text-1 font-12"><span class="color-red">*</span>AVI格式暂不支持预览</p>
-      </div>
+      <PreviewBox 
+        :width="108" 
+        :top="{interval: 0, type: this.formData.top.type, url: $tools.fileToUrl(this.formData.top)}" 
+        :bottom="{interval: 0, type: this.formData.bottom880Image.type, url: $tools.fileToUrl(this.formData.bottom880Image)}"/>
+      <p style="margin-top: 40px" class="decription color-text-1 font-12"><span class="color-red">*</span>AVI格式暂不支持预览</p>
     </PutMangeCard>
 
     <!-- 广告资质 -->
@@ -320,12 +292,14 @@
 <script>
 import PutMangeCard from '../../../../templates/PutMangeCard' 
 import MyRadio from '../../../../../../components/MyRadio' 
+import PreviewBox from '../../../../../../components/PreviewBox' 
 import { projectConst, MonitorData, fileType } from '../../../../../../utils/static'
 import { mapMutations, mapState } from 'vuex'
 export default {
   components: {
     PutMangeCard,
-    MyRadio
+    MyRadio,
+    PreviewBox
   },
 
   data() {
@@ -395,7 +369,7 @@ export default {
 
     // 单独创建创意
     if (this.createType === 'single') {
-      this.formData.screenType = '003'
+      this.formData.screenType = this.projectConst.screenType[2];
     }
     this.generateCreativeName();
     this.pageLoading = false;
@@ -736,30 +710,6 @@ export default {
           top: 8px;
           margin-left: 360px;
         }
-      }
-    }
-    .material-preview-box{
-      position: absolute;
-      bottom: 0;
-      margin:0 0 80px 558px;
-      width:126px;
-      height:314px;
-      background:rgba(236,235,233,1);
-      border:1px solid rgba(196, 196, 196, 0.8);
-      box-shadow:0px 6px 9px 1px rgba(19,18,18,0.14);
-      border-radius:6px;
-      .top{
-        margin: 9px;
-        width:108px;
-        height:192px;
-        background:rgba(225,225,225,1);
-      }
-      .bottom{
-        display: block;
-        margin: 0 9px 15px 9px;
-        width:108px;
-        height:88px;
-        background:rgba(225,225,225,1);
       }
     }
   }

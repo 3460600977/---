@@ -225,6 +225,7 @@ let tools = {
    * @param: 数组 suffix 后缀
    */
   checkSuffix: (str, suffix) => {
+    if (!str) return '';
     let result = false;
     let strSuffix = str.substr(str.lastIndexOf(".") + 1);
     for (let i = 0; i < suffix.length; i++) {
@@ -235,6 +236,18 @@ let tools = {
     }
     return result;
   },
+  
+  /**
+   * @description: 获取后缀
+   * @param: 字符串 str 校验的字符串
+   * @param: 数组 suffix 后缀
+   */
+  getSuffix: (str) => {
+    if (!str) return '';
+    let strSuffix = str.substr(str.lastIndexOf(".") + 1);
+    return strSuffix;
+  },
+
 
   /**
    * @description: 根据index删除数组元素
@@ -367,48 +380,6 @@ let tools = {
       }
     }
     return res
-  },
-
-
-  /**
-   * @description: 对象数据转化为form表单格式
-   * @param: val
-   */
-  convertToFormData(val) {
-    let formData = new FormData();
-    for (let i in val) {
-      isArray(val[i], i);
-    }
-
-    function isArray(array, key) {
-      if (array == undefined || typeof array == "function") {
-        return false;
-      }
-      if (typeof array != "object") {
-        formData.append(key, array);
-      } else if (array instanceof Array) {
-        if (array.length == 0) {
-          formData.append(`${key}`, "");
-        } else {
-          for (let i in array) {
-            for (let j in array[i]) {
-              isArray(array[i][j], `${key}[${i}].${j}`);
-            }
-          }
-        }
-      } else {
-        let arr = Object.keys(array);
-        if (arr.indexOf("uid") == -1) {
-          for (let j in array) {
-            isArray(array[j], `${key}.${j}`);
-          }
-        } else {
-          formData.append(`${key}`, array);
-        }
-      }
-    }
-
-    return formData;
   },
 
   /**
