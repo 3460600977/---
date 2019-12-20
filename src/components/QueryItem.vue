@@ -9,29 +9,14 @@
             @keyup.enter.native="handleTransfer"
           ></el-input>
         </el-form-item>
-<!--        <el-form-item v-if="val.type === 'checkBox'" :label="val.label">-->
-<!--          <el-checkbox-group v-model="filters[val.model.key]" @change="handleTransfer">-->
-<!--            <el-checkbox-->
-<!--              v-for="item in val.data"-->
-<!--              :key="item.value"-->
-<!--              :label="item.value"-->
-<!--            >{{item.label}}-->
-<!--            </el-checkbox>-->
-<!--          </el-checkbox-group>-->
-<!--        </el-form-item>-->
         <el-form-item v-if="val.type === 'select'" :label="val.label">
           <el-select
             ref="select"
             v-model="filters[val.model.key]"
-            :loading="treeData[val.model.key + 'Loading']"
             :filterable="val.filterable"
-            :remote="val.remote"
-            :remote-method="remoteMethod"
             style="margin-right: 10px"
             placeholder="请选择"
-            @clear="selectClear(val)"
-            @change="handleTransfer(val)"
-            @focus="handleSelectFocus(val)">
+            @change="handleTransfer(val)">
             <el-option
               v-for="(item, index) in treeData[val.model.key]"
               :key="index"
