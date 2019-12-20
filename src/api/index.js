@@ -6,6 +6,7 @@ import {CityList} from './modules/CityList'
 import {IndustryList} from './modules/industryList'
 import {CreateCreative} from './modules/createCreative'
 import {toolBox} from './modules/toolBox'
+import {Login} from './modules/login'
 
 
 const api = {
@@ -17,6 +18,7 @@ const api = {
   Report,        // 报表
   CreateCreative,// 创建创意
   toolBox, // 工具箱
+  Login,
 }
 
 export default api;
