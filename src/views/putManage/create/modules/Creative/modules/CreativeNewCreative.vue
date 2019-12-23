@@ -4,8 +4,9 @@
     <!-- 上传素材 -->
     <PutMangeCard class="form-box creative" v-loading="pageLoading" :title="'制作创意'">
       <!-- 上屏 -->
+      {{formData.screenType}}
       <el-form  
-        v-if="projectData.type !== '002'"
+        v-if="projectData.screenType !== '002'"
         ref="creativeFormMaterialTop"
         :model="formData"
         :rules="formDataRules"
@@ -17,8 +18,8 @@
           <div class="screen-type-preview-content">
             <MyRadio
               v-for="(item, index) in projectConst.screenType"
-              @click.native="formData.screenType = item"
-              :active="formData.screenType === item"
+              @click.native="formData.screenType = item.value"
+              :active="formData.screenType === item.value"
               :key="index">
               <span class="float-left">{{item.name}}</span>
               <div class="float-left screen-preview">
@@ -100,7 +101,7 @@
       </el-form>
 
       <!--下屏 -->
-      <div v-if="projectData.type !== '001'">
+      <div v-if="projectData.screenType !== '001'">
         <!-- 1080 880 -->
         <el-form
           ref="creativeFormMaterialBottom880"
