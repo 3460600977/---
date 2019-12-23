@@ -152,10 +152,13 @@
 
       <!-- 预览 -->
       <PreviewBox 
-        :width="108" 
-        :top="{interval: 0, type: this.formData.top.type, url: $tools.fileToUrl(this.formData.top)}" 
-        :bottom="{interval: 0, type: this.formData.bottom880Image.type, url: $tools.fileToUrl(this.formData.bottom880Image)}"/>
-      <p style="margin-top: 40px" class="decription color-text-1 font-12"><span class="color-red">*</span>AVI格式暂不支持预览</p>
+        style="position: absolute;
+          bottom: 0;
+          margin:0 0 80px 558px;"
+        :innerWidth="108" 
+        :top="{type: this.formData.top.type, url: $tools.fileToUrl(this.formData.top)}" 
+        :bottom="{type: this.formData.bottom880Image.type, url: $tools.fileToUrl(this.formData.bottom880Image)}"/>
+      <p style="margin-top: 40px; margin-left: 558px;" class="decription color-text-1 font-12"><span class="color-red">*</span>AVI格式暂不支持预览</p>
     </PutMangeCard>
 
     <!-- 广告资质 -->

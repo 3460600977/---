@@ -63,7 +63,6 @@ export default {
       type: Object,
       default: [
         {
-          interval: 0, 
           type: '', 
           url: ''
         }
@@ -74,7 +73,6 @@ export default {
       type: Object,
       default: [
         {
-          interval: 0, 
           type: '', 
           url: ''
         }
@@ -86,9 +84,7 @@ export default {
 
 <style lang="scss">
 .material-preview-box{
-  position: absolute;
-  bottom: 0;
-  margin:0 0 80px 558px;
+  width: fit-content;
   background:rgba(236,235,233,1);
   border:1px solid rgba(196, 196, 196, 0.8);
   box-shadow:0px 6px 9px 1px rgba(19,18,18,0.14);
@@ -96,7 +92,6 @@ export default {
   .top-box{
     background:rgb(0, 0, 0);
     .top{
-      width:100%;
       height:100%;
     }
   }
@@ -104,7 +99,6 @@ export default {
     background:rgb(0, 0, 0);
     .bottom{
       display: block;
-      width: 100%;
       height: 100%;
     }
   }
