@@ -91,12 +91,14 @@ export default {
   border-radius:6px;
   .top-box{
     background:rgb(0, 0, 0);
+    overflow: hidden;
     .top{
       height:100%;
     }
   }
   .bottom-box{
     background:rgb(0, 0, 0);
+    overflow: hidden;
     .bottom{
       display: block;
       height: 100%;
