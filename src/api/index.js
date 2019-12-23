@@ -7,7 +7,7 @@ import {IndustryList} from './modules/industryList'
 import {CreateCreative} from './modules/createCreative'
 import {toolBox} from './modules/toolBox'
 import {Login} from './modules/login'
-
+import {AuditCreative} from './modules/auditCreative'
 
 const api = {
   cityInsight,
@@ -18,7 +18,8 @@ const api = {
   Report,        // 报表
   CreateCreative,// 创建创意
   toolBox, // 工具箱
-  Login,
+  Login,//登录，登出
+  AuditCreative,//审核创意
 }
 
 export default api;

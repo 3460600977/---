@@ -70,7 +70,7 @@
         </el-button>
       </div>
       <el-table
-        :load="loading"
+        :loading="loading"
         :data="resultData"
         @sort-change="tableSort"
         :default-sort="{prop: 'costNum', order: 'ascending'}"

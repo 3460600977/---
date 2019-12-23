@@ -1,21 +1,23 @@
-import {removeUserInfo, getToken} from '@/utils/auth';
+import {getToken, removeUserInfo} from '@/utils/auth';
 
-const user = {
+export const userToken = {
   state: {
-    token: getToken(),
+    userToken: getToken(),
   },
 
   mutations: {
-    SET_TOKEN: (state, token) => {
-      state.token = token
+    setToken: (state, token) => {
+      state.userToken = token
     },
   },
-
-  getters: {},
-
   actions: {
-
+    // 前端 登出
+    FedLogOut({commit}) {
+      return new Promise(resolve => {
+        removeUserInfo()
+        commit('setToken', '');
+        resolve();
+      })
+    },
   }
 }
-
-export default user

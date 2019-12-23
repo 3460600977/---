@@ -15,11 +15,12 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // Do something before request is sent
-    // if (store.getters.token) {
-    //   // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
-    //   config.headers['token'] = getToken();
-    // }
-    config.headers['token'] = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJrYWtheGkiLCJleHAiOjE1NzcwODkyODh9.wNNEK6JAxcBHgsKpRwDJ46-NR1z0SvChOXj1ERcJdRo';
+    if (store.state.userToken) {
+      // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
+      config.headers['token'] = store.state.userToken;
+    } else {
+      config.headers['token'] = '';
+    }
     return config
   },
   error => {
@@ -46,8 +47,8 @@ service.interceptors.response.use(
       return res;
     }
     if (res.code !== 100001) {
-      // 100201:token过期
-      if (res.code === 100201 && location.hash.indexOf('/login') === -1) {
+      // 100900:token过期
+      if (res.code === 100900 && location.hash.indexOf('/login') === -1) {
         MessageBox.confirm('身份信息失效，可以取消继续留在该页面，或者重新登录', '确定退出', {
           confirmButtonText: '重新登录',
           cancelButtonText: '取消',
