@@ -36,7 +36,7 @@
         </el-select>
       </el-form-item>
       <el-form-item class="list-query-button">
-        <el-button type="primary" plain @click="onSubmit">查询</el-button>
+        <el-button type="primary" plain>查询</el-button>
       </el-form-item>
       <el-form-item class="list-new-button">
         <el-button @click="createSingleCreative" type="primary">新建广告创意</el-button>

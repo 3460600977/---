@@ -2,23 +2,23 @@
 <template>
   <div class="upload-creative">
     <!-- 上传素材 -->
-    <PutMangeCard class="form-box creative" v-loading="pageLoading" :title="'制作创意'">
+    <PutMangeCard class="form-box creative" :style="createType === 'single' ? 'min-height: 715px;' : ''" v-loading="pageLoading" :title="'制作创意'">
       <!-- 上屏 -->
-      {{formData.screenType}}
       <el-form  
-        v-if="projectData.screenType !== '002'"
         ref="creativeFormMaterialTop"
         :model="formData"
         :rules="formDataRules"
         :label-position="'left'" 
         label-width="112px" class="put-form">
-
         <!-- 屏幕类型 -->
-        <el-form-item v-if="createType === 'single'" style="margin-bottom: 12px;" class="screen-type-preview-box mt-20" prop="type" label="屏幕类型">
+        <el-form-item 
+          v-if="createType === 'single'" 
+          style="margin-bottom: 12px;" class="screen-type-preview-box mt-20" 
+          prop="screenType" label="屏幕类型">
           <div class="screen-type-preview-content">
             <MyRadio
               v-for="(item, index) in projectConst.screenType"
-              @click.native="formData.screenType = item.value"
+              @click.native="formData.screenType = item.value;changeScreenType(item.value)"
               :active="formData.screenType === item.value"
               :key="index">
               <span class="float-left">{{item.name}}</span>
@@ -33,75 +33,86 @@
             </MyRadio>
           </div>
         </el-form-item>
-        
-        <el-form-item prop="top.name" class="top-box" label="上屏内容">
-          <!-- 类型 -->
-          <div class="mid-between">
-            <el-button 
-              style="width: 102px"
-              @click="switchFileType(item.value)"
-              v-for="(item, index) in fileType" 
-              :type="formData.fileType == item.value ? 'primary' : 'info'" 
-              :key="index">
-              {{item.name}}
-            </el-button>
-          </div>
-          
-          <!-- 视频 -->
-          <div v-if="formData.fileType === 1">
-            <div class="mt-12 my-input-upload">
-              <input 
-                ref="topVideo"
-                @change="uploadMedia($event, 'topVideo')" 
-                type="file" 
-                accept=".avi, .mp4"
-                class="input-real"/>
-              <el-input
-                suffix-icon="iconfont icon-uploading1"
-                placeholder="请上传"
-                v-model="formData.top.name" class="input-fake"></el-input>
+
+        <div v-if="formData.screenType !== '002'">
+          <el-form-item prop="top.name" class="top-box" label="上屏内容">
+            <!-- 类型 -->
+            <div class="mid-between">
+              <el-button 
+                style="width: 102px"
+                @click="switchFileType(item.value)"
+                v-for="(item, index) in fileType" 
+                :type="formData.fileType == item.value ? 'primary' : 'info'" 
+                :key="index">
+                {{item.name}}
+              </el-button>
             </div>
-            <p class="decription color-text-1 font-12"><span class="color-red">*</span>上传1080X1920的视频，仅支持avi、mp4格式 仅支持5s、10s、15s的视频</p>
-          </div>
-
-          <!-- 图片 -->
-          <div v-if="formData.fileType === 2">
-            <div class="mt-12 my-input-upload">
-              <input 
-                ref="topImage"
-                @change="uploadMedia($event, 'topImage')"
-                type="file" 
-                accept=".jpg"
-                class="input-real"/>
-              <el-input
-                suffix-icon="iconfont icon-uploading1"
-                placeholder="请上传"
-                v-model="formData.top.name" class="input-fake"></el-input>
+            
+            <!-- 视频 -->
+            <div v-if="formData.fileType === 1">
+              <div class="mt-12 my-input-upload">
+                <input 
+                  ref="topVideo"
+                  @change="uploadMedia($event, 'topVideo')" 
+                  type="file" 
+                  accept=".avi, .mp4"
+                  class="input-real"/>
+                <el-input
+                  suffix-icon="iconfont icon-uploading1"
+                  placeholder="请上传"
+                  v-model="formData.top.name" class="input-fake"></el-input>
+              </div>
+              <p class="decription color-text-1 font-12"><span class="color-red">*</span>上传1080X1920的视频，仅支持avi、mp4格式 仅支持5s、10s、15s的视频</p>
             </div>
-            <p class="decription color-text-1 font-12"><span class="color-red">*</span>上传1080X1920的图片，仅支持jpg格式</p>
-          </div>
 
-        </el-form-item>
+            <!-- 图片 -->
+            <div v-if="formData.fileType === 2">
+              <div class="mt-12 my-input-upload">
+                <input 
+                  ref="topImage"
+                  @change="uploadMedia($event, 'topImage')"
+                  type="file" 
+                  accept=".jpg"
+                  class="input-real"/>
+                <el-input
+                  suffix-icon="iconfont icon-uploading1"
+                  placeholder="请上传"
+                  v-model="formData.top.name" class="input-fake"></el-input>
+              </div>
+              <p class="decription color-text-1 font-12"><span class="color-red">*</span>上传1080X1920的图片，仅支持jpg格式</p>
+            </div>
 
-        <!-- 时长  -->
-        <el-form-item prop="durationType" label="投放时长">
-          <el-select class="width-100-p"
-            :disabled="formData.fileType == 1 || this.createType !== 'single'"
-            v-model="formData.durationType" 
-            placeholder="请选择">
-            <el-option
-              v-for="(item, index) in projectConst.putDuration"
-              :key="index"
-              :label="item.name"
-              :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
+          </el-form-item>
+
+          <!-- 时长  -->
+          <el-form-item prop="durationType" label="投放时长">
+            <el-select class="width-100-p"
+              :disabled="this.createType !== 'single'"
+              v-model="formData.durationType" 
+              placeholder="请选择">
+              <el-option
+                v-for="(item, index) in projectConst.putDuration"
+                :key="index"
+                :label="item.name"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </div>
+
+        <!-- 预览 -->
+        <div class="creative-preview-box">
+          <PreviewBox 
+            :innerWidth="108" 
+            :top="{type: this.formData.top.type, url: $tools.fileToUrl(this.formData.top)}" 
+            :bottom="{type: this.formData.bottom880Image.type, url: $tools.fileToUrl(this.formData.bottom880Image)}"/>
+          <p class="decription color-text-1 font-12"><span class="color-red">*</span>AVI格式暂不支持预览</p>
+        </div>
 
       </el-form>
 
       <!--下屏 -->
-      <div v-if="projectData.screenType !== '001'">
+      <div v-if="formData.screenType !== '001'">
         <!-- 1080 880 -->
         <el-form
           ref="creativeFormMaterialBottom880"
@@ -110,7 +121,7 @@
           :label-position="'left'" 
           label-width="112px" class="put-form">
           <el-form-item prop="bottom880Image.name" label="下屏内容">
-            <div class="my-input-upload">
+            <div class="my-input-upload mt-12">
               <input 
                 ref="bottom880"
                 @change="uploadMedia($event, 'bottom880Image')"
@@ -134,7 +145,7 @@
           :label-position="'left'" 
           label-width="112px" class="put-form">
           <el-form-item prop="bottom720Image.name">
-            <div class="my-input-upload">
+            <div class="my-input-upload mt-12">
               <input 
                 ref="bottom720"
                 @change="uploadMedia($event, 'bottom720Image')"
@@ -151,15 +162,6 @@
         </el-form>
       </div>
 
-      <!-- 预览 -->
-      <PreviewBox 
-        style="position: absolute;
-          bottom: 0;
-          margin:0 0 80px 558px;"
-        :innerWidth="108" 
-        :top="{type: this.formData.top.type, url: $tools.fileToUrl(this.formData.top)}" 
-        :bottom="{type: this.formData.bottom880Image.type, url: $tools.fileToUrl(this.formData.bottom880Image)}"/>
-      <p style="margin-top: 40px; margin-left: 558px;" class="decription color-text-1 font-12"><span class="color-red">*</span>AVI格式暂不支持预览</p>
     </PutMangeCard>
 
     <!-- 广告资质 -->
@@ -176,6 +178,7 @@
           <el-select 
             :disabled="this.createType !== 'single'"
             class="width-100-p" 
+            @change="generateCreativeName"
             v-model="formData.industry" 
             placeholder="请选择">
             <el-option
@@ -341,7 +344,7 @@ export default {
           { max: 100, message: '创意名称100字以内!'}
         ],
         durationType: [
-          { required: true, message: '请选择投放时长!', trigger: 'blur' },
+          { required: true, message: '请选择投放时长!', trigger: 'change' },
         ],
         'top.name': [
           { required: true, message: '请上传创意!', trigger: 'change' },
@@ -360,8 +363,8 @@ export default {
   },
   
   beforeMount: async function() {
-    this.formData.projectId = this.$route.query.projectId;
     this.createType = this.$route.query.createType;
+    this.formData.projectId = this.$route.query.projectId || '';
     this.industryList = await this.getIndustryList();
 
     // 非单独创建创意
@@ -373,7 +376,7 @@ export default {
 
     // 单独创建创意
     if (this.createType === 'single') {
-      this.formData.screenType = this.projectConst.screenType[2];
+      this.formData.screenType = this.projectConst.screenType[2].value;
     }
     this.generateCreativeName();
     this.pageLoading = false;
@@ -381,6 +384,21 @@ export default {
 
   methods: {
     ...mapMutations(['setProjectData']),
+
+    // 切换屏幕类型
+    changeScreenType(typeCode) {
+      switch (typeCode) {
+        case '001': // 上
+          this.formData.bottom720Image = '';
+          this.formData.bottom880Image = '';
+          break;
+        case '002': // 下
+          this.formData.top = '';
+          break;
+        default:
+          break;
+      }
+    },
     
     // 获取行业列表
     getIndustryList: async function() {
@@ -719,6 +737,14 @@ export default {
   }
   .save-box{
     margin-top: 40px !important;
+  }
+  .creative-preview-box{
+    position: absolute;
+    bottom:0;
+    margin:0 0 80px 558px;
+    .decription{
+      margin-top: 40px;
+    }
   }
 }
 </style>

@@ -59,22 +59,19 @@ export default {
 
     top: {
       type: Object,
-      default: [
-        {
-          type: '', 
-          url: ''
-        }
-      ]
+      default: {
+        type: '', 
+        url: ''
+      }
+      
     },
 
     bottom: {
       type: Object,
-      default: [
-        {
-          type: '', 
-          url: ''
-        }
-      ]
+      default: {
+        type: '', 
+        url: ''
+      }
     }
   }
 }
