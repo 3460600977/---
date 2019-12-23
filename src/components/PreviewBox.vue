@@ -28,24 +28,22 @@
       :style="{width: `${innerWidth}px`, 
       height: `${innerWidth / 1080 * 880}px`, 
       margin: `${innerWidth / 10}px`}">
-        <div>
-          <video 
-            v-if="bottom.type === 'video/mp4'"
-            class="bottom"
-            controls 
-            autoplay
-            loop
-            muted
-            :src="bottom.url"></video>
+        <video 
+          v-if="bottom.type === 'video/mp4'"
+          class="bottom"
+          controls 
+          autoplay
+          loop
+          muted
+          :src="bottom.url"></video>
 
-          <img 
-            v-if="bottom.type === 'image/jpeg'"
-            class="bottom" 
-            :src="bottom.url"/>
+        <img 
+          v-if="bottom.type === 'image/jpeg'"
+          class="bottom" 
+          :src="bottom.url"/>
 
-          <div v-if="bottom.type === 'video/avi'" class="top font-12 mid-center">
-            AVI不支持预览
-          </div>
+        <div v-if="bottom.type === 'video/avi'" class="top font-12 mid-center">
+          AVI不支持预览
         </div>
     </div>
   </div>
@@ -61,22 +59,19 @@ export default {
 
     top: {
       type: Object,
-      default: [
-        {
-          type: '', 
-          url: ''
-        }
-      ]
+      default: {
+        type: '', 
+        url: ''
+      }
+      
     },
 
     bottom: {
       type: Object,
-      default: [
-        {
-          type: '', 
-          url: ''
-        }
-      ]
+      default: {
+        type: '', 
+        url: ''
+      }
     }
   }
 }
