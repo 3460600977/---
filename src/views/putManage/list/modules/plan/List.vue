@@ -1,196 +1,241 @@
 <template>
   <div class="list">
+
     <el-form :inline="true" class="list-form-inline clearfix">
-      <!-- <query-item 
-        :labelWidth="'100px'"
-        :queryItems="queryItems" 
-        :queryFilters="checkFormInline" 
-        @handleReturnData="handleReturnData" >
-        <template #btn>
-          <el-button type="primary">主要按钮</el-button>
-        </template>
-      </query-item> -->
+
       <el-form-item class="line-space" label="投放计划名称">
         <div slot="label">投放计划名称</div>
-        <el-select v-model="creativeFormInline.project_status" placeholder="不限" clearable>
+        <el-select 
+          @focus="getPlanNameList"
+          :loading="planNameList.loading" 
+          v-model="searchParam.name" 
+          placeholder="不限" 
+          filterable
+          clearable>
           <el-option
-            v-for="item in project_status_options"
+            v-for="item in planNameList.data"
             :key="item.id"
-            :label="item.status"
-            :value="item.id"
+            :label="item.name"
+            :value="item.name"
           ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item class="list-query-button">
-        <el-button type="primary" plain @click="onSubmit">查询</el-button>
+        <el-button type="primary" plain @click="search">查询</el-button>
       </el-form-item>
+
       <el-form-item class="list-new-button">
         <router-link to="/putManage/create/plan">
-          <el-button type="primary" @click="onSubmit">新建投放计划</el-button>
+          <el-button type="primary">新建投放计划</el-button>
         </router-link>
       </el-form-item>
     </el-form>
 
-
     <div class="query_result">
-      <el-table :data="tableData" class="list_table">
-        <el-table-column prop="name" label="投放计划名称"></el-table-column>
-        <el-table-column prop="status" label="投放目的">
+      <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
+        <el-table-column prop="name" label="投放计划名称">
+          <template slot-scope="scope">
+            <span class="hand">{{scope.row.name}}</span>
+          </template>
         </el-table-column>
-        <el-table-column prop="category" label="投放目的"></el-table-column>
-        <el-table-column prop="category" label="投放预算"></el-table-column>
-        <el-table-column prop="industry" label="创意行业"></el-table-column>
-        <el-table-column prop="industry" label="投放目的"></el-table-column>
+
+        <el-table-column prop="campaignType" label="投放目的">
+          <template slot-scope="scope">
+            {{$tools.getObjectItemFromArray(PutGoal, 'value', scope.row.campaignType).name}}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="totalBudget" label="投放预算">
+          <template slot-scope="scope">
+            <span :class="{'color-blue': scope.row.totalBudget}">
+              {{scope.row.totalBudget / 100 || '不限'}}
+            </span>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="cityList" label="投放城市">
+          <template slot-scope="scope">
+            <span v-for="(item, index) in scope.row.cityList" :key="index">
+              {{item.name}}<span v-if="index+1 !== scope.row.cityList.length">；</span>
+            </span>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="beginTime" label="投放时间">
+          <template slot-scope="scope">
+            {{$tools.getFormatDate('YY/mm/dd', scope.row.beginTime)}}
+            -
+            {{$tools.getFormatDate('YY/mm/dd', scope.row.endTime)}}
+          </template>
+        </el-table-column>
+
         <el-table-column prop="action" label="操作" fixed="right" width="400">
           <template slot-scope="scope">
-            <div v-if="scope.row.status === '待审核'">
-              <span class="icon-space">
-                <i class="el-icon-s-unfold icon-color"></i>详情
-              </span>
-              <span class="icon-space">
-                <i class="el-icon-error icon-color"></i>删除
-              </span>
-            </div>
-            <div v-else-if="scope.row.status === '审核通过'">
-              <span class="icon-space">
-                <i class="el-icon-s-unfold icon-color"></i>详情
-              </span>
-            </div>
-            <div v-else-if="scope.row.status === '审核拒绝'">
-              <span class="icon-space">
-                <i class="el-icon-s-unfold icon-color"></i>详情
-              </span>
-              <span class="icon-space">
-                <i class="el-icon-edit icon-color"></i>编辑
-              </span>
-              <span class="icon-space">
-                <i class="el-icon-error icon-color"></i>删除
-              </span>
-            </div>
-            <span v-else>NA</span>
+            <span class="icon-space hand" 
+              @click="detailDialog.dataIndex=scope.$index; detailDialog.show=true"
+            >
+              <i class="iconfont icon-shuxingliebiaoxiangqing2 icon-color"></i>详情
+            </span>
+            <span class="icon-space hand">
+              <router-link :to="`/reportList/plan?campaignId=${scope.row.id}`">
+                <i class="iconfont icon-baobiao icon-color"></i>报表
+              </router-link>
+            </span>
+            <span class="icon-space hand">
+              <router-link :to="`/putManage/create/plan?editPlanId=${scope.row.id}`">
+                <i class="iconfont icon-bianji icon-color"></i>编辑
+              </router-link>
+            </span>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
         background
         layout="total, sizes, prev, pager, next, jumper"
-        :total="1000"
-        :page-sizes="[10, 20, 30, 40,50]"
+        :current-page="tableData.page.currentPage"
+        :total="tableData.page.totalCount"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="currentPage"
         class="list-page"
       ></el-pagination>
     </div>
+
+    <el-dialog
+      v-if="tableData.data.length > 0"
+      class="my-dialog"
+      title="投放计划详情"
+      :visible.sync="detailDialog.show"
+      width="1000px">
+        <el-form label-position='left' label-width="150px">
+          <el-form-item label="投放计划名称">
+            <span class="color-text-1">{{tableData.data[detailDialog.dataIndex].name}}</span>
+          </el-form-item>
+          <el-form-item label="投放目的">
+            <span class="color-text-1">
+              {{$tools.getObjectItemFromArray(PutGoal, 'value', tableData.data[detailDialog.dataIndex].campaignType).name}}
+            </span>
+          </el-form-item>
+          <el-form-item label="总预算">
+            <span class="color-red" v-if="tableData.data[detailDialog.dataIndex].totalBudget">¥{{tableData.data[detailDialog.dataIndex].totalBudget / 100}}</span>
+            <span class="color-red" v-else>不限</span>
+          </el-form-item>
+          <el-form-item label="投放城市">
+            <span class="color-text-1">
+              <span v-for="(item, index) in tableData.data[detailDialog.dataIndex].cityList" :key="index">
+                {{item.name}}<span v-if="index+1 !== tableData.data[detailDialog.dataIndex].cityList.length">；</span>
+              </span>
+            </span>
+          </el-form-item>
+          <el-form-item label="投放时间">
+            <span class="color-text-1">
+              {{$tools.getFormatDate('YY-mm-dd', tableData.data[detailDialog.dataIndex].beginTime)}}
+              -
+              {{$tools.getFormatDate('YY-mm-dd', tableData.data[detailDialog.dataIndex].endTime)}}
+            </span>
+          </el-form-item>
+        </el-form>
+      <span slot="footer" class="dialog-footer center">
+        <el-button style="width: 136px;" type="primary" @click="detailDialog.show = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { tableMixin } from '../../../../../mixins/tableMixin'
-import QueryItem from "../../../../../components/QueryItem";
+import { PutGoal } from '../../../../../utils/static'
 export default {
   name: "planList",
-  // mixins: [tableMixin],
-  components: {
-    QueryItem
-  },
   data() {
     return {
-      queryItems: [
-        {
-          type: 'select',
-          key: 'select',
-          seriseLabel: 'name', // select-option显示的字段
-          seriseValue: 'id', // select-option作为value的字段
-          label: '投放计划名称:',
-          data: () => { // select-option可选项数据，必须是一个promise函数
-            return new Promise((resolve, reject) => {
-              let roleData = [
-                {name: '不限', id: ''}
-              ]
-              this.$api.PutPlan.PlanNameList().then(res => {
-                roleData.push(...res.result)
-                resolve(roleData);
-              })
-            });
-          }
-        },
-        {
-          type: 'actions',
-          actions: [
-            {label: '查询', key: 'search', type: 'primary', plain: true}
-          ]
-        }
-      ],
-      checkFormInline: {
-        name: '',
+      PutGoal,
+      planNameList: {
+        loading: true,
+        data: []
       },
-      currentPage: 50,
-      activeName: "second",
-      project_status_options: [
-        { id: 1, status: "详情" },
-        { id: 2, status: "删除" },
-        { id: 3, status: "修改" }
-      ],
-      creativeFormInline: {
-        user: "",
-        creativeName: "",
-        project_status: ""
+
+      searchParam: {
+        name: '', 
+        pageIndex: '',
+        pageSize: '',
+        record: '',
+        startIndex: '',
+        startindex: '', 
+        totalPageCount: ''
       },
-      tableData: [
-        {
-          name: "王小虎",
-          status: "投放目的",
-          category: "联动",
-          industry: "电商"
+
+      tableData: {
+        loading: true,
+        data: [],
+        page: {
+          currentPage: 0,
+          totalCount: 0
         }
-      ]
+      },
+
+      detailDialog: {
+        show: false,
+        dataIndex: 0,
+      },
+
     };
   },
 
-  
+  beforeMount() {
+    this.search()
+  },
   methods: {
-    // onSubmit() {
-    //   console.log("submit!");
-    // },
-
-    handleReturnData(val) {
-      console.log(val)
-      this.checkFormInline = val
-      // this.resetLoad()
+    // 下拉框数据
+    getPlanNameList() {
+      if (this.planNameList.data.length > 0) return;
+      this.$api.PutPlan.PlanNameList()
+        .then(res => {
+          this.planNameList = {
+            loading: false,
+            data: res.result,
+          }
+        })
+        .catch(res => {
+          this.planNameList = {
+            loading: false,
+            data: []
+          }
+        })
     },
 
-    handleClick(tab, event) {
-      if (tab.name === "plan") {
-        this.$router.push({
-          path: "/plan/list"
-        });
-      } else if (tab.name === "project") {
-        this.$router.push({
-          path: "/project/list",
-          query: {
-            planId: item.merchantNumber
+    // 搜索
+    search() {
+      this.tableData.loading = true;
+      this.$api.PutPlan.PlanList(this.searchParam)
+        .then(res => {
+          this.tableData = {
+            loading: false,
+            data: res.result,
+            page: res.page
           }
-        });
-      } else if (tab.name === "creative") {
-        this.$router.push({
-          path: "/creative/list",
-          query: {
-            planId: item.merchantNumber,
-            projectId: item.merchantNumber
+        })
+        .catch(res => {
+          this.tableData = {
+            loading: false,
+            data: [],
+            page: {
+              currentPage: 0,
+              totalCount: 0
+            }
           }
-        });
-      }
+        })
     },
+
 
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      this.searchParam.pageSize = val;
+      this.searchParam.pageIndex = 0;
+      this.search()
     },
+
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-    },
-    formatStatus(row, column) {},
-    formatAction(row, column) {}
+      this.searchParam.pageIndex = val;
+      this.search()
+    }
   }
 };
 </script>

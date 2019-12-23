@@ -19,7 +19,7 @@ service.interceptors.request.use(
     //   // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
     //   config.headers['token'] = getToken();
     // }
-    config.headers['token'] = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJrYWtheGkiLCJleHAiOjE1NzcwODkyODh9.wNNEK6JAxcBHgsKpRwDJ46-NR1z0SvChOXj1ERcJdRo';
+    config.headers['token'] = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJXQjE4MDUyNDMiLCJleHAiOjE1Nzc2OTExNDJ9.6pH_smhz5r_FdZWrX_mkBQfpT1ngYRer0HGW__Ub2Oo';
     return config
   },
   error => {

@@ -72,4 +72,17 @@ export const fileType = [
   { name: '上传图片', value: 2},
 ]
 
+// 投放目的
+export const PutGoal = [
+  { name: '品牌宣传', value: 0, icon: require('../assets/images/plan_title_1.png')},
+  { name: '新品上线', value: 1, icon: require('../assets/images/plan_title_2.png')},
+  { name: '活动宣传', value: 2, icon: require('../assets/images/plan_title_3.png')},
+  { name: '其他',     value: 3, icon: require('../assets/images/plan_title_4.png')}
+]
+
+// 投放预算分类
+export const Budget = [
+  { name: '不限', value: 0 },
+  { name: '指定预算', value: 1 }
+]
 export const PAGE_SIZE = [10, 20, 30, 40, 50]

@@ -1,13 +1,13 @@
 <template>
-  <div class="put-plan">
+  <div class="put-plan" v-loading="edit.loading">
     <!-- HI, 请选择投放目的 -->
     <PutMangeCard :title="'HI, 请选择投放目的'" class="form-box put-goal">
       <!-- 目的 -->
       <ul class="goal-box clearfix">
         <li class="item mid"
-          @click="goal.activeIndex = index; formData.goal=item.value"
-          :class="{'active': goal.activeIndex === index}"
-          v-for="(item, index) in goal.content"
+          @click="formData.goal=item.value"
+          :class="{'active': item.value === formData.goal}"
+          v-for="(item, index) in PutGoal"
           :key="index">
           <img class="icon-img" width="78px" height="66px" :src="item.icon">
           <p class="name">{{item.name}}</p>
@@ -24,11 +24,10 @@
         <el-form-item prop="budget.value">
           <label slot="label"><span class="color-red">* </span>总预算</label>
           <MyRadio
-            v-for="(item, index) in budget.content"
-            @click.native="switchBudget(index, item.value)"
-            :active="budget.activeIndex === index"
-            :key="index"
-            v-model="formData.budget.type">{{item.name}}</MyRadio>
+            v-for="(item, index) in Budget"
+            @click.native="formData.budget.type = item.value"
+            :active="formData.budget.type === item.value"
+            :key="index">{{item.name}}</MyRadio>
 
           <el-input 
             class="budget-value"
@@ -91,7 +90,7 @@
     <!-- 保存 取消 -->
     <PutMangeCard class="save-box">
       <div class="float-right">
-        <el-button :loading='formData.saving' @click="savePlan" style="width: 136px" type="primary">下一步</el-button>
+        <el-button :loading='formData.saving' @click="savePlan" style="width: 136px" type="primary">{{edit.isEdit ? '保存并关闭' : '下一步'}}</el-button>
       </div>
     </PutMangeCard>
   </div>
@@ -99,7 +98,9 @@
 
 <script>
 import PutMangeCard from '../../../../templates/PutMangeCard' 
+import { PutGoal, Budget } from '../../../../../../utils/static'
 import MyRadio from '../../../../../../components/MyRadio' 
+import { resolve } from 'q'
 export default {
   components: {
     PutMangeCard,
@@ -116,28 +117,16 @@ export default {
       if (value <= 1000) { return callback(new Error('指定预算不少于1000元!')); }
     }
     return {
-      // 投放目的
-      goal: {
-        activeIndex: 0,
-        content:[
-          { name: '品牌宣传', value: 0, icon: require('../../../../../../assets/images/plan_title_1.png')},
-          { name: '新品上线', value: 1, icon: require('../../../../../../assets/images/plan_title_2.png')},
-          { name: '活动宣传', value: 2, icon: require('../../../../../../assets/images/plan_title_3.png')},
-          { name: '其他',     value: 3, icon: require('../../../../../../assets/images/plan_title_4.png')}
-        ]
+      PutGoal,// 投放目的
+      Budget, // 预算
+      edit: {
+        loading: !!this.$route.query.editPlanId,
+        isEdit: !!this.$route.query.editPlanId,
+        planId: this.$route.query.editPlanId,
+        planDetail: ''
       },
 
-      // 预算 0 不限 1 指定
-      budget: {
-        activeIndex: 0,
-        content: [
-          { name: '不限', value: 0 },
-          { name: '指定预算', value: 1 }
-        ]
-      },
-
-      // 城市
-      city: '',
+      city: '',// 所有城市
 
       formData: {
         name: '',
@@ -167,47 +156,65 @@ export default {
         ],
       },
 
-      // 广告创意行业
-      creativeIndustry: [
-        '餐饮',
-        '餐饮2',
-        '餐饮3',
-        '餐饮4'
-      ],
-
-      // 日期控件限制
-      pickerOptions: {
-        disabledDate(date) {
-          return date.getTime() < Date.now() - 8.64e7;
-        },
-      }
     }
   },
 
   mounted() {
-    this.formData.goal = this.goal.content[this.goal.activeIndex].value;
+    if (this.edit.isEdit) {
+      this.editInit();
+    } else {
+      this.formData.goal = this.PutGoal[0].value;
+    }
   },
+
   methods: {
-    // 切换预算
-    switchBudget(index, type) {
-      this.budget.activeIndex = index;
-      this.formData.budget.type = type;
-      this.formData.budget.value = '';
-    },
-
     // 获取城市列表
-    getCityList() {
+    getCityList: async function() {
       if (this.city) return;
-      this.$api.CityList.AllList()
-        .then(res => {
-          this.city = res.result;
-        })
-        .catch(res => {
-          this.city = [];
-        })
+      return new Promise((resolve, reject) => {
+        this.$api.CityList.AllList()
+          .then(res => {
+            this.city = res.result;
+            resolve(res.result)
+          })
+          .catch(res => {
+            this.city = [];
+          })
+      })
     },
 
-    // 保存
+    // 编辑回显数据
+    editInit: async function() {
+      this.city = await this.getCityList();
+      this.edit.planDetail = await this.getPlanDetailById(this.edit.planId);
+      this.edit.loading = false;
+      this.formData.goal = this.edit.planDetail.campaignType;
+      this.formData.name = this.edit.planDetail.name;
+      this.formData.putCity = this.edit.planDetail.cityList;
+      this.formData.putDate = [
+        this.$tools.getFormatDate('YY-mm-dd', this.edit.planDetail.beginTime), 
+        this.$tools.getFormatDate('YY-mm-dd', this.edit.planDetail.endTime)
+      ];
+      this.formData.budget = {
+        type: this.edit.planDetail.budgetType,
+        value: this.edit.planDetail.totalBudget / 100
+      }
+    },
+
+    // 获取计划详情
+    getPlanDetailById: async function(planId) {
+      return new Promise((resolve, reject) => {
+        this.$api.PutPlan.PlanDetail(planId)
+          .then(res => {
+            resolve(res.result)
+          })
+          .catch(res => {
+            this.edit.loading = false;
+          })
+      }) 
+      
+    },
+    // 下一步/保存并关闭
     savePlan() {
       let isPassEnptyCheck = true,
           validateForms = ['planTop', 'planName'],
@@ -234,42 +241,78 @@ export default {
         name: this.formData.name,
         campaignType: this.formData.goal,
         budgetType: this.formData.budget.type,
-        totalBudget: this.formData.budget.value,
+        totalBudget: this.formData.budget.value * 100,
         cityList: this.formData.putCity,
         beginTime: this.formData.putDate[0],
         endTime: this.formData.putDate[1]
       };
 
-      this.$api.PutPlan.AddPlan(param)
-        .then(res => {
-          this.formData.saving = false;
-          this.$notify({
-            title: '成功',
-            message: '创建投放计划成功',
-            type: 'success'
-          });
-          this.$router.replace({
-            path: '/putManage/create/project',
-            query: {
-              planId: res.result.id,
-            }
+      // 编辑
+      if (this.edit.isEdit) {
+        param.id = this.$route.query.editPlanId;
+        this.$api.PutPlan.EditPlan(param)
+          .then(res => {
+            this.formData.saving = false;
+            this.$notify({
+              title: '成功',
+              message: '修改投放计划成功',
+              type: 'success'
+            });
+            this.$router.push({
+              path: '/putManage',
+            })
           })
-        })
-        .catch(res => {
-          this.formData.saving = false;
-        })
-
-      
+          .catch(res => {
+            this.formData.saving = false;
+          })
+      } 
+      // 新建
+      else {
+        this.$api.PutPlan.AddPlan(param)
+          .then(res => {
+            this.formData.saving = false;
+            this.$notify({
+              title: '成功',
+              message: '创建投放计划成功',
+              type: 'success'
+            });
+            this.$router.replace({
+              path: '/putManage/create/project',
+              query: {
+                planId: res.result.id,
+              }
+            })
+          })
+          .catch(res => {
+            this.formData.saving = false;
+          })
+      }
     },
 
 
   },
+
   watch: {
     // 生成名字
     'formData.goal': function() {
+      if (this.edit.isEdit) return;
       let date = new Date();
-      this.formData.name = `${this.goal.content[this.goal.activeIndex].name}_${date.getMonth()+1}_${date.getDate()}`
+      this.formData.name = `${this.$tools.getObjectItemFromArray(PutGoal, 'value', this.formData.goal).name}_${date.getMonth()+1}_${date.getDate()}`
     },
+  },
+
+  computed: {
+    pickerOptions() {
+      let _this = this;
+      return {
+        disabledDate(date) {
+          if (_this.edit.isEdit) {
+            return false;
+          }
+          return date.getTime() < Date.now() - 8.64e7;
+        }
+      }
+    }
   },
 }
 </script>

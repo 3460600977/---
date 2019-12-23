@@ -736,7 +736,6 @@ export default {
         if (!val.projectCity) {
           this.buildingDirection.cityInsight.selectedItemId = '';
           this.setBuildsList([])
-          // this.buildingDirection.builds.data = [];
         }
       },
       deep: true,

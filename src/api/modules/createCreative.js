@@ -30,6 +30,15 @@ export const CreateCreative = {
     });
   },
 
+  // 已有广告创意
+  CreativeList: (data) => {
+    return request({
+      url: "/dpapi/creative/list",
+      method: "post",
+      data
+    });
+  },
+
   // 方案绑定创意 (选择以有创意)
   BindCreativeProject: (data) => {
     return request({
