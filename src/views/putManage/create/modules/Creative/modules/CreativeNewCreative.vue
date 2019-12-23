@@ -105,7 +105,7 @@
           <PreviewBox 
             :innerWidth="108" 
             :top="{type: this.formData.top.type, url: $tools.fileToUrl(this.formData.top)}" 
-            :bottom="{type: this.formData.bottom880Image.type, height: '720', url: $tools.fileToUrl(this.formData.bottom880Image)}"/>
+            :bottom="{type: this.formData.bottom880Image.type, url: $tools.fileToUrl(this.formData.bottom880Image)}"/>
           <p class="decription color-text-1 font-12"><span class="color-red">*</span>AVI格式暂不支持预览</p>
         </div>
 
