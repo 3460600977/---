@@ -26,7 +26,7 @@
     <!-- 下屏 -->
     <div class="bottom-box" 
       :style="{width: `${innerWidth}px`, 
-      height: `${innerWidth / 1080 * 880}px`, 
+      height: bottom.height === '720' ? `${innerWidth / 1280 * 720}px` : `${innerWidth / 1080 * 880}px`, 
       margin: `${innerWidth / 10}px`}">
         <video 
           v-if="bottom.type === 'video/mp4'"
@@ -69,7 +69,8 @@ export default {
     bottom: {
       type: Object,
       default: {
-        type: '', 
+        type: '',
+        height: '720', // 720 880
         url: ''
       }
     }

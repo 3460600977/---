@@ -102,7 +102,17 @@ export default {
           seriseLabel: 'id', // select-option显示的字段
           seriseValue: 'name', // select-option作为value的字段
           label: '投放计划名称:',
-          data: ''
+          data: () => { // select-option可选项数据，必须是一个promise函数
+            return new Promise((resolve, reject) => {
+              let roleData = [
+                {name: '不限', id: ''}
+              ]
+              this.$tools.PutPlan.PlanList().then(res => {
+                roleData.push(res.result)
+                resolve(roleData);
+              })
+            });
+          }
         },
         {
           type: 'actions',
@@ -140,7 +150,6 @@ export default {
   beforeMount() {
     this.queryItems.data = () => { // select-option可选项数据，必须是一个promise函数
       return new Promise((resolve, reject) => {
-        debugger
         let roleData = [
           {name: '不限', id: ''}
         ]
