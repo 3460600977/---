@@ -1,6 +1,6 @@
 import {getToken, removeUserInfo} from '@/utils/auth';
 
-export const userToken = {
+export const token = {
   state: {
     userToken: getToken(),
   },
@@ -8,6 +8,11 @@ export const userToken = {
   mutations: {
     setToken: (state, token) => {
       state.userToken = token
+    },
+  },
+  getters: {
+    userToken: state => {
+      return getToken();
     },
   },
   actions: {
