@@ -2,7 +2,7 @@
   <el-dialog
     :title="mp4Data.title"
     :visible.sync="showMp4"
-    @cancel="showMp4Fun"
+    @close="showMp4Fun"
     class="point-list"
     width="380px"
   >

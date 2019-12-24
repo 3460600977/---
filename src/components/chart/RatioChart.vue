@@ -1,3 +1,4 @@
+<!--男女比例图-->
 <template>
     <div v-if="ratioArr.length" class="ratio">
       <slot name="text" :ratioArr="ratioArr">{{ratioArr}}</slot>
@@ -5,10 +6,6 @@
         <div class="item" v-for="(item, index) in ratioArr" :style="item.style" :key="index"></div>
       </div>
       <slot name="bottom" :ratioArr="ratioArr">{{ratioArr}}</slot>
-<!--      <div class="item" v-for="(item, index) in ratioArr" :style="{'width': item.width}" :key="index">-->
-<!--        <p class="text font-number" :style="item.textStyle">{{item.width}}</p>-->
-<!--        <div class="box" :style="item.style"></div>-->
-<!--      </div>-->
     </div>
 </template>
 
