@@ -184,13 +184,11 @@
       handleToLogout() {
         this.$api.Login.LoginOut()
           .then(res => {
-            this.$store.dispatch('FedLogOut').then(() => {
-              this.$router.replace({
-                path: '/login',
-                query: {}
-              })
-            })
             this.loading = false;
+            store.dispatch('FedLogOut').then(() => {
+
+            })
+
           })
           .catch(res => {
             this.loading = false;
