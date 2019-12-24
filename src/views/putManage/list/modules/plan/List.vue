@@ -1,6 +1,15 @@
 <template>
   <div class="list">
-    <el-form :inline="true" :model="creativeFormInline" class="list-form-inline clearfix">
+    <el-form :inline="true" class="list-form-inline clearfix">
+      <!-- <query-item 
+        :labelWidth="'100px'"
+        :queryItems="queryItems" 
+        :queryFilters="checkFormInline" 
+        @handleReturnData="handleReturnData" >
+        <template #btn>
+          <el-button type="primary">主要按钮</el-button>
+        </template>
+      </query-item> -->
       <el-form-item class="line-space" label="投放计划名称">
         <div slot="label">投放计划名称</div>
         <el-select v-model="creativeFormInline.project_status" placeholder="不限" clearable>
@@ -21,6 +30,7 @@
         </router-link>
       </el-form-item>
     </el-form>
+
 
     <div class="query_result">
       <el-table :data="tableData" class="list_table">
@@ -76,10 +86,45 @@
 </template>
 
 <script>
+import { tableMixin } from '../../../../../mixins/tableMixin'
+import QueryItem from "../../../../../components/QueryItem";
 export default {
   name: "planList",
+  // mixins: [tableMixin],
+  components: {
+    QueryItem
+  },
   data() {
     return {
+      queryItems: [
+        {
+          type: 'select',
+          key: 'select',
+          seriseLabel: 'name', // select-option显示的字段
+          seriseValue: 'id', // select-option作为value的字段
+          label: '投放计划名称:',
+          data: () => { // select-option可选项数据，必须是一个promise函数
+            return new Promise((resolve, reject) => {
+              let roleData = [
+                {name: '不限', id: ''}
+              ]
+              this.$api.PutPlan.PlanNameList().then(res => {
+                roleData.push(...res.result)
+                resolve(roleData);
+              })
+            });
+          }
+        },
+        {
+          type: 'actions',
+          actions: [
+            {label: '查询', key: 'search', type: 'primary', plain: true}
+          ]
+        }
+      ],
+      checkFormInline: {
+        name: '',
+      },
       currentPage: 50,
       activeName: "second",
       project_status_options: [
@@ -102,9 +147,17 @@ export default {
       ]
     };
   },
+
+  
   methods: {
-    onSubmit() {
-      console.log("submit!");
+    // onSubmit() {
+    //   console.log("submit!");
+    // },
+
+    handleReturnData(val) {
+      console.log(val)
+      this.checkFormInline = val
+      // this.resetLoad()
     },
 
     handleClick(tab, event) {

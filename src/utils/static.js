@@ -59,8 +59,11 @@ export const projectConst = {
 
 // 第三方监测
 export const MonitorData = {
-  mode: ['SDK', 'C2S', 'S2S'],
-  thirdPartyMonitor: ['酷云', 'admaster', '国双', '数字100', '秒针']
+  mode: ['SDK'],
+  thirdPartyMonitor: [
+    { name: '酷云', value: 'ky' }, 
+    { name: '秒针', value: 'mz' }, 
+  ]
 }
 
 // 上屏文件类型，1：视频,2:图片
@@ -69,4 +72,4 @@ export const fileType = [
   { name: '上传图片', value: 2},
 ]
 
-export const PAGE_SIZE = [10, 20, 30, 40,50]
+export const PAGE_SIZE = [10, 20, 30, 40, 50]

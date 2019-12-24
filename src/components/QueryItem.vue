@@ -2,7 +2,7 @@
   <div>
     <el-form :model="filters" :inline="true" :label-width="labelWidth">
       <template v-for="(val, index) in queryItems">
-        <el-form-item v-if="val.type === 'input'" :label="val.label">
+        <el-form-item v-if="val.type === 'input'" :key="index" :label="val.label">
           <el-input
             v-model.trim="filters[val.key]"
             clearable
@@ -10,7 +10,7 @@
             @keyup.enter.native="handleTransfer"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="val.type === 'select'" :label="val.label">
+        <el-form-item v-if="val.type === 'select'" :key="index" :label="val.label">
           <el-select
             ref="select"
             v-model="filters[val.key]"
@@ -26,7 +26,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="val.type === 'date'" :label="val.label">
+        <el-form-item v-if="val.type === 'date'" :key="index" :label="val.label">
           <el-date-picker
             v-model="filters[val.key]"
             :picker-options="val.options?val.options:reportTimePicker"
@@ -41,9 +41,9 @@
           >
           </el-date-picker>
         </el-form-item>
-        <el-form-item v-if="val.type === 'actions'" class="actions">
+        <el-form-item v-if="val.type === 'actions'" :key="index" class="actions">
           <template v-for="(v, i) in val.actions">
-            <el-button v-if="v.type !== 'slot'" :type="v.type" size="small" :plain="v.plain" @click="handleSearch(v)"> {{v.label}}</el-button>
+            <el-button v-if="v.type !== 'slot'" :type="v.type" :plain="v.plain" @click="handleSearch(v)"> {{v.label}}</el-button>
             <slot v-else :name="v.name"></slot>
           </template>
         </el-form-item>

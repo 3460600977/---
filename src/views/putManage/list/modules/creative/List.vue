@@ -8,8 +8,8 @@
             v-for="item in project_status_options"
             :key="item.id"
             :label="item.status"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item class="line-space" label="投放方案名称">
@@ -18,8 +18,8 @@
             v-for="item in project_status_options"
             :key="item.id"
             :label="item.status"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item class="line-space" label="广告创意名称">
@@ -31,17 +31,15 @@
             v-for="item in project_status_options"
             :key="item.id"
             :label="item.status"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item class="list-query-button">
-        <el-button type="primary" plain @click="onSubmit">查询</el-button>
+        <el-button type="primary" plain>查询</el-button>
       </el-form-item>
       <el-form-item class="list-new-button">
-        <router-link to="/putManage/create/creative">
-          <el-button type="primary" @click="onSubmit">新建广告创意</el-button>
-        </router-link>
+        <el-button @click="createSingleCreative" type="primary">新建广告创意</el-button>
       </el-form-item>
     </el-form>
     <div class="query_result">
@@ -49,18 +47,10 @@
         <el-table-column prop="name" label="广告创意名称"></el-table-column>
         <el-table-column prop="status" label="创意状态">
           <template slot-scope="scope">
-            <span v-if="scope.row.status === '待审核'" class="pending status">
-              待审核
-            </span>
-            <span v-else-if="scope.row.status === '审核通过'" class="pass status">
-              审核通过
-            </span>
-            <span v-else-if="scope.row.status === '审核拒绝'" class="deny status">
-              审核拒绝
-            </span>
-            <span v-else>
-              NA
-            </span>
+            <span v-if="scope.row.status === '待审核'" class="pending status">待审核</span>
+            <span v-else-if="scope.row.status === '审核通过'" class="pass status">审核通过</span>
+            <span v-else-if="scope.row.status === '审核拒绝'" class="deny status">审核拒绝</span>
+            <span v-else>NA</span>
           </template>
         </el-table-column>
         <el-table-column prop="category" label="屏幕类型"></el-table-column>
@@ -82,165 +72,179 @@
             </div>
             <div v-else-if="scope.row.status === '审核拒绝'">
               <span class="icon-space">
-                <i class="el-icon-s-unfold  icon-color"></i>详情
+                <i class="el-icon-s-unfold icon-color"></i>详情
               </span>
               <span class="icon-space">
-                <i class="el-icon-edit  icon-color"></i>编辑
+                <i class="el-icon-edit icon-color"></i>编辑
               </span>
               <span class="icon-space">
                 <i class="el-icon-error icon-color"></i>删除
               </span>
             </div>
-            <span v-else>
-              NA
-            </span>
+            <span v-else>NA</span>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
         background
         layout="total, sizes, prev, pager, next, jumper"
-        :total="1000" :page-sizes="[10, 20, 30, 40,50]"
+        :total="1000"
+        :page-sizes="[10, 20, 30, 40,50]"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        class="list-page">
-      </el-pagination>
+        class="list-page"
+      ></el-pagination>
     </div>
   </div>
 </template>
 
 <script>
-    export default {
-        name: "planList",
-        data() {
-            return {
-                currentPage: 50,
-                activeName: 'second',
-                project_status_options: [
-                    {id: 1, status: '详情'},
-                    {id: 2, status: '删除'},
-                    {id: 3, status: '修改'}
-                ],
-                creativeFormInline: {
-                    user: '',
-                    creativeName: '',
-                    project_status: '',
-                },
-                tableData: [
-                    {
-                        name: '王小虎',
-                        status: '待审核',
-                        category: '联动',
-                        industry: '电商',
-                    }, {
-                        name: '王小虎',
-                        status: '审核通过',
-                        category: '联动',
-                        industry: '电商',
-                    }, {
-                        name: '王小虎',
-                        status: '审核拒绝',
-                        category: '联动',
-                        industry: '电商',
-                    }, {
-                        name: '王小虎',
-                        status: '审核通过',
-                        category: '联动',
-                        industry: '电商',
-                    }, {
-                        name: '王小虎',
-                        status: '审核通过',
-                        category: '联动',
-                        industry: '电商',
-                    }, {
-                        name: '王小虎',
-                        status: '审核通过',
-                        category: '联动',
-                        industry: '电商',
-                    }, {
-                        name: '王小虎',
-                        status: '审核通过',
-                        category: '联动',
-                        industry: '电商',
-                    }, {
-                        name: '王小虎',
-                        status: '待审核',
-                        category: '联动',
-                        industry: '电商',
-                    }, {
-                        name: '王小虎',
-                        status: '待审核',
-                        category: '联动',
-                        industry: '电商',
-                    }, {
-                        name: '王小虎',
-                        status: '待审核',
-                        category: '联动',
-                        industry: '电商',
-                    }, {
-                        name: '王小虎',
-                        status: '待审核',
-                        category: '联动',
-                        industry: '电商',
-                    }, {
-                        name: '王小虎',
-                        status: '待审核',
-                        category: '联动',
-                        industry: '电商',
-                    }, {
-                        name: '王小虎',
-                        status: '待审核',
-                        category: '联动',
-                        industry: '电商',
-                    }]
-            }
+export default {
+  name: "planList",
+  data() {
+    return {
+      currentPage: 50,
+      activeName: "second",
+      project_status_options: [
+        { id: 1, status: "详情" },
+        { id: 2, status: "删除" },
+        { id: 3, status: "修改" }
+      ],
+      creativeFormInline: {
+        user: "",
+        creativeName: "",
+        project_status: ""
+      },
+      tableData: [
+        {
+          name: "王小虎",
+          status: "待审核",
+          category: "联动",
+          industry: "电商"
         },
-        methods: {
-            onSubmit() {
-                console.log('submit!');
-            },
-
-            handleClick(tab, event) {
-                if (tab.name === 'plan') {
-                    this.$router.push({
-                        path: '/plan/list',
-                    })
-                } else if (tab.name === 'project') {
-                    this.$router.push({
-                        path: '/project/list',
-                        query: {
-                            planId: item.merchantNumber,
-                        }
-                    })
-                } else if (tab.name === 'creative') {
-                    this.$router.push({
-                        path: '/creative/list',
-                        query: {
-                            planId: item.merchantNumber,
-                            projectId: item.merchantNumber,
-                        }
-                    })
-                }
-            },
-
-            handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
-            },
-            handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
-            },
-            formatStatus(row, column) {
-
-            },
-            formatAction(row, column) {
-
-            }
+        {
+          name: "王小虎",
+          status: "审核通过",
+          category: "联动",
+          industry: "电商"
+        },
+        {
+          name: "王小虎",
+          status: "审核拒绝",
+          category: "联动",
+          industry: "电商"
+        },
+        {
+          name: "王小虎",
+          status: "审核通过",
+          category: "联动",
+          industry: "电商"
+        },
+        {
+          name: "王小虎",
+          status: "审核通过",
+          category: "联动",
+          industry: "电商"
+        },
+        {
+          name: "王小虎",
+          status: "审核通过",
+          category: "联动",
+          industry: "电商"
+        },
+        {
+          name: "王小虎",
+          status: "审核通过",
+          category: "联动",
+          industry: "电商"
+        },
+        {
+          name: "王小虎",
+          status: "待审核",
+          category: "联动",
+          industry: "电商"
+        },
+        {
+          name: "王小虎",
+          status: "待审核",
+          category: "联动",
+          industry: "电商"
+        },
+        {
+          name: "王小虎",
+          status: "待审核",
+          category: "联动",
+          industry: "电商"
+        },
+        {
+          name: "王小虎",
+          status: "待审核",
+          category: "联动",
+          industry: "电商"
+        },
+        {
+          name: "王小虎",
+          status: "待审核",
+          category: "联动",
+          industry: "电商"
+        },
+        {
+          name: "王小虎",
+          status: "待审核",
+          category: "联动",
+          industry: "电商"
         }
-    }
+      ]
+    };
+  },
+  methods: {
+    createSingleCreative() {
+      this.$router.push({
+        path: '/putManage/create/creative',
+        query: {
+          createType: 'single'
+        }
+      })
+      console.log("submit!");
+    },
+
+    handleClick(tab, event) {
+      if (tab.name === "plan") {
+        this.$router.push({
+          path: "/plan/list"
+        });
+      } else if (tab.name === "project") {
+        this.$router.push({
+          path: "/project/list",
+          query: {
+            planId: item.merchantNumber
+          }
+        });
+      } else if (tab.name === "creative") {
+        this.$router.push({
+          path: "/creative/list",
+          query: {
+            planId: item.merchantNumber,
+            projectId: item.merchantNumber
+          }
+        });
+      }
+    },
+
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+    },
+    formatStatus(row, column) {},
+    formatAction(row, column) {}
+  }
+};
 </script>
 
 <style lang='scss'>
-@import '../listCommonStyle.scss';
+@import "../listCommonStyle.scss";
 </style>
 
