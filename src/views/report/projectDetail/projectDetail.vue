@@ -99,7 +99,6 @@
         },
         data() {
             return {
-              cityName: null,
                 projectId: null,
                 premiseId: null,
                 reportSelectCard: {
@@ -223,7 +222,6 @@
                                 }
                             }
                         })
-                      this.cityName = res.result.cityName
                         this.putProject.data.forEach(item => {
                             let property = item.field;
                             if (premiseList.hasOwnProperty(property)) {
