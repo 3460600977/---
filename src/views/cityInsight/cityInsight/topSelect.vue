@@ -176,7 +176,6 @@
         }
       },
       returnResult(val, type) {
-        console.log(val)
         this.$emit('returnBuildingTags', val)
         this.hide(type)
       }
@@ -188,6 +187,29 @@
   .select-style {
     position: absolute;
     top: 60px;
+  }
+  .ul-p {
+    line-height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    .icon1 {
+      position: absolute;
+      right: 10px;
+      transition: 0.5s;
+      font-size: 12px;
+      color: $color-split-line2;
+    }
+  }
+  .selectType {
+    padding: 0 20px;
+  }
+  .margin2 {
+    margin-right: 8px;
+  }
+  .font-22 {
+    font-size: 22px;
+    color: #8D8D8E;
   }
   .building-select {
     right: 147px;
@@ -202,28 +224,11 @@
   background:rgba(255,255,255,1);
   box-shadow:0px 3px 5px 0px rgba(0, 0, 0, 0.1);
 }
-.font-22 {
-  font-size: 22px;
-  color: #8D8D8E;
-}
 .icon-up {
   transform: rotate(-180deg);
 }
 .icon-down {
   transform: rotate(0deg);
-}
-.ul-p {
-  line-height: 20px;
-  display: inline-block;
-  vertical-align: middle;
-  position: relative;
-  .icon1 {
-    position: absolute;
-    right: 10px;
-    transition: 0.5s;
-    font-size: 12px;
-    color: $color-split-line2;
-  }
 }
 .margin2 {
   margin-right: 8px;
@@ -254,9 +259,6 @@
     line-height: 50px;
     .right1 {
       padding-right: 40px;
-    }
-    .selectType {
-      padding: 0 20px;
     }
   }
 </style>

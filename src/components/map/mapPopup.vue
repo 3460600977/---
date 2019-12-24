@@ -56,7 +56,7 @@
       }
     },
     created() {
-      this.value = this.item.type === 'polyline'? this.item.radius /2 : this.item.radius
+      this.value = this.item.radius
       this.renderDatas(this.item.selectedBuildings)
     },
     watch: {

@@ -1,12 +1,19 @@
 <template>
     <div class="container cityInsight">
-      <div class="top-select">
-        <top-select
-          :buildingFilter="buildingFilter"
-          @returnBuildingTags="returnBuildingTags"
+      <div class="draw-type">
+        <draw-type
+          ref="drawType"
           @drawTypeSelect="drawTypeSelect"
-        ></top-select>
+          @querySearchAsync="querySearchAsync"
+        ></draw-type>
       </div>
+<!--      <div class="top-select">-->
+<!--        <top-select-->
+<!--          :buildingFilter="buildingFilter"-->
+<!--          @returnBuildingTags="returnBuildingTags"-->
+<!--          @drawTypeSelect="drawTypeSelect"-->
+<!--        ></top-select>-->
+<!--      </div>-->
       <div class="mapPopup">
         <map-popup
           v-if="showPathCopy"
@@ -26,9 +33,6 @@
           :currentSelectType="currentSelectType"
         ></mouseMove-text>
       </div>
-<!--      <div class="left-select">-->
-<!--        <left-select @drawTypeSelect="drawTypeSelect"></left-select>-->
-<!--      </div>-->
       <div class="right-info">
         <right-info
           :budget="budget"
@@ -48,6 +52,7 @@
           @activePathChange="activePathChange"
           @currentMouseLocation="currentMouseLocation"
           @drawCancle="drawCancle"
+          @returnSearchResult="returnSearchResult"
           @returnSelectedBuildings="returnSelectedBuildings"
         ></db-map>
       </div>
@@ -56,12 +61,12 @@
 
 <script>
   import dbMap from '../../../components/map/map.vue'
-  import tools from "../../../components/map/tools";
   import mapPopup from "../../../components/map/mapPopup";
   import rightInfo from "./rightInfo";
-  import leftSelect from "./leftSelect";
+  import drawType from "../../../components/map/drawType";
+  // import leftSelect from "./leftSelect";
   import mouseMoveText from "./mouseMoveText";
-  import topSelect from "./topSelect";
+  // import topSelect from "./topSelect";
 
   const NAV_HEIGHT = 76,
     ANOTHER_HEIGHT = 10,
@@ -71,17 +76,16 @@
     name: "index",
     components: {
       dbMap,
-      tools,
       mapPopup,
-      leftSelect,
+      drawType,
+      // leftSelect,
       rightInfo,
-      topSelect,
+      // topSelect,
       mouseMoveText
     },
     data() {
       return {
         showPathCopy: null, // 当前显示的path
-        map: null,
         selectedBuildings: [], // 当前选中的楼盘
         pathArr: {}, // 当前存在的画线path
         buildingFilter: {
@@ -126,17 +130,23 @@
       }
     },
     methods: {
+      querySearchAsync(str) {
+        this.$refs.dbmap.searchByWord(str)
+      },
+      returnSearchResult(result) {
+        this.$refs.drawType.setSearchList(result)
+      },
       bindEvent() {
         document.documentElement.addEventListener('keydown', (e) => {
           if (e.keyCode === 27) {
             if (this.currentSelectType && this.currentSelectType.type === 'circle') {
               this.currentSelectType = null
+              this.$refs.drawType.cancleSelect()
             }
           }
         })
       },
       returnBuildingTags(val) {
-        console.log(val)
         this.buildingFilter = this.$tools.deepCopy(val)
       },
       deletePath(item) {
@@ -167,6 +177,8 @@
       },
       /*
       * 选择画线类型后回调函数
+      * type为select时 location为手动定点选择的item
+      * type不为select时 location为鼠标最后的点击位置
       * */
       drawTypeSelect(location, type) {
         this.location.x = location.x
@@ -174,6 +186,10 @@
         this.currentSelectType = {type: type}
         if (type === 'circle') {
           this.$refs.dbmap.closeDrawingManager()
+        } else if (type === 'select') {
+          this.$refs.dbmap.closeDrawingManager()
+          this.$refs.dbmap.drawCircle(location.point)
+          this.currentSelectType = null
         } else {
           this.$refs.dbmap.triggerDraw(type)
         }
@@ -189,6 +205,7 @@
       * */
       drawCancle() {
         this.currentSelectType = null
+        this.$refs.drawType.cancleSelect()
       },
       /*
       * 投放预算变化
@@ -208,6 +225,12 @@
     z-index: 2;
     top: 10px;
     left: 20px;
+  }
+  .draw-type {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
   }
   .top-select {
     position: absolute;
