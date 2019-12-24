@@ -22,86 +22,92 @@
 </template>
 
 <script>
-    export default {
-        name: "editPassIndex",
-        data() {
-            const validatePass = (rule, value, callback) => {
-                let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[1-9])(?=.*[\W])(?=.*[\S])^[0-9A-Za-z\S]{8,18}$/;
-                if (value === '') {
-                    this.hideMess = true
-                    callback(new Error('请输入新密码'));
-                } else if (!reg.test(value)) {
-                    this.hideMess = true
-                    callback(new Error('8-18位，必须包含大写字母、小写字母、数字和符号四种形式'));
-                } else {
-                    this.hideMess = false
-                    callback();
-                }
-            }
-            const validateConfirmPass = (rule, value, callback) => {
-                if (value === '') {
-                    callback(new Error('请再次输入新密码'));
-                } else if (value !== this.editForm.newPwd) {
-                    callback(new Error('两次输入密码不一致!'));
-                } else {
-                    callback();
-                }
-            }
-            return {
+  import {Notification} from 'element-ui'
 
-                loading: false,
-                hideMess: false,
-                editForm: {
-                    oldPwd: '',
-                    newPwd: '',
-                    confirmNewPwd: '',
-                },
-                rules: {
-                    oldPwd: [
-                        {required: true, message: '请输入原密码', trigger: ['blur', 'change']}
-                    ],
-                    newPwd: [
-                        {trigger: ['blur', 'change'], validator: validatePass},
-                    ],
-                    confirmNewPwd: [
-                        {
-                            trigger: ['blur', 'change'],
-                            validator: validateConfirmPass
-                        }
-                    ],
-                }
-            }
-        },
-        methods: {
-            resetForm(formName) {
-                this.$refs[formName].resetFields();
-
-            },
-            submitConfirm(formName) {
-                this.$refs[formName].validate((valid) => {
-                    if (!valid) {
-                        console.log('error submit!!');
-                        return false;
-                    } else {
-                        let param = {
-                            newPwd: this.editForm.newPwd,
-                            oldPwd: this.editForm.oldPwd,
-                            confirmNewPwd: this.editForm.confirmNewPwd,
-                        }
-                        //请求登录接口
-                        this.loading = true;
-                        this.$api.Login.ChangePass(param)
-                            .then(res => {
-
-                            })
-                            .catch(res => {
-                                this.loading = false;
-                            })
-                    }
-                });
-            }
+  export default {
+    name: "editPassIndex",
+    data() {
+      const validatePass = (rule, value, callback) => {
+        let reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[1-9])(?=.*[\W])(?=.*[\S])^[0-9A-Za-z\S]{8,18}$/;
+        if (value === '') {
+          this.hideMess = true
+          callback(new Error('请输入新密码'));
+        } else if (!reg.test(value)) {
+          this.hideMess = true
+          callback(new Error('8-18位，必须包含大写字母、小写字母、数字和符号四种形式'));
+        } else {
+          this.hideMess = false
+          callback();
         }
+      }
+      const validateConfirmPass = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请再次输入新密码'));
+        } else if (value !== this.editForm.newPwd) {
+          callback(new Error('两次输入密码不一致!'));
+        } else {
+          callback();
+        }
+      }
+      return {
+
+        loading: false,
+        hideMess: false,
+        editForm: {
+          oldPwd: '',
+          newPwd: '',
+          confirmNewPwd: '',
+        },
+        rules: {
+          oldPwd: [
+            {required: true, message: '请输入原密码', trigger: ['blur', 'change']}
+          ],
+          newPwd: [
+            {trigger: ['blur', 'change'], validator: validatePass},
+          ],
+          confirmNewPwd: [
+            {
+              trigger: ['blur', 'change'],
+              validator: validateConfirmPass
+            }
+          ],
+        }
+      }
+    },
+    methods: {
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+
+      },
+      submitConfirm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (!valid) {
+            console.log('error submit!!');
+            return false;
+          } else {
+            let param = {
+              newPwd: this.editForm.newPwd,
+              oldPwd: this.editForm.oldPwd,
+              confirmNewPwd: this.editForm.confirmNewPwd,
+            }
+            //请求登录接口
+            this.loading = true;
+            this.$api.Login.ChangePass(param)
+              .then(res => {
+                Notification({
+                  title: '成功修改密码',
+                  message: res.msg || '网络异常, 请稍后再试',
+                  type: 'success'
+                });
+              })
+              .catch(res => {
+                this.loading = false;
+              })
+          }
+        });
+      }
     }
+  }
 </script>
 
 <style lang="scss">

@@ -125,356 +125,394 @@
 </template>
 
 <script>
-    export default {
-        name: "auditList",
-        data() {
-            return {
-                checkReason: [],
-                activeName: 'aptitude',
-                dialogDenyVisible: false,
-                dialogShowContent: false,
-                form: {
-                    checkReason: [],
-                },
-                aptitudeData: [
-                    {value: '新潮传媒集团', label: '企业名称'},
-                    {value: '餐饮', label: '企业行业'},
-                    {value: '餐饮', label: '创意行业'},
-                    {value: '联动', label: '屏幕类型'},
-                    {
-                        value: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2966610753,437054214&fm=26&gp=0.jpg',
-                        label: '创意资质',
-                        srcList: [
-                            'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2966610753,437054214&fm=26&gp=0.jpg',
-                        ]
-                    }
-                ],
-                denyDialogReason: [
-                    {
-                        title: '1、效果承诺',
-                        reasons: [
-                            {
-                                index: 0,
-                                value: '不得含有对未来效果、收益或者与其相关的情况作出保证性承诺，明示或者暗示保本、无风险或者保收益等内容'
-                            },
-                            {
-                                index: 1,
-                                value: '不得涉及前后效果对比'
-                            },
-                            {
-                                index: 2,
-                                value: '不得对升学，提高成绩，拿证或培训效果作出保证性承诺'
-                            },
-                            {
-                                index: 3,
-                                value: '不得以受益人，专家学者等机构的名义推广'
-                            },
-                            {
-                                index: 4,
-                                value: '涉及虚假误导宣传'
-                            },
-                        ]
-                    },
-                    {
-                        title: '2、政治面貌敏感，极端词语类',
-                        reasons: [
-                            {
-                                index: 0,
-                                value: '不得使用或者变相使用中华人民共和国的国旗、国歌、国徽、军旗、军歌、军徽'
-                            },
-                            {
-                                index: 1,
-                                value: '不得使用”国家级””最高级””最佳”等极端用语'
-                            },
-                            {
-                                index: 2,
-                                value: '不得含有污秽、色情、赌博、迷信、恐怖、暴力的内容'
-                            },
-                            {
-                                index: 3,
-                                value: '含有名族、种族、宗教、性别歧视的内容'
-                            },
-                            {
-                                index: 4,
-                                value: '不得涉及时事热点政治敏感内容'
-                            },
-                            {
-                                index: 5,
-                                value: '不得使用国家机关或国家机关工作人员的形象名义作为推广'
-                            },
-                        ]
-                    },
-
-                    {
-                        title: '3、风险提示类',
-                        reasons: [
-                            {
-                                index: 0,
-                                value: '请在画面添加备注预售号'
-                            },
-                            {
-                                index: 1,
-                                value: '涉及招商加盟，请备注风险提示语：“投资有风险，加盟需谨慎”'
-                            },
-                            {
-                                index: 2,
-                                value: '画面请备注风险提示语“投资有风险”'
-                            },
-                        ]
-                    },
-                    {
-                        title: '4、素材质量类',
-                        reasons: [
-                            {
-                                index: 0,
-                                value: '素材画面整体质量较低'
-                            },
-                            {
-                                index: 1,
-                                value: '画面内容容易引起不适，易引起投诉'
-                            },
-                            {
-                                index: 2,
-                                value: '请合理规范使用标点符号'
-                            },
-                        ]
-                    },
-                    {
-                        title: '5、医疗行业类',
-                        reasons: [
-                            {
-                                index: 0,
-                                value: '不得涉及真人医患形象，真人代言，医疗器械，手术直播过程'
-                            },
-                            {
-                                index: 1,
-                                value: '非医疗行业不得涉及医疗相关描述'
-                            },
-                            {
-                                index: 2,
-                                value: '请在画面添加备注医广号'
-                            },
-                        ]
-                    },
-                    {
-                        title: '6、暂不接受投放类',
-                        reasons: [
-                            {
-                                index: 0,
-                                value: '暂不接受该行业投放，请知悉'
-                            },
-                        ]
-                    },
-                ],
-                formLabelWidth: '120px',
-                currentPage: 50,
-                checkFormInline: {
-                    reportPlanValue: '',
-                    checkStatus: [{value: 0, label: '待审核'}, {value: 1, label: '审核通过'}, {value: 2, label: '审核拒绝'}],
-                    checkSelectStatus: '',
-                },
-                tableData:
-                    {
-                        column: [
-                            {label: '创意组ID', prop: 'creativeID'},
-                            {label: '创意内容', prop: 'creativeContent'},
-                            {label: '创意名称', prop: 'creativeName'},
-                            {label: '企业名称', prop: 'companyName'},
-                            {label: '企业行业', prop: 'companyIndustry'},
-                            {label: '创意行业', prop: 'creativeIndustry'},
-                            {label: '屏幕类型', prop: 'screenCategory'},
-                            {label: '提交时间', prop: 'submitTime'},
-                            {label: '审核时间', prop: 'checkTime'},
-                            {label: '创意状态', prop: 'creativeStatus'},
-                            {label: '操作', prop: 'action'},
-                        ],
-                        data: [
-                            {
-                                creativeID: 11002082,
-                                creativeContent: '查看',
-                                creativeName: '餐饮_上屏_11_26',
-                                companyName: '新潮传媒集团有限公司',
-                                companyIndustry: '医药',
-                                creativeIndustry: '医药',
-                                screenCategory: '联动',
-                                submitTime: '2019-12-12 12:08:21',
-                                checkTime: '2019-12-12 12:08:21',
-                                creativeStatus: 0,
-                            },
-                            {
-                                creativeID: 11002082,
-                                creativeContent: '查看',
-                                creativeName: '餐饮_上屏_11_26',
-                                companyName: '新潮传媒集团有限公司',
-                                companyIndustry: '医药',
-                                creativeIndustry: '医药',
-                                screenCategory: '联动',
-                                submitTime: '2019-12-12 12:08:21',
-                                checkTime: '2019-12-12 12:08:21',
-                                creativeStatus: 1,
-                            },
-                            {
-                                creativeID: 11002082,
-                                creativeContent: '查看',
-                                creativeName: '餐饮_上屏_11_26',
-                                companyName: '新潮传媒集团有限公司',
-                                companyIndustry: '医药',
-                                creativeIndustry: '医药',
-                                screenCategory: '联动',
-                                submitTime: '2019-12-12 12:08:21',
-                                checkTime: '2019-12-12 12:08:21',
-                                creativeStatus: 2,
-                            },
-                            {
-                                creativeID: 11002082,
-                                creativeContent: '查看',
-                                creativeName: '餐饮_上屏_11_26',
-                                companyName: '新潮传媒集团有限公司',
-                                companyIndustry: '医药',
-                                creativeIndustry: '医药',
-                                screenCategory: '联动',
-                                submitTime: '2019-12-12 12:08:21',
-                                checkTime: '2019-12-12 12:08:21',
-                                creativeStatus: 0,
-                            },
-                            {
-                                creativeID: 11002082,
-                                creativeContent: '查看',
-                                creativeName: '餐饮_上屏_11_26',
-                                companyName: '新潮传媒集团有限公司',
-                                companyIndustry: '医药',
-                                creativeIndustry: '医药',
-                                screenCategory: '联动',
-                                submitTime: '2019-12-12 12:08:21',
-                                checkTime: '2019-12-12 12:08:21',
-                                creativeStatus: 1,
-                            },
-                            {
-                                creativeID: 11002082,
-                                creativeContent: '查看',
-                                creativeName: '餐饮_上屏_11_26',
-                                companyName: '新潮传媒集团有限公司',
-                                companyIndustry: '医药',
-                                creativeIndustry: '医药',
-                                screenCategory: '联动',
-                                submitTime: '2019-12-12 12:08:21',
-                                checkTime: '2019-12-12 12:08:21',
-                                creativeStatus: 2,
-                            },
-                            {
-                                creativeID: 11002082,
-                                creativeContent: '查看',
-                                creativeName: '餐饮_上屏_11_26',
-                                companyName: '新潮传媒集团有限公司',
-                                companyIndustry: '医药',
-                                creativeIndustry: '医药',
-                                screenCategory: '联动',
-                                submitTime: '2019-12-12 12:08:21',
-                                checkTime: '2019-12-12 12:08:21',
-                                creativeStatus: 0,
-                            },
-                            {
-                                creativeID: 11002082,
-                                creativeContent: '查看',
-                                creativeName: '餐饮_上屏_11_26',
-                                companyName: '新潮传媒集团有限公司',
-                                companyIndustry: '医药',
-                                creativeIndustry: '医药',
-                                screenCategory: '联动',
-                                submitTime: '2019-12-12 12:08:21',
-                                checkTime: '2019-12-12 12:08:21',
-                                creativeStatus: 1,
-                            },
-                            {
-                                creativeID: 11002082,
-                                creativeContent: '查看',
-                                creativeName: '餐饮_上屏_11_26',
-                                companyName: '新潮传媒集团有限公司',
-                                companyIndustry: '医药',
-                                creativeIndustry: '医药',
-                                screenCategory: '联动',
-                                submitTime: '2019-12-12 12:08:21',
-                                checkTime: '2019-12-12 12:08:21',
-                                creativeStatus: 2,
-                            },
-                            {
-                                creativeID: 11002082,
-                                creativeContent: '查看',
-                                creativeName: '餐饮_上屏_11_26',
-                                companyName: '新潮传媒集团有限公司',
-                                companyIndustry: '医药',
-                                creativeIndustry: '医药',
-                                screenCategory: '联动',
-                                submitTime: '2019-12-12 12:08:21',
-                                checkTime: '2019-12-12 12:08:21',
-                                creativeStatus: 0,
-                            },
-                            {
-                                creativeID: 11002082,
-                                creativeContent: '查看',
-                                creativeName: '餐饮_上屏_11_26',
-                                companyName: '新潮传媒集团有限公司',
-                                companyIndustry: '医药',
-                                creativeIndustry: '医药',
-                                screenCategory: '联动',
-                                submitTime: '2019-12-12 12:08:21',
-                                checkTime: '2019-12-12 12:08:21',
-                                creativeStatus: 1,
-                            },
-                        ]
-                    }
-            }
+  export default {
+    name: "auditList",
+    data() {
+      return {
+        checkReason: [],
+        activeName: 'aptitude',
+        dialogDenyVisible: false,
+        dialogShowContent: false,
+        form: {
+          checkReason: [],
         },
-        methods: {
-            getColumnWidth(index) {
-                let width;
-                switch (index) {
-                    case  2:
-                        width = 130;
-                        break;
-                    case  3:
-                        width = 200;
-                        break;
-                    case  7:
-                    case  8:
-                        width = 100;
-                        break;
-                    case  10:
-                        width = 200;
-                        break;
-                    default:
-                        width = 100;
-                        break;
-                }
-                return width;
-            },
-            getLastPosition(index) {
-                let position;
-                switch (index) {
-                    case  9:
-                    case  10:
-                        position = 'right';
-                        break;
-                    default:
-                        position = false;
-                        break;
-                }
-                return position;
-            },
-            handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
-            },
-            handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
-            },
-            handleCheckedReasonChange(checkItem) {
-                console.log(checkItem[0], checkItem[1])
-            },
-            handleContentClick() {
+        aptitudeData: [
+          {value: '新潮传媒集团', label: '企业名称'},
+          {value: '餐饮', label: '企业行业'},
+          {value: '餐饮', label: '创意行业'},
+          {value: '联动', label: '屏幕类型'},
+          {
+            value: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2966610753,437054214&fm=26&gp=0.jpg',
+            label: '创意资质',
+            srcList: [
+              'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2966610753,437054214&fm=26&gp=0.jpg',
+            ]
+          }
+        ],
+        denyDialogReason: [
+          {
+            title: '1、效果承诺',
+            reasons: [
+              {
+                index: 0,
+                value: '不得含有对未来效果、收益或者与其相关的情况作出保证性承诺，明示或者暗示保本、无风险或者保收益等内容'
+              },
+              {
+                index: 1,
+                value: '不得涉及前后效果对比'
+              },
+              {
+                index: 2,
+                value: '不得对升学，提高成绩，拿证或培训效果作出保证性承诺'
+              },
+              {
+                index: 3,
+                value: '不得以受益人，专家学者等机构的名义推广'
+              },
+              {
+                index: 4,
+                value: '涉及虚假误导宣传'
+              },
+            ]
+          },
+          {
+            title: '2、政治面貌敏感，极端词语类',
+            reasons: [
+              {
+                index: 0,
+                value: '不得使用或者变相使用中华人民共和国的国旗、国歌、国徽、军旗、军歌、军徽'
+              },
+              {
+                index: 1,
+                value: '不得使用”国家级””最高级””最佳”等极端用语'
+              },
+              {
+                index: 2,
+                value: '不得含有污秽、色情、赌博、迷信、恐怖、暴力的内容'
+              },
+              {
+                index: 3,
+                value: '含有名族、种族、宗教、性别歧视的内容'
+              },
+              {
+                index: 4,
+                value: '不得涉及时事热点政治敏感内容'
+              },
+              {
+                index: 5,
+                value: '不得使用国家机关或国家机关工作人员的形象名义作为推广'
+              },
+            ]
+          },
 
-            },
+          {
+            title: '3、风险提示类',
+            reasons: [
+              {
+                index: 0,
+                value: '请在画面添加备注预售号'
+              },
+              {
+                index: 1,
+                value: '涉及招商加盟，请备注风险提示语：“投资有风险，加盟需谨慎”'
+              },
+              {
+                index: 2,
+                value: '画面请备注风险提示语“投资有风险”'
+              },
+            ]
+          },
+          {
+            title: '4、素材质量类',
+            reasons: [
+              {
+                index: 0,
+                value: '素材画面整体质量较低'
+              },
+              {
+                index: 1,
+                value: '画面内容容易引起不适，易引起投诉'
+              },
+              {
+                index: 2,
+                value: '请合理规范使用标点符号'
+              },
+            ]
+          },
+          {
+            title: '5、医疗行业类',
+            reasons: [
+              {
+                index: 0,
+                value: '不得涉及真人医患形象，真人代言，医疗器械，手术直播过程'
+              },
+              {
+                index: 1,
+                value: '非医疗行业不得涉及医疗相关描述'
+              },
+              {
+                index: 2,
+                value: '请在画面添加备注医广号'
+              },
+            ]
+          },
+          {
+            title: '6、暂不接受投放类',
+            reasons: [
+              {
+                index: 0,
+                value: '暂不接受该行业投放，请知悉'
+              },
+            ]
+          },
+        ],
+        formLabelWidth: '120px',
+        currentPage: 50,
+        checkFormInline: {
+          reportPlanValue: '',
+          checkStatus: [{value: 0, label: '待审核'}, {value: 1, label: '审核通过'}, {value: 2, label: '审核拒绝'}],
+          checkSelectStatus: '',
+        },
+        tableData:
+          {
+            column: [
+              {label: '创意组ID', prop: 'creativeID'},
+              {label: '创意内容', prop: 'creativeContent'},
+              {label: '创意名称', prop: 'creativeName'},
+              {label: '企业名称', prop: 'companyName'},
+              {label: '企业行业', prop: 'companyIndustry'},
+              {label: '创意行业', prop: 'creativeIndustry'},
+              {label: '屏幕类型', prop: 'screenCategory'},
+              {label: '提交时间', prop: 'submitTime'},
+              {label: '审核时间', prop: 'checkTime'},
+              {label: '创意状态', prop: 'creativeStatus'},
+              {label: '操作', prop: 'action'},
+            ],
+            data: [
+              {
+                creativeID: 11002082,
+                creativeContent: '查看',
+                creativeName: '餐饮_上屏_11_26',
+                companyName: '新潮传媒集团有限公司',
+                companyIndustry: '医药',
+                creativeIndustry: '医药',
+                screenCategory: '联动',
+                submitTime: '2019-12-12 12:08:21',
+                checkTime: '2019-12-12 12:08:21',
+                creativeStatus: 0,
+              },
+              {
+                creativeID: 11002082,
+                creativeContent: '查看',
+                creativeName: '餐饮_上屏_11_26',
+                companyName: '新潮传媒集团有限公司',
+                companyIndustry: '医药',
+                creativeIndustry: '医药',
+                screenCategory: '联动',
+                submitTime: '2019-12-12 12:08:21',
+                checkTime: '2019-12-12 12:08:21',
+                creativeStatus: 1,
+              },
+              {
+                creativeID: 11002082,
+                creativeContent: '查看',
+                creativeName: '餐饮_上屏_11_26',
+                companyName: '新潮传媒集团有限公司',
+                companyIndustry: '医药',
+                creativeIndustry: '医药',
+                screenCategory: '联动',
+                submitTime: '2019-12-12 12:08:21',
+                checkTime: '2019-12-12 12:08:21',
+                creativeStatus: 2,
+              },
+              {
+                creativeID: 11002082,
+                creativeContent: '查看',
+                creativeName: '餐饮_上屏_11_26',
+                companyName: '新潮传媒集团有限公司',
+                companyIndustry: '医药',
+                creativeIndustry: '医药',
+                screenCategory: '联动',
+                submitTime: '2019-12-12 12:08:21',
+                checkTime: '2019-12-12 12:08:21',
+                creativeStatus: 0,
+              },
+              {
+                creativeID: 11002082,
+                creativeContent: '查看',
+                creativeName: '餐饮_上屏_11_26',
+                companyName: '新潮传媒集团有限公司',
+                companyIndustry: '医药',
+                creativeIndustry: '医药',
+                screenCategory: '联动',
+                submitTime: '2019-12-12 12:08:21',
+                checkTime: '2019-12-12 12:08:21',
+                creativeStatus: 1,
+              },
+              {
+                creativeID: 11002082,
+                creativeContent: '查看',
+                creativeName: '餐饮_上屏_11_26',
+                companyName: '新潮传媒集团有限公司',
+                companyIndustry: '医药',
+                creativeIndustry: '医药',
+                screenCategory: '联动',
+                submitTime: '2019-12-12 12:08:21',
+                checkTime: '2019-12-12 12:08:21',
+                creativeStatus: 2,
+              },
+              {
+                creativeID: 11002082,
+                creativeContent: '查看',
+                creativeName: '餐饮_上屏_11_26',
+                companyName: '新潮传媒集团有限公司',
+                companyIndustry: '医药',
+                creativeIndustry: '医药',
+                screenCategory: '联动',
+                submitTime: '2019-12-12 12:08:21',
+                checkTime: '2019-12-12 12:08:21',
+                creativeStatus: 0,
+              },
+              {
+                creativeID: 11002082,
+                creativeContent: '查看',
+                creativeName: '餐饮_上屏_11_26',
+                companyName: '新潮传媒集团有限公司',
+                companyIndustry: '医药',
+                creativeIndustry: '医药',
+                screenCategory: '联动',
+                submitTime: '2019-12-12 12:08:21',
+                checkTime: '2019-12-12 12:08:21',
+                creativeStatus: 1,
+              },
+              {
+                creativeID: 11002082,
+                creativeContent: '查看',
+                creativeName: '餐饮_上屏_11_26',
+                companyName: '新潮传媒集团有限公司',
+                companyIndustry: '医药',
+                creativeIndustry: '医药',
+                screenCategory: '联动',
+                submitTime: '2019-12-12 12:08:21',
+                checkTime: '2019-12-12 12:08:21',
+                creativeStatus: 2,
+              },
+              {
+                creativeID: 11002082,
+                creativeContent: '查看',
+                creativeName: '餐饮_上屏_11_26',
+                companyName: '新潮传媒集团有限公司',
+                companyIndustry: '医药',
+                creativeIndustry: '医药',
+                screenCategory: '联动',
+                submitTime: '2019-12-12 12:08:21',
+                checkTime: '2019-12-12 12:08:21',
+                creativeStatus: 0,
+              },
+              {
+                creativeID: 11002082,
+                creativeContent: '查看',
+                creativeName: '餐饮_上屏_11_26',
+                companyName: '新潮传媒集团有限公司',
+                companyIndustry: '医药',
+                creativeIndustry: '医药',
+                screenCategory: '联动',
+                submitTime: '2019-12-12 12:08:21',
+                checkTime: '2019-12-12 12:08:21',
+                creativeStatus: 1,
+              },
+            ]
+          }
+      }
+    },
+    methods: {
+      //获取审核创意列表
+      getAuditCreativeList() {
+        //必须参数
+        let queryParam = {
+          startTime: this.planList.startTime,
+          endTime: this.planList.endTime,
+          campaignId: this.planList.campaignId,
+          pageIndex: this.pageIndex,
+          pageSize: this.pageSize,
         }
+        //合并查询参数
+        Object.assign(queryParam, param);
+        console.log(queryParam)
+        //请求方案报表列表查询接口
+        this.reportSelectCard.loading = true
+        this.$api.Report.getPlanTotal(queryParam)
+          .then(res => {
+            this.reportSelectCard.loading = false
+            let cardList = res.result;
+            this.reportSelectCard.data.forEach(item => {
+              let property = item.field;
+              if (cardList.hasOwnProperty(property)) {
+                if (cardList[property] === '' || cardList[property] === null) {
+                  item.value = 0
+                } else if (property === 'cost') {
+                  let costValue = cardList[property]
+                  costValue = this.$tools.formatCentToYuan(costValue)
+                  item.value = this.$tools.toThousands(costValue)
+                } else {
+                  item.value = this.$tools.toThousands(cardList[property], false)
+                }
+              }
+            })
+          })
+          .catch(res => {
+            this.reportSelectCard.loading = false
+          })
+      },
+      getColumnWidth(index) {
+        let width;
+        switch (index) {
+          case  2:
+            width = 130;
+            break;
+          case  3:
+            width = 200;
+            break;
+          case  7:
+          case  8:
+            width = 100;
+            break;
+          case  10:
+            width = 200;
+            break;
+          default:
+            width = 100;
+            break;
+        }
+        return width;
+      },
+      getLastPosition(index) {
+        let position;
+        switch (index) {
+          case  9:
+          case  10:
+            position = 'right';
+            break;
+          default:
+            position = false;
+            break;
+        }
+        return position;
+      },
+      handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },
+      handleCheckedReasonChange(checkItem) {
+        console.log(checkItem[0], checkItem[1])
+      },
+      handleContentClick() {
+
+      },
     }
+  }
 </script>
 
 <style lang="scss">

@@ -1,3 +1,4 @@
+<!--水平柱状图-->
 <template>
   <div ref="chartBox" class="chartBox" :style="{'width':width,'height': height}"></div>
 </template>

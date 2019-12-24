@@ -1,3 +1,4 @@
+<!--空心饼状图-->
 <template>
   <div class="fullContainer">
     <div ref="chartBox" class="chartBox" :style="{'width':width,'height': height}"></div>
