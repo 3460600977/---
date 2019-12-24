@@ -77,6 +77,14 @@ export const PutProject = {
       data
     });
   },
+
+  // 根据id获取方案详情
+  GetProjectDetailById: (data) => {
+    return request({
+      url: "/dpapi/project/detail/" + data,
+      method: "GET",
+    });
+  },
   
   // 依据计划Id获取方案名称
   ProjectNameListByCamId: (data) => {
@@ -85,5 +93,15 @@ export const PutProject = {
       method: "GET",
     });
   },
+
+  // POST投放方案楼盘明细
+  ProjectBuildList: (data) => {
+    return request({
+      url: "/dpapi/project/premise/list",
+      method: "post",
+      data
+    });
+  },
+
 
 }

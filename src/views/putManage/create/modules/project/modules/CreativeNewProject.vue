@@ -380,7 +380,7 @@ export default {
         deliveryMode: projectConst.putWay[0], // 投放方式
         count: projectConst.putFrequency[2], // 投放频次
         second: projectConst.putDuration[2], // 投放时长
-        type: projectConst.screenType[0], // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
+        type: projectConst.screenType[2], // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
         projectCity: '', // 城市
         details: this.buildsDetails, // 楼盘数据
         confirming: false, // 确认方案ing

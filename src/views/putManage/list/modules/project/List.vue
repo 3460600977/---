@@ -1,13 +1,12 @@
 <template>
   <div class="list">
-
+{{detailDialog.show}}
     <el-form :inline="true" class="list-form-inline clearfix">
-
       <el-form-item class="line-space" label="投放计划名称">
         <el-select 
           @focus="getPlanNameList"
           :loading="planNameList.loading" 
-          v-model="searchParam.name" 
+          v-model="searchParam.campaignId" 
           placeholder="不限" 
           filterable
           clearable>
@@ -15,24 +14,24 @@
             v-for="item in planNameList.data"
             :key="item.id"
             :label="item.name"
-            :value="item.name"
+            :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
 
       <el-form-item class="line-space" label="投放方案名称">
         <el-select 
-          @focus="getPlanNameList"
-          :loading="planNameList.loading" 
-          v-model="searchParam.name" 
+          @focus="getProjectNameList"
+          :loading="projectNameList.loading" 
+          v-model="searchParam.projectId" 
           placeholder="不限" 
           filterable
           clearable>
           <el-option
-            v-for="item in planNameList.data"
+            v-for="item in projectNameList.data"
             :key="item.id"
             :label="item.name"
-            :value="item.name"
+            :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -41,15 +40,15 @@
         <el-select 
           @focus="getPlanNameList"
           :loading="planNameList.loading" 
-          v-model="searchParam.name" 
+          v-model="searchParam.status" 
           placeholder="不限" 
           filterable
           clearable>
           <el-option
-            v-for="item in planNameList.data"
-            :key="item.id"
+            v-for="item in putStatus"
+            :key="item.value"
             :label="item.name"
-            :value="item.name"
+            :value="item.value"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -75,45 +74,25 @@
 
         <el-table-column prop="status" label="投放方案状态">
           <template slot-scope="scope">
-            {{
-              scope.row.scope === 0 ? '待投放' : 
-              scope.row.scope === 1 ? '投放中' : 
-              scope.row.scope === 2 ? '已完成' : 
-              '已取消'
-            }}
+            <template v-if="scope.row.status == 0">待投放</template>
+            <template v-if="scope.row.status == 1">投放中</template>
+            <template v-if="scope.row.status == 2">已完成</template>
+            <template v-if="scope.row.status == 3">已取消</template>
           </template>
         </el-table-column>
 
         <el-table-column prop="status" label="创意状态">
           <template slot-scope="scope">
-            <span class="pass status">
-            {{
-              scope.row.creativeStatus
-            }}
-            </span>
-            <!-- <span class="empty status">
-            {{
-              scope.row.creativeStatus
-            }}
-            </span>
-            <span class="pending status">
-            {{
-              scope.row.creativeStatus
-            }}
-            </span>
-            <span class="deny status">
-            {{
-              scope.row.creativeStatus
-            }}
-            </span> -->
+            <span v-if="scope.row.creativeStatus === 0" class="pending status">待审核</span>
+            <span v-else-if="scope.row.creativeStatus === 1" class="deny status">审核拒绝</span>
+            <span v-else-if="scope.row.creativeStatus === 2" class="pass status">审核通过</span>
+            <span v-else class="empty status">未上传</span>
           </template>
         </el-table-column>
 
         <el-table-column prop="totalBudget" label="投放类型">
           <template slot-scope="scope">
-            {{
-              scope.row.projectType === 0 ? '按周投放' : '按天投放'
-            }}
+            {{scope.row.projectType === 0 ? '按周投放' : '按天投放'}}
           </template>
         </el-table-column>
 
@@ -125,11 +104,13 @@
 
         <el-table-column prop="cityList" label="投放城市">
           <template slot-scope="scope">
-            {{scope.row.projectCity}}
+            <template v-for="item in cityList">
+              <template v-if="item.cityCode === scope.row.projectCity">{{item.name}}</template>
+            </template>
           </template>
         </el-table-column>
 
-        <el-table-column prop="beginTime" label="投放时间">
+        <el-table-column prop="beginTime" label="投放时间" width="250">
           <template slot-scope="scope">
             {{$tools.getFormatDate('YY/mm/dd', scope.row.beginTime)}}
             -
@@ -137,23 +118,39 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="action" label="操作" fixed="right" width="400">
+        <el-table-column prop="action" label="操作" fixed="right" width="350">
           <template slot-scope="scope">
-            <span class="icon-space hand" 
-              @click="detailDialog.dataIndex=scope.$index; detailDialog.show=true"
+            <span 
+              class="icon-space hand" 
+              @click="detailDialog.projectId = +scope.row.projectId; detailDialog.show=true"
             >
               <i class="iconfont icon-shuxingliebiaoxiangqing2 icon-color"></i>详情
             </span>
-            <span class="icon-space hand">
+
+            <span v-if="scope.row.status == 0" class="icon-space hand">
+              <router-link :to="`/putManage/create/plan?editPlanId=${scope.row.id}`">
+                <i class="iconfont icon-bianji icon-color"></i>修改
+              </router-link>
+            </span>
+
+            <span v-if="scope.row.status == 1 || scope.row.status == 2" class="icon-space hand">
+              <router-link :to="`/putManage/create/plan?editPlanId=${scope.row.id}`">
+                <i class="iconfont icon-ziyuan icon-color"></i>点位明细
+              </router-link>
+            </span>
+
+            <span v-if="scope.row.status == 1 || scope.row.status == 2" class="icon-space hand">
               <router-link :to="`/reportList/plan?campaignId=${scope.row.id}`">
                 <i class="iconfont icon-baobiao icon-color"></i>报表
               </router-link>
             </span>
-            <span class="icon-space hand">
-              <router-link :to="`/putManage/create/plan?editPlanId=${scope.row.id}`">
-                <i class="iconfont icon-bianji icon-color"></i>编辑
+
+            <span v-if="scope.row.status == 0" class="icon-space hand">
+              <router-link :to="`/reportList/plan?campaignId=${scope.row.id}`">
+                <i class="iconfont icon-error1 icon-color"></i>取消
               </router-link>
             </span>
+
           </template>
         </el-table-column>
       </el-table>
@@ -168,59 +165,44 @@
       ></el-pagination>
     </div>
 
-    <el-dialog
-      v-if="tableData.data.length > 0"
-      class="my-dialog"
-      title="投放计划详情"
-      :visible.sync="detailDialog.show"
-      width="1000px">
-        <el-form label-position='left' label-width="150px">
-          <el-form-item label="投放计划名称">
-            <span class="color-text-1">{{tableData.data[detailDialog.dataIndex].name}}</span>
-          </el-form-item>
-          <el-form-item label="投放目的">
-            <span class="color-text-1">
-              {{$tools.getObjectItemFromArray(PutGoal, 'value', tableData.data[detailDialog.dataIndex].campaignType).name}}
-            </span>
-          </el-form-item>
-          <el-form-item label="总预算">
-            <span class="color-red" v-if="tableData.data[detailDialog.dataIndex].totalBudget">¥{{tableData.data[detailDialog.dataIndex].totalBudget / 100}}</span>
-            <span class="color-red" v-else>不限</span>
-          </el-form-item>
-          <el-form-item label="投放城市">
-            <span class="color-text-1">
-              <span v-for="(item, index) in tableData.data[detailDialog.dataIndex].cityList" :key="index">
-                {{item.name}}<span v-if="index+1 !== tableData.data[detailDialog.dataIndex].cityList.length">；</span>
-              </span>
-            </span>
-          </el-form-item>
-          <el-form-item label="投放时间">
-            <span class="color-text-1">
-              {{$tools.getFormatDate('YY-mm-dd', tableData.data[detailDialog.dataIndex].beginTime)}}
-              -
-              {{$tools.getFormatDate('YY-mm-dd', tableData.data[detailDialog.dataIndex].endTime)}}
-            </span>
-          </el-form-item>
-        </el-form>
-      <span slot="footer" class="dialog-footer center">
-        <el-button style="width: 136px;" type="primary" @click="detailDialog.show = false">确 定</el-button>
-      </span>
-    </el-dialog>
+    <!-- 详情 -->
+    <detailDialog @closeDetail="detailDialog.show = false" :detailDialogShow="detailDialog.show" :projectId="detailDialog.projectId"/>
   </div>
 </template>
 
 <script>
 import { PutGoal, projectConst } from '../../../../../utils/static'
+import detailDialog from './modules/detailDialog'
 export default {
   name: "planList",
+
+  components: {
+    detailDialog
+  },
+
   data() {
     return {
       PutGoal,
       screenType: projectConst.screenType,
+
       planNameList: {
         loading: true,
         data: []
       },
+
+      projectNameList: {
+        loading: true,
+        data: []
+      },
+
+      putStatus: [
+        { name: '待投放', value: 0 },
+        { name: '投放中', value: 1 },
+        { name: '已完成', value: 2 },
+        { name: '已取消', value: 3 },
+      ],
+
+      cityList: [],
 
       searchParam: {
         campaignId: '', 
@@ -241,7 +223,8 @@ export default {
 
       detailDialog: {
         show: false,
-        dataIndex: 0,
+        projectId: 1577086815000080,
+        activeTab: 'project'
       },
 
     };
@@ -249,9 +232,11 @@ export default {
 
   beforeMount() {
     this.search()
+    this.getAllCity()
   },
   methods: {
-    // 下拉框数据
+
+    // 计划名称列表
     getPlanNameList() {
       if (this.planNameList.data.length > 0) return;
       this.$api.PutPlan.PlanNameList()
@@ -267,6 +252,31 @@ export default {
             data: []
           }
         })
+    },
+
+    getProjectNameList() {
+      this.$api.PutProject.ProjectNameList()
+        .then(res => {
+          this.projectNameList = {
+            loading: false,
+            data: res.result,
+          }
+        })
+        .catch(res => {
+          this.projectNameList = {
+            loading: false,
+            data: []
+          }
+        })
+    },
+
+    // 城市列表
+    getAllCity() {
+      this.$api.CityList.AllList()
+        .then(res => {
+          this.cityList = res.result;
+        })
+        .catch(res => {})
     },
 
     // 搜索
