@@ -260,7 +260,7 @@ export default {
         { prop: "buildName", label: "楼栋" },
         { prop: "unitName", label: "单元" },
         { prop: "elevatorName", label: "电梯名" },
-        { prop: "avgTimes", label: "总次数/平均日次/今日次数" },
+        { prop: "allTime", label: "总次数/平均日次/今日次数" },
         { prop: "status", label: "状态" },
         { prop: "action", label: "操作" }
       ],
@@ -298,8 +298,8 @@ export default {
     changeTablePreVis() {
       this.dialogVisible = false;
     },
-    changePlanPreVis() {
-      this.dialogPreviewVisible = false;
+    changePlanPreVis(val) {
+      this.dialogPreviewVisible = val;
     },
     //地图插件，改变选择的楼盘
     changeShowBuild(val) {
@@ -411,6 +411,9 @@ export default {
             } else {
               item.value = res.result[property];
             }
+          });
+          this.resultData.forEach(item => {
+              item['allTime']=item['totalTimes']+'/'+item['avgTimes']+'/'+item['times']
           });
           this.deviceInfo.name.value = res.result.name;
           this.loading = false;
