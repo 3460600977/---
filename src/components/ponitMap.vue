@@ -1,64 +1,150 @@
 <template>
     <div
+      class="map"
       ref="map"
-      :style="{'width': width+'px', 'height': height + 'px'}"
     >
     </div>
 </template>
 
 <script>
+  const HIDE_LABEL_ZOOM = 11
+  const INIT_ZOOM = 13
   export default {
     name: "ponitMap",
     props: {
-      width: {
-        type: Number,
-        default: 896
-      },
-      height: {
-        type: Number,
-        default: 604
-      },
       points: {
         type: Array,
         required: true
-      },
+      }
     },
     data() {
       return {
+        // points: [],
         map: null,
-        zoom: 12
+        bounds: [],
+        markerArr: [],
+        pointsBak: null,
+        visualPoint: [],
+        currentPoint: null,
+        isFirst: true
       }
     },
     mounted() {
       this.map = new BMap.Map(this.$refs.map, {enableMapClick: false});
       this.map.enableScrollWheelZoom();
-      this.setCenter(this.points[0])
-      this.drawPoints(this.points)
+      if (!this.points.length) {
+        this.currentPoint = null
+      } else {
+        this.pointsBak = this.normalizePointsAll(this.points)
+        this.currentPoint = this.pointsBak[0].point
+        this.setCenter(this.pointsBak[0].point)
+      }
+    },
+    watch: {
+      currentPoint(val) {
+        this.$emit('changePoint', val)
+      }
     },
     methods: {
-      setCenter(point) {
-        console.log(point)
-        this.map.centerAndZoom(new BMap.Point(point.longitude, point.latitude), this.zoom);
+      clearMarkers() {
+        this.markerArr.forEach((item) => {
+          this.map.removeOverlay(item)
+        })
+        this.markerArr = []
       },
-      drawPoints(points) {
-        points.forEach((point) => {
-          this.addMarker(point)
+      normalizePointsAll(arr) {
+        let result = arr.map((item) => {
+          return {point: new BMap.Point(item.longitude, item.latitude), ...item}
+        })
+        return result
+      },
+      getBounds() {
+        const bounds = this.map.getBounds()
+        this.getPoints(bounds)
+      },
+      getPoints(bounds) {
+        let arr = this.pointsBak.filter((item) => {
+          return bounds.containsPoint(item.point)
+        })
+        this.drawPoints(arr)
+      },
+      setCenter(point) {
+        this.map.centerAndZoom(point, INIT_ZOOM)
+        this.map.addEventListener('tilesloaded', () => {
+          if (this.isFirst) {
+            this.clearMarkers()
+            this.getBounds()
+            this.isFirst = false
+          }
+        })
+        this.map.addEventListener('dragend', () => {
+          if (!this.isFirst) {
+            this.clearMarkers()
+            this.getBounds()
+          }
+        })
+        this.map.addEventListener('zoomend', () => {
+          if (!this.isFirst) {
+            this.clearMarkers()
+            this.getBounds()
+          }
         })
       },
-      addMarker(point){  // 创建图标对象
-        var myIcon = new BMap.Icon(require('@/assets/images/icon_location.png'), new BMap.Size(12, 22), {
+      drawPoints(points) {
+        this.visualPoint = points
+        points.forEach((point, index) => {
+          this.addMarker(point, index)
+        })
+      },
+      setLabelStyle(content, index) {
+          //左偏移  右偏移
+          let labelStyle = {
+            color: "#222222",
+            backgroundColor: "#ffffff",
+            fontSize : "12px",
+            verticalAlign:"center",
+            border: 'none',
+            borderRadius: "0px 4px 4px 0px",
+            whiteSpace:"nowrap",
+            padding:"0px 4px 0 4px",
+            // left: '50%',
+            lineHeight: '26px',
+            boxShadow: '0px 3px 7px 0px rgba(45, 90, 255, 0.2)'
+          };
+          //用于设置样式
+          let label = new BMap.Label(content, {
+            offset: new BMap.Size(29, 0)
+          });
+          label.setStyle(labelStyle);
+          label.addEventListener('click', () => {
+            this.currentPoint = this.visualPoint[index]
+          })
+          return label;
+        },
+      addMarker(point, index){  // 创建图标对象
+        var myIcon = new BMap.Icon(require('@/assets/images/icon_seat.png'), new BMap.Size(29, 26), {
         });
         // 创建标注对象并添加到地图
-        let marker = new BMap.Marker(new BMap.Point(point.longitude, point.latitude), {
+        let marker = new BMap.Marker(point.point, {
           icon: myIcon,
-          offset: new BMap.Size(6, -11),
+          offset: new BMap.Size(14, -13),
         });
+        if (this.map.getZoom() > HIDE_LABEL_ZOOM) {
+          marker.setLabel(this.setLabelStyle(point.premiseName, index));
+        }
+        this.markerArr.push(marker)
         this.map.addOverlay(marker);
+        marker.addEventListener('click', (event) => {
+          this.currentPoint = this.visualPoint[index]
+        })
       },
     },
   }
 </script>
 
 <style scoped lang='scss'>
-
+.map{
+  height: 100%;
+  width: 100%;
+}
 </style>
