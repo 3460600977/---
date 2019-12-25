@@ -42,7 +42,6 @@ export const putManageRouter = [
       // 创建方案
       {
         path: '/putManage/create/project',
-        name: 'createProject',
         component: () => import ('@/views/putManage/create/modules/project/Project'),
       },
       // 创建创意
