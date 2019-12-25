@@ -1,13 +1,14 @@
 <template>
   <div class="create-creative">
-      <el-tabs v-model="activeName" class="my-tabs creative-box" type="border-card">
-        <el-tab-pane name="create" label="创建投放计划">
-          <CreativeNewPlan/>
-        </el-tab-pane>
-        <el-tab-pane name="exist" label="选择已有投放计划">
-          <ExistPlanList :isShow="activeName==='exist'"/>
-        </el-tab-pane>
-      </el-tabs>
+    <CreativeNewPlan v-if="$route.query.editPlanId"/>
+    <el-tabs v-else v-model="activeName" class="my-tabs creative-box" type="border-card">
+      <el-tab-pane name="create" label="创建投放计划">
+        <CreativeNewPlan/>
+      </el-tab-pane>
+      <el-tab-pane name="exist" label="选择已有投放计划">
+        <ExistPlanList :isShow="activeName==='exist'"/>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 

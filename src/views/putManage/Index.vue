@@ -22,12 +22,12 @@ export default {
 
   data() {
     return {
-      activeName: 'plan'
+      activeName: ''
     }
   },
 
   beforeMount() {
-    this.activeName = this.$route.query.active || 'plan';
+    this.activeName = this.$route.query.active || 'project';
   }
 }
 </script>
