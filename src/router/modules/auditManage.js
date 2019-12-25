@@ -10,12 +10,12 @@ export const auditManageRouter = [
       //默认审核路径--创意审核列表
       {
         path: '/',
-        component: () => import('@/views/auditManage/list/modules/creative/list')
+        component: () => import('@/views/auditManage/list/modules/creative/List')
       },
       // 创意审核列表
       {
         path: '/auditList/creative',
-        component: () => import('@/views/auditManage/list/modules/creative/list')
+        component: () => import('@/views/auditManage/list/modules/creative/List')
       },
     ]
   },

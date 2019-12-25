@@ -20,7 +20,7 @@ const router = new Router({
       children: [
         {
           path: '/',
-          component: () => import ('@/views/home/modules/homeBody'),
+          component: () => import ('@/views/home/modules/HomeBody'),
         },
         ...putManageRouter,
         ...cityInsightRouter,
