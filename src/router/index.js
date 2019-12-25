@@ -7,6 +7,7 @@ import {cityInsightRouter} from './modules/cityInsight'
 import {reportCenterRouter} from './modules/reportCenter'//报表中心
 import {auditManageRouter} from './modules/auditManage'//审核管理
 import {toolBoxRouter} from './modules/toolBox'//工具箱
+import {peopleInsightRouter} from './modules/peopleInsight' // 人群洞察
 
 Vue.use(Router)
 
@@ -25,7 +26,8 @@ const router = new Router({
         ...cityInsightRouter,
         ...reportCenterRouter,
         ...auditManageRouter,
-        ...toolBoxRouter
+        ...toolBoxRouter,
+        ...peopleInsightRouter
       ],
     },
     {
