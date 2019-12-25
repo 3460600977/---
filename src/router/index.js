@@ -47,6 +47,15 @@ const router = new Router({
   ]
 })
 
+router.onError((error) => {
+  const pattern = /Loading chunk (\d)+ failed/g;
+  const isChunkLoadFailed = error.message.match(pattern);
+  const targetPath = router.history.pending.fullPath;
+  if (isChunkLoadFailed) {
+    router.replace(targetPath);
+  }
+});
+
 
 NProgress.inc(0.8)
 NProgress.configure({easing: 'ease', speed: 1500, showSpinner: false})

@@ -449,9 +449,9 @@ export default {
     },
     
     
-    // 根据id获取计划详情
-    getProjectDetailById(projectDetail) {
-      this.$api.PutPlan.PlanDetail(+projectDetail)
+    // 根据id初始化方案详情
+    initProjectDetailById(projectDetail) {
+      this.$api.PutProject.GetProjectDetailById(+projectDetail)
         .then(res => {
           this.planDataLoading = false;
           this.planData = res.result;
