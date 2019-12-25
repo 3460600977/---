@@ -424,7 +424,7 @@ export default {
 
   beforeMount() {
     if (this.isEdit) {
-      this.planDataLoading = false;
+      this.initProjectDetailById()
     } else {
       this.setBuildsList([]) // 清空楼盘列表
       this.getPlanDetailById(this.$route.query.planId) // 计划详情
@@ -450,11 +450,14 @@ export default {
     
     
     // 根据id初始化方案详情
-    initProjectDetailById(projectDetail) {
-      this.$api.PutProject.GetProjectDetailById(+projectDetail)
+    initProjectDetailById() {
+      this.$api.PutProject.GetProjectDetailById(+this.$route.query.editProjectId)
         .then(res => {
           this.planDataLoading = false;
-          this.planData = res.result;
+          this.getIndustryList()
+          this.formData = {
+            
+          }
         })
         .catch(res => {
           this.planData.name = '加载失败请刷新页面或重新进入';
