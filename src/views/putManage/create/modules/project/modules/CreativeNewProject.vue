@@ -447,6 +447,22 @@ export default {
           this.planDataLoading = false;
         })
     },
+    
+    
+    // 根据id初始化方案详情
+    initProjectDetailById(projectDetail) {
+      this.$api.PutProject.GetProjectDetailById(+projectDetail)
+        .then(res => {
+          this.planDataLoading = false;
+          this.planData = res.result;
+        })
+        .catch(res => {
+          this.planData.name = '加载失败请刷新页面或重新进入';
+          this.planDataLoading = false;
+        })
+    },
+
+
 
     // 生成方案名字
     generateProjectName() {

@@ -10,17 +10,17 @@ export const reportCenterRouter = [
       //默认投放报表路径--投放计划报表
       {
         path: '/',
-        component: () => import('@/views/report/list/modules/plan/list')
+        component: () => import('@/views/report/list/modules/plan/List')
       },
       // 投放计划报表
       {
         path: '/reportList/plan',
-        component: () => import('@/views/report/list/modules/plan/list')
+        component: () => import('@/views/report/list/modules/plan/List')
       },
       // 投放方案报表
       {
         path: '/reportList/project',
-        component: () => import('@/views/report/list/modules/project/list')
+        component: () => import('@/views/report/list/modules/project/List')
       },
     ]
   },

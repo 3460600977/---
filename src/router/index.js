@@ -20,7 +20,7 @@ const router = new Router({
       children: [
         {
           path: '/',
-          component: () => import ('@/views/home/modules/homeBody'),
+          component: () => import ('@/views/home/modules/HomeBody'),
         },
         ...putManageRouter,
         ...cityInsightRouter,
@@ -46,6 +46,15 @@ const router = new Router({
     {path: '*', redirect: '/404', hidden: true}
   ]
 })
+
+router.onError((error) => {
+  const pattern = /Loading chunk (\d)+ failed/g;
+  const isChunkLoadFailed = error.message.match(pattern);
+  const targetPath = router.history.pending.fullPath;
+  if (isChunkLoadFailed) {
+    router.replace(targetPath);
+  }
+});
 
 
 NProgress.inc(0.8)

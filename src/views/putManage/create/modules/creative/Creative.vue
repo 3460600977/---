@@ -27,7 +27,7 @@ export default {
     return{
       activeName: 'create',
       projectData: {}
-    }
+    } 
   },
   
   methods: {
