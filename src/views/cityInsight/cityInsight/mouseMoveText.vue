@@ -36,5 +36,6 @@
   padding: 0 12px;
   background:rgba(255,255,255,1);
   border:1px solid rgba(45,90,255,1);
+  white-space: nowrap;
 }
 </style>

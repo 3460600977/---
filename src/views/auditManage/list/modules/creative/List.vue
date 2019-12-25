@@ -25,21 +25,21 @@
       </el-form>
     </div>
     <div class="query_result">
-      <el-table :data="tableData.data" class="list_table">
+      <el-table :data="reviewCreativeList.data" :loading="reviewCreativeList.loading" class="list_table">
         <el-table-column
           :min-width="getColumnWidth(colIndex)"
           :prop="col.prop" :label="col.label"
-          v-for="(col,colIndex) in tableData.column"
+          v-for="(col,colIndex) in reviewCreativeList.column"
           :key="colIndex"
           :fixed="getLastPosition(colIndex)">
           <template slot-scope="scope">
-            <div v-if="col.prop === 'creativeStatus'">
+            <div v-if="col.prop === 'status'">
               <span v-if="scope.row[scope.column.property] === 0" class="pending status">待审核</span>
               <span v-if="scope.row[scope.column.property] === 1" class="pass status">审核通过</span>
               <span v-if="scope.row[scope.column.property] === 2" class="deny status">审核拒绝</span>
             </div>
             <div v-else-if="col.prop === 'action'">
-              <div v-if="scope.row.creativeStatus === 0">
+              <div v-if="scope.row.status === 0">
                 <span class="icon-space"><i class="el-icon-success icon-color"></i>通过</span>
                 <span class="icon-space" @click="dialogDenyVisible = true"><i
                   class="el-icon-error icon-color"></i>拒绝</span>
@@ -422,47 +422,77 @@
                 creativeStatus: 1,
               },
             ]
-          }
+          },
+        reviewCreativeList: {
+          data: null,
+          loading: false,
+          column: [
+            {label: '创意组ID', prop: 'id'},
+            {label: '创意内容', prop: 'creativeContent'},
+            {label: '创意名称', prop: 'name'},
+            {label: '企业名称', prop: 'companyName'},
+            {label: '企业行业', prop: 'companyIndustry'},
+            {label: '创意行业', prop: 'industry'},
+            {label: '屏幕类型', prop: 'screenType'},
+            {label: '提交时间', prop: 'createTime'},
+            {label: '审核时间', prop: 'reviewTime'},
+            {label: '创意状态', prop: 'status'},
+            {label: '操作', prop: 'action'}
+            ]
+        },
+        auditList: {
+          startTime: '',
+          endTime: '',
+        }
       }
+    },
+    created() {
+      this.getAuditCreativeList()
     },
     methods: {
       //获取审核创意列表
       getAuditCreativeList() {
         //必须参数
         let queryParam = {
-          startTime: this.planList.startTime,
-          endTime: this.planList.endTime,
-          campaignId: this.planList.campaignId,
+          name: this.auditList.startTime,
+          status: this.auditList.endTime,
           pageIndex: this.pageIndex,
           pageSize: this.pageSize,
         }
-        //合并查询参数
-        Object.assign(queryParam, param);
-        console.log(queryParam)
         //请求方案报表列表查询接口
-        this.reportSelectCard.loading = true
-        this.$api.Report.getPlanTotal(queryParam)
+        this.reviewCreativeList.loading = true
+        this.$api.AuditCreative.getAuditCreativeList(queryParam)
           .then(res => {
-            this.reportSelectCard.loading = false
-            let cardList = res.result;
-            this.reportSelectCard.data.forEach(item => {
-              let property = item.field;
-              if (cardList.hasOwnProperty(property)) {
-                if (cardList[property] === '' || cardList[property] === null) {
-                  item.value = 0
-                } else if (property === 'cost') {
-                  let costValue = cardList[property]
-                  costValue = this.$tools.formatCentToYuan(costValue)
-                  item.value = this.$tools.toThousands(costValue)
-                } else {
-                  item.value = this.$tools.toThousands(cardList[property], false)
-                }
-              }
-            })
+            this.reviewCreativeList.loading = false
+            this.reviewCreativeList.data = res.result
           })
           .catch(res => {
-            this.reportSelectCard.loading = false
+            this.reviewCreativeList.loading = false
           })
+      },
+      //获取创意明细
+      getAuditCreativeDetail() {
+        //必须参数
+        let queryParam = {
+          name: this.auditList.startTime,
+          status: this.auditList.endTime,
+          pageIndex: this.pageIndex,
+          pageSize: this.pageSize,
+        }
+        //请求方案报表列表查询接口
+        this.reviewCreativeList.loading = true
+        this.$api.AuditCreative.getAuditCreativeDetail(queryParam)
+          .then(res => {
+            this.reviewCreativeList.loading = false
+            this.reviewCreativeList.data = res.result
+          })
+          .catch(res => {
+            this.reviewCreativeList.loading = false
+          })
+      },
+      //创意审核提交
+      submitAuditCreative() {
+
       },
       getColumnWidth(index) {
         let width;
