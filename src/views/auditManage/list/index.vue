@@ -23,7 +23,7 @@
                           v-for="(menu_sub, subIndex) in rootMenu.sub_menu"
                           :key="subIndex"
                           @click="handleTo(menu_sub.path, subIndex)"
-                          :class="{'item_active':onRoutes===menu_sub.path.substr(1)}">
+                          :class="{'item_active':onRoutes===menu_sub.path.substr(1)||(subIndex===0&&onRoutes===default_path)}">
               <router-link :to="menu_sub.path" target="_self">{{menu_sub.name}}</router-link>
             </el-menu-item>
           </el-submenu>
@@ -38,51 +38,52 @@
 </template>
 
 <script>
-    export default {
-        name: "auditIndex",
-        data() {
-            return {
-                menuActiveIndex: 0,
-                isShowReportRoute: true,
-                menuCollapse: false,
-                report: {
-                    menu_index: 0,
-                    default_name: '审核管理',
-                    menu: [
-                        {
-                            name: '审核管理',
-                            sub_menu: [
-                                {
-                                    name: '创意审核',
-                                    path: '/auditList/creative',
-                                },
-                            ]
-                        }
-                    ]
-                }
+  export default {
+    name: "auditIndex",
+    data() {
+      return {
+        default_path: 'auditList',
+        menuActiveIndex: 0,
+        isShowReportRoute: true,
+        menuCollapse: false,
+        report: {
+          menu_index: 0,
+          default_name: '审核管理',
+          menu: [
+            {
+              name: '审核管理',
+              sub_menu: [
+                {
+                  name: '创意审核',
+                  path: '/auditList/creative',
+                },
+              ]
             }
-        },
-        computed: {
-            onRoutes() {
-                // 当前激活菜单的 index
-                let route_name = this.$route.path.replace('/', '')
-                console.log(route_name)
-                return route_name
-            },
-        },
-        methods: {
-            /**
-             * 手动跳转
-             */
-            handleTo(path, index) {
-                this.$router.push(path)
-            },
-            handleShow() {
-                this.menuCollapse = !this.menuCollapse
-                this.isShowReportRoute = !this.isShowReportRoute
-            }
+          ]
         }
+      }
+    },
+    computed: {
+      onRoutes() {
+        // 当前激活菜单的 index
+        let route_name = this.$route.path.replace('/', '')
+        console.log(route_name)
+        return route_name
+      },
+    },
+    methods: {
+      /**
+       * 手动跳转
+       */
+      handleTo(path, index) {
+        this.$router.push(path)
+      },
+      handleShow() {
+        this.menuCollapse = !this.menuCollapse
+        this.isShowReportRoute = !this.isShowReportRoute
+      }
     }
+  }
 </script>
 
 <style lang="scss">
