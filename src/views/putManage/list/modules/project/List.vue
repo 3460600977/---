@@ -1,6 +1,5 @@
 <template>
   <div class="list">
-{{detailDialog.show}}
     <el-form :inline="true" class="list-form-inline clearfix">
       <el-form-item class="line-space" label="投放计划名称">
         <el-select 
@@ -122,13 +121,13 @@
           <template slot-scope="scope">
             <span 
               class="icon-space hand" 
-              @click="detailDialog.projectId = +scope.row.projectId; detailDialog.show=true"
+              @click="detailDialog.projectId=+scope.row.projectId; detailDialog.show=true"
             >
               <i class="iconfont icon-shuxingliebiaoxiangqing2 icon-color"></i>详情
             </span>
 
             <span v-if="scope.row.status == 0" class="icon-space hand">
-              <router-link :to="`/putManage/create/plan?editPlanId=${scope.row.id}`">
+              <router-link :to="`/putManage/create/project?editProjectId=${scope.row.projectId}`">
                 <i class="iconfont icon-bianji icon-color"></i>修改
               </router-link>
             </span>
@@ -145,10 +144,8 @@
               </router-link>
             </span>
 
-            <span v-if="scope.row.status == 0" class="icon-space hand">
-              <router-link :to="`/reportList/plan?campaignId=${scope.row.id}`">
-                <i class="iconfont icon-error1 icon-color"></i>取消
-              </router-link>
+            <span @click="cancleProject(scope.row.projectId)" v-if="scope.row.status == 0" class="icon-space hand">
+              <i class="iconfont icon-error1 icon-color"></i>取消
             </span>
 
           </template>
@@ -166,7 +163,16 @@
     </div>
 
     <!-- 详情 -->
-    <detailDialog @closeDetail="detailDialog.show = false" :detailDialogShow="detailDialog.show" :projectId="detailDialog.projectId"/>
+    <el-dialog
+      class="my-dialog"
+      title="投放计划详情"
+      :visible.sync="detailDialog.show"
+      width="1000px">
+      <detailDialog :projectId="detailDialog.projectId"/>
+      <span slot="footer" class="dialog-footer center">
+        <el-button style="width: 136px;" type="primary" @click="detailDialog.show = false">确定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -223,7 +229,7 @@ export default {
 
       detailDialog: {
         show: false,
-        projectId: 1577086815000080,
+        projectId: '',
         activeTab: 'project'
       },
 
@@ -254,6 +260,7 @@ export default {
         })
     },
 
+    // 方案名字列表
     getProjectNameList() {
       this.$api.PutProject.ProjectNameList()
         .then(res => {
@@ -277,6 +284,18 @@ export default {
           this.cityList = res.result;
         })
         .catch(res => {})
+    },
+
+    // 取消方案
+    cancleProject(projectId) {
+      this.tableData.loading = true;
+      this.$api.PutProject.CancelProject({projectId: projectId})
+        .then(res => {
+          this.search()
+        })
+        .catch(res => {
+          this.tableData.loading = false;
+        })
     },
 
     // 搜索

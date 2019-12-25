@@ -423,9 +423,13 @@ export default {
   },
 
   beforeMount() {
-    this.setBuildsList([])
-    this.getPlanDetailById(this.$route.query.planId)
-    this.generateProjectName()
+    if (this.$route.query.editProjectId) {
+      this.planDataLoading = false;
+    } else {
+      this.setBuildsList([]) // 清空楼盘列表
+      this.getPlanDetailById(this.$route.query.planId) // 计划详情
+      this.generateProjectName() // 生成名字
+    }
   },
 
   methods: {
