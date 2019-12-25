@@ -6,7 +6,13 @@ export function setUserInfo(info) {
 }
 
 export function getUserInfo() {
-  return JSON.parse(Cookies.get('userinfo'))
+  let userInfoStr = Cookies.get('userinfo')
+  if (userInfoStr === '' || userInfoStr === null || userInfoStr === undefined) {
+    location.replace('/login')
+    return ''
+  } else {
+    return JSON.parse(Cookies.get('userinfo'))
+  }
 }
 
 export function removeUserInfo() {
@@ -15,10 +21,15 @@ export function removeUserInfo() {
 
 //token操作
 export function getToken() {
-  let userInfo = JSON.parse(Cookies.get('userinfo'))
-  if (userInfo.hasOwnProperty('token')) {
-    if (userInfo.token) {
-      return userInfo.token
+  let userInfoStr = Cookies.get('userinfo')
+  if (userInfoStr === '' || userInfoStr === null || userInfoStr === undefined) {
+
+  } else {
+    let userInfo = JSON.parse(userInfoStr)
+    if (userInfo.hasOwnProperty('token')) {
+      if (userInfo.token) {
+        return userInfo.token
+      }
     }
   }
   return '';

@@ -287,7 +287,7 @@ let tools = {
    */
   getFormatDate(fmt, dateStr) {
     let ret;
-    let date = dateStr || new Date();
+    let date = dateStr ? new Date(dateStr) : new Date();
     let opt = {
       "Y+": date.getFullYear().toString(),        // 年
       "m+": (date.getMonth() + 1).toString(),     // 月

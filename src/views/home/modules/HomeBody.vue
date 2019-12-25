@@ -26,29 +26,27 @@
 </template>
 
 <script>
-    import {getUserInfo} from '@/utils/auth';
-
-    export default {
-        data() {
-            return {
-                company: '',
-                accountBalance: '',
-                images: {
-                    userHead: require('../../../assets/images/icons/icon_tx.png'),
-                    grayHead: require('../../../assets/images/icons/icon_head portrait.png'),
-                    moneyBg: require('../../../assets/images/icon_money_bg.png'),
-                    noData: require('../../../assets/images/icon_no_data.png')
-                }
-            }
-        },
-        mounted() {
-            //请求验证码接口
-            let userInfo = getUserInfo()
-            this.company = userInfo.company
-            this.accountBalance = userInfo.accountBalance
-            console.log(userInfo)
-        },
-    }
+  import {getUserInfo} from '@/utils/auth';
+  export default {
+    data() {
+      return {
+        company: '',
+        accountBalance: '',
+        images: {
+          userHead: require('../../../assets/images/icons/icon_tx.png'),
+          grayHead: require('../../../assets/images/icons/icon_head portrait.png'),
+          moneyBg: require('../../../assets/images/icon_money_bg.png'),
+          noData: require('../../../assets/images/icon_no_data.png')
+        }
+      }
+    },
+    mounted() {
+      //请求验证码接口
+      let userInfo = getUserInfo()
+      this.company = userInfo.company
+      this.accountBalance = userInfo.accountBalance
+    },
+  }
 </script>
 
 <style lang="scss" scoped>

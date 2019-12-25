@@ -153,7 +153,7 @@
     </PutMangeCard>
 
     <!-- 楼盘定向 -->
-    <PutMangeCard v-loading="planDataLoading" :title="'楼盘定向'" class="form-box">
+    <PutMangeCard v-if="!isEdit" v-loading="planDataLoading" :title="'楼盘定向'" class="form-box">
       <el-tabs class="thin-tab mt-15" v-model="buildingDirection.activeType">
         <!-- 新建楼盘定向 -->
         <el-tab-pane label="新建楼盘定向" name="create">
@@ -270,7 +270,7 @@
 
 
     <!-- 楼盘预估数面板 -->
-    <EstimateBox/>
+    <EstimateBox v-if="!isEdit"/>
     
     <!-- 地图选点 -->
     <mapChooseWindow :mapChooseShow.sync="buildingDirection.mapChooseShow"/>
@@ -380,7 +380,7 @@ export default {
         deliveryMode: projectConst.putWay[0], // 投放方式
         count: projectConst.putFrequency[2], // 投放频次
         second: projectConst.putDuration[2], // 投放时长
-        type: projectConst.screenType[0], // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
+        type: projectConst.screenType[2], // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
         projectCity: '', // 城市
         details: this.buildsDetails, // 楼盘数据
         confirming: false, // 确认方案ing
@@ -423,9 +423,13 @@ export default {
   },
 
   beforeMount() {
-    this.setBuildsList([])
-    this.getPlanDetailById(this.$route.query.planId)
-    this.generateProjectName()
+    if (this.isEdit) {
+      this.planDataLoading = false;
+    } else {
+      this.setBuildsList([]) // 清空楼盘列表
+      this.getPlanDetailById(this.$route.query.planId) // 计划详情
+      this.generateProjectName() // 生成名字
+    }
   },
 
   methods: {
@@ -727,6 +731,11 @@ export default {
       return !this.validataForm();
     },
 
+    // 是否为编辑
+    isEdit() {
+      return !!this.$route.query.editProjectId;
+    },
+
   },
 
   watch: {
@@ -736,7 +745,6 @@ export default {
         if (!val.projectCity) {
           this.buildingDirection.cityInsight.selectedItemId = '';
           this.setBuildsList([])
-          // this.buildingDirection.builds.data = [];
         }
       },
       deep: true,

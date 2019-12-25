@@ -50,90 +50,89 @@
 </template>
 
 <script>
-    import {setUserInfo} from '@/utils/auth';
+  import {setUserInfo} from '@/utils/auth';
 
-    export default {
-        name: 'login',
-        data() {
-            return {
-                imageWidth: 442,
-                logo_img: require('../../assets/images/icon_left@2x.png'),
-                logo_back_img: require('../../assets/images/img_bg@2x.png'),
-                login_capture_img: '',
-                loginForm: {
-                    username: '',
-                    password: '',
-                    verifyToken: '',
-                    verifyValue: ''
-                },
-                loading: false,
-                rules: {
-                    username: [
-                        {required: true, message: '请输入账号名', trigger: ['blur', 'change']},
-                    ],
-                    password: [
-                        {required: true, message: '请输入密码', trigger: ['blur', 'change']}
-                    ],
-                    verifyValue: [
-                        {required: true, message: '请输入验证码', trigger: ['blur', 'change']}
-                    ],
-                }
-            }
+  export default {
+    name: 'login',
+    data() {
+      return {
+        imageWidth: 442,
+        logo_img: require('../../assets/images/icon_left@2x.png'),
+        logo_back_img: require('../../assets/images/img_bg@2x.png'),
+        login_capture_img: '',
+        loginForm: {
+          username: '',
+          password: '',
+          verifyToken: '',
+          verifyValue: ''
         },
-        computed: {
-            loginFormWidth: function () {
-                return this.imageWidth * 2 + 20;
-            }
-        },
-        mounted() {
-            //请求验证码接口
-            this.changeCaptureNUm()
-        },
-        methods: {
-            onSubmit(formName) {
-                //登录表框的验证
-                this.$refs[formName].validate((valid) => {
-                    if (!valid) {
-                        console.log('error submit!!');
-                        return false;
-                    } else {
-                        let param = {
-                            username: this.loginForm.username,
-                            password: this.loginForm.password,
-                            verifyToken: this.loginForm.verifyToken,
-                            verifyValue: this.loginForm.verifyValue,
-                        }
-                        //请求登录接口
-                        this.loading = true;
-                        this.$api.Login.LoginIn(param)
-                            .then(res => {
-                                console.log(res.result)
-                                let info = res.result
-                                this.$router.replace({
-                                    path: '/home',
-                                    query: {}
-                                })
-                                this.loading = false;
-                                setUserInfo(info)
-                            })
-                            .catch(res => {
-                                console.log(res.result)
-                                this.loading = false;
-                            })
-                    }
-                });
-            },
-            changeCaptureNUm() {
-                //请求验证码接口
-                this.$api.Login.GetVerifyCode()
-                    .then(res => {
-                        this.login_capture_img = res.result.image
-                        this.loginForm.verifyToken = res.result.verifyToken
-                    }).catch(res => {
-                })
-            }
+        loading: false,
+        rules: {
+          username: [
+            {required: true, message: '请输入账号名', trigger: ['blur', 'change']},
+          ],
+          password: [
+            {required: true, message: '请输入密码', trigger: ['blur', 'change']}
+          ],
+          verifyValue: [
+            {required: true, message: '请输入验证码', trigger: ['blur', 'change']}
+          ],
         }
+      }
+    },
+    computed: {
+      loginFormWidth: function () {
+        return this.imageWidth * 2 + 20;
+      }
+    },
+    mounted() {
+      //请求验证码接口
+      this.changeCaptureNUm()
+    },
+    methods: {
+      onSubmit(formName) {
+        //登录表框的验证
+        this.$refs[formName].validate((valid) => {
+          if (!valid) {
+            return false;
+          } else {
+            let param = {
+              username: this.loginForm.username,
+              password: this.loginForm.password,
+              verifyToken: this.loginForm.verifyToken,
+              verifyValue: this.loginForm.verifyValue,
+            }
+            //请求登录接口
+            this.loading = true;
+            this.$api.Login.LoginIn(param)
+              .then(res => {
+                console.log(res.result)
+                let info = res.result
+                this.$router.replace({
+                  path: '/home',
+                  query: {}
+                })
+                this.loading = false;
+                this.$store.commit('setToken', info.token)
+                setUserInfo(info)
+              })
+              .catch(res => {
+                this.loading = false;
+              })
+          }
+        });
+      },
+      changeCaptureNUm() {
+        //请求验证码接口
+        this.$api.Login.GetVerifyCode()
+          .then(res => {
+            this.login_capture_img = res.result.image
+            this.loginForm.verifyToken = res.result.verifyToken
+          }).catch(res => {
+        })
+      }
     }
+  }
 </script>
 
 <style lang="scss">

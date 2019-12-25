@@ -40,7 +40,7 @@
     overflow: hidden;
     background: transparent;
     border: none;
-    .el-tabs__header{
+    >.el-tabs__header{
       border: none;
       background-color: #fff;
       .el-tabs__item{
@@ -66,7 +66,7 @@
         }
       }
     }
-    .el-tabs__content{
+    >.el-tabs__content{
       padding: 0;
     }
   }
@@ -174,4 +174,9 @@
 // input设定宽度为200
 .el-input {
   width: 200px;
+}
+
+// 分页输入框
+.el-pagination__editor{
+  width: 82px !important;
 }
