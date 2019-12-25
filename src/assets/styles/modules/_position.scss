@@ -46,6 +46,11 @@
     justify-content: space-between;
     -webkit-justify-content: space-between;
 }
+.mid-start {
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline;
+}
 .flex1{
   flex: 1;
   -webkit-box-flex:1
