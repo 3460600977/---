@@ -1,7 +1,7 @@
 import request from "@/utils/request";
 
 /**
- * 创建创意相关接口
+ * 创意相关接口
  */
 export const CreateCreative = {
   // 获取方案明细
@@ -45,6 +45,33 @@ export const CreateCreative = {
       url: "/dpapi/creative/bind",
       method: "post",
       data
+    });
+  },
+
+  // POST创意下拉列表
+  CreativeNameList: (data) => {
+    return request({
+      url: "/dpapi/creative/allList",
+      method: "post",
+      data
+    });
+  },
+
+  // GET获取创意明细
+  CreativeDetail: (data) => {
+    return request({
+      url: "/dpapi/creative/" + data,
+      method: "GET",
+    });
+  },
+
+  
+
+  // DELETE删除创意数据
+  DeleteCreativeById: (data) => {
+    return request({
+      url: "/dpapi/creative/" + data,
+      method: "DELETE",
     });
   }
 }

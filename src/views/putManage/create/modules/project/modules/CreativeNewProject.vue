@@ -16,6 +16,7 @@
         <!-- 投放方案行业 -->
         <el-form-item class="mt-20" prop="industry" label="投放方案行业">
           <el-select 
+            :disabled="isEdit"
             @focus="getIndustryList"
             :loading="industry.loading"
             filterable
@@ -35,6 +36,7 @@
         <el-form-item class="mt-20" prop="projectType" label="投放类型">
           <div class="mid-between" style="width: 240px">
             <el-button 
+              :disabled="isEdit"
               style="width: 102px"
               @click="formData.projectType = type;
                 formData.dateForDay = '';
@@ -55,6 +57,7 @@
         <el-form-item v-show="formData.projectType.value == 1" class="mt-20" prop="dateForDay">
           <label slot="label"><span class="color-red">* </span>投放时间</label>
           <el-date-picker
+            :disabled="isEdit"
             v-model="formData.dateForDay"
             value-format="yyyy-MM-dd"
             type="daterange"
@@ -70,6 +73,7 @@
           <el-form-item class="week-item mt-20" prop="dateForWeekBegin">
             <label slot="label"><span class="color-red">* </span>投放时间</label>
             <el-date-picker
+              :disabled="isEdit"
               @change="chooseWeek"
               value-format="yyyy-MM-dd"
               style="width: 150px"
@@ -83,7 +87,7 @@
           <label class="float-left week-center-label center">至</label>
           <el-form-item class="week-item end mt-20" prop="dateForWeekEnd">
             <el-date-picker
-              :disabled="!formData.dateForWeekBegin"
+              :disabled="!formData.dateForWeekBegin || isEdit"
               @change="chooseWeek"
               value-format="yyyy-MM-dd"
               style="width: 170px"
@@ -98,15 +102,16 @@
         <!-- 投放方式 -->
         <el-form-item class="mt-20" prop="deliveryMode" label="投放方式">
           <MyRadio
+            :disabled="isEdit"
             v-for="(way, index) in projectConst.putWay"
-            @click.native="formData.deliveryMode = way"
+            @click.native="isEdit ? null : formData.deliveryMode = way"
             :active="+formData.deliveryMode.value === 1+index"
             :key="index">{{way.name}}</MyRadio>
         </el-form-item>
 
         <!-- 投放频次 -->
         <el-form-item class="mt-20" prop="count" label="投放频次">
-          <el-select filterable v-model="formData.count" placeholder="请选择">
+          <el-select  :disabled="isEdit" filterable v-model="formData.count" placeholder="请选择">
             <el-option
               v-for="(frequency, index) in projectConst.putFrequency"
               :key="index"
@@ -118,7 +123,7 @@
 
         <!-- 投放时长 -->
         <el-form-item class="mt-20" prop="second" label="投放时长">
-          <el-select filterable v-model="formData.second" placeholder="请选择">
+          <el-select  :disabled="isEdit" filterable v-model="formData.second" placeholder="请选择">
             <el-option
               v-for="(duration, index) in projectConst.putDuration"
               :key="index"
@@ -132,8 +137,9 @@
         <el-form-item class="screen-type-preview-box mt-20" prop="type" label="屏幕类型">
           <div class="screen-type-preview-content">
             <MyRadio
+              :disabled="isEdit"
               v-for="(item, index) in projectConst.screenType"
-              @click.native="formData.type = item"
+              @click.native="isEdit ? null : formData.type = item"
               :active="formData.type === item"
               :key="index">
               <span class="float-left">{{item.name}}</span>
@@ -259,7 +265,11 @@
 
     <!-- 保存 取消 -->
     <PutMangeCard v-loading="planDataLoading" class="save-box">
-      <div class="float-right">
+      <div v-if="isEdit" class="float-right">
+        <el-button :loading="formData.confirming" @click="confirmProject" style="width: 136px" type="primary">保存并关闭</el-button>
+      </div>
+
+      <div v-else class="float-right">
         <el-button style="width: 136px" plain>取消</el-button>
         <el-button :loading="formData.confirming" @click="confirmProject" style="width: 136px" type="primary">确定</el-button>
       </div>
@@ -449,14 +459,26 @@ export default {
     },
     
     
-    // 根据id初始化方案详情
-    initProjectDetailById() {
+    // 根据id初始化回显方案详情
+    initProjectDetailById: async function() {
+      this.industry.data = await this.getIndustryList();
       this.$api.PutProject.GetProjectDetailById(+this.$route.query.editProjectId)
         .then(res => {
+          let resData = res.result;
           this.planDataLoading = false;
-          this.getIndustryList()
           this.formData = {
-            
+            name: resData.name,
+            id: resData.id,
+            industry: this.$tools.getObjectItemFromArray(this.industry.data, 'industryId', resData.industry),
+            projectType: this.$tools.getObjectItemFromArray(projectConst.putType, 'value', resData.projectType), // 投放类型，0按周投放，1按天投放
+            dateForDay: [resData.beginTime, resData.endTime],
+            dateForWeekBegin: resData.beginTime,
+            dateForWeekEnd: resData.endTime,
+            deliveryMode: this.$tools.getObjectItemFromArray(projectConst.putWay, 'value', resData.deliveryMode), // 投放方式
+            count: this.$tools.getObjectItemFromArray(projectConst.putFrequency, 'value', resData.count), // 投放频次
+            second: this.$tools.getObjectItemFromArray(projectConst.putDuration, 'value', resData.second), // 投放时长
+            type: this.$tools.getObjectItemFromArray(projectConst.screenType, 'value', resData.type), // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
+            confirming: false
           }
         })
         .catch(res => {
@@ -474,17 +496,20 @@ export default {
     },
 
     // 行业列表
-    getIndustryList() {
-      if (this.industry.data) return;
-      this.industry.loading = true;
-      this.$api.IndustryList.AllList()
-        .then(res => {
-          this.industry.loading = false;
-          this.industry.data = res.result;
-        })
-        .catch(res => {
-          this.industry.loading = false;
-        })
+    getIndustryList: async function() {
+      // if (this.industry.data) return;
+      return new Promise((resolve, reject) => {
+        this.industry.loading = true;
+        this.$api.IndustryList.AllList()
+          .then(res => {
+            this.industry.loading = false;
+            this.industry.data = res.result;
+            resolve(res.result)
+          })
+          .catch(res => {
+            this.industry.loading = false;
+          })
+      })
     },
 
     // 显示地图选点
@@ -674,23 +699,36 @@ export default {
         projectType:  this.formData.projectType.value, // 投放类型，0按周投放，1按天投放
         second:       this.formData.second.value // 投放时长，001-5s/次，002-10s/次，003-15s/次 依次类推
       }
-          // this.$notify({
-          //   title: '成功',
-          //   message: '创建投放计划成功',
-          //   type: 'success'
-          // });
-          // this.$router.replace('/putManage/create/creative')
-      this.$api.PutProject.AddProject(param)
-        .then(res => {
-          this.formData.confirming = false;
-          this.confirmWindowMsg.show = true;
-          this.confirmWindowMsg.pageData = this.formData;
-          this.confirmWindowMsg.resData = res.result;
-        })
-        .catch(res => {
-          this.formData.confirming = false;
-          this.planDataLoading = false;
-        })
+      if (this.isEdit) {
+        this.$api.PutProject.EditProject({id: this.formData.id, name: this.formData.name})
+          .then(res => {
+            this.formData.confirming = false;
+            this.planDataLoading = false;
+            return this.$notify({
+              title: '成功',
+              message: '修改方案成功',
+              type: 'success'
+            });
+          })
+          .catch(res => {
+            this.formData.confirming = false;
+            this.planDataLoading = false;
+          })
+      }
+      if (!this.isEdit) {
+        this.$api.PutProject.AddProject(param)
+          .then(res => {
+            this.formData.confirming = false;
+            this.planDataLoading = false;
+            this.confirmWindowMsg.show = true;
+            this.confirmWindowMsg.pageData = this.formData;
+            this.confirmWindowMsg.resData = res.result;
+          })
+          .catch(res => {
+            this.formData.confirming = false;
+            this.planDataLoading = false;
+          })
+      }
     },
   },
 
