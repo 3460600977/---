@@ -12,7 +12,7 @@ import {peopleInsightRouter} from './modules/peopleInsight' // 人群洞察
 Vue.use(Router)
 
 const router = new Router({
-  mode: 'history',
+  // mode: 'history',
   routes: [
     {
       path: '/home',

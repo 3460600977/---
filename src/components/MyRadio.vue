@@ -1,6 +1,6 @@
 <template>
-  <div class="my-radio clearfix" 
-    :class="{'active': active}">
+  <div @click.stop.prevent="clickMyBtn" class="my-radio clearfix" 
+    :class="getClass">
     <div class="my-r-button">
       <i :class="{'el-icon-check': active}"></i>
     </div>
@@ -16,8 +16,25 @@ export default {
     active: {
       type: Boolean,
       default: false
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
-  }
+  },
+
+  computed: {
+    getClass: function() {
+      let className = '';
+      if (this.active) {
+        className += 'active '
+      }
+      if (this.disabled) {
+        className += 'disabled '
+      }
+      return className;
+    }
+  },
 }
 </script>
 
@@ -29,14 +46,24 @@ export default {
     display: inline-flex;
     align-items: center;
     margin-right: 40px;
+    cursor: pointer;
     &.active{
       .my-r-button{
         border-color: $color-main;
         background:rgba(45,90,255,0.1);
       }
     }
+    &.disabled{
+      cursor: not-allowed;
+      .my-r-button{
+        background-color: $color-bg;
+        >i{
+          color: $color-text-1;
+        }
+        border-color: $color-bg;
+      }
+    }
     .my-r-button{
-      cursor: pointer;
       float: left;
       width: 22px;
       height: 22px;
@@ -50,7 +77,7 @@ export default {
       }
     }
     .label{
-      cursor: pointer;
+      cursor: inherit;
       float: left;
       line-height: 22px;
       min-height: 22px;

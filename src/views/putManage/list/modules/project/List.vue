@@ -58,7 +58,7 @@
 
       <el-form-item class="list-new-button">
         <router-link to="/putManage/create/plan">
-          <el-button type="primary">新建投放计划</el-button>
+          <el-button type="primary">新建投放方案</el-button>
         </router-link>
       </el-form-item>
     </el-form>

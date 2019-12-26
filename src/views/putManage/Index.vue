@@ -27,7 +27,7 @@ export default {
   },
 
   beforeMount() {
-    this.activeName = this.$route.query.active || 'project';
+    this.activeName = this.$route.query.active || 'creative';
   }
 }
 </script>
