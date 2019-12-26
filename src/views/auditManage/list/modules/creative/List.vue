@@ -50,8 +50,8 @@
           <template slot-scope="scope">
             <div v-if="col.prop === 'status'">
               <span v-if="scope.row[scope.column.property] === 0" class="pending status">待审核</span>
-              <span v-if="scope.row[scope.column.property] === 1" class="pass status">审核通过</span>
-              <span v-if="scope.row[scope.column.property] === 2" class="deny status">审核拒绝</span>
+              <span v-if="scope.row[scope.column.property] === 2" class="pass status">审核通过</span>
+              <span v-if="scope.row[scope.column.property] === 1" class="deny status">审核拒绝</span>
             </div>
             <div v-else-if="col.prop === 'screenType'">
               <div v-if="scope.row.screenType === 0">
@@ -76,7 +76,7 @@
               </div>
             </div>
             <div v-else-if="col.prop === 'creativeContent'">
-              <div class="show-contents" @click="dialogShowContent = true">
+              <div class="show-contents" @click="showContent(scope.row.id)">
                 <a href="#"><span>查看</span></a>
               </div>
             </div>
@@ -113,19 +113,21 @@
           </el-checkbox-group>
         </el-form-item>
       </el-form>
-      <textarea class="choose-deny-list">
-        <el-tag closable>不得使用或者变相使用中华人民共和国的国旗、国歌、国徽、军旗、军歌、军徽</el-tag>
-        <el-tag closable>涉及虚假误导宣传</el-tag>
-      </textarea>
+      <div class="choose-deny-list">
+        {{denyDialogReasonList}}
+        <el-tag closable v-for="(item,reasonIndex) in denyDialogReasonList" :key="reasonIndex" :index="reasonIndex">
+          {{item}}
+        </el-tag>
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDenyVisible = false">取 消</el-button>
         <el-button type="primary" @click="submitDengyCreative()">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="创意内容" :visible.sync="dialogShowContent" class="creative-dialog">
-      <el-tabs v-model="activeName" @tab-click="handleContentClick">
+      <el-tabs v-model="activeName">
         <el-tab-pane label="创意资质" name="aptitude" class="aptitude">
-          <div v-for="(aItem,aIndex) in aptitudeData" :key="aIndex" class="text-col">
+          <div v-for="(aItem,aIndex) in reviewCreativeDetail.data" :key="aIndex" class="text-col">
             <span class="text-title">{{aItem.label}}</span>
             <div class="demo-image__preview" v-if="aItem.label==='创意资质'">
               <el-image
@@ -138,15 +140,40 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="创意素材" name="material" class="material">
-          <div class="top-screen">
+          <div class="top-screen"
+               v-if="downloadCreative.data.screenType==='001'||downloadCreative.data.screenType==='003'">
             <p>上屏</p>
-            <el-button plain type="primary">下载视频</el-button>
+            <div class="top-screen-box">
+              <!--              <el-button class="primary" plain>-->
+              <!--                <a :href="downloadCreative.data.topList.previewUrl"-->
+              <!--                   :download="downloadCreative.data.topList.previewUrl"-->
+              <!--                   class="topPreVideo">预览视频</a>-->
+              <!--              </el-button>-->
+              <a :href="downloadCreative.data.topList.downloadUrl"
+                 :download="downloadCreative.data.topList.downloadUrl"
+                 class="topDownVideo">下载视频</a>
+            </div>
           </div>
-          <div class="bottom-screen">
+          <div class="bottom-screen"
+               v-if="downloadCreative.data.screenType==='002'||downloadCreative.data.screenType==='003'">
             <p>下屏</p>
             <div class="bottom-screen-box">
-              <div class="left-pre"></div>
-              <div class="right-pre"></div>
+              <div class="left-pre">
+                <el-image
+                  style="width: 100%; height: 100%"
+                  fit="cover"
+                  :src="downloadCreative.data.downList.url1"
+                  :preview-src-list="downloadCreative.data.downList.strList1">
+                </el-image>
+              </div>
+              <div class="right-pre">
+                <el-image
+                  style="width: 100%; height: 100%"
+                  fit="cover"
+                  :src="downloadCreative.data.downList.url2"
+                  :preview-src-list="downloadCreative.data.downList.strList2">
+                </el-image>
+              </div>
             </div>
           </div>
         </el-tab-pane>
@@ -166,121 +193,10 @@
       return {
         DenyDialogReason,
         checkReason: [],
+        downloadVideoSrc: '',
         activeName: 'aptitude',
         dialogDenyVisible: false,
         dialogShowContent: false,
-        aptitudeData: [
-          {value: '新潮传媒集团', label: '企业名称'},
-          {value: '餐饮', label: '企业行业'},
-          {value: '餐饮', label: '创意行业'},
-          {value: '联动', label: '屏幕类型'},
-          {
-            value: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2966610753,437054214&fm=26&gp=0.jpg',
-            label: '创意资质',
-            srcList: [
-              'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2966610753,437054214&fm=26&gp=0.jpg',
-            ]
-          }
-        ],
-        denyDialogReason: [
-          {
-            title: '效果承诺',
-            reasons: [
-              {
-                value: '不得含有对未来效果、收益或者与其相关的情况作出保证性承诺，明示或者暗示保本、无风险或者保收益等内容'
-              },
-              {
-
-                value: '不得涉及前后效果对比'
-              },
-              {
-
-                value: '不得对升学，提高成绩，拿证或培训效果作出保证性承诺'
-              },
-              {
-                value: '不得以受益人，专家学者等机构的名义推广'
-              },
-              {
-                value: '涉及虚假误导宣传'
-              },
-            ]
-          },
-          {
-            title: '政治面貌敏感，极端词语类',
-            reasons: [
-              {
-                value: '不得使用或者变相使用中华人民共和国的国旗、国歌、国徽、军旗、军歌、军徽'
-              },
-              {
-                value: '不得使用”国家级””最高级””最佳”等极端用语'
-              },
-              {
-                value: '不得含有污秽、色情、赌博、迷信、恐怖、暴力的内容'
-              },
-              {
-                value: '含有名族、种族、宗教、性别歧视的内容'
-              },
-              {
-                value: '不得涉及时事热点政治敏感内容'
-              },
-              {
-                value: '不得使用国家机关或国家机关工作人员的形象名义作为推广'
-              },
-            ]
-          },
-
-          {
-            title: '风险提示类',
-            reasons: [
-              {
-                value: '请在画面添加备注预售号'
-              },
-              {
-
-                value: '涉及招商加盟，请备注风险提示语：“投资有风险，加盟需谨慎”'
-              },
-              {
-                value: '画面请备注风险提示语“投资有风险”'
-              },
-            ]
-          },
-          {
-            title: '素材质量类',
-            reasons: [
-              {
-                value: '素材画面整体质量较低'
-              },
-              {
-                value: '画面内容容易引起不适，易引起投诉'
-              },
-              {
-                value: '请合理规范使用标点符号'
-              },
-            ]
-          },
-          {
-            title: '医疗行业类',
-            reasons: [
-              {
-                value: '不得涉及真人医患形象，真人代言，医疗器械，手术直播过程'
-              },
-              {
-                value: '非医疗行业不得涉及医疗相关描述'
-              },
-              {
-                value: '请在画面添加备注医广号'
-              },
-            ]
-          },
-          {
-            title: '暂不接受投放类',
-            reasons: [
-              {
-                value: '暂不接受该行业投放，请知悉'
-              },
-            ]
-          },
-        ],
         formLabelWidth: '120px',
         currentPage: 50,
         checkFormInline: {
@@ -317,12 +233,27 @@
         },
         //创意素材下载
         downloadCreative: {
-          data: null,
+          data: {
+            screenType: 0,
+            topList: {previewUrl: '', downloadUrl: ''},
+            downList: {strList1: [], url1: '', strList2: [], url2: ''},
+          },
           loading: false,
         },
         //创意审核资质
         reviewCreativeDetail: {
-          data: null,
+          data: [
+            {value: '新潮传媒集团', label: '企业名称', field: 'companyName'},
+            {value: '餐饮', label: '企业行业', field: 'companyIndustry'},
+            {value: '餐饮', label: '创意行业', field: 'industry'},
+            {value: '联动', label: '屏幕类型', field: 'screenType'},
+            {
+              value: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2966610753,437054214&fm=26&gp=0.jpg',
+              label: '创意资质',
+              field: 'industryIdentify',
+              srcList: []
+            }
+          ],
           loading: false,
         },
         //创意审核提交
@@ -354,6 +285,18 @@
     },
     created() {
       this.getAuditCreativeList()
+      console.log(this.denyDialogReasonList)
+    },
+    computed: {
+      denyDialogReasonList: function () {
+        let tmp = []
+        this.DenyDialogReason.forEach((item, itemIndex) => {
+          item.reasons.forEach((reason, reasonIndex) => {
+            tmp.push({name: reason.value, index: `${itemIndex}-${reasonIndex}`})
+          })
+        })
+        return tmp
+      }
     },
     methods: {
       //查询创意
@@ -454,12 +397,27 @@
         this.downloadCreative.loading = true
         this.$api.AuditCreative.downloadAuditCreative(queryParam)
           .then(res => {
+            let videoList = res.result
             this.downloadCreative.loading = false
-            this.$tools.downLoadFileFlow(res,
-              `审核创意${this.auditList.name}_${this.$tools.getFormatDate("YYmmdd")}.xsl`
-            );
+            if (videoList.top != null && 0 in videoList.top) {
+              this.downloadCreative.data.topList = videoList.top[0]
+            }
+            if (videoList.down != null) {
+              if (0 in videoList.down) {
+                this.downloadCreative.data.downList.strList1 = [videoList.down[0].previewUrl]
+                this.downloadCreative.data.downList.url1 = videoList.down[0].previewUrl
+              }
+
+              if (1 in videoList.down) {
+                this.downloadCreative.data.downList.strList2 = [videoList.down[1].previewUrl]
+                this.downloadCreative.data.downList.url2 = videoList.down[1].previewUrl
+              }
+            }
+            this.downloadCreative.data.screenType = videoList.screenType
+            console.log('downloadCreative', this.downloadCreative.data.topList, this.downloadCreative.data.downList, this.downloadCreative.data.screenType)
           })
           .catch(res => {
+            console.log('downloadCreative', 'false')
             this.downloadCreative.loading = false
           })
       },
@@ -474,7 +432,27 @@
         this.$api.AuditCreative.getAuditCreativeReviewDetail(queryParam)
           .then(res => {
             this.reviewCreativeDetail.loading = false
-            this.reviewCreativeDetail.data = res.result
+            let reviewList = res.result
+            this.reviewCreativeDetail.data.forEach(item => {
+              let property = item.field
+              if (reviewList.hasOwnProperty(property)) {
+                if (property === "industryIdentify") {
+                  item.srcList = ["http://digital-publish.obs.cn-east-2.myhuaweicloud.com/industry/INDUSTRY_0_9958d63090e4473e936e1844faa9334a_INDUSTRYIMAGE.jpg"]
+                  item.value = "http://digital-publish.obs.cn-east-2.myhuaweicloud.com/industry/INDUSTRY_0_9958d63090e4473e936e1844faa9334a_INDUSTRYIMAGE.jpg"
+                } else if (property === "screenType") {
+                  let screenType = reviewList[property]
+                  this.screenTypeList.forEach((screen, index) => {
+                    if (screen['id'] === screenType) {
+                      item.value = screen['type']
+                    }
+                  })
+                } else if (reviewList[property] === "" || reviewList[property] === null) {
+                  item.value = 0;
+                } else {
+                  item.value = reviewList[property]
+                }
+              }
+            })
           })
           .catch(res => {
             this.reviewCreativeDetail.loading = false
@@ -498,6 +476,7 @@
       },
       //选择拒绝原因
       handleCheckedReasonChange(checkItem) {
+
         console.log(checkItem, this.checkReason)
       },
       //用户选择完拒绝原因，点击提交按钮
@@ -516,14 +495,14 @@
         this.$api.AuditCreative.submitAuditCreative(queryParam)
           .then(res => {
             console.log(queryParam, res.result)
-            if (this.auditList.status === 2) {
+            if (this.submit.status === 2) {
               Notification({
                 title: '成功',
                 message: '创意:' + creativeName + ',通过审查',
                 type: 'success'
               });
             }
-            if (this.auditList.status === 1) {
+            if (this.submit.status === 1) {
               Notification({
                 title: '失败',
                 message: '创意:' + creativeName + ',审核拒绝',
@@ -535,6 +514,13 @@
           .catch(res => {
             this.reviewCreativeList.loading = false
           })
+      },
+      //查看创意
+      showContent(id) {
+        this.dialogShowContent = true
+        this.auditList.id = id
+        this.getAuditCreativeReviewDetail()
+        this.downloadAuditCreative()
       },
       getColumnWidth(index) {
         let width;
@@ -578,9 +564,6 @@
       handleCurrentChange(currentPage) {
         this.pageIndex = currentPage;
         this.getAuditCreativeList();
-      },
-      handleContentClick() {
-
       },
     }
   }
@@ -854,7 +837,7 @@
       }
 
       .choose-deny-list {
-        height: 160px;
+        min-height: 160px;
         background: $color-bg-7;
         border-radius: 4px;
         padding: 20px;
@@ -933,14 +916,35 @@
 
       .material {
         .top-screen {
-          p {
-
-          }
-
-          .el-button {
+          a {
             margin-top: 24px;
+            text-decoration: none;
+            display: inline-block;
+            line-height: 1;
+            white-space: nowrap;
+            cursor: pointer;
+            background: #FFFFFF;
+            border: 1px solid $color-blue;
+            color: $color-blue;
+            -webkit-appearance: none;
+            text-align: center;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            outline: none;
+            -webkit-transition: .1s;
+            transition: .1s;
+            font-weight: 400;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            padding: 11px 20px;
+            font-size: 12px;
+            border-radius: 2px;
           }
 
+          a:hover, a:active, a:link, a:visited {
+            color: $color-blue;
+          }
         }
 
         .bottom-screen {

@@ -7,7 +7,7 @@ import request from "@/utils/request";
 // 登录接口
 const LoginIn = (data) => {
   return request({
-    url: "/dpapi/new/signIn",
+    url: "/dpapi/signIn",
     method: "POST",
     data,
   });
@@ -24,7 +24,7 @@ const LoginOut = () => {
 // 修改密码接口
 const ChangePass = (data) => {
   return request({
-    url: "/dpapi/change/password",
+    url: "/dpapi/password/set",
     method: "POST",
     data,
   });

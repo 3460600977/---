@@ -12,11 +12,11 @@ const getAuditCreativeList = (data) => {
   });
 }
 // 审核创意素材下载
-const downloadAuditCreative = () => {
+const downloadAuditCreative = (params) => {
   return request({
     url: "/dpapi/creative/review/download",
     method: "GET",
-    responseType: 'blob', //一定要写
+    params
   });
 }
 // 审核创意资质查看
