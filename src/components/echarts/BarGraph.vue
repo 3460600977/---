@@ -22,7 +22,7 @@
                     title: '花费数',
                     xAxis: {
                         data: [
-                            
+
                         ]
                     },
                     yAxis: {
@@ -91,7 +91,7 @@
                     },
                     series: [
                         { // For shadow
-                            type: 'bar',
+                            type: 'line',
                             itemStyle: {
 
                                 normal: {color: 'rgba(110,136,195,0.14)'}
@@ -107,7 +107,7 @@
                             },
                         },
                         {
-                            type: 'bar',
+                            type: 'line',
                             itemStyle: {
                                 normal: {color: 'rgba(45,90,255,1)'}
                             },

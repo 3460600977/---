@@ -5,14 +5,29 @@
         <el-divider direction="vertical"></el-divider>
         <span class="report-form-title">创意审核</span>
       </div>
-      <el-form :inline="true" :model="checkFormInline" class="report-query-form">
+      <el-form :inline="true" :model="auditList" class="report-query-form">
         <el-form-item class="item-space-1">
-          <el-input v-model="checkFormInline.reportPlanValue" placeholder="输入创意名称" clearable></el-input>
+          <el-select
+            v-model="auditList.name"
+            placeholder="输入创意名称"
+            :loading="creativeNameList.loading"
+            :remote-method="remoteCreativeName"
+            @change="changeCreativeName"
+            @clear="clearCreativeName"
+            filterable
+            remote
+            clearable>
+            <el-option v-for="item in creativeNameList.data" :key="item.id" :label="item.name" :value="item.id">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item class="item-space-end">
-          <el-select v-model="checkFormInline.checkSelectStatus" placeholder="全部状态">
+          <el-select v-model="auditList.statusName"
+                     placeholder="全部状态"
+                     @change="changeCreativeStatus"
+                     clearable>
             <el-option
-              v-for="(check,checkIndex) in checkFormInline.checkStatus"
+              v-for="(check,checkIndex) in creativeStatus"
               :key="checkIndex"
               :label="check.label"
               :value="check.value">
@@ -20,7 +35,7 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" plain>查询</el-button>
+          <el-button type="primary" plain @click="submitCreativeList">查询</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -38,10 +53,25 @@
               <span v-if="scope.row[scope.column.property] === 1" class="pass status">审核通过</span>
               <span v-if="scope.row[scope.column.property] === 2" class="deny status">审核拒绝</span>
             </div>
+            <div v-else-if="col.prop === 'screenType'">
+              <div v-if="scope.row.screenType === 0">
+                <span>上屏</span>
+              </div>
+              <div v-else-if="scope.row.screenType  === 1">
+                <span>下屏</span>
+              </div>
+              <div v-else-if="scope.row.screenType  === 2">
+                <span>上下屏</span>
+              </div>
+              <div v-else>
+                <span>暂无</span>
+              </div>
+            </div>
             <div v-else-if="col.prop === 'action'">
               <div v-if="scope.row.status === 0">
-                <span class="icon-space"><i class="el-icon-success icon-color"></i>通过</span>
-                <span class="icon-space" @click="dialogDenyVisible = true"><i
+                <span class="icon-space" @click="passCreative(scope.row.id,scope.row.name)"><i
+                  class="el-icon-success icon-color"></i>通过</span>
+                <span class="icon-space" @click="denyCreative(scope.row.id,scope.row.name)"><i
                   class="el-icon-error icon-color"></i>拒绝</span>
               </div>
             </div>
@@ -61,34 +91,35 @@
       <el-pagination
         background
         layout="total, sizes, prev, pager, next, jumper"
-        :total="1000"
-        :page-sizes="[10, 20, 30, 40,50]"
+        :total="totalCount"
+        :page-sizes="pageSizeSelectable"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        class="list-page"></el-pagination>
+        :current-page="pageIndex"
+        class="list-page"
+      ></el-pagination>
     </div>
     <el-dialog title="审核拒绝" :visible.sync="dialogDenyVisible" class="deny-dialog">
-      <el-form :model="form" class="deny-from">
-        <el-form-item :label-width="formLabelWidth" v-for="(denyItem,denyIndex) in denyDialogReason" :key="denyIndex"
+      <el-form :model="denyFrom" class="deny-from">
+        <el-form-item :label-width="formLabelWidth" v-for="(denyItem,denyIndex) in DenyDialogReason" :key="denyIndex"
                       :denyIndex="denyIndex">
-          <h3 class="deny-title">{{denyItem.title}}</h3>
+          <h3 class="deny-title">{{denyIndex+1+'、'+denyItem.title}}</h3>
           <el-checkbox-group v-model="checkReason" class="deny-reason-group"
                              @change="handleCheckedReasonChange" :min="0">
-            <el-checkbox-button v-for="reason in denyItem.reasons" :key="reason.index"
-                                :label="denyIndex +'-'+ reason.index">
+            <el-checkbox-button v-for="(reason,reasonIndex) in denyItem.reasons" :key="reasonIndex"
+                                :label="denyIndex +'-'+ reasonIndex">
               {{reason.value}}
             </el-checkbox-button>
           </el-checkbox-group>
         </el-form-item>
       </el-form>
-      <div class="choose-deny-list">
+      <textarea class="choose-deny-list">
         <el-tag closable>不得使用或者变相使用中华人民共和国的国旗、国歌、国徽、军旗、军歌、军徽</el-tag>
         <el-tag closable>涉及虚假误导宣传</el-tag>
-      </div>
+      </textarea>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDenyVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogDenyVisible = false">确 定</el-button>
+        <el-button type="primary" @click="submitDengyCreative()">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="创意内容" :visible.sync="dialogShowContent" class="creative-dialog">
@@ -125,17 +156,19 @@
 </template>
 
 <script>
+  const PAGE_SIZE = [10, 20, 30, 40, 50];
+  import {Notification} from 'element-ui'
+  import {DenyDialogReason} from '../../../../../utils/static'
+
   export default {
     name: "auditList",
     data() {
       return {
+        DenyDialogReason,
         checkReason: [],
         activeName: 'aptitude',
         dialogDenyVisible: false,
         dialogShowContent: false,
-        form: {
-          checkReason: [],
-        },
         aptitudeData: [
           {value: '新潮传媒集团', label: '企业名称'},
           {value: '餐饮', label: '企业行业'},
@@ -151,116 +184,98 @@
         ],
         denyDialogReason: [
           {
-            title: '1、效果承诺',
+            title: '效果承诺',
             reasons: [
               {
-                index: 0,
                 value: '不得含有对未来效果、收益或者与其相关的情况作出保证性承诺，明示或者暗示保本、无风险或者保收益等内容'
               },
               {
-                index: 1,
+
                 value: '不得涉及前后效果对比'
               },
               {
-                index: 2,
+
                 value: '不得对升学，提高成绩，拿证或培训效果作出保证性承诺'
               },
               {
-                index: 3,
                 value: '不得以受益人，专家学者等机构的名义推广'
               },
               {
-                index: 4,
                 value: '涉及虚假误导宣传'
               },
             ]
           },
           {
-            title: '2、政治面貌敏感，极端词语类',
+            title: '政治面貌敏感，极端词语类',
             reasons: [
               {
-                index: 0,
                 value: '不得使用或者变相使用中华人民共和国的国旗、国歌、国徽、军旗、军歌、军徽'
               },
               {
-                index: 1,
                 value: '不得使用”国家级””最高级””最佳”等极端用语'
               },
               {
-                index: 2,
                 value: '不得含有污秽、色情、赌博、迷信、恐怖、暴力的内容'
               },
               {
-                index: 3,
                 value: '含有名族、种族、宗教、性别歧视的内容'
               },
               {
-                index: 4,
                 value: '不得涉及时事热点政治敏感内容'
               },
               {
-                index: 5,
                 value: '不得使用国家机关或国家机关工作人员的形象名义作为推广'
               },
             ]
           },
 
           {
-            title: '3、风险提示类',
+            title: '风险提示类',
             reasons: [
               {
-                index: 0,
                 value: '请在画面添加备注预售号'
               },
               {
-                index: 1,
+
                 value: '涉及招商加盟，请备注风险提示语：“投资有风险，加盟需谨慎”'
               },
               {
-                index: 2,
                 value: '画面请备注风险提示语“投资有风险”'
               },
             ]
           },
           {
-            title: '4、素材质量类',
+            title: '素材质量类',
             reasons: [
               {
-                index: 0,
                 value: '素材画面整体质量较低'
               },
               {
-                index: 1,
                 value: '画面内容容易引起不适，易引起投诉'
               },
               {
-                index: 2,
                 value: '请合理规范使用标点符号'
               },
             ]
           },
           {
-            title: '5、医疗行业类',
+            title: '医疗行业类',
             reasons: [
               {
-                index: 0,
                 value: '不得涉及真人医患形象，真人代言，医疗器械，手术直播过程'
               },
               {
-                index: 1,
                 value: '非医疗行业不得涉及医疗相关描述'
               },
               {
-                index: 2,
                 value: '请在画面添加备注医广号'
               },
             ]
           },
           {
-            title: '6、暂不接受投放类',
+            title: '暂不接受投放类',
             reasons: [
               {
-                index: 0,
                 value: '暂不接受该行业投放，请知悉'
               },
             ]
@@ -269,160 +284,14 @@
         formLabelWidth: '120px',
         currentPage: 50,
         checkFormInline: {
-          reportPlanValue: '',
-          checkStatus: [{value: 0, label: '待审核'}, {value: 1, label: '审核通过'}, {value: 2, label: '审核拒绝'}],
-          checkSelectStatus: '',
+          selectCreativeName: '',
+          selectCreativeStatus: '',
         },
-        tableData:
-          {
-            column: [
-              {label: '创意组ID', prop: 'creativeID'},
-              {label: '创意内容', prop: 'creativeContent'},
-              {label: '创意名称', prop: 'creativeName'},
-              {label: '企业名称', prop: 'companyName'},
-              {label: '企业行业', prop: 'companyIndustry'},
-              {label: '创意行业', prop: 'creativeIndustry'},
-              {label: '屏幕类型', prop: 'screenCategory'},
-              {label: '提交时间', prop: 'submitTime'},
-              {label: '审核时间', prop: 'checkTime'},
-              {label: '创意状态', prop: 'creativeStatus'},
-              {label: '操作', prop: 'action'},
-            ],
-            data: [
-              {
-                creativeID: 11002082,
-                creativeContent: '查看',
-                creativeName: '餐饮_上屏_11_26',
-                companyName: '新潮传媒集团有限公司',
-                companyIndustry: '医药',
-                creativeIndustry: '医药',
-                screenCategory: '联动',
-                submitTime: '2019-12-12 12:08:21',
-                checkTime: '2019-12-12 12:08:21',
-                creativeStatus: 0,
-              },
-              {
-                creativeID: 11002082,
-                creativeContent: '查看',
-                creativeName: '餐饮_上屏_11_26',
-                companyName: '新潮传媒集团有限公司',
-                companyIndustry: '医药',
-                creativeIndustry: '医药',
-                screenCategory: '联动',
-                submitTime: '2019-12-12 12:08:21',
-                checkTime: '2019-12-12 12:08:21',
-                creativeStatus: 1,
-              },
-              {
-                creativeID: 11002082,
-                creativeContent: '查看',
-                creativeName: '餐饮_上屏_11_26',
-                companyName: '新潮传媒集团有限公司',
-                companyIndustry: '医药',
-                creativeIndustry: '医药',
-                screenCategory: '联动',
-                submitTime: '2019-12-12 12:08:21',
-                checkTime: '2019-12-12 12:08:21',
-                creativeStatus: 2,
-              },
-              {
-                creativeID: 11002082,
-                creativeContent: '查看',
-                creativeName: '餐饮_上屏_11_26',
-                companyName: '新潮传媒集团有限公司',
-                companyIndustry: '医药',
-                creativeIndustry: '医药',
-                screenCategory: '联动',
-                submitTime: '2019-12-12 12:08:21',
-                checkTime: '2019-12-12 12:08:21',
-                creativeStatus: 0,
-              },
-              {
-                creativeID: 11002082,
-                creativeContent: '查看',
-                creativeName: '餐饮_上屏_11_26',
-                companyName: '新潮传媒集团有限公司',
-                companyIndustry: '医药',
-                creativeIndustry: '医药',
-                screenCategory: '联动',
-                submitTime: '2019-12-12 12:08:21',
-                checkTime: '2019-12-12 12:08:21',
-                creativeStatus: 1,
-              },
-              {
-                creativeID: 11002082,
-                creativeContent: '查看',
-                creativeName: '餐饮_上屏_11_26',
-                companyName: '新潮传媒集团有限公司',
-                companyIndustry: '医药',
-                creativeIndustry: '医药',
-                screenCategory: '联动',
-                submitTime: '2019-12-12 12:08:21',
-                checkTime: '2019-12-12 12:08:21',
-                creativeStatus: 2,
-              },
-              {
-                creativeID: 11002082,
-                creativeContent: '查看',
-                creativeName: '餐饮_上屏_11_26',
-                companyName: '新潮传媒集团有限公司',
-                companyIndustry: '医药',
-                creativeIndustry: '医药',
-                screenCategory: '联动',
-                submitTime: '2019-12-12 12:08:21',
-                checkTime: '2019-12-12 12:08:21',
-                creativeStatus: 0,
-              },
-              {
-                creativeID: 11002082,
-                creativeContent: '查看',
-                creativeName: '餐饮_上屏_11_26',
-                companyName: '新潮传媒集团有限公司',
-                companyIndustry: '医药',
-                creativeIndustry: '医药',
-                screenCategory: '联动',
-                submitTime: '2019-12-12 12:08:21',
-                checkTime: '2019-12-12 12:08:21',
-                creativeStatus: 1,
-              },
-              {
-                creativeID: 11002082,
-                creativeContent: '查看',
-                creativeName: '餐饮_上屏_11_26',
-                companyName: '新潮传媒集团有限公司',
-                companyIndustry: '医药',
-                creativeIndustry: '医药',
-                screenCategory: '联动',
-                submitTime: '2019-12-12 12:08:21',
-                checkTime: '2019-12-12 12:08:21',
-                creativeStatus: 2,
-              },
-              {
-                creativeID: 11002082,
-                creativeContent: '查看',
-                creativeName: '餐饮_上屏_11_26',
-                companyName: '新潮传媒集团有限公司',
-                companyIndustry: '医药',
-                creativeIndustry: '医药',
-                screenCategory: '联动',
-                submitTime: '2019-12-12 12:08:21',
-                checkTime: '2019-12-12 12:08:21',
-                creativeStatus: 0,
-              },
-              {
-                creativeID: 11002082,
-                creativeContent: '查看',
-                creativeName: '餐饮_上屏_11_26',
-                companyName: '新潮传媒集团有限公司',
-                companyIndustry: '医药',
-                creativeIndustry: '医药',
-                screenCategory: '联动',
-                submitTime: '2019-12-12 12:08:21',
-                checkTime: '2019-12-12 12:08:21',
-                creativeStatus: 1,
-              },
-            ]
-          },
+        //屏幕类型
+        screenTypeList: [
+          {id: '001', type: '上屏'}, {id: '002', type: '下屏'}, {id: '003', type: '上下屏'}
+        ],
+        //创意审核列表
         reviewCreativeList: {
           data: null,
           loading: false,
@@ -438,24 +307,111 @@
             {label: '审核时间', prop: 'reviewTime'},
             {label: '创意状态', prop: 'status'},
             {label: '操作', prop: 'action'}
-            ]
+          ]
+        },
+        creativeStatus: [{value: 0, label: '待审核'}, {value: 1, label: '审核拒绝'}, {value: 2, label: '审核通过'}],
+        //创意名称列表
+        creativeNameList: {
+          data: null,
+          loading: false,
+        },
+        //创意素材下载
+        downloadCreative: {
+          data: null,
+          loading: false,
+        },
+        //创意审核资质
+        reviewCreativeDetail: {
+          data: null,
+          loading: false,
+        },
+        //创意审核提交
+        submitCreative: {
+          data: null,
+          loading: false,
         },
         auditList: {
-          startTime: '',
-          endTime: '',
-        }
+          id: '',
+          name: '',
+          status: '',
+          statusName: '',
+          rejectReason: ''
+        },
+        submit: {
+          id: '',
+          name: '',
+          status: '',
+          rejectReason: ''
+        },
+        denyFrom: {},
+        totalCount: 0, // 总共条数
+        pageSizeSelectable: PAGE_SIZE,
+        resultData: null,
+        pageIndex: 1,
+        pageSize: 10,
+        loading: false,
       }
     },
     created() {
       this.getAuditCreativeList()
     },
     methods: {
+      //查询创意
+      submitCreativeList() {
+        this.getAuditCreativeList()
+      },
+      //远程模糊搜索创意名称，获取对应创意列表
+      remoteCreativeName(query) {
+        this.creativeNameList.loading = true
+        if (query !== '') {
+          setTimeout(() => {
+            let queryParam = {
+              name: query,
+            }
+            //请求方案报表列表查询接口
+            this.$api.AuditCreative.getAuditCreativeList(queryParam)
+              .then(res => {
+                this.creativeNameList.loading = false
+                this.creativeNameList.data = res.result
+              })
+              .catch(res => {
+                this.creativeNameList.loading = false
+              })
+          }, 200);
+        } else {
+          this.creativeNameList.data = []
+          this.creativeNameList.loading = false;
+        }
+      },
+      //改变选择的创意名称
+      changeCreativeName(val) {
+        this.auditList.id = val
+        let changeObj = {};
+        changeObj = this.creativeNameList.data.find((item) => {
+          return item.id === val;
+        });
+        this.auditList.name = changeObj.name;
+      },
+      //清空选择的创意名称
+      clearCreativeName() {
+        this.auditList.name = ''
+        this.auditList.id = ''
+      },
+      //改变状态
+      changeCreativeStatus(status) {
+        this.auditList.status = status
+        let changeObj = {};
+        changeObj = this.creativeStatus.find((item) => {
+          return item.value === status
+        })
+        this.auditList.statusName = changeObj.label;
+      },
       //获取审核创意列表
       getAuditCreativeList() {
         //必须参数
         let queryParam = {
-          name: this.auditList.startTime,
-          status: this.auditList.endTime,
+          name: this.auditList.name,
+          status: this.auditList.status,
           pageIndex: this.pageIndex,
           pageSize: this.pageSize,
         }
@@ -464,35 +420,121 @@
         this.$api.AuditCreative.getAuditCreativeList(queryParam)
           .then(res => {
             this.reviewCreativeList.loading = false
+            this.totalCount = res.page.totalCount;
+            res.result.forEach(item => {
+              if (item.reviewTime === null || item.reviewTime === undefined) {
+                item.reviewTime = '暂无'
+              } else {
+                item.reviewTime = this.$tools.formatDate(item.reviewTime, 'yyyy-MM-dd')
+              }
+              if (item.createTime === null || item.createTime === undefined) {
+                item.createTime = '暂无'
+              } else {
+                item.createTime = this.$tools.formatDate(item.createTime, 'yyyy-MM-dd')
+              }
+              if (item.screenType === null || item.screenType === undefined) {
+                item.screenType = -1
+              } else {
+                item.screenType = parseInt(item.screenType)
+              }
+            })
             this.reviewCreativeList.data = res.result
           })
           .catch(res => {
             this.reviewCreativeList.loading = false
           })
       },
-      //获取创意明细
-      getAuditCreativeDetail() {
+      // 审核创意素材下载
+      downloadAuditCreative() {
         //必须参数
         let queryParam = {
-          name: this.auditList.startTime,
-          status: this.auditList.endTime,
-          pageIndex: this.pageIndex,
-          pageSize: this.pageSize,
+          id: this.auditList.id,
         }
         //请求方案报表列表查询接口
-        this.reviewCreativeList.loading = true
-        this.$api.AuditCreative.getAuditCreativeDetail(queryParam)
+        this.downloadCreative.loading = true
+        this.$api.AuditCreative.downloadAuditCreative(queryParam)
           .then(res => {
-            this.reviewCreativeList.loading = false
-            this.reviewCreativeList.data = res.result
+            this.downloadCreative.loading = false
+            this.$tools.downLoadFileFlow(res,
+              `审核创意${this.auditList.name}_${this.$tools.getFormatDate("YYmmdd")}.xsl`
+            );
+          })
+          .catch(res => {
+            this.downloadCreative.loading = false
+          })
+      },
+      // 审核创意资质查看
+      getAuditCreativeReviewDetail() {
+        //必须参数
+        let queryParam = {
+          id: this.auditList.id,
+        }
+        //请求方案报表列表查询接口
+        this.reviewCreativeDetail.loading = true
+        this.$api.AuditCreative.getAuditCreativeReviewDetail(queryParam)
+          .then(res => {
+            this.reviewCreativeDetail.loading = false
+            this.reviewCreativeDetail.data = res.result
+          })
+          .catch(res => {
+            this.reviewCreativeDetail.loading = false
+          })
+      },
+      //点击通过,创意变为通过
+      passCreative(id, name) {
+        console.log(id, name)
+        this.submit.id = id
+        this.submit.status = 2
+        this.submit.rejectReason = ''
+        this.submit.name = name
+        this.submitAuditCreative(name)
+      },
+      //点击拒绝,创意变为拒绝
+      denyCreative(id, name) {
+        this.submit.id = id
+        this.submit.status = 1
+        this.submit.name = name
+        this.dialogDenyVisible = true
+      },
+      //选择拒绝原因
+      handleCheckedReasonChange(checkItem) {
+        console.log(checkItem, this.checkReason)
+      },
+      //用户选择完拒绝原因，点击提交按钮
+      submitDenyCreative() {
+        this.submitAuditCreative()
+      },
+      //创意审核提交
+      submitAuditCreative(creativeName) {
+        //必须参数
+        let queryParam = {
+          id: this.submit.id,
+          status: this.submit.status,
+          rejectReason: this.submit.rejectReason,
+        }
+        //请求创意审核提交接口
+        this.$api.AuditCreative.submitAuditCreative(queryParam)
+          .then(res => {
+            console.log(queryParam, res.result)
+            if (this.auditList.status === 2) {
+              Notification({
+                title: '成功',
+                message: '创意:' + creativeName + ',通过审查',
+                type: 'success'
+              });
+            }
+            if (this.auditList.status === 1) {
+              Notification({
+                title: '失败',
+                message: '创意:' + creativeName + ',审核拒绝',
+                type: 'error'
+              });
+            }
+            this.getAuditCreativeList()
           })
           .catch(res => {
             this.reviewCreativeList.loading = false
           })
-      },
-      //创意审核提交
-      submitAuditCreative() {
-
       },
       getColumnWidth(index) {
         let width;
@@ -529,14 +571,13 @@
         }
         return position;
       },
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+      handleSizeChange(size) {
+        this.pageSize = size;
+        this.getAuditCreativeList();
       },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
-      },
-      handleCheckedReasonChange(checkItem) {
-        console.log(checkItem[0], checkItem[1])
+      handleCurrentChange(currentPage) {
+        this.pageIndex = currentPage;
+        this.getAuditCreativeList();
       },
       handleContentClick() {
 
