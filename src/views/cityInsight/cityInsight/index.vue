@@ -36,11 +36,9 @@
       <div class="right-info">
         <slide-container>
           <right-info
-            :budget="budget"
             :selectedBuildings="selectedBuildings"
-            :pathArr="pathArr"
-            @deletePath="deletePath"
-            @budgetChange="budgetChange"
+            @createPackage="createPackage"
+            @deleteItem="deleteItem"
           ></right-info>
         </slide-container>
       </div>
@@ -58,16 +56,20 @@
           @returnSelectedBuildings="returnSelectedBuildings"
         ></db-map>
       </div>
+      <div class="create-dialog">
+        <create-dialog ref="createDialog" :data="selectedBuildings"></create-dialog>
+      </div>
     </div>
 </template>
 
 <script>
   import dbMap from '../../../components/map/map.vue'
   import mapPopup from "../../../components/map/mapPopup";
-  // import rightInfo from "./rightInfo";
+  import rightInfo from "./rightInfo";
   import drawType from "../../../components/map/drawType";
   // import leftSelect from "./leftSelect";
   import mouseMoveText from "./mouseMoveText";
+  import createDialog from "./createDialog";
   import slideContainer from "../../../components/slideContainer";
   // import topSelect from "./topSelect";
 
@@ -81,6 +83,7 @@
       dbMap,
       mapPopup,
       drawType,
+      createDialog,
       slideContainer,
       // leftSelect,
       rightInfo,
@@ -134,9 +137,19 @@
       }
     },
     methods: {
+      // 右边弹出框点击删除某个楼盘
+      deleteItem(item) {
+        this.$refs.dbmap.deleteItem(item)
+      },
+      // 右边弹出框点击创建资源包
+      createPackage() {
+        this.$refs.createDialog.show()
+      },
+      // 查找选点搜索地点
       querySearchAsync(str) {
         this.$refs.dbmap.searchByWord(str)
       },
+      // 地图组件返回搜索结果
       returnSearchResult(result) {
         this.$refs.drawType.setSearchList(result)
       },
@@ -211,12 +224,6 @@
         this.currentSelectType = null
         this.$refs.drawType.cancleSelect()
       },
-      /*
-      * 投放预算变化
-      * */
-      budgetChange(val) {
-        this.budget = val
-      },
     },
   }
 </script>
@@ -224,6 +231,7 @@
 <style scoped lang='scss'>
 .cityInsight {
   position: relative;
+  overflow: hidden;
   .tools {
     position: absolute;
     z-index: 2;
@@ -254,9 +262,9 @@
   .right-info {
     position: absolute;
     z-index: 3;
-    top: 79px;
-    background: #fff;
-    right: 40px;
+    top: 0;
+    height: 100%;
+    right: 0;
   }
   .left-select {
     position: absolute;

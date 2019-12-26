@@ -8,7 +8,7 @@
       <div>
         <el-input v-model="val" placeholder="输入地点"></el-input>
       </div>
-      <ul class="ul">
+      <ul class="ul customScroll">
         <li @click="handleSelect(item)"  v-for="(item, index) in lists" :key="index">
           <p>{{item.title}}</p>
           <p class="color-text-1 margin">{{item.address}}</p>
@@ -99,26 +99,6 @@
         &:active {
           background:rgba(241,242,246,1);
         }
-      }
-
-      &::-webkit-scrollbar    //滚动条整体部分
-      {
-        width: 5px;
-        height:10px;
-        background-color:rgba(242,242,242,1);
-      }
-      &::-webkit-scrollbar-track       //scroll轨道背景
-      {
-        -webkit-box-shadow: inset 0 0 6px rgba(242,242,242,1);
-        border-radius: 10px;
-        background-color:rgba(242,242,242,1);
-
-      }
-      &::-webkit-scrollbar-thumb  // 滚动条中能上下移动的小块
-      {
-        border-radius: 10px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color:rgba(223,223,223,1);;
       }
     }
     .remote {

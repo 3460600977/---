@@ -25,6 +25,7 @@
         defaultRadius: 3000,
         drawingManager: null,
         selectedBuildings: [], //当前选中楼盘
+        unSelectedBuildings: [], // 当前未选中楼盘
         pointsOptions: {
           0: {
             shape: BMAP_POINT_SHAPE_CIRCLE,
@@ -129,6 +130,27 @@
           }
           this.loading = false
         })
+      },
+      /*
+      * 删除arr中的点
+      * */
+      deleteItem(item) {
+        // let index = this.$tools.binarySearch(item, this.selectedBuildings, 'premisesId')
+        // console.log(index)
+        // this.selectedBuildings.splice(index, 1)
+        for (let i = 0; i < this.selectedBuildings.length; i++) {
+          if (item.premisesId === this.selectedBuildings[i].premisesId) {
+            this.selectedBuildings.splice(i, 1)
+            break;
+          }
+        }
+        this.unSelectedBuildings.push(item)
+        this.draw(this.selectedBuildings, this.unSelectedBuildings)
+      },
+      // 根据传入的以选中和未选中楼盘重新画数据
+      draw(selectP, unSelectP) {
+        this.setDevicePoints(selectP, 0)
+        this.setDevicePoints(unSelectP, 1)
       },
       /*
       * 根据关键字搜索
@@ -499,12 +521,14 @@
           if (this.budget === 1) {
             this.setDevicePoints(this.normalizePoints(this.points), 0)
             this.setDevicePoints([], 1)
+            this.unSelectedBuildings = []
             this.selectedBuildings = this.points
           } else {
             let [selectP, unSelectP] = this.getRandomBuildings(this.points, this.budget)
             this.setDevicePoints(selectP, 0)
             this.setDevicePoints(unSelectP, 1)
             this.selectedBuildings = selectP
+            this.unSelectedBuildings = unSelectP
           }
         } else {
           let selectedBuildings = []
@@ -520,7 +544,6 @@
             }
           }
           let result = this.unique(selectedBuildings)
-          this.selectedBuildings = result
           this.separateBgPonits(result)
         }
       },
@@ -546,8 +569,10 @@
       * 画背景点
       * */
       drawBg(selected, unSelected) {
-        let selectP = this.normalizePoints(Object.values(selected))
-        let unSelectP = this.normalizePoints(Object.values(unSelected))
+        let selectP = Object.values(selected)
+        let unSelectP = Object.values(unSelected)
+        this.selectedBuildings = selectP
+        this.unSelectedBuildings = unSelectP
         this.setDevicePoints(selectP, 0)
         this.setDevicePoints(unSelectP, 1)
       },
