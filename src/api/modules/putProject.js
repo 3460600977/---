@@ -103,5 +103,14 @@ export const PutProject = {
     });
   },
 
+  // POST编辑投放方案
+  EditProject: (data) => {
+    return request({
+      url: "/dpapi/project/edit",
+      method: "post",
+      data
+    });
+  },
+
 
 }
