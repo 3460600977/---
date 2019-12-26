@@ -1,7 +1,10 @@
 <template>
   <div class="create-creative">
-    <!-- 非单独创建 -->
-    <el-tabs v-if="$route.query.createType !== 'single'" v-model="activeName" class="my-tabs creative-box" type="border-card">
+    <!-- 单独创建编辑 -->
+    <CreativeNewCreative v-if="$route.query.createType !== 'step'"/>
+
+    <!-- 按步骤 -->
+    <el-tabs v-else v-model="activeName" class="my-tabs creative-box" type="border-card">
       <el-tab-pane name="create" label="创建新广告创意">
         <CreativeNewCreative/>
       </el-tab-pane>
@@ -9,8 +12,6 @@
         <ExistCreativeList :isShow="activeName==='exist'"/>
       </el-tab-pane>
     </el-tabs>
-    <!-- 单独创建 -->
-    <CreativeNewCreative v-else/>
   </div>
 </template>
 
@@ -36,7 +37,6 @@ export default {
   
   beforeMount() {
     this.setLeftStep({rootActiveIndex: 2, subActiveIndex: 0})
-    console.log(this.$route.query.createType)
   }
 }
 </script>
