@@ -305,6 +305,7 @@ export default {
     },
     handleSizeChange(size) {
       this.pageSize = size;
+      this.getProjectList();
       //console.log(`每页 ${size} 条`);
     },
     handleCurrentChange(currentPage) {
@@ -447,12 +448,7 @@ export default {
       let queryParam = {
         startTime: this.projectList.startTime,
         endTime: this.projectList.endTime,
-        sortList: [
-          {
-            sortField: this.projectList.sortField,
-            sortType: 1
-          }
-        ],
+        sortField: this.projectList.sortField,
         topStatus: this.projectList.topStatus,
         campaignId: this.projectList.campaignId,
         id: this.projectList.id,
