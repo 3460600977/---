@@ -50,7 +50,6 @@
       <el-button class="map-btn" @click="cancleConfirm">取消投放</el-button>
       <el-button class="map-btn" @click="confirm" type="primary">确认并关闭</el-button>
       <el-button class="map-btn" @click="createActive" type="primary">确认并编辑创意</el-button>
-      <!-- <el-button type="primary" @click="innerVisible = true">打开内层 Dialog</el-button> -->
     </div>
   </el-dialog>
 </template>

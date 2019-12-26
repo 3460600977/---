@@ -1,11 +1,11 @@
 <template>
   <div class="put-project">
     <div class="title">
-      <h2>所属投放计划：{{planData.name || '正在加载中...'}}</h2>
+      <h2>所属投放计划：{{planData.name || formData.planName}}</h2>
     </div>
 
     <!-- 投放设置 -->
-    <PutMangeCard v-loading="planDataLoading" :title="'投放设置'" class="form-box">
+    <PutMangeCard v-loading="planData.loading" :title="'投放设置'" class="form-box">
       <el-form
         ref="planTop"
         :label-position="'left'"
@@ -159,7 +159,7 @@
     </PutMangeCard>
 
     <!-- 楼盘定向 -->
-    <PutMangeCard v-if="!isEdit" v-loading="planDataLoading" :title="'楼盘定向'" class="form-box">
+    <PutMangeCard v-if="!isEdit" v-loading="planData.loading" :title="'楼盘定向'" class="form-box">
       <el-tabs class="thin-tab mt-15" v-model="buildingDirection.activeType">
         <!-- 新建楼盘定向 -->
         <el-tab-pane label="新建楼盘定向" name="create">
@@ -200,7 +200,7 @@
         <el-tab-pane label="导入楼盘数据" name="import">
           <el-form label-position='left' label-width="125px">
 
-            <el-form-item label="城市">
+            <!-- <el-form-item label="城市">
               <el-select 
                 @change="buildingDirection.uploadBuildsFile = ''"
                 filterable
@@ -213,13 +213,13 @@
                   :value="item.cityCode">
                 </el-option>
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
 
             <el-form-item label="导入楼盘数据" style="margin-top: 8px">
               <div class="mid">
                <div class="my-input-upload" style="width: 240px;">
                 <input 
-                  v-show="!cityInsightDisabled && formData.projectCity != ''"
+                  v-show="!cityInsightDisabled"
                   ref="uplaodBuild"
                   @change="uplaodBuild($event)"
                   suffix-icon="el-icon-upload2"
@@ -228,7 +228,7 @@
                   class="input-real"/>
                 <el-input
                   suffix-icon="el-icon-upload2"
-                  :disabled="cityInsightDisabled || formData.projectCity == ''"
+                  :disabled="cityInsightDisabled"
                   placeholder="点击上传"
                   v-model="buildingDirection.uploadBuildsFile.name"
                   class="input-fake"></el-input>
@@ -238,7 +238,6 @@
                   style="width: 102px; margin-left: 10px">模板下载</el-button>
               </div>
               <span class="el-form-item__error" v-if="cityInsightDisabled">* 请先完善投放设置!</span>
-              <span class="el-form-item__error" v-else-if="!formData.projectCity">* 请选择城市!</span>
             </el-form-item>
           </el-form>
         </el-tab-pane>
@@ -250,7 +249,7 @@
     </PutMangeCard>
 
     <!-- 投放方案名称 -->
-    <PutMangeCard v-loading="planDataLoading" :title="'投放方案名称'" class="form-box">
+    <PutMangeCard v-loading="planData.loading" :title="'投放方案名称'" class="form-box">
       <el-form
         ref="planName"
         :model="formData"
@@ -264,9 +263,16 @@
     </PutMangeCard>
 
     <!-- 保存 取消 -->
-    <PutMangeCard v-loading="planDataLoading" class="save-box">
+    <PutMangeCard v-loading="planData.loading" class="save-box">
       <div v-if="isEdit" class="float-right">
-        <el-button :loading="formData.confirming" @click="confirmProject" style="width: 136px" type="primary">保存并关闭</el-button>
+        <el-button :loading="formData.confirming" @click="confirmProject" style="width: 136px" type="primary">
+          <template v-if="formData.creativeStatus === 0 || formData.creativeStatus === 2">
+            保存并关闭
+          </template>
+          <template v-else>
+            下一步
+          </template>
+        </el-button>
       </div>
 
       <div v-else class="float-right">
@@ -274,10 +280,6 @@
         <el-button :loading="formData.confirming" @click="confirmProject" style="width: 136px" type="primary">确定</el-button>
       </div>
     </PutMangeCard>
-
-
-
-
 
     <!-- 楼盘预估数面板 -->
     <EstimateBox v-if="!isEdit"/>
@@ -328,8 +330,10 @@ export default {
     return {
       projectConst,
       // 所属计划的信息
-      planData: {},
-      planDataLoading: true,
+      planData: {
+        loading: true,
+        data: ''
+      },
 
       // 投放行业
       industry: {
@@ -449,12 +453,12 @@ export default {
     getPlanDetailById(planid) {
       this.$api.PutPlan.PlanDetail(+planid)
         .then(res => {
-          this.planDataLoading = false;
-          this.planData = res.result;
+          this.planData.loading = false;
+          this.planData.data = res.result;
         })
         .catch(res => {
           this.planData.name = '加载失败请刷新页面或重新进入';
-          this.planDataLoading = false;
+          this.planData.loading = false;
         })
     },
     
@@ -465,8 +469,11 @@ export default {
       this.$api.PutProject.GetProjectDetailById(+this.$route.query.editProjectId)
         .then(res => {
           let resData = res.result;
-          this.planDataLoading = false;
+          this.planData.loading = false;
+          // this.planData.name = resData.campaignName;
           this.formData = {
+            planName: resData.campaignName,
+            creativeStatus: resData.creativeStatus,
             name: resData.name,
             id: resData.id,
             industry: this.$tools.getObjectItemFromArray(this.industry.data, 'industryId', resData.industry),
@@ -483,7 +490,7 @@ export default {
         })
         .catch(res => {
           this.planData.name = '加载失败请刷新页面或重新进入';
-          this.planDataLoading = false;
+          this.planData.loading = false;
         })
     },
 
@@ -683,7 +690,7 @@ export default {
         });
       }
 
-      this.planDataLoading = true;
+      this.planData.loading = true;
       this.formData.confirming = true;
       param = {
         name:         this.formData.name,
@@ -703,30 +710,51 @@ export default {
         this.$api.PutProject.EditProject({id: this.formData.id, name: this.formData.name})
           .then(res => {
             this.formData.confirming = false;
-            this.planDataLoading = false;
-            return this.$notify({
+            this.planData.loading = false;
+            this.$notify({
               title: '成功',
               message: '修改方案成功',
               type: 'success'
             });
+            /**
+             * 若该方式的创意状态为“未上传、审核拒绝”，按钮为【下一步】，可跳转到创建广告创意页面；
+             * 若广告创意是审核拒绝，显示之前的记录，支持修改，修改后，状态为“待审核“
+             * 创意状态 0未审核，1审核不通过，2审核通过
+             */
+            if (this.formData.creativeStatus === 0 || this.formData.creativeStatus === 2) {
+              this.$router.push({
+                path: '/putManage',
+                query: {
+                  active: 'project'
+                }
+              })
+            } else {
+              this.$router.push({
+                path: '/putManage/create/creative',
+                query: {
+                  projectId: this.$route.query.editProjectId,
+                  createType: 'step'
+                }
+              })
+            }
           })
           .catch(res => {
             this.formData.confirming = false;
-            this.planDataLoading = false;
+            this.planData.loading = false;
           })
       }
       if (!this.isEdit) {
         this.$api.PutProject.AddProject(param)
           .then(res => {
             this.formData.confirming = false;
-            this.planDataLoading = false;
+            this.planData.loading = false;
             this.confirmWindowMsg.show = true;
             this.confirmWindowMsg.pageData = this.formData;
             this.confirmWindowMsg.resData = res.result;
           })
           .catch(res => {
             this.formData.confirming = false;
-            this.planDataLoading = false;
+            this.planData.loading = false;
           })
       }
     },
@@ -783,7 +811,7 @@ export default {
 
     // 判断 资源包 导入是否可用
     cityInsightDisabled() {
-      this.formData.projectCity = '';
+      // this.formData.projectCity = '';
       if (this.buildingDirection.activeType === 'create') return;
       return !this.validataForm();
     },
