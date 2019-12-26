@@ -34,15 +34,13 @@
         ></mouseMove-text>
       </div>
       <div class="right-info">
-        <slide-container>
-          <right-info
-            :budget="budget"
-            :selectedBuildings="selectedBuildings"
-            :pathArr="pathArr"
-            @deletePath="deletePath"
-            @budgetChange="budgetChange"
-          ></right-info>
-        </slide-container>
+        <right-info
+          :budget="budget"
+          :selectedBuildings="selectedBuildings"
+          :pathArr="pathArr"
+          @deletePath="deletePath"
+          @budgetChange="budgetChange"
+        ></right-info>
       </div>
       <div class="map container">
         <db-map
@@ -64,11 +62,10 @@
 <script>
   import dbMap from '../../../components/map/map.vue'
   import mapPopup from "../../../components/map/mapPopup";
-  // import rightInfo from "./rightInfo";
+  import rightInfo from "./rightInfo";
   import drawType from "../../../components/map/drawType";
   // import leftSelect from "./leftSelect";
   import mouseMoveText from "./mouseMoveText";
-  import slideContainer from "../../../components/slideContainer";
   // import topSelect from "./topSelect";
 
   const NAV_HEIGHT = 76,
@@ -81,7 +78,6 @@
       dbMap,
       mapPopup,
       drawType,
-      slideContainer,
       // leftSelect,
       rightInfo,
       // topSelect,
