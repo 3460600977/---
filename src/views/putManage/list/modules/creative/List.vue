@@ -113,8 +113,8 @@
             >
               <i class="iconfont icon-shuxingliebiaoxiangqing2 icon-color"></i>详情
             </span>
-            <span v-if="scope.row.statusName == '审核拒绝'" class="icon-space hand">
-              <router-link :to="`/reportList/plan?campaignId=${scope.row.id}`">
+            <span class="icon-space hand">
+              <router-link :to="`/putManage/create/creative?createType=edit&creativeId=${scope.row.id}`">
                 <i class="iconfont icon-baobiao icon-color"></i>修改
               </router-link>
             </span>
@@ -122,7 +122,7 @@
               @click="delCreativeById(scope.row.id)"
               v-if="scope.row.statusName != '审核通过'" 
               class="icon-space hand">
-              <i class="el-icon-error icon-color"></i>删除
+              <i class="iconfont icon-error icon-color"></i>删除
             </span>
           </template>
         </el-table-column>

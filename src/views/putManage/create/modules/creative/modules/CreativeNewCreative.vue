@@ -2,7 +2,7 @@
 <template>
   <div class="upload-creative">
     <!-- 上传素材 -->
-    <PutMangeCard class="form-box creative" :style="createType === 'single' ? 'min-height: 715px;' : ''" v-loading="pageLoading" :title="'制作创意'">
+    <PutMangeCard class="form-box creative" :style="createType === 'single' ? 'min-height: 715px;' : !haveProject ? 'min-height: 715px;' : ''" v-loading="pageLoading" :title="'制作创意'">
       <!-- 上屏 -->
       <el-form  
         ref="creativeFormMaterialTop"
@@ -12,7 +12,7 @@
         label-width="112px" class="put-form">
         <!-- 屏幕类型 -->
         <el-form-item 
-          v-if="createType === 'single'" 
+          v-if="createType === 'single' || !haveProject" 
           style="margin-bottom: 12px;" class="screen-type-preview-box mt-20" 
           prop="screenType" label="屏幕类型">
           <div class="screen-type-preview-content">
@@ -104,8 +104,8 @@
         <div class="creative-preview-box">
           <PreviewBox 
             :innerWidth="108" 
-            :top="{type: this.formData.top.type, url: $tools.fileToUrl(this.formData.top)}" 
-            :bottom="{type: this.formData.bottom880Image.type, url: $tools.fileToUrl(this.formData.bottom880Image)}"/>
+            :top="previewInfo.top" 
+            :bottom="previewInfo.bottom880"/>
           <p class="decription color-text-1 font-12"><span class="color-red">*</span>AVI格式暂不支持预览</p>
         </div>
 
@@ -317,6 +317,7 @@ export default {
       fileType,
       
       createType: 'single', // single 联动,  top 上,  bottom 下屏
+      haveProject: false, // 编辑时后端返回的是否绑定创意, 判断是否可以选择上下屏类型
       pageLoading: true, // 页面加载中 数据保存中
       formData: {
         projectId: '',
@@ -367,23 +368,56 @@ export default {
     this.formData.projectId = this.$route.query.projectId || '';
     this.industryList = await this.getIndustryList();
 
-    // 非单独创建创意
-    if (this.createType !== 'single') {
+    // 按步骤创建
+    if (this.createType === 'step') {
       let projectTmp = await this.getProjectDetail();
       this.setProjectData(projectTmp)
       this.setPageProjectDetail()
+      this.generateCreativeName();
+      this.pageLoading = false;
     }
 
     // 单独创建创意
     if (this.createType === 'single') {
       this.formData.screenType = this.projectConst.screenType[2].value;
+      this.generateCreativeName();
+      this.pageLoading = false;
     }
-    this.generateCreativeName();
-    this.pageLoading = false;
+
+    // 编辑
+    if (this.createType === 'edit') {
+      this.editInit(+this.$route.query.creativeId)
+    }
   },
 
   methods: {
     ...mapMutations(['setProjectData']),
+
+    // 编辑初始化
+    editInit(creativeId) {
+      this.pageLoading = true;
+      this.$api.CreateCreative.CreativeDetail(creativeId)
+        .then(res => {
+          let resData = res.result;
+          this.pageLoading = false;
+          this.haveProject = resData.haveProject;
+          this.formData.fileType = +resData.fileType;
+          this.formData.industry = resData.industry
+          this.formData.name = resData.name;
+          this.formData.industryImage = resData.industryIdentify ? JSON.parse(resData.industryIdentify) : [];
+
+          // 素材
+          resData.materials.forEach((item, index) => {
+            if (item.screenType === 1) {
+              this.formData.top = item;
+            }
+            // if (item.screenType === 2 && )
+          })
+        })
+        .catch(res => {
+          this.pageLoading = false;
+        })
+    },
 
     // 切换屏幕类型
     changeScreenType(typeCode) {
@@ -612,6 +646,7 @@ export default {
           paramForm.append(`monitor[${i}].thirdPartyMonitorUrl`, this.formData.monitor[i].thirdPartyMonitorUrl)
         }
       }
+
       this.$api.CreateCreative.AddCreative(paramForm)
         .then(res => {
           this.pageLoading = false;
@@ -648,6 +683,43 @@ export default {
       return res;
     },
 
+    // 生成预览对象
+    previewInfo() {
+      let top = {};
+      let bottom880 = {};
+
+      if (this.formData.top) {
+        if (this.formData.top.id) {
+          let suffix = this.$tools.getSuffix(this.formData.top.srcUrl);
+          top = {
+            type: suffix,
+            url: this.formData.top.srcUrl
+          }
+        } else {
+          top = {
+            type: this.formData.top.type,
+            url: this.$tools.fileToUrl(this.formData.top)
+          }
+        }
+      }
+
+      if (this.formData.bottom880Image) {
+        if (this.formData.bottom880Image.id) {
+          let suffix = this.$tools.getSuffix(this.formData.bottom880Image.srcUrl);
+          bottom880 = {
+            type: suffix,
+            url: this.formData.bottom880Image.srcUrl
+          }
+        } else {
+          bottom880 = {
+            type: this.formData.bottom880Image.type,
+            url: this.$tools.fileToUrl(this.formData.bottom880Image)
+          }
+        }
+      }
+
+      return { top, bottom880 };
+    }
   },
 
 }

@@ -29,7 +29,7 @@
       height: bottom.height === '720' ? `${innerWidth / 1280 * 720}px` : `${innerWidth / 1080 * 880}px`, 
       margin: `${innerWidth / 10}px`}">
         <video 
-          v-if="bottom.type === 'video/mp4'"
+          v-if="bottom.type === 'video/mp4' || bottom.type === 'mp4'"
           class="bottom"
           controls 
           autoplay
@@ -38,11 +38,11 @@
           :src="bottom.url"></video>
 
         <img 
-          v-if="bottom.type === 'image/jpeg'"
+          v-if="bottom.type === 'image/jpeg' || bottom.type === 'jpeg' || bottom.type === 'jpg'"
           class="bottom" 
           :src="bottom.url"/>
 
-        <div v-if="bottom.type === 'video/avi'" class="top font-12 mid-center">
+        <div v-if="bottom.type === 'video/avi' || bottom.type === 'avi'" class="top font-12 mid-center">
           AVI不支持预览
         </div>
     </div>
