@@ -11,14 +11,6 @@ const getAuditCreativeList = (data) => {
     data,
   });
 }
-// 获取创意明细
-const getAuditCreativeDetail = (params) => {
-  return request({
-    url: "/dpapi/creative",
-    method: "GET",
-    params
-  });
-}
 // 审核创意素材下载
 const downloadAuditCreative = () => {
   return request({
@@ -39,13 +31,12 @@ const getAuditCreativeReviewDetail = (params) => {
 const submitAuditCreative = (data) => {
   return request({
     url: "/dpapi/creative/review/submit",
-    method: "POST",
+    method: "PUT",
     data,
   });
 }
 export const AuditCreative = {
   getAuditCreativeList,
-  getAuditCreativeDetail,
   downloadAuditCreative,
   getAuditCreativeReviewDetail,
   submitAuditCreative

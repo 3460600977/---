@@ -42,7 +42,7 @@ const router = new Router({
       path: '/themePreview',
       component: () => import('@/views/themePreview/themePreview')
     },
-    {path: '/', redirect: '/home', hidden: true},
+    {path: '/', redirect: '/login', hidden: true},
     {path: '*', redirect: '/404', hidden: true}
   ]
 })

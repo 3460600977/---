@@ -271,6 +271,7 @@ export default {
     },
     handleSizeChange(size) {
       this.pageSize = size;
+      this.getPlanList();
     },
     handleCurrentChange(currentPage) {
       this.pageIndex = currentPage;
@@ -349,12 +350,7 @@ export default {
       let queryParam = {
         startTime: this.planList.startTime,
         endTime: this.planList.endTime,
-        sortList: [
-          {
-            sortField: this.planList.sortField,
-            sortType: 1
-          }
-        ],
+        sortField: this.planList.sortField,
         topStatus: this.planList.topStatus,
         campaignId: this.planList.campaignId,
         pageIndex: this.pageIndex,

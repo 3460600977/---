@@ -7,7 +7,7 @@ import request from "@/utils/request";
 // 登录接口
 const LoginIn = (data) => {
   return request({
-    url: "/dpapi/signIn",
+    url: "/dpapi/new/signIn",
     method: "POST",
     data,
   });
