@@ -83,22 +83,22 @@
             </div>
 
           </el-form-item>
-
-          <!-- 时长  -->
-          <el-form-item prop="durationType" label="投放时长">
-            <el-select class="width-100-p"
-              :disabled="this.createType === 'step'"
-              v-model="formData.durationType" 
-              placeholder="请选择">
-              <el-option
-                v-for="(item, index) in projectConst.putDuration"
-                :key="index"
-                :label="item.name"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
         </div>
+
+        <!-- 时长  -->
+        <el-form-item prop="durationType" label="投放时长">
+          <el-select class="width-100-p"
+            :disabled="this.createType === 'step'"
+            v-model="formData.durationType" 
+            placeholder="请选择">
+            <el-option
+              v-for="(item, index) in projectConst.putDuration"
+              :key="index"
+              :label="item.name"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
 
         <!-- 预览 -->
         <div class="creative-preview-box">
@@ -658,11 +658,16 @@ export default {
       paramForm.append('screenType', this.formData.screenType)
       paramForm.append('bottom720Image', this.formData.bottom720Image)
       paramForm.append('bottom880Image', this.formData.bottom880Image)
-      paramForm.append('fileType', this.formData.fileType)
+      paramForm.append('fileType', this.formData.fileType || 2)
       paramForm.append('projectId', this.formData.projectId)
       paramForm.append('top', this.formData.top)
+      
       for (let i=0; i<this.formData.industryImage.length; i++) {
-        paramForm.append(`industryImage`, this.formData.industryImage[i])
+        if (typeof this.formData.industryImage[i] === 'string'){
+          paramForm.append(`industryUrls`, this.formData.industryImage[i])
+        } else {
+          paramForm.append(`industryImage`, this.formData.industryImage[i])
+        }
       }
       
       if (this.formData.monitor.length >= 1 && this.formData.monitor[0].mode) {
