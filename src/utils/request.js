@@ -21,7 +21,7 @@ service.interceptors.request.use(
     // } else {
     //   config.headers['token'] = '';
     // }
-    config.headers['token'] = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJrYWtheGkiLCJleHAiOjE1NzcwODkyODh9.wNNEK6JAxcBHgsKpRwDJ46-NR1z0SvChOXj1ERcJdRo';
+    config.headers['token'] = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJXQjE4MDUyNDMiLCJleHAiOjE1Nzc5NTE1Njd9.joN07JA-ZyC2AwZJHxbIy22FcLsKIxNOOtxvePPqw9M';
     return config
   },
   error => {
