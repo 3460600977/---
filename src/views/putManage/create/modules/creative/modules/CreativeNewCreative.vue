@@ -87,7 +87,7 @@
           <!-- 时长  -->
           <el-form-item prop="durationType" label="投放时长">
             <el-select class="width-100-p"
-              :disabled="this.createType !== 'single'"
+              :disabled="this.createType === 'step'"
               v-model="formData.durationType" 
               placeholder="请选择">
               <el-option
@@ -176,7 +176,7 @@
         <!-- 行业列表 -->
         <el-form-item prop="name" label="广告创意行业">
           <el-select 
-            :disabled="this.createType !== 'single'"
+            :disabled="this.createType === 'step'"
             class="width-100-p" 
             @change="generateCreativeName"
             v-model="formData.industry" 
@@ -289,8 +289,10 @@
     <!-- 保存 取消 -->
     <PutMangeCard class="save-box clearfix" v-loading="pageLoading">
       <div class="float-right">
-        <el-button  style="width: 136px">取消</el-button>
-        <el-button  style="width: 136px" @click="saveCreative" type="primary">新建并关闭</el-button>
+        <el-button  style="width: 136px" @click="nextPage()">取消</el-button>
+        <el-button  style="width: 136px" @click="saveCreative" type="primary">
+          {{createType === 'edit' ? '确认并关闭' : '新建并关闭'}}
+        </el-button>
       </div>
     </PutMangeCard>
   </div>
@@ -320,6 +322,7 @@ export default {
       haveProject: false, // 编辑时后端返回的是否绑定创意, 判断是否可以选择上下屏类型
       pageLoading: true, // 页面加载中 数据保存中
       formData: {
+        id: '',
         projectId: '',
         name: '', //创意名称
         screenType: '',// 屏幕类型，003联动，001上屏，002下屏
@@ -396,23 +399,43 @@ export default {
     // 编辑初始化
     editInit(creativeId) {
       this.pageLoading = true;
+      this.formData.id = creativeId;
       this.$api.CreateCreative.CreativeDetail(creativeId)
         .then(res => {
           let resData = res.result;
-          this.pageLoading = false;
           this.haveProject = resData.haveProject;
+          
+          this.formData.name = resData.name;
+          this.formData.screenType = resData.screenType;
+          this.formData.durationType = resData.durationType;
           this.formData.fileType = +resData.fileType;
           this.formData.industry = resData.industry
-          this.formData.name = resData.name;
+          this.formData.monitor = resData.monitor || [
+          { 
+            mode: '', 
+            thirdPartyMonitor: 'ky',
+            thirdPartyMonitorUrl: '',
+          }
+        ];
           this.formData.industryImage = resData.industryIdentify ? JSON.parse(resData.industryIdentify) : [];
 
-          // 素材
+          // 素材回显
           resData.materials.forEach((item, index) => {
             if (item.screenType === 1) {
               this.formData.top = item;
+              this.formData.top.name = item.fileName;
             }
-            // if (item.screenType === 2 && )
+            if (item.screenType === 2 && item.height === 880) {
+              this.formData.bottom880Image = item;
+              this.formData.bottom880Image.name = item.fileName;
+            }
+            if (item.screenType === 2 && item.height === 720) {
+              this.formData.bottom720Image = item;
+              this.formData.bottom720Image.name = item.fileName;
+            }
           })
+
+          this.pageLoading = false;
         })
         .catch(res => {
           this.pageLoading = false;
@@ -626,6 +649,9 @@ export default {
       }
       this.pageLoading = true;
       let paramForm = new FormData();
+      if (this.createType === 'edit') {
+        paramForm.append('id', this.formData.id)
+      }
       paramForm.append('durationType', this.formData.durationType)
       paramForm.append('industry', this.formData.industry)
       paramForm.append('name', this.formData.name)
@@ -636,7 +662,7 @@ export default {
       paramForm.append('projectId', this.formData.projectId)
       paramForm.append('top', this.formData.top)
       for (let i=0; i<this.formData.industryImage.length; i++) {
-        paramForm.append(`industryImage[${i}]`, this.formData.industryImage[i])
+        paramForm.append(`industryImage`, this.formData.industryImage[i])
       }
       
       if (this.formData.monitor.length >= 1 && this.formData.monitor[0].mode) {
@@ -647,25 +673,49 @@ export default {
         }
       }
 
-      this.$api.CreateCreative.AddCreative(paramForm)
-        .then(res => {
-          this.pageLoading = false;
-          this.$router.push({
-            path: '/putManage',
-            query: {
-              'active': 'project'
-            }
+      if (this.createType === 'edit') {
+        this.$api.CreateCreative.EditCreative({id: this.formData.id, formData: paramForm})
+          .then(res => {
+            this.pageLoading = false;
+            this.nextPage()
+            return this.$notify({
+              title: '成功',
+              message: '修改创意成功',
+              type: 'success'
+            })
           })
-          return this.$notify({
-            title: '成功',
-            message: '创建创意成功',
-            type: 'success'
+          .catch(res => {
+            this.pageLoading = false;
           })
-        })
-        .catch(res => {
-          this.pageLoading = false;
-        })
+      }
+
+      if (this.createType !== 'edit') {
+        this.$api.CreateCreative.AddCreative(paramForm)
+          .then(res => {
+            this.pageLoading = false;
+            this.nextPage()
+            return this.$notify({
+              title: '成功',
+              message: '创建创意成功',
+              type: 'success'
+            })
+          })
+          .catch(res => {
+            this.pageLoading = false;
+          })
+      }
+
     },
+
+    // 保存取消按钮下一个跳转页面
+    nextPage() {
+      this.$router.push({
+        path: '/putManage',
+        query: {
+          'active': this.createType !== 'step' ? 'creative' : 'project'
+        }
+      })
+    }
 
   },
 
@@ -690,10 +740,10 @@ export default {
 
       if (this.formData.top) {
         if (this.formData.top.id) {
-          let suffix = this.$tools.getSuffix(this.formData.top.srcUrl);
+          let suffix = this.$tools.getSuffix(this.formData.top.previewUrl);
           top = {
             type: suffix,
-            url: this.formData.top.srcUrl
+            url: this.formData.top.previewUrl
           }
         } else {
           top = {
@@ -705,10 +755,10 @@ export default {
 
       if (this.formData.bottom880Image) {
         if (this.formData.bottom880Image.id) {
-          let suffix = this.$tools.getSuffix(this.formData.bottom880Image.srcUrl);
+          let suffix = this.$tools.getSuffix(this.formData.bottom880Image.previewUrl);
           bottom880 = {
             type: suffix,
-            url: this.formData.bottom880Image.srcUrl
+            url: this.formData.bottom880Image.previewUrl
           }
         } else {
           bottom880 = {
