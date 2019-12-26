@@ -8,10 +8,12 @@
             <left-tab
               :tabData="tabData"
               :activeTab="activeTab"
+              :seriesValue="seriesValue"
               @changeTab="changeTab"
             ></left-tab>
           </div>
           <div class="left-content">
+            <component :is="currentTabComponent"></component>
             <demographic-attr></demographic-attr>
 <!--            <location-attr></location-attr>-->
 <!--            <hobby></hobby>-->
@@ -22,21 +24,10 @@
       <div class="right-container float-left">
         <p class="title bold">已选条件</p>
         <div class="condition">
-          <conditions :data="conditions"></conditions>
+          <conditions></conditions>
         </div>
-        <div class="form">
-          <el-form label-position="top" :model="form" :rules="rules" ref="ruleForm">
-            <el-form-item label="人群包名称：" prop="name">
-              <el-input v-model="form.name"></el-input>
-            </el-form-item>
-            <el-form-item label="人群包描述：" style="margin-bottom: 30px">
-              <el-input type="textarea" v-model="form.text"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button @click="cancle('ruleForm')">取消</el-button>
-              <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
-            </el-form-item>
-          </el-form>
+        <div>
+          <create-form></create-form>
         </div>
       </div>
     </div>
@@ -54,12 +45,17 @@
   import locationAttr from "./locationAttr";
   import industryConsume from "./industryConsume";
   import demographicAttr from "./demographicAttr";
+  import createForm from "./createForm";
+
+  const seriesValue = 'tid'
+
   export default {
     name: "createPeoplePackage",
     components: {
       leftTab,
       Back,
       Hobby,
+      createForm,
       locationAttr,
       industryConsume,
       demographicAttr,
@@ -68,45 +64,32 @@
     data() {
       return {
         activeTab: 0,
-        rules: {
-          name: [
-            {required: true, message: '请输入人群包名称', trigger: 'blur'}
-          ],
+        seriesValue: seriesValue,
+        tabData: [],
+        currentTabComponent: '',
+        tabMapping: {
+          110: demographicAttr,
+          111: locationAttr,
+          112: Hobby,
+          113: industryConsume
         },
-        form: {
-          name: '',
-          text: ''
-        },
-        conditions: [
-          {
-            title: '城市：',
-            data: [
-              {name: '全国', value: 0}
-            ]
-          }
-        ],
-        tabData: [
-          {name: '人口属性', value: 0},
-          {name: '位置属性', value: 1},
-          {name: '兴趣爱好', value: 2},
-          {name: '行业消费', value: 3},
-        ]
       }
+    },
+    created() {
+      this.$api.peopleInsight.getMenuList().then((data) => {
+        this.tabData = data.result
+        this.activeTab = data.result[0][seriesValue]
+
+      })
+    },
+    watch: {
+      activeTab(val) {
+        this.currentTabComponent = this.tabMapping[val]
+      },
     },
     methods: {
       changeTab(item) {
-        this.activeTab = item.value
-      },
-      cancle() {},
-      submitForm(form) {
-        this.$refs[form].validate((valid) => {
-          if (valid) {
-            alert('submit!');
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
+        this.activeTab = item[seriesValue]
       },
     },
   }
@@ -126,22 +109,6 @@
     .condition {
       margin-top: 10px;
       border-bottom: 1px solid $color-border;
-    }
-    .form {
-      padding: 15px 30px;
-      .el-input {
-        width: 260px;
-      }
-      .el-button {
-        width: 100px;
-      }
-      & /deep/ .el-textarea__inner {
-        width:260px;
-        height:90px;
-      }
-      .el-button + .el-button {
-        margin-left: 60px;
-      }
     }
   }
   .left-container {

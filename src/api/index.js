@@ -8,9 +8,11 @@ import { CreateCreative } from './modules/createCreative'
 import { toolBox } from './modules/toolBox'
 import { Login } from './modules/login'
 import { AuditCreative } from './modules/auditCreative'
+import {peopleInsight} from "./modules/peopleInsight";
 
 const api = {
-  cityInsight,
+  cityInsight,  // 城市洞察
+  peopleInsight, // 人群洞察
   PutPlan,       // 投放计划
   PutProject,    // 投放方案
   CityList,      // 城市列表

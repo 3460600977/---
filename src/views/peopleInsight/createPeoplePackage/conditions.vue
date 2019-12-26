@@ -19,10 +19,10 @@
   export default {
     name: "conditions",
     props: {
-      data: {
-        type: Array,
-        required: true
-      },
+      // data: {
+      //   type: Array,
+      //   required: true
+      // },
     },
     data() {
       return {
