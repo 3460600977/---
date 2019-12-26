@@ -14,7 +14,6 @@
           </div>
           <div class="left-content">
             <component :is="currentTabComponent"></component>
-            <demographic-attr></demographic-attr>
 <!--            <location-attr></location-attr>-->
 <!--            <hobby></hobby>-->
 <!--            <industry-consume></industry-consume>-->
