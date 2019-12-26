@@ -51,9 +51,9 @@ export const projectConst = {
 
   // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
   screenType: [
+    {name: '联动', value: '003', creativeVal: 2},
     {name: '上屏', value: '001', creativeVal: 0},
-    {name: '下屏', value: '002', creativeVal: 1},
-    {name: '联动', value: '003', creativeVal: 2}
+    {name: '下屏', value: '002', creativeVal: 1}
   ]
 }
 

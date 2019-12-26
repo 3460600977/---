@@ -1,7 +1,7 @@
 <template>
   <div class="put-project">
     <div class="title">
-      <h2>所属投放计划：{{planData.name || formData.planName}}</h2>
+      <h2>所属投放计划：{{planData.data.name || formData.planName}}</h2>
     </div>
 
     <!-- 投放设置 -->
@@ -32,6 +32,29 @@
             </el-option>
           </el-select>
         </el-form-item>
+
+        <!-- 屏幕类型 -->
+        <el-form-item class="screen-type-preview-box mt-20" prop="type" label="屏幕类型">
+          <div class="screen-type-preview-content">
+            <MyRadio
+              :disabled="isEdit"
+              v-for="(item, index) in projectConst.screenType"
+              @click.native="isEdit ? null : formData.type = item"
+              :active="formData.type === item"
+              :key="index">
+              <span class="float-left">{{item.name}}</span>
+              <div class="float-left screen-preview">
+                <div 
+                  class="top" 
+                  :class="{'bg-gray': item.value == '003' || item.value == '001'}"></div>
+                <div 
+                  :class="{'bg-gray': item.value == '003' || item.value == '002'}" 
+                  class="bottom"></div>
+              </div>
+            </MyRadio>
+          </div>
+        </el-form-item>
+
         <!-- 投放类型 -->
         <el-form-item class="mt-20" prop="projectType" label="投放类型">
           <div class="mid-between" style="width: 240px">
@@ -100,14 +123,14 @@
         </div>
 
         <!-- 投放方式 -->
-        <el-form-item class="mt-20" prop="deliveryMode" label="投放方式">
+        <!-- <el-form-item class="mt-20" prop="deliveryMode" label="投放方式">
           <MyRadio
             :disabled="isEdit"
             v-for="(way, index) in projectConst.putWay"
             @click.native="isEdit ? null : formData.deliveryMode = way"
             :active="+formData.deliveryMode.value === 1+index"
             :key="index">{{way.name}}</MyRadio>
-        </el-form-item>
+        </el-form-item> -->
 
         <!-- 投放频次 -->
         <el-form-item class="mt-20" prop="count" label="投放频次">
@@ -132,28 +155,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        
-        <!-- 屏幕类型 -->
-        <el-form-item class="screen-type-preview-box mt-20" prop="type" label="屏幕类型">
-          <div class="screen-type-preview-content">
-            <MyRadio
-              :disabled="isEdit"
-              v-for="(item, index) in projectConst.screenType"
-              @click.native="isEdit ? null : formData.type = item"
-              :active="formData.type === item"
-              :key="index">
-              <span class="float-left">{{item.name}}</span>
-              <div class="float-left screen-preview">
-                <div 
-                  class="top" 
-                  :class="{'bg-gray': item.value == '003' || item.value == '001'}"></div>
-                <div 
-                  :class="{'bg-gray': item.value == '003' || item.value == '002'}" 
-                  class="bottom"></div>
-              </div>
-            </MyRadio>
-          </div>
-        </el-form-item>
+
       </el-form>
         
     </PutMangeCard>
@@ -161,15 +163,7 @@
     <!-- 楼盘定向 -->
     <PutMangeCard v-if="!isEdit" v-loading="planData.loading" :title="'楼盘定向'" class="form-box">
       <el-tabs class="thin-tab mt-15" v-model="buildingDirection.activeType">
-        <!-- 新建楼盘定向 -->
-        <el-tab-pane label="新建楼盘定向" name="create">
-          <el-form label-position='left' label-width="125px">
-            <el-form-item label="选点方式">
-              <el-button @click="showMapChoose" type="primary" style="width: 102px">地图选点</el-button>
-            </el-form-item>
-          </el-form>
-        </el-tab-pane>
-        
+               
         <!-- 已有资源包 -->
         <el-tab-pane label="已有资源包" name="exist">
           <el-form label-position='left' label-width="125px">
@@ -196,24 +190,18 @@
           </el-form>
         </el-tab-pane>
 
+        <!-- 新建楼盘定向 -->
+        <el-tab-pane label="新建楼盘定向" name="create">
+          <el-form label-position='left' label-width="125px">
+            <el-form-item label="选点方式">
+              <el-button @click="showMapChoose" type="primary" style="width: 102px">地图选点</el-button>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+
         <!-- 导入楼盘数据 -->
         <el-tab-pane label="导入楼盘数据" name="import">
           <el-form label-position='left' label-width="125px">
-
-            <!-- <el-form-item label="城市">
-              <el-select 
-                @change="buildingDirection.uploadBuildsFile = ''"
-                filterable
-                v-model="formData.projectCity" 
-                placeholder="请选择">
-                <el-option
-                  v-for="item in planData.cityList"
-                  :key="item.cityCode"
-                  :label="item.name"
-                  :value="item.cityCode">
-                </el-option>
-              </el-select>
-            </el-form-item> -->
 
             <el-form-item label="导入楼盘数据" style="margin-top: 8px">
               <div class="mid">
@@ -343,7 +331,7 @@ export default {
 
       // 楼盘定向
       buildingDirection: {
-        activeType: 'create',
+        activeType: 'exist',
         mapChooseShow: false,
         uploadBuildsFile: '',
         templateFileDownloading: false, // 导入楼盘数据->下载中
@@ -391,7 +379,7 @@ export default {
         dateForDay:'',
         dateForWeekBegin:'',
         dateForWeekEnd:'',
-        deliveryMode: projectConst.putWay[0], // 投放方式
+        // deliveryMode: projectConst.putWay[0], // 投放方式
         count: projectConst.putFrequency[2], // 投放频次
         second: projectConst.putDuration[2], // 投放时长
         type: projectConst.screenType[2], // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
@@ -419,9 +407,9 @@ export default {
         dateForWeekEnd:[
           { validator: checkWeek, trigger: 'blur' },
         ],
-        deliveryMode: [
-          { required: true, message: '请设置投放方式!', trigger: 'blur' },
-        ],
+        // deliveryMode: [
+        //   { required: true, message: '请设置投放方式!', trigger: 'blur' },
+        // ],
         count:[
           { required: true, message: '请选投放频次!', trigger: 'change' },
         ],
@@ -700,7 +688,7 @@ export default {
         endTime:      this.formData.projectType.value == 0 ? this.formData.dateForWeekEnd : this.formData.dateForDay[1],
         campaignId:   this.$route.query.planId, // 投放计划ID
         count:        this.formData.count.value, // 投放频次，001-300次/天，002-600次/天，003-900次/天 依次类推
-        deliveryMode: this.formData.deliveryMode.value, // 投放方式，001一个楼盘所有点位，002一个单元一个电梯，003一个单元一半电梯
+        // deliveryMode: this.formData.deliveryMode.value, // 投放方式，001一个楼盘所有点位，002一个单元一个电梯，003一个单元一半电梯
         details:      this.buildsDetails, // 楼盘列表
         projectCity:  this.formData.projectCity, // 城市
         projectType:  this.formData.projectType.value, // 投放类型，0按周投放，1按天投放
@@ -811,9 +799,10 @@ export default {
 
     // 判断 资源包 导入是否可用
     cityInsightDisabled() {
+      return true;
       // this.formData.projectCity = '';
-      if (this.buildingDirection.activeType === 'create') return;
-      return !this.validataForm();
+      // if (this.buildingDirection.activeType === 'create') return;
+      // return !this.validataForm();
     },
 
     // 是否为编辑

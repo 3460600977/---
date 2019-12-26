@@ -53,14 +53,6 @@
           </template>
         </el-table-column>
 
-        <!-- <el-table-column prop="cityList" label="投放城市">
-          <template slot-scope="scope">
-            <span v-for="(item, index) in scope.row.cityList" :key="index">
-              {{item.name}}<span v-if="index+1 !== scope.row.cityList.length">；</span>
-            </span>
-          </template>
-        </el-table-column> -->
-
         <el-table-column prop="beginTime" label="投放时间">
           <template slot-scope="scope">
             {{$tools.getFormatDate('YY/mm/dd', scope.row.beginTime)}}
