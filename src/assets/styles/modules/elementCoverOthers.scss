@@ -1,16 +1,182 @@
 // elementUI 主题编辑中无法修改的内容在此处覆盖
 .el-button{
-  width: 136px;
   &.is-circle{
     width: auto;
   }
   &.is-plain{
     background: transparent !important;
+    &.el-button--primary{
+      border-color: $color-main;
+      color: $color-main;
+      &:hover{
+        color: $color-main;
+      }
+      &:active{
+        color: $color-main;
+      }
+    }
   }
 }
 .el-card__header{
-  padding: 32px 30px;
+  padding: 20px;
 }
 .el-card{
-  box-shadow:0px 4px 16px 0px rgba(139,139,139,0.16) !important;
-} 
+  margin-top: 20px;
+  box-shadow: 0 0 0 #fff !important;
+  &.shadow{
+    box-shadow:0px 4px 16px 0px rgba(139,139,139,0.16) !important;
+  }
+}
+.el-badge__content{
+  border: none;
+}
+
+//  tabs
+
+.el-tabs{
+  &.my-tabs{
+    box-shadow: 0 0 0 #fff;
+    border-radius: 4px;
+    overflow: hidden;
+    background: transparent;
+    border: none;
+    >.el-tabs__header{
+      border: none;
+      background-color: #fff;
+      .el-tabs__item{
+        background-color: #EEEEEE;
+        color: #181819;
+        width: 160px;
+        height: 60px;
+        line-height: 60px;
+        text-align: center;
+        font-size: 14px;
+        &.is-active{
+          background-color: #fff;
+          border-color: #fff;
+          &::before{
+            position: absolute;
+            left: 0;
+            display: inline-block;
+            width: 100%;
+            height: 4px;
+            content: "";
+            background-color: $color-main;
+          }
+        }
+      }
+    }
+    >.el-tabs__content{
+      padding: 0;
+    }
+  }
+  &.thin-tab{
+    .el-tabs__nav-wrap{
+      &::after{
+        height: 0px !important;
+      }
+    }
+    .el-tabs__active-bar{
+      height:3px;
+      border-radius:2px;
+    }
+    .el-tabs__item{
+      color: #999999;
+      &.is-active{
+        color: #181819;
+      }
+    }
+    &.small{
+      .el-tabs__active-bar{
+        height: 1px;
+      }
+      .el-tabs__nav-wrap{
+        border-bottom: 1px solid #E5E7E9;
+      }
+      .el-tabs__item.is-active{
+        color: $color-main;
+      }
+      .el-form-item__label{
+        color: $color-text;
+      }
+      .el-tabs__active-bar{
+        display: none;
+      }
+      .el-tabs__item{
+        margin-right: 93px;
+        padding: 0;
+        &.is-active{
+          border-bottom: 1px solid $color-main;
+        }
+      }
+    }
+  }
+}
+
+// form-label
+.el-form-item__label{
+  color: #999999;
+}
+.el-input{
+  width: 240px;
+}
+.el-input__inner{
+  &::placeholder{
+    color: $color-text;
+  }
+  border:1px solid rgba(229,231,233,1);
+}
+
+.el-input-group__append{
+  color: $color-text !important;
+}
+// 时间组件 至 显示不全
+.el-date-editor .el-range-separator{
+  padding: 0;
+  line-height: 29px;
+}
+
+.el-form-item__content{
+  line-height: 36px;
+}
+
+.el-date-editor .el-range-input{
+  &::placeholder{
+    color: $color-text;
+  }
+}
+
+//dialog样式覆盖
+.my-dialog {
+  .el-dialog__footer {
+    text-align: center;
+    padding-bottom: 40px;
+  }
+  .el-dialog__header {
+    border-bottom: 1px solid $color-border;
+    padding: 24px 0 21px 30px;
+    .el-dialog__title {
+      font-size: 16px;
+      color: $color-text;
+    }
+  }
+  .el-dialog__body {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+}
+
+// el-form label颜色修改
+.el-form-item__label {
+  color: $color-text;
+}
+
+// input设定宽度为200
+.el-input {
+  width: 200px;
+}
+
+// 分页输入框
+.el-pagination__editor{
+  width: 82px !important;
+}

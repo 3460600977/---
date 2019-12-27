@@ -393,11 +393,11 @@
     cursor: pointer;
     -webkit-transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
     transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-    padding: 10px 20px;
+    padding: 11px 20px;
     font-size: 12px;
     border-radius: 0; }
     .el-radio-button__inner.is-round {
-      padding: 10px 20px; }
+      padding: 11px 20px; }
     .el-radio-button__inner:hover {
       color: #2D5AFF; }
     .el-radio-button__inner [class*="el-icon-"] {
@@ -447,11 +447,11 @@
     .el-radio-button--small .el-radio-button__inner.is-round {
       padding: 9px 15px; }
   .el-radio-button--mini .el-radio-button__inner {
-    padding: 7px 15px;
+    padding: 5px 10px;
     font-size: 12px;
     border-radius: 0; }
     .el-radio-button--mini .el-radio-button__inner.is-round {
-      padding: 7px 15px; }
+      padding: 5px 10px; }
   .el-radio-button:focus:not(.is-focus):not(:active):not(.is-disabled) {
     /*获得焦点时 样式提醒*/
     -webkit-box-shadow: 0 0 2px 2px #2D5AFF;

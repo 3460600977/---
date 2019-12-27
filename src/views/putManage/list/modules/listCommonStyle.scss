@@ -1,0 +1,58 @@
+.list {
+  .el-input{
+    width: 200px;
+  }
+  .query_result {
+    background-color: $color-bg;
+  }
+
+  .list-form-inline {
+
+    margin: 0;
+    padding-top: 17px;
+    padding-left: 15px;
+    background-color: $color-bg-3;
+    margin-bottom: 37px;
+
+    // .list-button {
+      // width: 340px;
+
+      // div.el-form-item__content {
+        // width: 100%;
+      // }
+
+      .list-query-button {
+        width: 80px;
+        height: 36px;
+        margin-left: 10px;
+      }
+
+      .list-new-button {
+        float: right;
+        margin-right: 40px;
+      }
+    // }
+  }
+
+  .line-space {
+    margin-left: 10px;
+    margin-right: 0 !important;
+  }
+
+  .line-space:first-child {
+    margin-left: 0;
+  }
+
+  .list-page {
+    background-color: $color-bg-3;
+    padding: 54px 0;
+    text-align: center;
+    border-radius: 4px;
+    height: 120px;
+    margin-top: 33px;
+
+    li.active {
+      background-color: $color-blue !important;
+    }
+  }
+}

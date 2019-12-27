@@ -1,39 +1,165 @@
 // 杂项写在这里
-/***                                                                          
- *          .,:,,,                                        .::,,,::.          
- *        .::::,,;;,                                  .,;;:,,....:i:         
- *        :i,.::::,;i:.      ....,,:::::::::,....   .;i:,.  ......;i.        
- *        :;..:::;::::i;,,:::;:,,,,,,,,,,..,.,,:::iri:. .,:irsr:,.;i.        
- *        ;;..,::::;;;;ri,,,.                    ..,,:;s1s1ssrr;,.;r,        
- *        :;. ,::;ii;:,     . ...................     .;iirri;;;,,;i,        
- *        ,i. .;ri:.   ... ............................  .,,:;:,,,;i:        
- *        :s,.;r:... ....................................... .::;::s;        
- *        ,1r::. .............,,,.,,:,,........................,;iir;        
- *        ,s;...........     ..::.,;:,,.          ...............,;1s        
- *       :i,..,.              .,:,,::,.          .......... .......;1,       
- *      ir,....:rrssr;:,       ,,.,::.     .r5S9989398G95hr;. ....,.:s,      
- *     ;r,..,s9855513XHAG3i   .,,,,,,,.  ,S931,.,,.;s;s&BHHA8s.,..,..:r:     
- *    :r;..rGGh,  :SAG;;G@BS:.,,,,,,,,,.r83:      hHH1sXMBHHHM3..,,,,.ir.    
- *   ,si,.1GS,   sBMAAX&MBMB5,,,,,,:,,.:&8       3@HXHBMBHBBH#X,.,,,,,,rr    
- *   ;1:,,SH:   .A@&&B#&8H#BS,,,,,,,,,.,5XS,     3@MHABM&59M#As..,,,,:,is,   
- *  .rr,,,;9&1   hBHHBB&8AMGr,,,,,,,,,,,:h&&9s;   r9&BMHBHMB9:  . .,,,,;ri.  
- *  :1:....:5&XSi;r8BMBHHA9r:,......,,,,:ii19GG88899XHHH&GSr.      ...,:rs.  
- *  ;s.     .:sS8G8GG889hi.        ....,,:;:,.:irssrriii:,.        ...,,i1,  
- *  ;1,         ..,....,,isssi;,        .,,.                      ....,.i1,  
- *  ;h:               i9HHBMBBHAX9:         .                     ...,,,rs,  
- *  ,1i..            :A#MBBBBMHB##s                             ....,,,;si.  
- *  .r1,..        ,..;3BMBBBHBB#Bh.     ..                    ....,,,,,i1;   
- *   :h;..       .,..;,1XBMMMMBXs,.,, .. :: ,.               ....,,,,,,ss.   
- *    ih: ..    .;;;, ;;:s58A3i,..    ,. ,.:,,.             ...,,,,,:,s1,    
- *    .s1,....   .,;sh,  ,iSAXs;.    ,.  ,,.i85            ...,,,,,,:i1;     
- *     .rh: ...     rXG9XBBM#M#MHAX3hss13&&HHXr         .....,,,,,,,ih;      
- *      .s5: .....    i598X&&A&AAAAAA&XG851r:       ........,,,,:,,sh;       
- *      . ihr, ...  .         ..                    ........,,,,,;11:.       
- *         ,s1i. ...  ..,,,..,,,.,,.,,.,..       ........,,.,,.;s5i.         
- *          .:s1r,......................       ..............;shs,           
- *          . .:shr:.  ....                 ..............,ishs.             
- *              .,issr;,... ...........................,is1s;.               
- *                 .,is1si;:,....................,:;ir1sr;,                  
- *                    ..:isssssrrii;::::::;;iirsssssr;:..                    
- *                         .,::iiirsssssssssrri;;:.                      
+
+// nprogress 加载中全局遮罩
+.nprogress-busy::after{
+  position: fixed;
+  top:0;
+  left:0;
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  opacity: 0.1;
+}
+.container {
+  height: 100%;
+  width: 100%;
+}
+.border-bottom {
+  border-bottom: 1px solid $color-border;
+}
+.border-left {
+  border-left: 1px solid $color-border;
+}
+.border-right {
+  border-right: 1px solid $color-border;
+}
+.margin-right-10 {
+  margin-right: 10px;
+}
+.margin-left-20 {
+  margin-left: 20px;
+}
+.margin-top-10 {
+  margin-top: 10px;
+}
+.margin-top-20 {
+  margin-top: 20px;
+}
+.margin-top-60 {
+  margin-top: 60px;
+}
+.hand {
+  cursor: pointer;
+}
+.base-radius {
+  border-radius: 2px;
+}
+.BMapLib_Drawing { // 隐藏地图页面开源库DrawingManager的工具栏
+  visibility: hidden;
+}
+
+// el-input input上传
+.my-input-upload {
+  overflow: hidden;
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  height: 36px;
+  .input-real{
+    position: absolute;
+    z-index: 2;
+    height: 36px;
+    cursor: pointer;
+    opacity: 0;
+  }
+  .input-fake{
+    position: absolute;
+    z-index: 1;
+  }
+}
+.mt-20{
+  margin-top: 20px !important;
+}
+.mt-12{
+  margin-top: 12px !important;
+}
+.mt-15{
+  margin-top: 15px !important;
+}
+.mt-10{
+  margin-top: 10px !important;
+}
+
+// 上下联动三种屏幕类型
+.screen-type-preview-box{
+  overflow: hidden;
+  width: 100vw;
+  .screen-type-preview-content{
+    margin-top: -100px;
+    .screen-preview {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-left: 10px;
+      margin-top: 100px;
+      width:78px;
+      height:180px;
+      background:rgba(255,255,255,1);
+      border:1px solid rgba(229,231,233,1);
+      .bg-gray{
+        background:rgba(249,250,255,1) !important;
+      }
+      .top{
+        width:76px;
+        height:139px;
+        background:rgba(255,255,255,1);
+      }
+      .bottom{
+        width:76px;
+        height:44px;
+        background:rgba(255,255,255,1);
+        border-top:1px solid rgba(229,231,233,1);
+      }
+    }
+  }
+}
+// 页面标题样式
+.db-title {
+  font-size: 16px;
+  font-weight: bold;
+  padding-left: 9px;
+  line-height: 1.15;
+  margin-bottom: 40px;
+  border-left: 3px solid $color-main;
+}
+/***
+ *          .,:,,,                                        .::,,,::.
+ *        .::::,,;;,                                  .,;;:,,....:i:
+ *        :i,.::::,;i:.      ....,,:::::::::,....   .;i:,.  ......;i.
+ *        :;..:::;::::i;,,:::;:,,,,,,,,,,..,.,,:::iri:. .,:irsr:,.;i.
+ *        ;;..,::::;;;;ri,,,.                    ..,,:;s1s1ssrr;,.;r,
+ *        :;. ,::;ii;:,     . ...................     .;iirri;;;,,;i,
+ *        ,i. .;ri:.   ... ............................  .,,:;:,,,;i:
+ *        :s,.;r:... ....................................... .::;::s;
+ *        ,1r::. .............,,,.,,:,,........................,;iir;
+ *        ,s;...........     ..::.,;:,,.          ...............,;1s
+ *       :i,..,.              .,:,,::,.          .......... .......;1,
+ *      ir,....:rrssr;:,       ,,.,::.     .r5S9989398G95hr;. ....,.:s,
+ *     ;r,..,s9855513XHAG3i   .,,,,,,,.  ,S931,.,,.;s;s&BHHA8s.,..,..:r:
+ *    :r;..rGGh,  :SAG;;G@BS:.,,,,,,,,,.r83:      hHH1sXMBHHHM3..,,,,.ir.
+ *   ,si,.1GS,   sBMAAX&MBMB5,,,,,,:,,.:&8       3@HXHBMBHBBH#X,.,,,,,,rr
+ *   ;1:,,SH:   .A@&&B#&8H#BS,,,,,,,,,.,5XS,     3@MHABM&59M#As..,,,,:,is,
+ *  .rr,,,;9&1   hBHHBB&8AMGr,,,,,,,,,,,:h&&9s;   r9&BMHBHMB9:  . .,,,,;ri.
+ *  :1:....:5&XSi;r8BMBHHA9r:,......,,,,:ii19GG88899XHHH&GSr.      ...,:rs.
+ *  ;s.     .:sS8G8GG889hi.        ....,,:;:,.:irssrriii:,.        ...,,i1,
+ *  ;1,         ..,....,,isssi;,        .,,.                      ....,.i1,
+ *  ;h:               i9HHBMBBHAX9:         .                     ...,,,rs,
+ *  ,1i..            :A#MBBBBMHB##s                             ....,,,;si.
+ *  .r1,..        ,..;3BMBBBHBB#Bh.     ..                    ....,,,,,i1;
+ *   :h;..       .,..;,1XBMMMMBXs,.,, .. :: ,.               ....,,,,,,ss.
+ *    ih: ..    .;;;, ;;:s58A3i,..    ,. ,.:,,.             ...,,,,,:,s1,
+ *    .s1,....   .,;sh,  ,iSAXs;.    ,.  ,,.i85            ...,,,,,,:i1;
+ *     .rh: ...     rXG9XBBM#M#MHAX3hss13&&HHXr         .....,,,,,,,ih;
+ *      .s5: .....    i598X&&A&AAAAAA&XG851r:       ........,,,,:,,sh;
+ *      . ihr, ...  .         ..                    ........,,,,,;11:.
+ *         ,s1i. ...  ..,,,..,,,.,,.,,.,..       ........,,.,,.;s5i.
+ *          .:s1r,......................       ..............;shs,
+ *          . .:shr:.  ....                 ..............,ishs.
+ *              .,issr;,... ...........................,is1s;.
+ *                 .,is1si;:,....................,:;ir1sr;,
+ *                    ..:isssssrrii;::::::;;iirsssssr;:..
+ *                         .,::iiirsssssssssrri;;:.
  */

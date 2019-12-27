@@ -1,12 +1,14 @@
 <template>
   <div class="home">
     <TopHeader/>
-    <router-view class="main"/>
+    <main class="main">
+      <router-view/>
+    </main>
   </div>
 </template>
 
 <script>
-import TopHeader from '@/components/TopHeader.vue'
+import TopHeader from './modules/TopHeader'
 
 export default {
   name: 'Home',
@@ -28,6 +30,7 @@ export default {
     flex-grow: 1;
     width: 100%;
     overflow-y: auto;
+    background-color: $color-bg;
   }
 }
 </style>

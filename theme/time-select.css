@@ -727,14 +727,14 @@
   line-height: 20px; }
 
 .el-range-editor.is-disabled {
-  background-color: #C5C8CE;
+  background-color: rgba(197, 200, 206, 0.24);
   border-color: #E5E7E9;
   color: #C0C4CC;
   cursor: not-allowed; }
   .el-range-editor.is-disabled:hover, .el-range-editor.is-disabled:focus {
     border-color: #E5E7E9; }
   .el-range-editor.is-disabled input {
-    background-color: #C5C8CE;
+    background-color: rgba(197, 200, 206, 0.24);
     color: #C0C4CC;
     cursor: not-allowed; }
     .el-range-editor.is-disabled input::-webkit-input-placeholder {

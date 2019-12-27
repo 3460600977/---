@@ -518,7 +518,7 @@
     background-color: #FFFFFF;
     background-image: none;
     border: 1px solid #E5E7E9;
-    border-radius: 4px;
+    border-radius: 2px;
     -webkit-transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
     transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1); }
     .el-textarea__inner::-webkit-input-placeholder {
@@ -542,7 +542,7 @@
     bottom: 5px;
     right: 10px; }
   .el-textarea.is-disabled .el-textarea__inner {
-    background-color: #C5C8CE;
+    background-color: rgba(197, 200, 206, 0.24);
     border-color: #E5E7E9;
     color: #C0C4CC;
     cursor: not-allowed; }
@@ -607,15 +607,15 @@
     -webkit-appearance: none;
     background-color: #FFFFFF;
     background-image: none;
-    border-radius: 4px;
+    border-radius: 2px;
     border: 1px solid #E5E7E9;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     color: #606266;
     display: inline-block;
     font-size: inherit;
-    height: 40px;
-    line-height: 40px;
+    height: 36px;
+    line-height: 36px;
     outline: none;
     padding: 0 15px;
     -webkit-transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
@@ -661,7 +661,7 @@
     text-align: center;
     -webkit-transition: all .3s;
     transition: all .3s;
-    line-height: 40px; }
+    line-height: 36px; }
     .el-input__icon:after {
       content: '';
       height: 100%;
@@ -674,7 +674,7 @@
     outline: none;
     border-color: #2D5AFF; }
   .el-input.is-disabled .el-input__inner {
-    background-color: #C5C8CE;
+    background-color: rgba(197, 200, 206, 0.24);
     border-color: #E5E7E9;
     color: #C0C4CC;
     cursor: not-allowed; }
@@ -734,7 +734,7 @@
     display: table-cell;
     position: relative;
     border: 1px solid #E5E7E9;
-    border-radius: 4px;
+    border-radius: 2px;
     padding: 0 20px;
     width: 1px;
     white-space: nowrap; }
@@ -1409,16 +1409,16 @@
         color: #FFFFFF;
         background-color: #2d5aff; }
   .el-tag.el-tag--warning {
-    background-color: #fdf6ec;
-    border-color: #faecd8;
-    color: #e6a23c; }
+    background-color: #fffae6;
+    border-color: #fff5cc;
+    color: #ffcc00; }
     .el-tag.el-tag--warning.is-hit {
-      border-color: #E6A23C; }
+      border-color: #FFCC00; }
     .el-tag.el-tag--warning .el-tag__close {
-      color: #e6a23c; }
+      color: #ffcc00; }
       .el-tag.el-tag--warning .el-tag__close:hover {
         color: #FFFFFF;
-        background-color: #e6a23c; }
+        background-color: #ffcc00; }
   .el-tag.el-tag--danger {
     background-color: #feeded;
     border-color: #fddbdb;
@@ -1478,16 +1478,16 @@
           color: #FFFFFF;
           background-color: #577bff; }
     .el-tag--dark.el-tag--warning {
-      background-color: #e6a23c;
-      border-color: #e6a23c;
+      background-color: #ffcc00;
+      border-color: #ffcc00;
       color: white; }
       .el-tag--dark.el-tag--warning.is-hit {
-        border-color: #E6A23C; }
+        border-color: #FFCC00; }
       .el-tag--dark.el-tag--warning .el-tag__close {
         color: white; }
         .el-tag--dark.el-tag--warning .el-tag__close:hover {
           color: #FFFFFF;
-          background-color: #ebb563; }
+          background-color: #ffd633; }
     .el-tag--dark.el-tag--danger {
       background-color: #f44a4a;
       border-color: #f44a4a;
@@ -1534,15 +1534,15 @@
           background-color: #2d5aff; }
     .el-tag--plain.el-tag--warning {
       background-color: white;
-      border-color: #f5dab1;
-      color: #e6a23c; }
+      border-color: #ffeb99;
+      color: #ffcc00; }
       .el-tag--plain.el-tag--warning.is-hit {
-        border-color: #E6A23C; }
+        border-color: #FFCC00; }
       .el-tag--plain.el-tag--warning .el-tag__close {
-        color: #e6a23c; }
+        color: #ffcc00; }
         .el-tag--plain.el-tag--warning .el-tag__close:hover {
           color: #FFFFFF;
-          background-color: #e6a23c; }
+          background-color: #ffcc00; }
     .el-tag--plain.el-tag--danger {
       background-color: white;
       border-color: #fbb7b7;
@@ -2396,11 +2396,11 @@
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    padding: 10px 20px;
+    padding: 11px 20px;
     font-size: 12px;
     border-radius: 0; }
     .el-checkbox-button__inner.is-round {
-      padding: 10px 20px; }
+      padding: 11px 20px; }
     .el-checkbox-button__inner:hover {
       color: #2D5AFF; }
     .el-checkbox-button__inner [class*="el-icon-"] {
@@ -2453,11 +2453,11 @@
     .el-checkbox-button--small .el-checkbox-button__inner.is-round {
       padding: 9px 15px; }
   .el-checkbox-button--mini .el-checkbox-button__inner {
-    padding: 7px 15px;
+    padding: 5px 10px;
     font-size: 12px;
     border-radius: 0; }
     .el-checkbox-button--mini .el-checkbox-button__inner.is-round {
-      padding: 7px 15px; }
+      padding: 5px 10px; }
 
 .el-checkbox-group {
   font-size: 0; }
@@ -2898,16 +2898,16 @@
     position: relative;
     vertical-align: middle; }
     .el-radio__input.is-disabled .el-radio__inner {
-      background-color: #C5C8CE;
+      background-color: rgba(197, 200, 206, 0.24);
       border-color: #E5E7E9;
       cursor: not-allowed; }
       .el-radio__input.is-disabled .el-radio__inner::after {
         cursor: not-allowed;
-        background-color: #C5C8CE; }
+        background-color: rgba(197, 200, 206, 0.24); }
       .el-radio__input.is-disabled .el-radio__inner + .el-radio__label {
         cursor: not-allowed; }
     .el-radio__input.is-disabled.is-checked .el-radio__inner {
-      background-color: #C5C8CE;
+      background-color: rgba(197, 200, 206, 0.24);
       border-color: #E5E7E9; }
       .el-radio__input.is-disabled.is-checked .el-radio__inner::after {
         background-color: #C0C4CC; }
@@ -2927,8 +2927,8 @@
   .el-radio__inner {
     border: 1px solid #E5E7E9;
     border-radius: 100%;
-    width: 14px;
-    height: 14px;
+    width: 22px;
+    height: 22px;
     background-color: #FFFFFF;
     position: relative;
     cursor: pointer;
@@ -3361,7 +3361,7 @@
   display: inline-block;
   position: relative;
   font-size: 14px;
-  line-height: 40px; }
+  line-height: 36px; }
   .el-cascader:not(.is-disabled):hover .el-input__inner {
     cursor: pointer;
     border-color: #C0C4CC; }

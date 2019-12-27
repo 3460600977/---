@@ -1,0 +1,72 @@
+/*
+ * @Description:
+ * @Author: 何彬
+ * @Date: 2019-07-12 09:19:08
+ * @LastEditTime: 2019-10-09 17:48:49
+ * @LastEditors: Please set LastEditors
+ */
+
+/**
+ * 颜色规范, 对应UI设计规范
+ */
+
+$color-blue:       #2D5AFF; // 主色
+$color-main:       $color-blue; // 主色
+$color-red:        #F44A4A; // 点缀
+$color-split-line: #575E87; // 分割线
+$color-split-line2:#D4D4D4; // 分割线2
+$color-table-title:#333333; // 表格标题主色
+$color-text:       #181819; // 文字主色
+$color-text-1:     #999999; // 文字辅色
+$color-text-2:     #969CBE; // 文字辅助
+$color-shadow-1:   rgba(239,189,38,0.25); // 文字投影1
+$color-shadow-2:   rgba(45,90,255,0.25); // 文字投影2
+$color-shadow-3:   rgba(245,77,77,0.25); // 文字投影3
+$color-shadow-4:   rgba(45, 90, 255, 0.2); // 文字投影4
+$color-shadow-5:   rgba(139,139,139,0.16); // 文字投影5
+$color-bg:         #F6F6F6; // 背景
+$color-bg-2:       #FFCC00; // 按钮背景
+$color-bg-3:       #FFFFFF; // 纯色背景
+$color-bg-4:       #E3ECFF; // 选择路由背景
+$color-bg-5:       #E5E5E5; // 下载按钮背景
+$color-bg-6:       #F8FAFF; // 报告详情卡片背景
+$color-bg-7:       #F2F4F6; // 按钮背景2
+$color-bg-8:       #F2F8FF; // 按钮背景3
+$color-border:     #E5E7E9; // 边框
+$color-disabled:   #C5C8CE; // 失效
+$color-step:       #D9DFE9; // 步骤虚线
+
+
+/**
+ * 字体颜色
+ */
+.color-main, .color-blue{
+    color: $color-main !important;
+}
+.color-red{
+  color: $color-red !important;
+}
+.color-split-line{
+  color: $color-split-line !important;
+}
+.color-text{
+    color: $color-text !important;
+}
+.color-text-1{
+    color: $color-text-1 !important;
+}
+.color-text-2{
+    color: $color-text-2 !important;
+}
+.color-bg {
+    color: $color-bg !important;
+}
+.color-border {
+    color: $color-border !important;
+}
+.color-disabled {
+    color: $color-disabled !important;
+}
+.color-white{
+  color: #ffffff !important;
+}

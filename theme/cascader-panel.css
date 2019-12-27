@@ -819,11 +819,11 @@
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    padding: 10px 20px;
+    padding: 11px 20px;
     font-size: 12px;
     border-radius: 0; }
     .el-checkbox-button__inner.is-round {
-      padding: 10px 20px; }
+      padding: 11px 20px; }
     .el-checkbox-button__inner:hover {
       color: #2D5AFF; }
     .el-checkbox-button__inner [class*="el-icon-"] {
@@ -876,11 +876,11 @@
     .el-checkbox-button--small .el-checkbox-button__inner.is-round {
       padding: 9px 15px; }
   .el-checkbox-button--mini .el-checkbox-button__inner {
-    padding: 7px 15px;
+    padding: 5px 10px;
     font-size: 12px;
     border-radius: 0; }
     .el-checkbox-button--mini .el-checkbox-button__inner.is-round {
-      padding: 7px 15px; }
+      padding: 5px 10px; }
 
 .el-checkbox-group {
   font-size: 0; }
@@ -1321,16 +1321,16 @@
     position: relative;
     vertical-align: middle; }
     .el-radio__input.is-disabled .el-radio__inner {
-      background-color: #C5C8CE;
+      background-color: rgba(197, 200, 206, 0.24);
       border-color: #E5E7E9;
       cursor: not-allowed; }
       .el-radio__input.is-disabled .el-radio__inner::after {
         cursor: not-allowed;
-        background-color: #C5C8CE; }
+        background-color: rgba(197, 200, 206, 0.24); }
       .el-radio__input.is-disabled .el-radio__inner + .el-radio__label {
         cursor: not-allowed; }
     .el-radio__input.is-disabled.is-checked .el-radio__inner {
-      background-color: #C5C8CE;
+      background-color: rgba(197, 200, 206, 0.24);
       border-color: #E5E7E9; }
       .el-radio__input.is-disabled.is-checked .el-radio__inner::after {
         background-color: #C0C4CC; }
@@ -1350,8 +1350,8 @@
   .el-radio__inner {
     border: 1px solid #E5E7E9;
     border-radius: 100%;
-    width: 14px;
-    height: 14px;
+    width: 22px;
+    height: 22px;
     background-color: #FFFFFF;
     position: relative;
     cursor: pointer;
