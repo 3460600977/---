@@ -6,7 +6,7 @@
         height: `${innerWidth / 1080 * 1920}px`, 
         margin: `${innerWidth / 10}px`}">
         <video 
-          v-if="top.type === 'video/mp4'"
+          v-if="top.type === 'video/mp4' || top.type === 'mp4'"
           class="top"
           controls 
           autoplay
@@ -14,11 +14,11 @@
           :src="top.url"></video>
 
         <img 
-          v-if="top.type === 'image/jpeg'"
+          v-if="top.type === 'image/jpeg' || top.type === 'jpeg' || top.type === 'jpg'"
           class="top" 
           :src="top.url"/>
 
-        <div v-if="top.type === 'video/avi'" class="top font-12 mid-center">
+        <div v-if="top.type === 'video/avi' || top.type === 'avi'" class="top font-12 mid-center">
           AVI不支持预览
         </div>
     </div>
@@ -29,7 +29,7 @@
       height: bottom.height === '720' ? `${innerWidth / 1280 * 720}px` : `${innerWidth / 1080 * 880}px`, 
       margin: `${innerWidth / 10}px`}">
         <video 
-          v-if="bottom.type === 'video/mp4'"
+          v-if="bottom.type === 'video/mp4' || bottom.type === 'mp4'"
           class="bottom"
           controls 
           autoplay
@@ -38,11 +38,11 @@
           :src="bottom.url"></video>
 
         <img 
-          v-if="bottom.type === 'image/jpeg'"
+          v-if="bottom.type === 'image/jpeg' || bottom.type === 'jpeg' || bottom.type === 'jpg'"
           class="bottom" 
           :src="bottom.url"/>
 
-        <div v-if="bottom.type === 'video/avi'" class="top font-12 mid-center">
+        <div v-if="bottom.type === 'video/avi' || bottom.type === 'avi'" class="top font-12 mid-center">
           AVI不支持预览
         </div>
     </div>
