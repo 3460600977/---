@@ -257,7 +257,7 @@
     </PutMangeCard>
 
     <!-- 楼盘预估数面板 -->
-    <div class="estimate-box" v-if="!isEdit">
+    <div class="estimate-box">
       <div class="font-16 bold">楼盘预估数</div>
 
       <ul class="msg-box color-text-1">
@@ -304,7 +304,7 @@
       </el-form>
 
       <div class="save-box">
-        <div v-if="isEdit" class="mid-between">
+        <div v-if="isEdit" class="float-right">
           <el-button :loading="formData.confirming" @click="confirmProject" style="width: 120px" type="primary">
             <template v-if="formData.creativeStatus === 0 || formData.creativeStatus === 2">
               保存并关闭
