@@ -93,6 +93,8 @@
     beforeMount() {
       if (this.isTokenLogin) {
         this.tokenLogin()
+      } else {
+        this.pageLoading = false;
       }
     },
 

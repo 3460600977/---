@@ -117,9 +117,7 @@
 .el-form-item__label{
   color: #999999;
 }
-.el-input{
-  width: 240px;
-}
+
 .el-input__inner{
   &::placeholder{
     color: $color-text;
@@ -174,6 +172,11 @@
 // input设定宽度为200
 .el-input {
   width: 200px;
+}
+.bigger{
+  .el-input {
+    width: 240px;
+  }
 }
 
 // 分页输入框

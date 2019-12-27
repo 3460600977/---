@@ -1,43 +1,62 @@
 <template>
   <div class="selected-list">
-    <div class="title mid-between">
+    <template v-if="buildingDirectionActiveType === 'exist'">
+      <ul class="selected-list-data-box" v-loading='loading'>
+        <noData v-if="buildsNumber <= 0"/>
 
-      <div>
-        <span>已选择楼盘 <span class="color-main font16">{{buildsNumber}}</span> 个</span>
-        <span>, 可售设备 <span class="color-main font16">{{deviceNumber}}</span> 个</span>
+        <li v-else class="item mid" v-for="(item, index) in existList" :key="index">
+
+          <div class="left-info exist"><p class="name">{{item.name}}</p></div>
+
+          <div class="account">
+            <span class="font-16 number">{{item.value || 0}}</span>
+            <span class="font-14" v-if="item.name === '覆盖人次'">人</span>
+            <span class="font-14" v-else>个</span>
+          </div>
+        </li>
+      </ul>
+    </template>
+
+    <template v-if="buildingDirectionActiveType === 'create'">
+      <div class="title mid-between">
+
+        <div>
+          <span>已选择楼盘 <span class="color-main font16">{{buildsNumber}}</span> 个</span>
+          <span>, 可售设备 <span class="color-main font16">{{deviceNumber}}</span> 个</span>
+        </div>
+
+        <el-button :loading="exporting" @click="buildsListExport" v-show="buildsNumber > 0" size="small">下载</el-button>
+
       </div>
 
-      <el-button :loading="exporting" @click="buildsListExport" v-show="buildsNumber > 0" size="small">下载</el-button>
+      <ul class="selected-list-data-box" v-loading='loading'>
+        <li class="item mid" v-for="(item, index) in putProject.list" :key="index">
 
-    </div>
+          <div class="left-info">
+            <p class="name">{{item.premiseName}}</p>
+            <p class="addr font-12 color-text-1">{{item.address}}</p>
+          </div>
 
-    <ul class="selected-list-data-box" v-loading='loading'>
-      <li class="item mid" v-for="(item, index) in putProject.list" :key="index">
+          <div class="account">
+            <span class="font-16 number">{{item.deviceNum || 0}}</span><span class="font-14">个</span>
+          </div>
 
-        <div class="left-info">
-          <p class="name">{{item.premiseName}}</p>
-          <p class="addr font-12 color-text-1">{{item.address}}</p>
-        </div>
+          <DelCirclrButton @click.native="$emit('update:data', $tools.removeArrayItemByIndex(putProject.list, index))" class="delete-item"/>
 
-        <div class="account">
-          <span class="font-16 number">{{item.deviceNum || 0}}</span><span class="font-14">个</span>
-        </div>
+        </li>
 
-        <DelCirclrButton @click.native="$emit('update:data', $tools.removeArrayItemByIndex(putProject.list, index))" class="delete-item"/>
-
-      </li>
-
-      <!-- 分页 -->
-      <!-- <li class="item clearfix">
-        <el-pagination
-          class="float-right"
-          background
-          layout="total, sizes, prev, pager, next"
-          :total="20">
-        </el-pagination>
-      </li> -->
-      <noData v-if="buildsNumber <= 0"/>
-    </ul>
+        <!-- 分页 -->
+        <!-- <li class="item clearfix">
+          <el-pagination
+            class="float-right"
+            background
+            layout="total, sizes, prev, pager, next"
+            :total="20">
+          </el-pagination>
+        </li> -->
+        <noData v-if="buildsNumber <= 0"/>
+      </ul>
+    </template>
 
   </div>
 </template>
@@ -49,7 +68,11 @@ export default {
     loading: {
       type: Boolean,
       default: true,
-    }
+    },
+    buildingDirectionActiveType: {
+      type: String,
+      default: 'exist',
+    },
   },
 
   data() {
@@ -94,7 +117,17 @@ export default {
       'peopleNumber',
       'priceNumber'
     ]),
-    ...mapState(['putProject'])
+    ...mapState(['putProject']),
+
+    existList() {
+      let res = [
+        { name: '楼盘数',  value: this.buildsNumber},
+        { name: '单元数',  value: '待后端添加接口'},
+        { name: '点位数',  value: this.deviceNumber},
+        { name: '覆盖人次', value: this.peopleNumber},
+      ];
+      return res;
+    }
   }
 }
 </script>
@@ -110,17 +143,26 @@ export default {
     line-height: 44px;
     font-weight: bold;
     background:rgba(249,252,255,1);
+    border-bottom: 1px solid rgba(229,231,233,1);
+
   }
   .selected-list-data-box{
     max-height: 76px * 6;
     overflow-y: auto;
     .item{
       position: relative;
-      border-top:1px solid rgba(229,231,233,1);
       padding: 20px 45px 17px 20px;
+      &+.item{
+        border-top:1px solid rgba(229,231,233,1);
+      }
       .left-info{
-        width: 588px;
+        width: 288px;
         padding-right: 20px;
+        &.exist{
+          .name{
+            margin-bottom: 0;
+          }
+        }
         .name{
           height: 14px;
           line-height: 14px;
@@ -131,6 +173,7 @@ export default {
         }
       }
       .account{
+        color: $color-text-1;
         .number{
           font-weight: bold;
         }
