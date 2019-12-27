@@ -7,13 +7,6 @@
           @querySearchAsync="querySearchAsync"
         ></draw-type>
       </div>
-<!--      <div class="top-select">-->
-<!--        <top-select-->
-<!--          :buildingFilter="buildingFilter"-->
-<!--          @returnBuildingTags="returnBuildingTags"-->
-<!--          @drawTypeSelect="drawTypeSelect"-->
-<!--        ></top-select>-->
-<!--      </div>-->
       <div class="mapPopup">
         <map-popup
           v-if="showPathCopy"
@@ -34,12 +27,17 @@
         ></mouseMove-text>
       </div>
       <div class="right-info">
-        <slide-container>
-          <right-info
-            :selectedBuildings="selectedBuildings"
-            @createPackage="createPackage"
-            @deleteItem="deleteItem"
-          ></right-info>
+        <slide-container
+        >
+<!--          <right-info-->
+<!--            :selectedBuildings="selectedBuildings"-->
+<!--            @addBtnClick="addBtnClick"-->
+<!--            @createPackage="createPackage"-->
+<!--            @deleteItem="deleteItem"-->
+<!--          ></right-info>-->
+          <building-detail
+            ref="buildingDetail"
+          ></building-detail>
         </slide-container>
       </div>
       <div class="map container">
@@ -59,6 +57,13 @@
       <div class="create-dialog">
         <create-dialog ref="createDialog" :data="selectedBuildings"></create-dialog>
       </div>
+      <div class="add-dialog">
+        <add-dialog
+          ref="addDialog"
+          cityCode="510100"
+          @selectLocation="addLocation"
+        ></add-dialog>
+      </div>
     </div>
 </template>
 
@@ -70,7 +75,9 @@
   // import leftSelect from "./leftSelect";
   import mouseMoveText from "./mouseMoveText";
   import createDialog from "./createDialog";
+  import buildingDetail from "./buildingDetail";
   import slideContainer from "../../../components/slideContainer";
+  import addDialog from "./addDialog";
   // import topSelect from "./topSelect";
 
   const NAV_HEIGHT = 76,
@@ -81,8 +88,10 @@
     name: "index",
     components: {
       dbMap,
+      addDialog,
       mapPopup,
       drawType,
+      buildingDetail,
       createDialog,
       slideContainer,
       // leftSelect,
@@ -119,6 +128,7 @@
     },
     mounted() {
       this.bindEvent()
+      this.$refs.buildingDetail.loadData(167921)
     },
     computed: {
       mapLocation() { // 当前显示弹窗得path
@@ -137,6 +147,15 @@
       }
     },
     methods: {
+      // 添加媒体资源弹窗选择添加的楼盘
+      addLocation(val) {
+        let isExist = this.$refs.dbmap.addItem(val)
+        this.$refs.addDialog.selectCallBack(isExist)
+      },
+      // 右边弹出框点击添加按钮
+      addBtnClick() {
+        this.$refs.addDialog.show()
+      },
       // 右边弹出框点击删除某个楼盘
       deleteItem(item) {
         this.$refs.dbmap.deleteItem(item)
@@ -151,6 +170,7 @@
       },
       // 地图组件返回搜索结果
       returnSearchResult(result) {
+        console.log(result)
         this.$refs.drawType.setSearchList(result)
       },
       bindEvent() {

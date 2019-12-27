@@ -132,12 +132,45 @@
         })
       },
       /*
-      * 删除arr中的点
+      * 像已选楼盘中添加楼盘
+      * */
+      addItem(item) {
+        let isExist = false
+        isExist = this.checkPointIsExist(item)
+
+        if (!isExist) {
+          this.addPointInSelectedBuildings(item)
+        }
+        this.drawPoints(this.selectedBuildings, this.unSelectedBuildings)
+
+        return isExist
+      },
+
+      // 像已选楼盘中加一个点，并且如果他存在在未选楼盘中将他删除
+      addPointInSelectedBuildings(item) {
+        this.selectedBuildings.push(item)
+        for (let i = 0; i < this.unSelectedBuildings.length; i++) {
+          if (item.premisesId === this.unSelectedBuildings[i].premisesId) {
+            this.unSelectedBuildings.splice(i, 1)
+            break;
+          }
+        }
+      },
+      // 检测某一个点是否已存在在已选楼盘中
+      checkPointIsExist(item) {
+        let i = false
+        for (let i = 0; i < this.selectedBuildings.length; i++) {
+          if (item.premisesId === this.selectedBuildings[i].premisesId) {
+            i = true
+            return i
+            break;
+          }
+        }
+      },
+      /*
+      * 在已选楼盘中删除选中的点
       * */
       deleteItem(item) {
-        // let index = this.$tools.binarySearch(item, this.selectedBuildings, 'premisesId')
-        // console.log(index)
-        // this.selectedBuildings.splice(index, 1)
         for (let i = 0; i < this.selectedBuildings.length; i++) {
           if (item.premisesId === this.selectedBuildings[i].premisesId) {
             this.selectedBuildings.splice(i, 1)
@@ -145,10 +178,10 @@
           }
         }
         this.unSelectedBuildings.push(item)
-        this.draw(this.selectedBuildings, this.unSelectedBuildings)
+        this.drawPoints(this.selectedBuildings, this.unSelectedBuildings)
       },
       // 根据传入的以选中和未选中楼盘重新画数据
-      draw(selectP, unSelectP) {
+      drawPoints(selectP, unSelectP) {
         this.setDevicePoints(selectP, 0)
         this.setDevicePoints(unSelectP, 1)
       },
@@ -156,10 +189,12 @@
       * 根据关键字搜索
       * */
       searchByWord(keyWord) {
+        console.log(keyWord)
         let options = {
           onSearchComplete: ((results) => {
             // 判断状态是否正确
             if (local.getStatus() == BMAP_STATUS_SUCCESS){
+              console.log(results)
               this.$emit('returnSearchResult', results.Sq)
               local = null
             }
@@ -519,16 +554,10 @@
       drawDevicePoints() {
         if (!Object.keys(this.pathArr).length) {
           if (this.budget === 1) {
-            this.setDevicePoints(this.normalizePoints(this.points), 0)
-            this.setDevicePoints([], 1)
-            this.unSelectedBuildings = []
-            this.selectedBuildings = this.points
+            this.drawBg(this.points, [])
           } else {
             let [selectP, unSelectP] = this.getRandomBuildings(this.points, this.budget)
-            this.setDevicePoints(selectP, 0)
-            this.setDevicePoints(unSelectP, 1)
-            this.selectedBuildings = selectP
-            this.unSelectedBuildings = unSelectP
+            this.drawBg(selectP, unSelectP)
           }
         } else {
           let selectedBuildings = []
@@ -560,7 +589,7 @@
             unSelected[item.premisesId] = item
           }
         })
-        this.drawBg(selected, unSelected)
+        this.drawBg(Object.values(selected), Object.values(unSelected))
       },
       /*
       * 传已选及未选的点画背景点
@@ -568,13 +597,10 @@
       /*
       * 画背景点
       * */
-      drawBg(selected, unSelected) {
-        let selectP = Object.values(selected)
-        let unSelectP = Object.values(unSelected)
+      drawBg(selectP, unSelectP) {
         this.selectedBuildings = selectP
         this.unSelectedBuildings = unSelectP
-        this.setDevicePoints(selectP, 0)
-        this.setDevicePoints(unSelectP, 1)
+        this.drawPoints(selectP, unSelectP)
       },
       /*
       * 根据pointsOverlayObj里面存在的背景海量点 清空海量点图层

@@ -34,7 +34,7 @@
         <p class="title bold" style="margin-bottom: 10px">资源包名称</p>
         <create-form></create-form>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="" class="btn">清空</el-button>
+          <el-button @click="hide" class="btn">取消</el-button>
           <el-button type="primary" @click="" class="btn">确认</el-button>
         </span>
       </el-dialog>

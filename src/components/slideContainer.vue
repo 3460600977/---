@@ -1,8 +1,8 @@
 <template>
     <div class="container">
       <div class="container" ref="container">
-        <slot></slot>
-        <div class="slider-item" @click="togglePanel">
+        <slot v-show="isShow"></slot>
+        <div class="slider-item hand" @click="togglePanel">
           <i class="iconfont color-text-1" :class="isShow?'icon-icon-test2':'icon-icon-test1'"></i>
         </div>
       </div>

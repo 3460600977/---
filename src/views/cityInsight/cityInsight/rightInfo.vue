@@ -34,7 +34,7 @@
 
         <div class="mid-between margin1">
           <p class="bold">媒体资源</p>
-          <el-button type="primary" plain icon="el-icon-plus">添加</el-button>
+          <el-button type="primary" plain icon="el-icon-plus" @click="addBtnClick">添加</el-button>
         </div>
       </div>
       <ul class="list margin2 border-bottom flex1 customScroll">
@@ -44,7 +44,7 @@
             <p class="list-item-1">点位数：{{item.signElevatorNum}}</p>
             <p>约覆盖人数：{{item.totalPeople}}</p>
           </div>
-          <span class="iconfont icon-remove icon-error" @click="deleteItem(item)"></span>
+          <span class="iconfont icon-remove icon-error hand" @click="deleteItem(item)"></span>
         </li>
       </ul>
       <div style="margin-top: 14px;text-align: center" class="padding padding2">
@@ -89,6 +89,9 @@
           this.coveredPeople += item.totalPeople
           this.unitNum += item.unitNum? item.unitNum: 0
         })
+      },
+      addBtnClick() {
+        this.$emit('addBtnClick')
       },
       createPackage() {
         this.$emit('createPackage')
@@ -165,14 +168,14 @@
       border: 1px dashed $color-main;
       background:rgba(255,255,255,1);
       .icon-remove {
-        width: 18px;
+        font-size: 18px;
         background: #ffffff;
         position: absolute;
         top: 50%;
         color: $color-main;
         z-index: 100;
         transform: translateY(-50%);
-        right: -10px;
+        right: -9px;
       }
     }
   }
