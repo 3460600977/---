@@ -73,7 +73,6 @@
             onRoutes() {
                 // 当前激活菜单的 index
                 let route_name = this.$route.path.replace('/', '')
-                console.log(route_name)
                 return route_name
             },
         },
