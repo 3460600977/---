@@ -1,6 +1,7 @@
 <template>
   <div class="put-project">
     <div class="title">
+      {{cityInsightDisabled}}
       <h2>所属投放计划：{{planData.data.name || formData.planName}}</h2>
     </div>
 
@@ -379,10 +380,9 @@ export default {
         dateForDay:'',
         dateForWeekBegin:'',
         dateForWeekEnd:'',
-        // deliveryMode: projectConst.putWay[0], // 投放方式
         count: projectConst.putFrequency[2], // 投放频次
         second: projectConst.putDuration[2], // 投放时长
-        type: projectConst.screenType[2], // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
+        type: projectConst.screenType[0], // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
         projectCity: '', // 城市
         details: this.buildsDetails, // 楼盘数据
         confirming: false, // 确认方案ing
@@ -395,9 +395,6 @@ export default {
         industry: [
           { required: true, message: '请选择投放方案行业!', trigger: 'change' },
         ],
-        projectType: [
-          { required: true, message: '请设置投放类型!', trigger: 'blur' },
-        ],
         dateForDay:[
           { validator: checkDate, trigger: 'blur' },
         ],
@@ -407,9 +404,6 @@ export default {
         dateForWeekEnd:[
           { validator: checkWeek, trigger: 'blur' },
         ],
-        // deliveryMode: [
-        //   { required: true, message: '请设置投放方式!', trigger: 'blur' },
-        // ],
         count:[
           { required: true, message: '请选投放频次!', trigger: 'change' },
         ],
@@ -417,7 +411,7 @@ export default {
           { required: true, message: '请选择投放时长!', trigger: 'change' },
         ],
         type:[
-          { required: true, message: '请选择屏幕类型!', trigger: 'blur' },
+          { required: true, message: '请选择屏幕类型!', trigger: 'change' },
         ]
       },
       
@@ -657,6 +651,10 @@ export default {
       let validateForms = ['planTop', 'planName'];
       for (let i=0; i<validateForms.length; i++) {
         let item = validateForms[i];
+        if (!this.$refs[item]) {
+          isPassEnptyCheck = false;
+          break;
+        }
         this.$refs[item].validate((valid) => {
           isPassEnptyCheck = valid; 
         });
@@ -799,10 +797,10 @@ export default {
 
     // 判断 资源包 导入是否可用
     cityInsightDisabled() {
-      return true;
+      let res = !this.validataForm();
       // this.formData.projectCity = '';
       // if (this.buildingDirection.activeType === 'create') return;
-      // return !this.validataForm();
+      return res;
     },
 
     // 是否为编辑

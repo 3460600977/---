@@ -111,13 +111,6 @@
             <span class="color-red" v-if="tableData.data[detailDialog.dataIndex].totalBudget">¥{{tableData.data[detailDialog.dataIndex].totalBudget / 100}}</span>
             <span class="color-red" v-else>不限</span>
           </el-form-item>
-          <el-form-item label="投放城市">
-            <span class="color-text-1">
-              <span v-for="(item, index) in tableData.data[detailDialog.dataIndex].cityList" :key="index">
-                {{item.name}}<span v-if="index+1 !== tableData.data[detailDialog.dataIndex].cityList.length">；</span>
-              </span>
-            </span>
-          </el-form-item>
           <el-form-item label="投放时间">
             <span class="color-text-1">
               {{$tools.getFormatDate('YY-mm-dd', tableData.data[detailDialog.dataIndex].beginTime)}}
