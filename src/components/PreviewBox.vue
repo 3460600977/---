@@ -6,7 +6,7 @@
         height: `${innerWidth / 1080 * 1920}px`, 
         margin: `${innerWidth / 10}px`}">
         <video 
-          v-if="top.type === 'video/mp4'"
+          v-if="top.type === 'video/mp4' || top.type === 'mp4'"
           class="top"
           controls 
           autoplay
@@ -14,11 +14,11 @@
           :src="top.url"></video>
 
         <img 
-          v-if="top.type === 'image/jpeg'"
+          v-if="top.type === 'image/jpeg' || top.type === 'jpeg' || top.type === 'jpg'"
           class="top" 
           :src="top.url"/>
 
-        <div v-if="top.type === 'video/avi'" class="top font-12 mid-center">
+        <div v-if="top.type === 'video/avi' || top.type === 'avi'" class="top font-12 mid-center">
           AVI不支持预览
         </div>
     </div>

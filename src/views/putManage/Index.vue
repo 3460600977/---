@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <el-tabs v-model="activeName" class="my-tabs" type="border-card">
+    <el-tabs @tab-click="changeTab" v-model="activeName" class="my-tabs" type="border-card">
 
       <el-tab-pane label="投放计划" name="plan">
         <planList />
@@ -37,8 +37,19 @@ export default {
   },
 
   beforeMount() {
-    this.activeName = this.$route.query.active || "creative";
-  }
+    this.activeName = this.$route.query.active || "plan";
+  },
+
+  methods: {
+    changeTab() {
+      this.$router.push({
+        path: '/putManage',
+        query: {
+          active: this.activeName
+        }
+      })
+    },
+  },
 };
 </script>
 

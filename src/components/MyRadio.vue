@@ -1,5 +1,5 @@
 <template>
-  <div @click.stop.prevent="clickMyBtn" class="my-radio clearfix" 
+  <div class="my-radio clearfix" 
     :class="getClass">
     <div class="my-r-button">
       <i :class="{'el-icon-check': active}"></i>

@@ -65,13 +65,20 @@ export const CreateCreative = {
     });
   },
 
-  
-
   // DELETE删除创意数据
   DeleteCreativeById: (data) => {
     return request({
       url: "/dpapi/creative/" + data,
       method: "DELETE",
     });
-  }
+  },
+
+  // 编辑保存
+  EditCreative: (data) => {
+    return request({
+      url: "/dpapi/creative/" + data.id,
+      method: "put",
+      data: data.formData
+    });
+  },
 }
