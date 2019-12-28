@@ -1,12 +1,18 @@
 <template>
     <div class="container cityInsight">
-      <div class="draw-type">
-        <draw-type
-          ref="drawType"
-          @drawTypeSelect="drawTypeSelect"
-          @querySearchAsync="querySearchAsync"
-        ></draw-type>
+      <div class="left-info">
+        <left-info></left-info>
       </div>
+<!--      <div>-->
+<!--        <top-select></top-select>-->
+<!--      </div>-->
+<!--      <div class="draw-type">-->
+<!--        <draw-type-->
+<!--          ref="drawType"-->
+<!--          @drawTypeSelect="drawTypeSelect"-->
+<!--          @querySearchAsync="querySearchAsync"-->
+<!--        ></draw-type>-->
+<!--      </div>-->
       <div class="mapPopup">
         <map-popup
           v-if="showPathCopy"
@@ -72,13 +78,14 @@
   import mapPopup from "../../../components/map/mapPopup";
   import rightInfo from "./rightInfo";
   import drawType from "../../../components/map/drawType";
+  import leftInfo from "./leftInfo";
   // import leftSelect from "./leftSelect";
   import mouseMoveText from "./mouseMoveText";
   import createDialog from "./createDialog";
   import buildingDetail from "./buildingDetail";
   import slideContainer from "../../../components/slideContainer";
   import addDialog from "./addDialog";
-  // import topSelect from "./topSelect";
+  import topSelect from "./topSelect";
 
   const NAV_HEIGHT = 76,
     ANOTHER_HEIGHT = 10,
@@ -94,9 +101,10 @@
       buildingDetail,
       createDialog,
       slideContainer,
+      leftInfo,
       // leftSelect,
       rightInfo,
-      // topSelect,
+      topSelect,
       mouseMoveText
     },
     data() {
@@ -285,6 +293,12 @@
     top: 0;
     height: 100%;
     right: 0;
+  }
+  .left-info {
+    position: absolute;
+    z-index: 3;
+    top: 20px;
+    left: 36px;
   }
   .left-select {
     position: absolute;

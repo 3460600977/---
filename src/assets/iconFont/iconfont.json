@@ -27,6 +27,13 @@
       "unicode_decimal": 58932
     },
     {
+      "icon_id": "710122",
+      "name": "指缘地点7",
+      "font_class": "zhiyuandidian7",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
       "icon_id": "1127415",
       "name": "错误",
       "font_class": "error",
@@ -62,6 +69,27 @@
       "unicode_decimal": 58908
     },
     {
+      "icon_id": "3427841",
+      "name": "筛选",
+      "font_class": "icon-",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "4890368",
+      "name": "编辑",
+      "font_class": "bianji1",
+      "unicode": "e6e2",
+      "unicode_decimal": 59106
+    },
+    {
+      "icon_id": "5023197",
+      "name": "提示",
+      "font_class": "tishi",
+      "unicode": "e625",
+      "unicode_decimal": 58917
+    },
+    {
       "icon_id": "5191441",
       "name": "报表",
       "font_class": "baobiao",
@@ -88,6 +116,13 @@
       "font_class": "yanjing",
       "unicode": "e63b",
       "unicode_decimal": 58939
+    },
+    {
+      "icon_id": "6966905",
+      "name": "分析",
+      "font_class": "fenxi",
+      "unicode": "e622",
+      "unicode_decimal": 58914
     },
     {
       "icon_id": "8311410",
@@ -193,6 +228,13 @@
       "font_class": "reconnaissance1",
       "unicode": "e62f",
       "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "12571612",
+      "name": "kuaijiezhifu1",
+      "font_class": "kuaijiezhifu1",
+      "unicode": "e630",
+      "unicode_decimal": 58928
     }
   ]
 }
