@@ -124,11 +124,18 @@
                 this.pathArr[key].buildings = this.isInArea(this.pathArr[key])
               }
             }
+            // this.drawLabels(this.points)
             this.drawDevicePoints()
           } else {
             this.clearPoints()
           }
           this.loading = false
+        })
+      },
+      // 添加弹窗覆盖物
+      drawLabels(arr) {
+        arr.forEach((item) => {
+          this.addLabel(item.point)
         })
       },
       /*
@@ -182,6 +189,8 @@
       },
       // 根据传入的以选中和未选中楼盘重新画数据
       drawPoints(selectP, unSelectP) {
+        console.log(selectP)
+        console.log(unSelectP)
         this.setDevicePoints(selectP, 0)
         this.setDevicePoints(unSelectP, 1)
       },
@@ -189,7 +198,6 @@
       * 根据关键字搜索
       * */
       searchByWord(keyWord) {
-        console.log(keyWord)
         let options = {
           onSearchComplete: ((results) => {
             // 判断状态是否正确
@@ -535,13 +543,6 @@
         this.heatmapOverlay.setDataSet({data:arr, max:100});
       },
 
-      normalizePoints(arr) {
-        let result = arr.map((item) => {
-          return item.point
-        })
-        return result
-      },
-
       normalizePointsAll(arr) {
         let result = arr.map((item) => {
           return {point: new BMap.Point(item.lng, item.lat), ...item}
@@ -628,7 +629,87 @@
         }
         return [result, arrCopy]
       },
+      // 添加lable
+      addLabel(point) {
+        let labelStyle = {
+          color: "#222222",
+          backgroundColor: "#ffffff",
+          fontSize : "12px",
+          verticalAlign:"center",
+          border: 'none',
+          borderRadius: "0px 4px 4px 0px",
+          whiteSpace:"nowrap",
+          padding:"0px 4px 0 4px",
+          // left: '50%',
+          lineHeight: '26px',
+          boxShadow: '0px 3px 7px 0px rgba(45, 90, 255, 0.2)'
+        };
+        let content = `
+          <div style="
+            padding: 17px 0 21px;
+            background: #fff;
+            font-size:14px;
+            line-height: 1.15;
+            width:170px;
+            height:245px;
+            border:1px solid rgba(229,231,233,1);
+            box-shadow:0px 3px 5px 0px rgba(0, 0, 0, 0.1);
+            border-radius:4px;"
+          >
+              <div style="padding: 0 15px 14px;border-bottom: 1px solid #FFE5E7E9">
+                <div class="mid-between">
+                  <p>东郊记忆</p>
+                  <i style="height: 16px;width: 16px;background: #ededed;display: block"></i>
+                </div>
+                <div class="mid-between color-main" style="margin-top: 15px">
+                  <p>娱乐</p>
+                  <p class="font-number">98</p>
+                </div>
+              </div>
+              <div style="padding: 0 15px 0;">
+                <div class="mid-between" style="color: #999999FF;margin-top: 15px">
+                  <p>1.娱乐</p>
+                  <p class="font-number">98</p>
+                </div>
+                <div class="mid-between" style="color: #999999FF;margin-top: 15px">
+                  <p>1.娱乐</p>
+                  <p class="font-number">98</p>
+                </div>
+                <div class="mid-between" style="color: #999999FF;margin-top: 15px">
+                  <p>1.娱乐</p>
+                  <p class="font-number">98</p>
+                </div>
+                <p class="color-main text-center" style="margin-top: 34px">更多</p>
+              </div>
+            </div>
+        `
+        //用于设置样式
+        let label = new BMap.Label(content, {
+          // offset: new BMap.Size(29, 0)
+          position: point
+        });
+        // label.setStyle(labelStyle);
+        label.addEventListener('click', () => {
+          console.log('44444')
+          // this.currentPoint = this.visualPoint[index]
+        })
+        this.map.addOverlay(label)
+      },
 
+      // 为海量点添加点击事件
+      selectedEvent(event) {
+        console.log(event)
+      },
+      unSelectedEvent(event) {
+        console.log(event)
+      },
+      pointAddEvent(overlay, type) {
+        if (type === 0) {
+          overlay.addEventListener('click',  this.selectedEvent);
+        } else {
+          overlay.addEventListener('click',  this.unSelectedEvent);
+        }
+      },
       /*
       * 画背景点方法 0：已选 1：未选
       * */
@@ -638,10 +719,14 @@
         if (!this.pointsOverlayObj[overlay]) {
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
+          this.pointAddEvent(pointsOverlay, type)
+          // this.pointsOverlayObj[overlay].addEventListener('click',  this.pointsEvent(type));
           this.map.addOverlay(pointsOverlay);
+
         } else {
           if (points.length === 0) {
             this.pointsOverlayObj[overlay].clear()
+            this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointsEvent(type));
           } else {
             this.pointsOverlayObj[overlay].clear()
             this.pointsOverlayObj[overlay].setPoints(points)

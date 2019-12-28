@@ -6,13 +6,13 @@
 <!--      <div>-->
 <!--        <top-select></top-select>-->
 <!--      </div>-->
-<!--      <div class="draw-type">-->
-<!--        <draw-type-->
-<!--          ref="drawType"-->
-<!--          @drawTypeSelect="drawTypeSelect"-->
-<!--          @querySearchAsync="querySearchAsync"-->
-<!--        ></draw-type>-->
-<!--      </div>-->
+      <div class="draw-type">
+        <draw-type
+          ref="drawType"
+          @drawTypeSelect="drawTypeSelect"
+          @querySearchAsync="querySearchAsync"
+        ></draw-type>
+      </div>
       <div class="mapPopup">
         <map-popup
           v-if="showPathCopy"

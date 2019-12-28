@@ -37,7 +37,7 @@
 </template>
 
 <script>
-  import leftTab from "./leftTab";
+  import leftTab from "../../../components/leftTab";
   import conditions from "./conditions";
   import Back from "../../../components/Back";
   import Hobby from "./Hobby";
