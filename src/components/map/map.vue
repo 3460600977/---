@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-loading="loading">
+  <div class="container">
     <div ref="container" class="container"></div>
   </div>
 </template>
@@ -10,7 +10,7 @@
     name: "index",
     data() {
       return {
-        loading: false,
+        labelsArr: [], // 存储label覆盖物的变量 用于清楚label
         map: null,
         pathArr: {},
         indexArr: [],
@@ -18,7 +18,7 @@
           selectedOverlay: null,
           unSelectedOverlay: null
         },
-        showHotMapLevel: 12,
+        showLabel: 17,
         heatmapOverlay: null,
         activePath: null,
         points: null, // 楼盘设备数据
@@ -91,51 +91,38 @@
     mounted() {
       let map = new BMap.Map(this.$refs.container, {enableMapClick: false});
       this.map = map
-      // var geolocation = new BMap.Geolocation();
-      // geolocation.getCurrentPosition(function(r){
-      //   if(this.getStatus() == BMAP_STATUS_SUCCESS){
-      //     console.log(r)
-      //     var mk = new BMap.Marker(r.point);
-      //     map.addOverlay(mk);
-      //     map.panTo(r.point);
-      //   }
-      //   else {
-      //     alert('failed'+this.getStatus());
-      //   }
-      // });
-      var myCity = new BMap.LocalCity();
-      myCity.get((result) => {
-        map.centerAndZoom(result.name,10);
-        this.initMouse()
-        this.loadData()
-      });
+
       map.enableScrollWheelZoom();
       map.addControl(new BMap.ScaleControl());
       this.mapBindEvent()
     },
     methods:{
-      loadData() {
-        this.loading = true
-        this.$api.cityInsight.getPremisesByCity({cityCode: '510100', tag: this.filters}).then((data) => {
-          if (data.result) {
-            this.points = this.normalizePointsAll(data.result)
-            if (Object.keys(this.pathArr).length) {
-              for(let key in this.pathArr) {
-                this.pathArr[key].buildings = this.isInArea(this.pathArr[key])
-              }
-            }
-            // this.drawLabels(this.points)
-            this.drawDevicePoints()
-          } else {
-            this.clearPoints()
-          }
-          this.loading = false
+      location() {
+        return new Promise((resolve) => {
+          let myCity = new BMap.LocalCity();
+          myCity.get((result) => {
+            this.map.centerAndZoom(result.center, result.level);
+            resolve(result)
+            // this.initMouse()
+            // this.loadData()
+          });
         })
+        // let geolocation = new BMap.Geolocation();
+        // let that = this
+        // geolocation.getCurrentPosition(function(r){
+        //   if(this.getStatus() == BMAP_STATUS_SUCCESS){
+        //     console.log(r)
+        //     that.map.centerAndZoom(r.point, 12);
+        //   }
+        //   else {
+        //     alert('failed'+this.getStatus());
+        //   }
+        // });
       },
       // 添加弹窗覆盖物
       drawLabels(arr) {
         arr.forEach((item) => {
-          this.addLabel(item.point)
+          this.addLabel(item)
         })
       },
       /*
@@ -143,36 +130,43 @@
       * */
       addItem(item) {
         let isExist = false
-        isExist = this.checkPointIsExist(item)
+        isExist = this.checkPointIsExist(item, this.selectedBuildings) !== -1? true : false
 
-        if (!isExist) {
+        if (!isExist) { // 如果item没在当前选中的楼盘中
           this.addPointInSelectedBuildings(item)
         }
-        this.drawPoints(this.selectedBuildings, this.unSelectedBuildings)
+        setTimeout(() => {
+          this.drawPoints(this.selectedBuildings, this.unSelectedBuildings)
+        }, 0)
 
         return isExist
       },
-
-      // 像已选楼盘中加一个点，并且如果他存在在未选楼盘中将他删除
-      addPointInSelectedBuildings(item) {
-        this.selectedBuildings.push(item)
-        for (let i = 0; i < this.unSelectedBuildings.length; i++) {
-          if (item.premisesId === this.unSelectedBuildings[i].premisesId) {
-            this.unSelectedBuildings.splice(i, 1)
-            break;
-          }
+      // 判断一个点是否在可视区域内
+      addSigleLabel(item) {
+        let bounds = this.map.getBounds()
+        let isIn = bounds.containsPoint(item.point)
+        if (isIn) {
+          this.addLabel(item)
         }
       },
-      // 检测某一个点是否已存在在已选楼盘中
-      checkPointIsExist(item) {
-        let i = false
-        for (let i = 0; i < this.selectedBuildings.length; i++) {
-          if (item.premisesId === this.selectedBuildings[i].premisesId) {
-            i = true
-            return i
-            break;
-          }
+      // 像已选楼盘中加一个点，并且如果他存在在未选楼盘中将他删除
+      addPointInSelectedBuildings(item) {
+        let index = this.checkPointIsExist(item, this.points)
+        if (index === -1) { // 如果不在当前楼盘列表中 添加他的label
+          this.addSigleLabel(item)
         }
+        let i = this.checkPointIsExist(item, this.unSelectedBuildings)
+        if (i !== -1) { // 如果在未选中楼盘列表中 将他删除
+          this.unSelectedBuildings.splice(i, 1)
+        }
+        this.selectedBuildings.push(item)
+      },
+      // 检测某一个点是否已存在在已选楼盘中
+      checkPointIsExist(item, arr) {
+        let i = arr.findIndex((val) => {
+          return val.premisesId === item.premisesId
+        })
+        return i
       },
       /*
       * 在已选楼盘中删除选中的点
@@ -189,8 +183,7 @@
       },
       // 根据传入的以选中和未选中楼盘重新画数据
       drawPoints(selectP, unSelectP) {
-        console.log(selectP)
-        console.log(unSelectP)
+        console.log(selectP, unSelectP)
         this.setDevicePoints(selectP, 0)
         this.setDevicePoints(unSelectP, 1)
       },
@@ -202,7 +195,6 @@
           onSearchComplete: ((results) => {
             // 判断状态是否正确
             if (local.getStatus() == BMAP_STATUS_SUCCESS){
-              console.log(results)
               this.$emit('returnSearchResult', results.Sq)
               local = null
             }
@@ -481,14 +473,37 @@
         }
       },
 
+      getVisualPoint() {
+        let bounds = this.map.getBounds()
+        let arr = this.points.filter((item) => {
+          return bounds.containsPoint(item.point)
+        })
+        this.drawLabels(arr)
+      },
+      removeLabels() {
+        if (this.labelsArr.length) return
+        this.labelsArr.forEach((item) => {
+          this.map.removeOverlay(item)
+        })
+        this.labelsArr = []
+      },
+      drawLabelsByVisual() {
+        let zoom = this.map.getZoom()
+        if (zoom >= this.showLabel) {
+          this.removeLabels()
+          setTimeout(() => {
+            this.getVisualPoint()
+          }, 0)
+        } else {
+          this.removeLabels()
+        }
+      },
       mapBindEvent() {
+        this.map.addEventListener('dragend', () => {
+          this.drawLabelsByVisual()
+        })
         this.map.addEventListener('zoomend', (type, target) => {
-          let zoom = this.map.getZoom()
-          // if (zoom < this.showHotMapLevel) {
-          //   this.heatmapOverlay.show()
-          // } else {
-          //   this.heatmapOverlay.hide()
-          // }
+          this.drawLabelsByVisual()
           this.zoomChangeAllPath()
         })
         this.map.addEventListener('click', ({point}) => {
@@ -632,17 +647,8 @@
       // 添加lable
       addLabel(point) {
         let labelStyle = {
-          color: "#222222",
-          backgroundColor: "#ffffff",
-          fontSize : "12px",
-          verticalAlign:"center",
           border: 'none',
-          borderRadius: "0px 4px 4px 0px",
-          whiteSpace:"nowrap",
-          padding:"0px 4px 0 4px",
-          // left: '50%',
-          lineHeight: '26px',
-          boxShadow: '0px 3px 7px 0px rgba(45, 90, 255, 0.2)'
+          transform: 'translateY(-100%) translateX(-50%)'
         };
         let content = `
           <div style="
@@ -651,48 +657,48 @@
             font-size:14px;
             line-height: 1.15;
             width:170px;
-            height:245px;
             border:1px solid rgba(229,231,233,1);
             box-shadow:0px 3px 5px 0px rgba(0, 0, 0, 0.1);
             border-radius:4px;"
           >
               <div style="padding: 0 15px 14px;border-bottom: 1px solid #FFE5E7E9">
                 <div class="mid-between">
-                  <p>东郊记忆</p>
-                  <i style="height: 16px;width: 16px;background: #ededed;display: block"></i>
-                </div>
-                <div class="mid-between color-main" style="margin-top: 15px">
-                  <p>娱乐</p>
-                  <p class="font-number">98</p>
+                  <p>${point.premisesName}</p>
+                  <i style="height: 16px;width: 16px;color: #ededed;display: block" class="icon-error2 iconfont"></i>
                 </div>
               </div>
               <div style="padding: 0 15px 0;">
                 <div class="mid-between" style="color: #999999FF;margin-top: 15px">
-                  <p>1.娱乐</p>
-                  <p class="font-number">98</p>
+                  <p>楼栋数</p>
+                  <p class="font-number">${point.buildNum}</p>
                 </div>
                 <div class="mid-between" style="color: #999999FF;margin-top: 15px">
-                  <p>1.娱乐</p>
-                  <p class="font-number">98</p>
+                  <p>单元数</p>
+                  <p class="font-number">${point.unitNum}</p>
                 </div>
                 <div class="mid-between" style="color: #999999FF;margin-top: 15px">
-                  <p>1.娱乐</p>
-                  <p class="font-number">98</p>
+                  <p>点位数</p>
+                  <p class="font-number">${point.signElevatorNum}</p>
                 </div>
-                <p class="color-main text-center" style="margin-top: 34px">更多</p>
+                <div class="mid-between" style="color: #999999FF;margin-top: 15px">
+                  <p>覆盖人数</p>
+                  <p class="font-number">${point.totalPeople}</p>
+                </div>
+<!--                <p class="color-main text-center" style="margin-top: 34px">更多</p>-->
               </div>
             </div>
         `
         //用于设置样式
         let label = new BMap.Label(content, {
-          // offset: new BMap.Size(29, 0)
-          position: point
+          offset: new BMap.Size(-5, -15),
+          position: point.point
         });
-        // label.setStyle(labelStyle);
+        label.setStyle(labelStyle);
         label.addEventListener('click', () => {
-          console.log('44444')
+          this.$emit('buildingClick', point)
           // this.currentPoint = this.visualPoint[index]
         })
+        this.labelsArr.push(label)
         this.map.addOverlay(label)
       },
 
@@ -719,14 +725,13 @@
         if (!this.pointsOverlayObj[overlay]) {
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
-          this.pointAddEvent(pointsOverlay, type)
-          // this.pointsOverlayObj[overlay].addEventListener('click',  this.pointsEvent(type));
+          // this.pointAddEvent(pointsOverlay, type)
           this.map.addOverlay(pointsOverlay);
 
         } else {
           if (points.length === 0) {
             this.pointsOverlayObj[overlay].clear()
-            this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointsEvent(type));
+            // this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointsEvent(type));
           } else {
             this.pointsOverlayObj[overlay].clear()
             this.pointsOverlayObj[overlay].setPoints(points)

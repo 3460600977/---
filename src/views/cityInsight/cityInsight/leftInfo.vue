@@ -44,6 +44,17 @@
       singleSelectPopup,
       filterContainer
     },
+    props: {
+      cityFilter: {
+        type: Object,
+        required: true
+      },
+    },
+    watch: {
+      cityFilter() {
+        // console.log('4444')
+      },
+    },
     data() {
       return {
         cityDatas: [],
@@ -52,9 +63,6 @@
           1: false
         },
         isShowCity: true,
-        cityFilter: {
-          cityCode: 440100
-        },
       }
     },
     created() {
@@ -63,6 +71,7 @@
     methods: {
       returnResult(val, index) {
         console.log(val, index)
+        this.$emit('returnResult', val, index)
       },
       hideAll () {
         for (let key in this.isShow) {

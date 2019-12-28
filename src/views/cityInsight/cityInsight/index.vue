@@ -1,7 +1,10 @@
 <template>
-    <div class="container cityInsight">
+    <div class="container cityInsight" v-loading="loading">
       <div class="left-info">
-        <left-info></left-info>
+        <left-info
+          :cityFilter="cityFilter"
+          @returnResult="leftInfoCallBak"
+        ></left-info>
       </div>
 <!--      <div>-->
 <!--        <top-select></top-select>-->
@@ -35,13 +38,16 @@
       <div class="right-info">
         <slide-container
         >
-<!--          <right-info-->
-<!--            :selectedBuildings="selectedBuildings"-->
-<!--            @addBtnClick="addBtnClick"-->
-<!--            @createPackage="createPackage"-->
-<!--            @deleteItem="deleteItem"-->
-<!--          ></right-info>-->
+          <right-info
+            v-show="rightShow === 0"
+            :selectedBuildings="selectedBuildings"
+            @addBtnClick="addBtnClick"
+            @createPackage="createPackage"
+            @deleteItem="deleteItem"
+          ></right-info>
           <building-detail
+            v-show="rightShow === 1"
+            @back="rightBack"
             ref="buildingDetail"
           ></building-detail>
         </slide-container>
@@ -52,6 +58,7 @@
           :budget="budget"
           :filters="buildingFilter"
           :currentSelectType="currentSelectType"
+          @buildingClick="buildingClick"
           @pathArrChange="pathArrChange"
           @activePathChange="activePathChange"
           @currentMouseLocation="currentMouseLocation"
@@ -109,6 +116,12 @@
     },
     data() {
       return {
+        cityFilter: { // 当前城市信息
+          cityCode: null,
+          name: null
+        },
+        loading: false,
+        rightShow: 0, // 空控制右边面板显示点位信息还是楼盘详情
         showPathCopy: null, // 当前显示的path
         selectedBuildings: [], // 当前选中的楼盘
         pathArr: {}, // 当前存在的画线path
@@ -135,8 +148,13 @@
       }
     },
     mounted() {
+      this.init()
       this.bindEvent()
-      this.$refs.buildingDetail.loadData(167921)
+    },
+    watch: {
+      cityFilter(val) {
+        // console.log(val)
+      },
     },
     computed: {
       mapLocation() { // 当前显示弹窗得path
@@ -155,6 +173,46 @@
       }
     },
     methods: {
+      // 左边传出信息
+      leftInfoCallBak(val, type) {
+        console.log(val, type)
+        if (type === 0) {
+          this.cityFilter = val
+        }
+      },
+      // loadData() {
+      //   this.loading = true
+      //   this.$api.cityInsight.getPremisesByCity({cityCode: '510100', tag: this.filters}).then((data) => {
+      //     if (data.result) {
+      //       this.points = this.normalizePointsAll(data.result)
+      //       if (Object.keys(this.pathArr).length) {
+      //         for(let key in this.pathArr) {
+      //           this.pathArr[key].buildings = this.isInArea(this.pathArr[key])
+      //         }
+      //       }
+      //       // this.drawLabels(this.points)
+      //       this.drawDevicePoints()
+      //     } else {
+      //       this.clearPoints()
+      //     }
+      //     this.loading = false
+      //   })
+      // },
+      // 初始化
+      init() {
+        this.$refs.dbmap.location().then((data) => {
+          this.cityFilter = Object.assign({}, this.cityFilter.name, {name: data.name})
+        })
+      },
+      // 楼盘详情窗口点击返回按钮
+      rightBack() {
+        this.rightShow = 0
+      },
+      // 某个building被点击触发事件
+      buildingClick(item) {
+        this.$refs.buildingDetail.loadData(item.premisesId)
+        this.rightShow = 1
+      },
       // 添加媒体资源弹窗选择添加的楼盘
       addLocation(val) {
         let isExist = this.$refs.dbmap.addItem(val)

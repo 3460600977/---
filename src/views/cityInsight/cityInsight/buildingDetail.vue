@@ -1,6 +1,7 @@
 <template>
-    <div class="container customScroll" v-if="buildDetail">
-      <p class="back border-bottom margin1 hand"><span class="iconfont icon-icon-test icon"></span>返回</p>
+  <div  v-loading="loading" class="container customScroll">
+    <p class="back border-bottom margin1 hand" @click="back"><span class="iconfont icon-icon-test icon"></span>返回</p>
+    <div v-if="buildDetail">
       <div class="wrapper border-bottom">
         <p class="bold">{{buildDetail.name}}</p>
         <div class="mid-start margin-top-20">
@@ -195,6 +196,10 @@
         </div>
       </div>
     </div>
+    <div v-else>
+      没有楼盘详情数据！
+    </div>
+  </div>
 </template>
 
 <script>
@@ -215,6 +220,7 @@
     },
     data() {
       return {
+        loading: false,
         buildDetail: null,
         sexArr: null,
         ageArr: null,
@@ -312,12 +318,20 @@
       }
     },
     methods: {
+      back() {
+        this.$emit('back')
+      },
       renderImg(src) {
         return require(`@/assets/images/icon_${src}.png`)
       },
       loadData(id) {
+        this.loading = true
         this.$api.cityInsight.getBuildingDetail({pid: id}).then((data) => {
           this.buildDetail = data.result
+          if (!this.buildDetail) {
+            this.loading = false
+            return
+          }
           this.sexArr = this.renderSexChart(data.result.chat.genderDist)
           this.ageArr = this.renderHistogramChart(data.result.chat.ageDist, data.result.chat.cityAverage.ageAverageDist)
 
@@ -330,6 +344,7 @@
           this.incomeDist = this.renderHistogramChart(data.result.chat.incomeDist, data.result.chat.cityAverage.incomeAverageDist)
 
           this.educationDist = this.renderHistogramChart(data.result.chat.educationDist, data.result.chat.cityAverage.educationAverageDist)
+          this.loading = false
         })
       },
       renderSexChart(arr) {

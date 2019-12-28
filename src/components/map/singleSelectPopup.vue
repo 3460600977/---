@@ -41,13 +41,22 @@
     },
     created() {
       // this.filtersCopy = this.$tools.deepCopy(this.filters)
-      this.currentItem = this.findItem(this.filters, this.selectDatas)
+      // this.currentItem = this.findItem(this.filters, this.selectDatas)
+    },
+    watch: {
+      filters(val) {
+        // console.log(val)
+        this.currentItem = this.findItem(this.filters, this.selectDatas)
+      },
+      currentItem(val) {
+        this.$emit('returnResult', val)
+      },
     },
     methods: {
       findItem(val, arr) {
         let arrTotal = this.$tools.operation(arr, 'values')
         let result =  arrTotal.find((item) => {
-          return item.cityCode == val.cityCode
+          return item.name == val.name
         })
         return result
       },
@@ -58,7 +67,6 @@
       typeClick(val) {
         this.currentItem = val
         this.hide()
-        this.$emit('returnResult', val)
       },
     }
   }
