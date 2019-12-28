@@ -40,6 +40,7 @@
     },
     methods: {
       initChart(chartParam) {
+        let that = this
         this.myChart = this.myChart ? this.myChart : echarts.init(this.$refs.chartBox);
         let option = {
           title: {
@@ -53,10 +54,17 @@
             left: 28,
           },
           tooltip: {//鼠标移入折点显示悬浮框
-            trigger: 'item',
-            formatter: function (val) {
-              return val.data;
+            trigger: 'axis',
+            formatter: function (allVal) {
+              let val = []
+              if (allVal.length > 0) {
+                val = allVal.shift()
+                return val.name + '<br/>' +
+                  '<div style="width: 12px; height: 12px;background: #2D5AFF;border-radius: 50%;border: 1px solid #2D5AFF;display: inline-block;margin-right: 20px"></div>'
+                  + that.$tools.toThousands(val.data, 0)
+              }
             },
+            padding: [10, 20]
           },
           grid: {
             left: '2%',
@@ -111,6 +119,8 @@
             //     },
             // },
             {
+              symbol: 'circle',
+              symbolSize: 10,
               type: 'line',
               itemStyle: {
                 normal: {color: 'rgba(45,90,255,1)'}
