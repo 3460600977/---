@@ -8,7 +8,6 @@ export function setUserInfo(info) {
 export function getUserInfo() {
   let userInfoStr = Cookies.get('userinfo')
   if (userInfoStr === '' || userInfoStr === null || userInfoStr === undefined) {
-    // location.replace('/login')
     return ''
   } else {
     return JSON.parse(Cookies.get('userinfo'))
