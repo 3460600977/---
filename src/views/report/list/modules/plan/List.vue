@@ -262,8 +262,8 @@
       },
       //清空投放计划
       clearPlanValue() {
-        this.planList.campaignId = 0;
-        this.planList.selectPlan = "";
+        this.planList.campaignId = '';
+        this.planList.selectPlan = '';
       },
       //top5 top10更换
       getBarSelectData(chooseValue) {
