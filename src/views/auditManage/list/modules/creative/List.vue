@@ -104,8 +104,7 @@
         <el-form-item :label-width="formLabelWidth" v-for="(denyItem,denyIndex) in DenyDialogReason" :key="denyIndex"
                       :denyIndex="denyIndex">
           <h3 class="deny-title">{{denyIndex+1+'、'+denyItem.title}}</h3>
-          <el-checkbox-group v-model="checkReason" class="deny-reason-group"
-                             @change="handleCheckedReasonChange" :min="0">
+          <el-checkbox-group v-model="checkReason" class="deny-reason-group" :min="0" @change="handleCheckedChange">
             <el-checkbox-button v-for="(reason,reasonIndex) in denyItem.reasons" :key="reasonIndex"
                                 :label="denyIndex +'-'+ reasonIndex">
               {{reason.value}}
@@ -114,14 +113,15 @@
         </el-form-item>
       </el-form>
       <div class="choose-deny-list">
-        {{denyDialogReasonList}}
-        <el-tag closable v-for="(item,reasonIndex) in denyDialogReasonList" :key="reasonIndex" :index="reasonIndex">
-          {{item}}
+        <el-tag closable :class="{'showTag': item.select,'displayTag':true}" :disable-transitions="false"
+                @close="handleClose(item.index)"
+                v-for="(item,reasonIndex) in denyDialogReasonList" :key="reasonIndex" :index="item.index">
+          {{item.name}}
         </el-tag>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDenyVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitDengyCreative()">确 定</el-button>
+        <el-button type="primary" @click="submitDenyCreative()" :loading="submitCreative.loading">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="创意内容" :visible.sync="dialogShowContent" class="creative-dialog">
@@ -193,6 +193,7 @@
       return {
         DenyDialogReason,
         checkReason: [],
+        checkReasonHistory: [],
         downloadVideoSrc: '',
         activeName: 'aptitude',
         dialogDenyVisible: false,
@@ -285,18 +286,24 @@
     },
     created() {
       this.getAuditCreativeList()
-      console.log(this.denyDialogReasonList)
     },
     computed: {
       denyDialogReasonList: function () {
         let tmp = []
         this.DenyDialogReason.forEach((item, itemIndex) => {
           item.reasons.forEach((reason, reasonIndex) => {
-            tmp.push({name: reason.value, index: `${itemIndex}-${reasonIndex}`})
+            tmp.push({name: reason.value, index: `${itemIndex}-${reasonIndex}`, select: false})
+          })
+        })
+        tmp.forEach(denyItem => {
+          this.checkReason.forEach(item => {
+            if (denyItem.index === item) {
+              denyItem.select = true
+            }
           })
         })
         return tmp
-      }
+      },
     },
     methods: {
       //查询创意
@@ -460,7 +467,6 @@
       },
       //点击通过,创意变为通过
       passCreative(id, name) {
-        console.log(id, name)
         this.submit.id = id
         this.submit.status = 2
         this.submit.rejectReason = ''
@@ -473,15 +479,31 @@
         this.submit.status = 1
         this.submit.name = name
         this.dialogDenyVisible = true
+        if (this.submit.id in this.checkReasonHistory) {
+          this.checkReason = this.checkReasonHistory[this.submit.id]
+        } else {
+          this.checkReason = []
+        }
       },
-      //选择拒绝原因
-      handleCheckedReasonChange(checkItem) {
-
-        console.log(checkItem, this.checkReason)
+      //用户选择拒绝原因
+      handleCheckedChange() {
+        this.checkReasonHistory.splice(this.submit.id, 1, this.checkReason)
+      },
+      //拒绝原因，删除
+      handleClose(closeIndex) {
+        let index = this.checkReason.indexOf(closeIndex);
+        this.checkReason.splice(index, 1)
       },
       //用户选择完拒绝原因，点击提交按钮
       submitDenyCreative() {
-        this.submitAuditCreative()
+        this.submit.rejectReason = []
+        this.denyDialogReasonList.forEach(item => {
+          if (item.select === true) {
+            this.submit.rejectReason.push({index: item.index, reason: item.reason})
+          }
+        })
+        this.submit.rejectReason = JSON.stringify(this.submit.rejectReason)
+        this.submitAuditCreative(this.submit.name)
       },
       //创意审核提交
       submitAuditCreative(creativeName) {
@@ -492,6 +514,8 @@
           rejectReason: this.submit.rejectReason,
         }
         //请求创意审核提交接口
+        this.reviewCreativeList.loading = true
+        this.submitCreative.loading = true
         this.$api.AuditCreative.submitAuditCreative(queryParam)
           .then(res => {
             console.log(queryParam, res.result)
@@ -504,14 +528,18 @@
             }
             if (this.submit.status === 1) {
               Notification({
-                title: '失败',
+                title: '审核拒绝成功',
                 message: '创意:' + creativeName + ',审核拒绝',
-                type: 'error'
+                type: 'info'
               });
+              this.dialogDenyVisible = false
             }
+            this.submitCreative.loading = false
+            this.reviewCreativeList.loading = false
             this.getAuditCreativeList()
           })
           .catch(res => {
+            this.submitCreative.loading = false
             this.reviewCreativeList.loading = false
           })
       },
@@ -868,6 +896,15 @@
           position: absolute;
           top: 6%;
           left: 13%;
+        }
+
+        .displayTag {
+          display: none;
+        }
+
+        .showTag {
+          display: inline-block;
+          margin: 0 40px 10px 0
         }
       }
     }

@@ -22,12 +22,12 @@ export const toolBoxRouter = [
         path: '/toolBox/accountInfo',
         component: () => import('@/views/toolBox/manage/modules/account/Info')
       },
-      // 资源包
-      {
-        path: '/toolBox/resourceBundle',
-        component: () => import('@/views/toolBox/resourceBundle/')
-      },
     ]
+  },
+  // 资源包
+  {
+    path: '/toolBox/resourceBundle',
+    component: () => import('@/views/toolBox/resourceBundle/')
   },
   // 工具箱--修改账号密码
   {
