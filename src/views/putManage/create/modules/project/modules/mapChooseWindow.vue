@@ -23,18 +23,18 @@
         ></map-popup>
       </div>
       <div class="map container">
-<!--        <db-map-->
-<!--          ref="dbmap"-->
-<!--          :budget="budget"-->
-<!--          :filters="buildingFilter"-->
-<!--          :currentSelectType="currentSelectType"-->
-<!--          @pathArrChange="pathArrChange"-->
-<!--          @activePathChange="activePathChange"-->
-<!--          @currentMouseLocation="currentMouseLocation"-->
-<!--          @drawCancle="drawCancle"-->
-<!--          @returnSearchResult="returnSearchResult"-->
-<!--          @returnSelectedBuildings="returnSelectedBuildings"-->
-<!--        ></db-map>-->
+        <db-map
+          ref="dbmap"
+          :budget="budget"
+          :filters="buildingFilter"
+          :currentSelectType="currentSelectType"
+          @pathArrChange="pathArrChange"
+          @activePathChange="activePathChange"
+          @currentMouseLocation="currentMouseLocation"
+          @drawCancle="drawCancle"
+          @returnSearchResult="returnSearchResult"
+          @returnSelectedBuildings="returnSelectedBuildings"
+        ></db-map>
       </div>
     </div>
     <el-dialog
