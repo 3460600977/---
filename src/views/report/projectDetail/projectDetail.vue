@@ -130,6 +130,7 @@
         </div>
       </div>
     </div>
+    <bottom-back @handleBack="handleBack"></bottom-back>
   </div>
 </template>
 
@@ -137,11 +138,12 @@
   //import {tableMixin} from '../../../mixins/tableMixin'
   import ponitMap from "../../../components/ponitMap";
   import PlanList from "../../../components/PlanList";
+  import bottomBack from "../../../components/Back";
 
   const PAGE_SIZE = [10, 20, 30, 40, 50];
   export default {
     name: "projectDetail",
-    components: {PlanList, ponitMap},
+    components: {PlanList, ponitMap, bottomBack},
     data() {
       return {
         deviceCode: null,
@@ -285,6 +287,10 @@
       this.getProjectPremiseList();
     },
     methods: {
+      //回到之前的页面
+      handleBack() {
+        this.$router.back()
+      },
       //预览展示
       showPreviewPlayList: async function (deviceCode) {
         this.playList.loading = true;
@@ -304,6 +310,7 @@
       },
       //地图插件，改变选择的楼盘
       changeShowBuild(val) {
+        this.premiseId = val.premiseId
         this.premiseList.default.forEach(item => {
           let prop = item.field;
           if (val.hasOwnProperty(prop)) {
