@@ -265,7 +265,7 @@
           <label class="name">楼盘数</label><label class="bold">{{buildsNumber}}</label>个
         </li>
         <li class="item">
-          <label class="name">单元数</label><label class="bold">{{'接口还没好'}}</label>个
+          <label class="name">单元数</label><label class="bold">{{unitNum}}</label>个
         </li>
         <li class="item">
           <label class="name">点位数</label><label class="bold">{{deviceNumber}}</label>个
@@ -279,12 +279,12 @@
         <li class="item">
           <span>预算:&emsp;</span>
           <span class="color-red">¥</span>
-          <span class="color-red font-16 bold">45645674576</span>
+          <span class="color-red font-16 bold">接口还没好</span>
         </li>
         <li class="item">
           <span>余额:&emsp;</span>
           <span>¥</span>
-          <span class="font-16 bold">45645674576</span>
+          <span class="font-16 bold">{{$tools.toThousands(userInfo.accountBalance)}}</span>
         </li>
       </ul>
 
@@ -305,7 +305,7 @@
 
       <div class="save-box">
         <div v-if="isEdit" class="float-right">
-          <el-button :loading="formData.confirming" @click="confirmProject" style="width: 120px" type="primary">
+          <el-button :disabled="deviceNumber === 0" :loading="formData.confirming" @click="confirmProject" style="width: 120px" type="primary">
             <template v-if="formData.creativeStatus === 0 || formData.creativeStatus === 2">
               保存并关闭
             </template>
@@ -317,7 +317,7 @@
 
         <div v-else class="mid-between">
           <el-button style="width: 120px" plain>取消</el-button>
-          <el-button :loading="formData.confirming" @click="confirmProject" style="width: 120px" type="primary">确定</el-button>
+          <el-button :disabled="deviceNumber === 0" :loading="formData.confirming" @click="confirmProject" style="width: 120px" type="primary">确认投放</el-button>
         </div>
       </div>
 
@@ -339,8 +339,8 @@ import MyRadio from '../../../../../../components/MyRadio'
 import SelectedList from './SelectedList' 
 import mapChooseWindow from './mapChooseWindow' 
 import confirmWindow from './confirmWindow' 
-// import EstimateBox from './EstimateBox'
 import { projectConst } from '../../../../../../utils/static'
+import { getUserInfo } from '@/utils/auth';
 import { mapGetters, mapMutations } from 'vuex'
 export default {
   components: {
@@ -385,6 +385,8 @@ export default {
         loading: false,
         data: ''
       },
+
+      userInfo: '',
 
       // 楼盘定向
       buildingDirection: {
@@ -476,6 +478,7 @@ export default {
   },
 
   beforeMount() {
+    this.userInfo = getUserInfo();
     if (this.isEdit) {
       this.initProjectDetailById()
     } else {
@@ -508,7 +511,7 @@ export default {
         .then(res => {
           let resData = res.result;
           this.planData.loading = false;
-          // this.planData.name = resData.campaignName;
+          this.setBuildsList(res.result.premiseVOS)
           this.formData = {
             planName: resData.campaignName,
             creativeStatus: resData.creativeStatus,
@@ -754,7 +757,7 @@ export default {
       return isPassEnptyCheck
     },
 
-    // 确认 并锁量 展示详情
+    // 确认
     confirmProject() {
       let param;
       let isformValidatePass = this.validataForm();
@@ -807,10 +810,9 @@ export default {
               })
             } else {
               this.$router.push({
-                path: '/putManage/create/creative',
+                path: '/putManage/create/payConfirm',
                 query: {
                   projectId: this.$route.query.editProjectId,
-                  createType: 'step'
                 }
               })
             }
@@ -825,9 +827,12 @@ export default {
           .then(res => {
             this.formData.confirming = false;
             this.planData.loading = false;
-            this.confirmWindowMsg.show = true;
-            this.confirmWindowMsg.pageData = this.formData;
-            this.confirmWindowMsg.resData = res.result;
+            this.$router.push({
+              path: '/putManage/create/payConfirm',
+              query: {
+                projectId: res.result.projectId,
+              }
+            })
           })
           .catch(res => {
             this.formData.confirming = false;
@@ -842,7 +847,7 @@ export default {
       'buildsNumber',
       'deviceNumber',
       'peopleNumber',
-      'priceNumber',
+      'unitNum',
       'buildsDetails'
     ]),
     

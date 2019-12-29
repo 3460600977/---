@@ -183,3 +183,13 @@
 .el-pagination__editor{
   width: 82px !important;
 }
+
+// 展示信息form
+.info-form{
+  .el-form-item{
+    margin-bottom: 30px;
+  }
+  .el-form-item__content, .el-form-item__label{
+    line-height: 1;
+  }
+}

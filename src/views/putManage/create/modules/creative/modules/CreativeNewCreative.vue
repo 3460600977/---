@@ -382,7 +382,7 @@ export default {
 
     // 单独创建创意
     if (this.createType === 'single') {
-      this.formData.screenType = this.projectConst.screenType[2].value;
+      this.formData.screenType = this.projectConst.screenType[0].value;
       this.generateCreativeName();
       this.pageLoading = false;
     }

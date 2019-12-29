@@ -2,7 +2,7 @@
   <div class="selected-list">
     <template v-if="buildingDirectionActiveType === 'exist'">
       <ul class="selected-list-data-box" v-loading='loading'>
-        <noData v-if="buildsNumber <= 0"/>
+        <noData v-if="buildsNumber <= 0 || deviceNumber <= 0">无可售数据</noData>
 
         <li v-else class="item mid" v-for="(item, index) in existList" :key="index">
 
@@ -54,7 +54,7 @@
             :total="20">
           </el-pagination>
         </li> -->
-        <noData v-if="buildsNumber <= 0"/>
+        <noData v-if="buildsNumber <= 0">无可售数据</noData>
       </ul>
     </template>
 
@@ -115,14 +115,14 @@ export default {
       'buildsNumber',
       'deviceNumber',
       'peopleNumber',
-      'priceNumber'
+      'unitNum'
     ]),
     ...mapState(['putProject']),
 
     existList() {
       let res = [
         { name: '楼盘数',  value: this.buildsNumber},
-        { name: '单元数',  value: '待后端添加接口'},
+        { name: '单元数',  value: this.unitNum},
         { name: '点位数',  value: this.deviceNumber},
         { name: '覆盖人次', value: this.peopleNumber},
       ];
