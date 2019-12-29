@@ -138,10 +138,6 @@
 </script>
 
 <style lang="scss">
-  .active {
-    background: $color-bg;
-    color: $color-text;
-  }
   .map-choosed-list {
     position: absolute;
     top: 54px;
@@ -155,6 +151,10 @@
     overflow: hidden;
     .title {
       user-select: none;
+    }
+    .active {
+      background: $color-bg;
+      color: $color-text;
     }
     .redcheckbtn {
       position: relative;
