@@ -37,7 +37,7 @@
           <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.screenType, 'value', projectDetail.data.type).name}}</span>
         </el-form-item>
         <el-form-item label="总计">
-          <span class="color-red">¥ {{projectDetail.data.totalCost}}</span>
+          <span class="color-red">¥ {{this.$tools.toThousands(projectDetail.data.totalCost / 100)}}</span>
         </el-form-item>
       </el-form>
     </el-tab-pane>
