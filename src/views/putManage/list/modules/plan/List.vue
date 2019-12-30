@@ -53,14 +53,6 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="cityList" label="投放城市">
-          <template slot-scope="scope">
-            <span v-for="(item, index) in scope.row.cityList" :key="index">
-              {{item.name}}<span v-if="index+1 !== scope.row.cityList.length">；</span>
-            </span>
-          </template>
-        </el-table-column>
-
         <el-table-column prop="beginTime" label="投放时间">
           <template slot-scope="scope">
             {{$tools.getFormatDate('YY/mm/dd', scope.row.beginTime)}}
@@ -118,13 +110,6 @@
           <el-form-item label="总预算">
             <span class="color-red" v-if="tableData.data[detailDialog.dataIndex].totalBudget">¥{{tableData.data[detailDialog.dataIndex].totalBudget / 100}}</span>
             <span class="color-red" v-else>不限</span>
-          </el-form-item>
-          <el-form-item label="投放城市">
-            <span class="color-text-1">
-              <span v-for="(item, index) in tableData.data[detailDialog.dataIndex].cityList" :key="index">
-                {{item.name}}<span v-if="index+1 !== tableData.data[detailDialog.dataIndex].cityList.length">；</span>
-              </span>
-            </span>
           </el-form-item>
           <el-form-item label="投放时间">
             <span class="color-text-1">

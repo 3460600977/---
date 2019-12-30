@@ -37,13 +37,12 @@ export const putProject = {
       }
       return res;
     },
-
-    priceNumber: state => {
+    
+    unitNum: state => {
       let res = 0;
       if (state.list.length > 0) {
         state.list.forEach(item => {
-          // 预扣款：成交单价 * 锁定点位数 * 投放天数
-          res += +item.deviceNum * 200;
+          res += +item.unitNum;
         });
       }
       return res;

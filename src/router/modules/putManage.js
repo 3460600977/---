@@ -44,6 +44,11 @@ export const putManageRouter = [
         path: '/putManage/create/project',
         component: () => import ('@/views/putManage/create/modules/project/Project'),
       },
+      // 确认并支付
+      {
+        path: '/putManage/create/payConfirm',
+        component: () => import ('@/views/putManage/create/modules/payConfirm/PayConfirm'),
+      },
       // 创建创意
       { 
         path: '/putManage/create/creative',
