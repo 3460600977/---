@@ -1,11 +1,11 @@
 <template>
     <div class="selectPopUp">
-      <p class="title border-bottom padding mid-between">
-        <span>{{selectDatas.title}}</span>
-        <span class="iconfont icon1 icon-error2 hand" @click="operate(1)"></span>
-      </p>
+<!--      <p class="title border-bottom padding mid-between">-->
+<!--        <span>{{selectDatas.title}}</span>-->
+<!--        <span class="iconfont icon1 icon-error2 hand" @click="operate(1)"></span>-->
+<!--      </p>-->
       <div class="content padding">
-        <div class="item" v-for="(item, index) in selectDatas.options" :key="index">
+        <div class="item mid-start" v-for="(item, index) in selectDatas.options" :key="index">
           <p class="type">{{item.title}}</p>
           <ul class="ul hand">
             <li :class="{'active': filtersCopy[item.key].includes(val.key)}" v-for="(val, key) in item.types" :key="key" @click="typeClick(item.key, val.key)">{{val.label}}</li>
@@ -63,7 +63,12 @@
         this.filtersOld = this.$tools.deepCopy(this.filtersCopy)
       },
       typeClick(v1, v2) {
-        this.filtersCopy[v1].push(v2)
+        let index = this.filtersCopy[v1].indexOf(v2)
+        if (index !== -1) {
+          this.filtersCopy[v1].splice(index, 1)
+        } else {
+          this.filtersCopy[v1].push(v2)
+        }
       },
     }
   }

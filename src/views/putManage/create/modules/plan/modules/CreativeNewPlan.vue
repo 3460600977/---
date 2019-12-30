@@ -21,41 +21,16 @@
         :rules="formDataRules" 
         label-width="112px" class="put-form">
 
-        <el-form-item prop="budget.value">
-          <label slot="label"><span class="color-red">* </span>总预算</label>
-          <MyRadio
-            v-for="(item, index) in Budget"
-            @click.native="formData.budget.type = item.value"
-            :active="formData.budget.type === item.value"
-            :key="index">{{item.name}}</MyRadio>
-
+        <el-form-item prop="totalBudget">
+          <label slot="label"><span class="color-red">*</span> 总预算</label>
           <el-input 
             class="budget-value"
-            v-if="formData.budget.type === 1" 
             placeholder="请输入内容" 
-            v-model.number.trim="formData.budget.value">
+            v-model.number.trim="formData.totalBudget">
             <template slot="append">元</template>
           </el-input>
         </el-form-item>
         
-        <el-form-item class="mt-20" prop="putCity" label="投放城市">
-          <el-select 
-            @focus="getCityList"
-            :loading="!city" 
-            multiple 
-            filterable
-            clearable 
-            v-model="formData.putCity" 
-            value-key="cityCode"
-            placeholder="请选择">
-            <el-option
-              v-for="(item, index) in city"
-              :key="index"
-              :label="item.name"
-              :value="item">
-            </el-option>
-          </el-select>
-        </el-form-item>
         
         <el-form-item class="mt-20" prop="putDate" label="投放时间">
           <el-date-picker
@@ -109,9 +84,6 @@ export default {
   data() {
     // 自定义校验 预算    
     let validateBudget = (rules, value, callback) => {
-      if (this.formData.budget.type == 0) {
-        return callback();
-      }
       if (!value) { return callback(new Error('请输入指定预算!')); }
       if (isNaN(value)) { return callback(new Error('请输入数字!')); }
       if (value <= 1000) { return callback(new Error('指定预算不少于1000元!')); }
@@ -131,11 +103,7 @@ export default {
       formData: {
         name: '',
         saving: false,
-        budget: {
-          type: 0,
-          value: ''
-        },
-        putCity: '',
+        totalBudget: '',
         putDate: '',
         goal: ''
       },
@@ -145,13 +113,10 @@ export default {
           { required: true, message: '请输入计划名称!', trigger: 'blur' },
           { max: 100, message: '计划名称100字以内!'}
         ],
-        putCity: [
-          { required: true, message: '请选择投放城市!', trigger: 'blur' }
-        ],
         putDate: [
           { required: true, message: '请选择投放时间!', trigger: 'blur' }
         ],
-        'budget.value': [
+        totalBudget: [
           { validator: validateBudget, trigger: 'blur' }
         ],
       },
@@ -168,37 +133,17 @@ export default {
   },
 
   methods: {
-    // 获取城市列表
-    getCityList: async function() {
-      if (this.city) return;
-      return new Promise((resolve, reject) => {
-        this.$api.CityList.AllList()
-          .then(res => {
-            this.city = res.result;
-            resolve(res.result)
-          })
-          .catch(res => {
-            this.city = [];
-          })
-      })
-    },
-
     // 编辑回显数据
     editInit: async function() {
-      this.city = await this.getCityList();
       this.edit.planDetail = await this.getPlanDetailById(this.edit.planId);
       this.edit.loading = false;
       this.formData.goal = this.edit.planDetail.campaignType;
       this.formData.name = this.edit.planDetail.name;
-      this.formData.putCity = this.edit.planDetail.cityList;
       this.formData.putDate = [
         this.$tools.getFormatDate('YY-mm-dd', this.edit.planDetail.beginTime), 
         this.$tools.getFormatDate('YY-mm-dd', this.edit.planDetail.endTime)
       ];
-      this.formData.budget = {
-        type: this.edit.planDetail.budgetType,
-        value: this.edit.planDetail.totalBudget / 100
-      }
+      this.formData.totalBudget = this.edit.planDetail.totalBudget / 100;
     },
 
     // 获取计划详情
@@ -240,8 +185,7 @@ export default {
       param = {
         name: this.formData.name,
         campaignType: this.formData.goal,
-        budgetType: this.formData.budget.type,
-        totalBudget: this.formData.budget.value * 100,
+        totalBudget: this.formData.totalBudget * 100,
         cityList: this.formData.putCity,
         beginTime: this.formData.putDate[0],
         endTime: this.formData.putDate[1]
@@ -336,13 +280,13 @@ export default {
     width: 100%;
   }
   .goal-box{
+    margin-right: -30px;
     .item{
       float: left;
-      padding: 0px 23px;
+      padding: 0 0 0 23px;
       margin: 30px 40px 0 0;
       width:200px;
       height:100px;
-      background:rgba(255,255,255,1);
       border-radius:2px;
       transition: .3s;
       cursor: pointer;
@@ -378,7 +322,6 @@ export default {
     .put-form{
       margin-top: 18px;
       .budget-value{
-        margin-left: -30px;
         width: 240px;
       }
     }

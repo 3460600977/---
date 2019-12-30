@@ -112,5 +112,13 @@ export const PutProject = {
     });
   },
 
+  // GET方案确认支付接口
+  ConfirmPay: (data) => {
+    return request({
+      url: "/dpapi/project/confirmPay/" + data,
+      method: "get",
+    });
+  },
+
 
 }

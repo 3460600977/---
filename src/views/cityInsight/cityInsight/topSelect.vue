@@ -51,7 +51,7 @@
 
 <script>
   import {colorMain} from '../../../utils/static'
-  import selectPopUp from "./selectPopUp";
+  import selectPopUp from "../../../components/map/multipleSelectPopUp";
   import singleSelectPopup from "../../../components/map/singleSelectPopup";
 
   const CITY_MAPPING = {

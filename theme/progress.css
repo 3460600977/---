@@ -285,9 +285,9 @@
     padding-right: 0;
     margin-right: 0; }
   .el-progress.is-success .el-progress-bar__inner {
-    background-color: #2D5AFF; }
+    background-color: #F44A4A; }
   .el-progress.is-success .el-progress__text {
-    color: #2D5AFF; }
+    color: #F44A4A; }
   .el-progress.is-warning .el-progress-bar__inner {
     background-color: #FFCC00; }
   .el-progress.is-warning .el-progress__text {
@@ -317,7 +317,7 @@
     left: 0;
     top: 0;
     height: 100%;
-    background-color: #2D5AFF;
+    background-color: #F44A4A;
     text-align: right;
     border-radius: 100px;
     line-height: 1;

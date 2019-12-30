@@ -12,16 +12,16 @@
       return {
         labelsArr: [], // 存储label覆盖物的变量 用于清楚label
         map: null,
+        points: [],
         pathArr: {},
         indexArr: [],
         pointsOverlayObj: { // 记录已选和未选海量点的对象 用于重画
           selectedOverlay: null,
           unSelectedOverlay: null
         },
-        showLabel: 17,
+        showLabel: 18,
         heatmapOverlay: null,
         activePath: null,
-        points: null, // 楼盘设备数据
         defaultRadius: 3000,
         drawingManager: null,
         selectedBuildings: [], //当前选中楼盘
@@ -47,6 +47,14 @@
       }
     },
     props: {
+      buildings: {
+        type: Array,
+        required: true
+      },
+      city: {
+        type: Object,
+        required: true
+      },
       sliderVal: {
         type: Number,
         default: 3000
@@ -61,17 +69,17 @@
           return {}
         }
       },
-      filters: {
-        type: Object,
-        required: true
-      },
     },
     watch: {
+      buildings(val) {
+        console.log(val)
+        this.clearMap()
+        if (val.length) {
+          this.initMap(val)
+        }
+      },
       activePath(val) {
         this.$emit('activePathChange', val)
-      },
-      filters(val) {
-        this.loadData()
       },
       budget() {
         this.drawDevicePoints()
@@ -97,11 +105,42 @@
       this.mapBindEvent()
     },
     methods:{
+      clearMap() {
+        this.map.clearOverlays()
+        this.pointsOverlayObj =  {
+          selectedOverlay: null,
+          unSelectedOverlay: null
+        }
+      },
+      initMap(val) {
+        this.points = this.normalizePointsAll(val)
+        this.drawDevicePoints()
+      },
+      // initMap() {
+      //   this.loading = true
+      //   this.$api.cityInsight.getPremisesByCity({cityCode: '510100', tag: this.filters}).then((data) => {
+      //     if (data.result) {
+      //       this.points = this.normalizePointsAll(data.result)
+      //       if (Object.keys(this.pathArr).length) {
+      //         for(let key in this.pathArr) {
+      //           this.pathArr[key].buildings = this.isInArea(this.pathArr[key])
+      //         }
+      //       }
+      //       // this.drawLabels(this.points)
+      //       this.drawDevicePoints()
+      //     } else {
+      //       this.clearPoints()
+      //     }
+      //     this.loading = false
+      //   })
+      // },
+      setCity(city) {
+        this.map.centerAndZoom(city.name, 12);
+      },
       location() {
         return new Promise((resolve) => {
           let myCity = new BMap.LocalCity();
           myCity.get((result) => {
-            this.map.centerAndZoom(result.center, result.level);
             resolve(result)
             // this.initMouse()
             // this.loadData()
@@ -121,6 +160,7 @@
       },
       // 添加弹窗覆盖物
       drawLabels(arr) {
+        console.log(arr)
         arr.forEach((item) => {
           this.addLabel(item)
         })
@@ -481,7 +521,7 @@
         this.drawLabels(arr)
       },
       removeLabels() {
-        if (this.labelsArr.length) return
+        if (!this.labelsArr.length) return
         this.labelsArr.forEach((item) => {
           this.map.removeOverlay(item)
         })
@@ -491,9 +531,7 @@
         let zoom = this.map.getZoom()
         if (zoom >= this.showLabel) {
           this.removeLabels()
-          setTimeout(() => {
-            this.getVisualPoint()
-          }, 0)
+          this.getVisualPoint()
         } else {
           this.removeLabels()
         }

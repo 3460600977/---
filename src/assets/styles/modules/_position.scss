@@ -46,6 +46,15 @@
     justify-content: space-between;
     -webkit-justify-content: space-between;
 }
+.mid-around{
+    display: flex !important;
+    display:-webkit-box;
+    display:-webkit-flex;
+    align-items: center;
+    -webkit-box-align: center;
+    justify-content: space-around;
+    -webkit-justify-content: space-around;
+}
 .mid-start {
   display: flex;
   justify-content: flex-start;

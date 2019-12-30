@@ -295,6 +295,19 @@
         </el-button>
       </div>
     </PutMangeCard>
+
+    <!-- 保存成功提示 -->
+    <el-dialog
+      title="创意审核"
+      :visible.sync="successDialog"
+      width="568px"
+      height="320px"
+      :before-close="handleClose">
+      <span>创意已提交审核，请及时核实审核结果，以免因未按时审核通过，而造成方案取消！</span>
+      <span slot="footer" class="dialog-footer center">
+        <el-button style="width:100px;" type="primary" @click="successDialog = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -363,6 +376,8 @@ export default {
 
       // 广告创意行业
       industryList: [],
+
+      successDialog: true,
     }
   },
   
@@ -382,7 +397,7 @@ export default {
 
     // 单独创建创意
     if (this.createType === 'single') {
-      this.formData.screenType = this.projectConst.screenType[2].value;
+      this.formData.screenType = this.projectConst.screenType[0].value;
       this.generateCreativeName();
       this.pageLoading = false;
     }

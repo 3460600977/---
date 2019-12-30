@@ -117,9 +117,7 @@
 .el-form-item__label{
   color: #999999;
 }
-.el-input{
-  width: 240px;
-}
+
 .el-input__inner{
   &::placeholder{
     color: $color-text;
@@ -175,8 +173,23 @@
 .el-input {
   width: 200px;
 }
+.bigger{
+  .el-input {
+    width: 240px;
+  }
+}
 
 // 分页输入框
 .el-pagination__editor{
   width: 82px !important;
+}
+
+// 展示信息form
+.info-form{
+  .el-form-item{
+    margin-bottom: 30px;
+  }
+  .el-form-item__content, .el-form-item__label{
+    line-height: 1;
+  }
 }

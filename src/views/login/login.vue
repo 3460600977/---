@@ -1,5 +1,5 @@
 <template>
-  <div class="login-page" v-bind:style="{ backgroundImage: 'url('+this.logo_back_img+')'}">
+  <div v-loading="pageLoading" class="login-page" v-bind:style="{ backgroundImage: 'url('+this.logo_back_img+')'}">
     <div class="login-box">
       <div class="box-center" v-bind:style="{ width: loginFormWidth +'px' }">
         <div class="xinchao-logo" v-bind:style="{ width: imageWidth +'px' }">
@@ -67,6 +67,7 @@
           verifyValue: ''
         },
         loading: false,
+        pageLoading: true, // 整个页面转圈, token登录用
         rules: {
           username: [
             {required: true, message: '请输入账号名', trigger: ['blur', 'change']},
@@ -83,11 +84,25 @@
     computed: {
       loginFormWidth: function () {
         return this.imageWidth * 2 + 20;
+      },
+      isTokenLogin() {
+        return !!this.$route.query.advertiserId && !!this.$route.query.saleAccessToken
       }
     },
+
+    beforeMount() {
+      if (this.isTokenLogin) {
+        this.tokenLogin()
+      } else {
+        this.pageLoading = false;
+      }
+    },
+
     mounted() {
-      //请求验证码接口
-      this.changeCaptureNUm()
+      if (!this.isTokenLogin) {
+        this.changeCaptureNUm()
+      }
+
     },
     methods: {
       onSubmit(formName) {
@@ -118,6 +133,32 @@
           }
         });
       },
+
+      // 根据url中token和id登录
+      tokenLogin() {
+        let param = {
+          advertiserId: this.$route.query.advertiserId,
+	        saleAccessToken: this.$route.query.saleAccessToken
+        }
+        this.$api.Login.LoginInByToken(param)
+          .then(res => {
+              console.log(res.result)
+              let info = res.result
+              this.pageLoading = false;
+              this.$router.replace({
+                path: '/home',
+                query: {}
+              })
+              this.loading = false;
+              this.$store.commit('setToken', info.token)
+              setUserInfo(info)
+          })
+          .catch(res => {
+            this.pageLoading = false;
+            this.changeCaptureNUm()
+          })
+      },
+
       changeCaptureNUm() {
         //请求验证码接口
         this.$api.Login.GetVerifyCode()
