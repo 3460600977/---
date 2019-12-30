@@ -187,7 +187,9 @@
                   :value="item.id">
                 </el-option>
               </el-select>
-              <el-button type="primary" style="margin-left: 10px;">管理已有资源包</el-button>
+              <router-link to="/toolBox/resourceBundle">
+                <el-button type="primary" style="margin-left: 10px;">管理已有资源包</el-button>
+              </router-link>
               <span class="el-form-item__error" v-if="!validataForm()">* 请先完善上面投放设置!</span>
             </el-form-item>
           </el-form>
