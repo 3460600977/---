@@ -214,8 +214,11 @@
           width: 90px;
           display: inline-block;
           margin-left: 12px;
-          position: absolute;
-          top: 10%;
+          position: relative;
+          .el-image {
+            position: absolute;
+            top: -20px;
+          }
           img {
             width: 100%;
             cursor: pointer;

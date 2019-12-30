@@ -1,46 +1,34 @@
 <template>
   <!-- 选点结果列表 -->
-  <div class="map-choosed-list panel panel-default animate-to-top ui-tab-container">
-    <el-radio-group v-model="mapListShowType" style="margin-bottom: 30px;">
+  <div class="map-choosed-list">
+    <el-radio-group v-model="mapListShowType" style="margin-bottom: 10px;">
       <el-radio-button label="inCircle">圈内楼盘 {{resData.mapPointList.length || 0}}</el-radio-button>
-      <el-radio-button label="inSelect">已选楼盘 {{mapCheckedListSum.list.length || 0}}</el-radio-button>
+      <el-radio-button label="inSelect">已选楼盘 {{selectedBuildings.length || 0}}</el-radio-button>
     </el-radio-group>
 
     <!-- 圈内列表 -->
     <div class="list-box" v-if="mapListShowType === 'inCircle'">
       <div class="top-title">
-        <table class="table table-bordered" style="margin-bottom:0">
-          <thead>
-          <tr>
-            <th style="width: 42px" class="text-center">
-              <input class="redcheckbtnall" v-if="mapAllChecked" type="checkbox" @click="checkAllMapPoint()"/>
-            </th>
-            <th>楼盘名称</th>
-          </tr>
-          </thead>
-        </table>
-      </div>
-
-      <div class="bottom-list" v-if="resData.mapPointList.length > 0">
-        <table class="table table-hover table-bordered">
-          <tbody>
-          <tr v-for="(buildItem,index) in resData.mapPointList">
-            <td
-              style="width: 42px;"
-              class="text-center"
-              @click="changeMapListCheck(buildItem)">
-              <input class="redcheckbtn" type="checkbox" ng-checked="buildItem.action === 1">
-            </td>
-            <td title="点击查看楼盘详情">
-              <a @click="showBuildDetail(buildItem)" href="javascript:;">{{buildItem}}</a>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="bottom-list" v-if="resData.mapPointList.length <= 0">
-        <div class="nodata text-center">
+        <el-table v-if="resData.mapPointList.length > 0" border class="build-list-table"
+                  ref="multipleCircleTable"
+                  :data="resData.mapPointList"
+                  tooltip-effect="dark"
+                  style="width: 100%;max-height:100%;overflow-y: auto"
+                  @select="handleSelectionChange"
+                  @select-all="handleSelectionAllChange"
+                  @row-click="handleCurrentChange">
+          <el-table-column
+            prop="id"
+            type="selection"
+            width="42px">
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="楼盘名称"
+            width="186px">
+          </el-table-column>
+        </el-table>
+        <div v-if="resData.mapPointList.length <= 0" class="nodata text-center">
           暂无数据
         </div>
       </div>
@@ -49,30 +37,19 @@
     <!-- 已选楼盘 -->
     <div class="list-box" v-if="mapListShowType === 'inSelect'">
       <div class="top-title">
-        <table class="table table-bordered" style="margin-bottom:0">
-          <thead>
-          <tr>
-            <!-- <th style="width: 42px" class="text-center"><input class="redcheckbtnall" type="checkbox" @click="checkAllMapPoint()"></th> -->
-            <th>楼盘名称</th>
-          </tr>
-          </thead>
-        </table>
-      </div>
-
-      <div class="bottom-list">
-        <table class="table table-hover table-bordered">
-          <tbody>
-          <tr v-for="buildItem in mapCheckedListSum.list">
-            <!-- <td
-                style="width: 42px;"
-                class="text-center"
-                @click="dataExchange.delItemOuter($index)">
-                <label class="redcheckbtnall" checked="true"></label>
-            </td> -->
-            <td>{{buildItem.build_name}}</td>
-          </tr>
-          </tbody>
-        </table>
+        {{this.tableCheckedListSum.list}}
+        <el-table v-if="this.tableCheckedListSum.list.length > 0" border class="build-list-table"
+                  :data="this.tableCheckedListSum.list"
+                  style="width: 100%">
+          <el-table-column
+            prop="name"
+            label="楼盘名称"
+            width="186px">
+          </el-table-column>
+        </el-table>
+        <div v-if="this.tableCheckedListSum.list.length <= 0" class="nodata text-center">
+          暂无数据{{this.tableCheckedListSum.list}}
+        </div>
       </div>
     </div>
   </div>
@@ -81,24 +58,47 @@
 <script>
   export default {
     name: "SelectBuild",
+    props: {
+      selectedBuildings: {
+        type: Array,
+        default: []
+      }
+    },
     data() {
       return {
+        localKey: 'chooseBuildList',
         isActive: true,
         mapAllChecked: false,
         selectedListLoading: false,
         mapListShowType: 'inCircle',
+        //地图选点数据
         mapCheckedListSum: {
           list: []
         },
+        //右侧列表选点数据
+        tableCheckedListSum: {
+          list: []
+        },
         resData: {
-          // 楼盘列表
-          buildList: [],
+          // 地图点位
+          mapPointList: [
+            {name: '安基大厦', id: 1},
+            {name: '复兴苑', id: 2},
+            {name: '中融大厦', id: 3},
+            {name: '振安广场（恒安大厦）', id: 4},
+            {name: '锦海大厦', id: 5},
+            {name: '安基大厦', id: 6},
+            {name: '复兴苑', id: 7},
+            {name: '中融大厦', id: 8},
+            {name: '振安广场（恒安大厦）', id: 9},
+            {name: '锦海大厦', id: 10},
+          ],
           //buildList 分页
           buildListPage: null,
           // 楼盘详细
           buildDetail: [],
-          // 地图点位
-          mapPointList: [],
+          // 楼盘列表
+          buildList: [],
           // 已选点位
           selected_point:
             {
@@ -107,31 +107,30 @@
               list: []
             }
         },
+        multipleSelection: []
       }
     },
+    watch: {
+      selectedBuildings: {
+        handler: function (newVal, oldVal) {
+          //this.$refs.multipleCircleTable.toggleRowSelection(row, true)
+          this.mapCheckedListSum.list = newVal
+          return newVal
+        },
+        deep: true
+      },
+    },
     methods: {
-      setLocalStorage: function (name, data) {
-        return localStorage.setItem(name, JSON.stringify(data));
+      handleSelectionChange: function (selection) {
+        console.log(selection)
+        this.tableCheckedListSum.list = selection
       },
-
-      getLocalStorage: function (name) {
-        return JSON.parse(localStorage.getItem(name));
+      handleSelectionAllChange: function (selection) {
+        this.tableCheckedListSum.list = selection
       },
-      changeMapListShowType: function (showType) {
-        this.mapListShowType = showType;
-      },
-      checkAllMapPoint: function () {
-        this.removeAllMapPoint();
-      },
-      removeAllMapPoint: function () {
-
-      },
-      changeMapListCheck: function (buildItem) {
-
-      },
-      showBuildDetail: function (buildObj) {
-        // 点基础的信息
-        this.resData.buildDetail.parentData = buildObj;
+      handleCurrentChange(row, event, column) {
+        console.log(row)
+        this.$refs.multipleCircleTable.toggleRowSelection(row, true);//点击选中
       }
     }
   }
@@ -141,7 +140,7 @@
   .map-choosed-list {
     position: absolute;
     top: 54px;
-    right: 10px;
+    right: 40px;
     width: 250px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
     background: #fff;
@@ -149,101 +148,30 @@
     z-index: 1;
     transition: .35s;
     overflow: hidden;
-    .title {
-      user-select: none;
+    .el-radio-group {
+      width: 100%;
+      .el-radio-button {
+        width: 50%;
+        .el-radio-button__inner {
+          width: 100%;
+        }
+      }
     }
-    .active {
-      background: $color-bg;
-      color: $color-text;
+    .top-title {
+      padding: 0 10px;
+      margin: 10px 0 20px 0;
+      height: 400px;
     }
-    .redcheckbtn {
+    .build-list-table {
       position: relative;
-      text-align: center;
-      cursor: pointer;
-      line-height: 18px;
-      &::after {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        margin: -9px 0 0 -9px;
-        display: inline-block;
-        content: '';
-        width: 18px;
-        height: 18px;
-        background: #fff;
-        border: 1px solid #CBD5DD;
-      }
-      &:checked::after {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        margin: -9px 0 0 -9px;
-        display: inline-block;
-        content: '✔';
-        width: 18px;
-        height: 18px;
-        background: $color-blue;
-        color: #fff;
-        border: none;
-      }
+      z-index: 1;
+      margin-top: -2px;
     }
-    .redcheckbtnall {
-      position: relative;
-      text-align: center;
-      color: #fff;
-      line-height: 20px;
-      cursor: pointer;
-      &::after {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        margin: -10px 0 0 -10px;
-        display: inline-block;
-        content: '＋';
-        width: 20px;
-        height: 20px;
-        background: $color-blue;
-      }
-      &:checked::after {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        margin: -10px 0 0 -10px;
-        display: inline-block;
-        content: '－';
-        width: 20px;
-        height: 20px;
-        background: $color-blue;
-      }
+    .el-table--border {
+      border-bottom: 1px solid $color-border;
     }
-    .list-box {
-      padding: 10px;
-      .top-title {
-        position: relative;
-        background: #fff;
-        z-index: 2;
-        td {
-          padding: 4px 10px;
-        }
-      }
-      .bottom-list {
-        position: relative;
-        z-index: 1;
-        margin-top: -2px;
-        // height: calc(100vh - 405px);
-        height: calc(100vh - 360px);
-        overflow-y: auto;
-        table {
-          margin-bottom: 0;
-          td {
-            // padding: 4px 10px;
-          }
-        }
-        .nodata {
-          line-height: calc(100vh - 415px);
-          border: 1px solid #ddd;
-        }
-      }
+    .el-table__header-wrapper {
+      border-bottom: 1px solid $color-border;
     }
   }
 </style>
