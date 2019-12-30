@@ -209,7 +209,13 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["buildsNumber", "deviceNumber", "peopleNumber", "unitNum"]),
+    ...mapGetters([
+      "buildsNumber", 
+      "deviceNumber", 
+      "peopleNumber", 
+      "unitNum"
+    ]),
+    
     ...mapState({
       localProject: "putProject"
     }),

@@ -262,35 +262,38 @@
     <div class="estimate-box" v-loading="buildingDirection.builds.loading">
       <div class="font-16 bold">楼盘预估数</div>
 
-      <ul v-if="deviceNumber > 0" class="msg-box color-text-1">
-        <li class="item">
-          <label class="name">楼盘数</label><label class="bold">{{buildsNumber}}</label>个
-        </li>
-        <li class="item">
-          <label class="name">单元数</label><label class="bold">{{unitNum}}</label>个
-        </li>
-        <li class="item">
-          <label class="name">点位数</label><label class="bold">{{deviceNumber}}</label>个
-        </li>
-        <li class="item">
-          <label class="name">覆盖人次</label><label class="bold">{{peopleNumber}}</label>人
-        </li>
-      </ul>
+      <template v-if="deviceNumber > 0">
+        <ul class="msg-box color-text-1">
+          <li class="item">
+            <label class="name">楼盘数</label><label class="bold">{{buildsNumber}}</label>个
+          </li>
+          <li class="item">
+            <label class="name">单元数</label><label class="bold">{{unitNum}}</label>个
+          </li>
+          <li class="item">
+            <label class="name">点位数</label><label class="bold">{{deviceNumber}}</label>个
+          </li>
+          <li class="item">
+            <label class="name">覆盖人次</label><label class="bold">{{peopleNumber}}</label>人
+          </li>
+        </ul>
+
+
+        <ul class="money-box">
+          <li class="item">
+            <span>预算:&emsp;</span>
+            <span class="color-red">¥</span>
+            <span class="color-red font-16 bold">{{$tools.toThousands(buildingDirection.estimatePrice/100)}}</span>
+          </li>
+          <li class="item">
+            <span>余额:&emsp;</span>
+            <span>¥</span>
+            <span class="font-16 bold">{{$tools.toThousands(userInfo.accountBalance/100)}}</span>
+          </li>
+        </ul>
+      </template>
 
       <noData v-else>无可售数据</noData>
-
-      <ul class="money-box">
-        <li class="item">
-          <span>预算:&emsp;</span>
-          <span class="color-red">¥</span>
-          <span class="color-red font-16 bold">{{$tools.toThousands(buildingDirection.estimatePrice/100)}}</span>
-        </li>
-        <li class="item">
-          <span>余额:&emsp;</span>
-          <span>¥</span>
-          <span class="font-16 bold">{{$tools.toThousands(userInfo.accountBalance/100)}}</span>
-        </li>
-      </ul>
 
 
       <el-divider></el-divider>
