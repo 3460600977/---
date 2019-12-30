@@ -137,7 +137,7 @@
             </span>
 
             <span v-if="scope.row.status == 1 || scope.row.status == 2" class="icon-space hand">
-              <router-link :to="`/reportList/plan?campaignId=${scope.row.id}`">
+              <router-link :to="`/reportList/project?projectId=${scope.row.projectId}`">
                 <i class="iconfont icon-baobiao icon-color"></i>报表
               </router-link>
             </span>
