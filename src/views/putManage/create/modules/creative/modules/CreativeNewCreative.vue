@@ -12,7 +12,7 @@
         label-width="112px" class="put-form">
         <!-- 屏幕类型 -->
         <el-form-item 
-          v-if="createType === 'single' || !haveProject" 
+          v-if="createType === 'single' || (createType === 'edit' && !haveProject)" 
           style="margin-bottom: 12px;" class="screen-type-preview-box mt-20" 
           prop="screenType" label="屏幕类型">
           <div class="screen-type-preview-content">
