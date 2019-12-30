@@ -524,19 +524,7 @@ export default {
             type: 'error'
           })
         }
-        return this.$tools.checkVideoTimeAndSize(_file, 15000, 200, 1080, 1920)
-          .then(res => {
-            this.formData.durationType = res.durationType
-            this.formData.top =  _file;
-          })
-          .catch(err => {
-            this.clearTopFile();
-            this.$notify({
-              title: '错误',
-              message: err.msg,
-              type: 'error'
-            })
-          })
+        this.formData.top =  _file;
       }
 
       if (mediaType === 'topImage' || mediaType === 'bottom880Image' || mediaType === 'bottom720Image') {

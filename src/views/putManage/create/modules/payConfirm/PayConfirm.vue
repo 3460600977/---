@@ -68,6 +68,7 @@
 
     <!-- 确认回调弹窗 -->
     <el-dialog
+      :beforeClose="backToList"    
       :visible.sync="confirmPayCallBack.show"
       class="my-confirm-dialog"
       width="568px">

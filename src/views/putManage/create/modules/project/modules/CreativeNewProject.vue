@@ -379,6 +379,8 @@ export default {
         data: ''
       },
 
+      projectDetail: '',
+
       // 城市列表
       cityList: {
         loading: true,
@@ -516,6 +518,7 @@ export default {
       this.$api.PutProject.GetProjectDetailById(+this.$route.query.editProjectId)
         .then(res => {
           let resData = res.result;
+          this.projectDetail = resData;
           this.planData.loading = false;
           this.setBuildsList(res.result.premiseVOS)
           this.formData = {
@@ -708,6 +711,7 @@ export default {
 
         })
     },
+
     // 导入楼盘数据
     uplaodBuild(event) {
       let file = event.target.files[0];
@@ -826,7 +830,6 @@ export default {
             });
             /**
              * 若该方式的创意状态为“未上传、审核拒绝”，按钮为【下一步】，可跳转到创建广告创意页面；
-             * 若广告创意是审核拒绝，显示之前的记录，支持修改，修改后，状态为“待审核“
              * 创意状态 0未审核，1审核不通过，2审核通过
              */
             if (this.formData.creativeStatus === 0 || this.formData.creativeStatus === 2) {
@@ -837,12 +840,22 @@ export default {
                 }
               })
             } else {
-              this.$router.push({
-                path: '/putManage/create/payConfirm',
-                query: {
-                  projectId: this.$route.query.editProjectId,
-                }
-              })
+              if(this.projectDetail.status === 0) {
+                this.$router.push({
+                  path: '/putManage/create/creative',
+                  query: {
+                    projectId: this.$route.query.editProjectId,
+                    createType: 'step'
+                  }
+                })
+              } else {
+                this.$router.push({
+                  path: '/putManage/create/payConfirm',
+                  query: {
+                    projectId: this.$route.query.editProjectId,
+                  }
+                })
+              }
             }
           })
           .catch(res => {
