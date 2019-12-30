@@ -5,8 +5,12 @@
         <el-input v-model="form.name"></el-input>
       </el-form-item>
       <el-form-item label="资源包描述：" style="margin-bottom: 20px">
-        <el-input type="textarea" v-model="form.text"></el-input>
+        <el-input type="textarea" v-model="form.description"></el-input>
       </el-form-item>
+      <el-form-item class="text-center">
+          <el-button @click="hide" class="btn">取消</el-button>
+          <el-button type="primary" @click="" class="btn" @click="submitForm('ruleForm')">确认</el-button>
+        </el-form-item>
     </el-form>
   </div>
 </template>
@@ -23,18 +27,26 @@
         },
         form: {
           name: '',
-          text: ''
+          description: ''
         },
       }
     },
     methods: {
-      cancle() {},
+      resetForm() {
+        this.form = {
+          name: '',
+          description: ''
+        }
+      },
+      hide() {
+        this.$emit('hide')
+      },
       submitForm(form) {
         this.$refs[form].validate((valid) => {
           if (valid) {
-            alert('submit!');
+            this.$emit('submit', this.form)
+            this.resetForm()
           } else {
-            console.log('error submit!!');
             return false;
           }
         });
@@ -45,11 +57,12 @@
 
 <style scoped lang='scss'>
   .form {
+    padding-bottom: 30px;
     .el-input {
       width: 100%;
     }
-    .el-button {
-      width: 100px;
+    .btn {
+      width: 136px;
     }
     & /deep/ .el-textarea__inner {
       width: 100%;

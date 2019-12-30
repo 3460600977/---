@@ -16,6 +16,12 @@
   height: 100%;
   width: 100%;
 }
+.text-ellipsis{
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
 .border-bottom {
   border-bottom: 1px solid $color-border;
 }
@@ -29,7 +35,10 @@
   margin-right: 10px;
 }
 .margin-left-20 {
-  margin-left: 20px;
+  margin-left: 20px !important;
+}
+.margin-left-30 {
+  margin-left: 30px;
 }
 .margin-top-10 {
   margin-top: 10px;

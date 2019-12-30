@@ -34,5 +34,13 @@ export const cityInsight = {
       method: "POST",
       data
     });
-  }
+  },
+  // 创建洞察包
+  createCityInsight:(data) => {
+    return request({
+      url: `/dpapi/cityInsight/create`,
+      method: "POST",
+      data
+    });
+  },
 }
