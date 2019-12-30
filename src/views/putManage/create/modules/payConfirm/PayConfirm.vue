@@ -68,7 +68,7 @@
 
     <!-- 确认回调弹窗 -->
     <el-dialog
-      :visible.sync="confirmPay.show"
+      :visible.sync="confirmPayCallBack.show"
       class="my-confirm-dialog"
       width="568px">
 
@@ -82,12 +82,12 @@
 
       <div class="font-14">
         <span>支付金额：</span>
-        <span class="color-red">¥ 40000</span>
+        <span class="color-red">¥ {{this.$tools.toThousands(confirmPayCallBack.data.account / 100)}}</span>
       </div>
 
       <div style="margin-top: 23px;" class="font-14">
         <span>账户余额：</span>
-        <span class="color-red">¥ 40000</span>
+        <span class="color-red">¥ {{this.$tools.toThousands(confirmPayCallBack.data.balance / 100)}}</span>
       </div>
       <span slot="footer" class="dialog-footer mid-center">
         <el-button style="width: 100px" @click="backToList">返回列表</el-button>

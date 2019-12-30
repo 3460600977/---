@@ -133,7 +133,7 @@
               @click="detailDialog.projectId=+scope.row.projectId; detailDialog.show=true; detailDialog.activeTab='point'"
               v-if="scope.row.status == 1 || scope.row.status == 2" 
               class="icon-space hand">
-              <i class="iconfont icon-ziyuan icon-color"></i>点位明细
+              <i class="iconfont icon-ziyuan icon-color"></i>点位
             </span>
 
             <span v-if="scope.row.status == 1 || scope.row.status == 2" class="icon-space hand">
@@ -179,6 +179,13 @@ import { projectConst, projectStatus } from '../../../../../utils/static'
 import detailDialog from './modules/detailDialog'
 export default {
   name: "planList",
+
+  props: {
+    active: {
+      type: Boolean,
+      default: false,
+    }
+  },
 
   components: {
     detailDialog
