@@ -163,7 +163,7 @@
     <!-- 详情 -->
     <el-dialog
       class="my-dialog"
-      title="投放计划详情"
+      title="投放方案详情"
       :visible.sync="detailDialog.show"
       width="1000px">
       <detailDialog :activeTab="detailDialog.activeTab" :projectId="detailDialog.projectId"/>
