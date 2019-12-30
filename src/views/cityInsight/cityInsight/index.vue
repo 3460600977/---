@@ -2,9 +2,39 @@
     <div class="container cityInsight" v-loading="loading">
       <div class="left-info">
         <left-info
-          :cityFilter="cityFilter"
-          @returnResult="leftInfoCallBak"
+          :isShow="isShow"
+          @toggle="toggle"
         ></left-info>
+        <div class="city-select select-style" v-show="isShow[0]">
+          <singleSelect-popup
+            ref="citySelect"
+            title="城市列表"
+            :selectDatas="cityDatas"
+            :filters="cityFilter"
+            @hide="() => hide(0)"
+            @returnResult="(val) => returnResult(val, 0)"
+          ></singleSelect-popup>
+        </div>
+        <div class="filter-container select-style" v-show="isShow[1]">
+          <div class="mid-start filter-popup">
+            <div style="width: 106px;height: 100%">
+              <left-tab
+                :lineHeight="42"
+                :tabData="tabData"
+                :activeTab="activeTab"
+                @changeTab="changeTab"
+              ></left-tab>
+            </div>
+            <div class="flex1">
+              <multiple-selectPopUp
+                :selectDatas="buildingDatas"
+                :filters="buildingFilter"
+                @returnResult="(val) => returnResult(val, 1)"
+                @hide="() => hide(1)"
+              ></multiple-selectPopUp>
+            </div>
+          </div>
+        </div>
       </div>
 <!--      <div>-->
 <!--        <top-select></top-select>-->
@@ -55,8 +85,9 @@
       <div class="map container">
         <db-map
           ref="dbmap"
+          :buildings="points"
           :budget="budget"
-          :filters="buildingFilter"
+          :city="cityFilter"
           :currentSelectType="currentSelectType"
           @buildingClick="buildingClick"
           @pathArrChange="pathArrChange"
@@ -81,6 +112,12 @@
 </template>
 
 <script>
+  const CITY_MAPPING = {
+    1: '一线城市:',
+    2: '二线城市:',
+    3: '三线城市:'
+  }
+
   import dbMap from '../../../components/map/map.vue'
   import mapPopup from "../../../components/map/mapPopup";
   import rightInfo from "./rightInfo";
@@ -93,6 +130,9 @@
   import slideContainer from "../../../components/slideContainer";
   import addDialog from "./addDialog";
   import topSelect from "./topSelect";
+  import leftTab from "../../../components/leftTab";
+  import multipleSelectPopUp from "../../../components/map/multipleSelectPopUp";
+  import singleSelectPopup from "../../../components/map/singleSelectPopup";
 
   const NAV_HEIGHT = 76,
     ANOTHER_HEIGHT = 10,
@@ -102,9 +142,12 @@
     name: "index",
     components: {
       dbMap,
+      leftTab,
       addDialog,
       mapPopup,
       drawType,
+      multipleSelectPopUp,
+      singleSelectPopup,
       buildingDetail,
       createDialog,
       slideContainer,
@@ -116,6 +159,82 @@
     },
     data() {
       return {
+        buildingDatas: { // 楼宇标签
+          title: '楼宇标签',
+          options: [
+            {
+              title: '楼宇类型',
+              key: 'buildType',
+              types: [
+                {label: '中高端住宅', key: 0},
+                {label: '商住楼', key: 1},
+                {label: '综合体', key: 2},
+                {label: '写字楼', key: 3},
+              ]
+            },
+            {
+              title: '平均房价',
+              key: 'premiseAvgFee',
+              types: [
+                {label: '1万以下', key: 0},
+                {label: '1-1.5万', key: 1},
+                {label: '1.5-2万', key: 2},
+                {label: '2-2.5万', key: 3},
+                {label: '2.5-3万', key: 4},
+                {label: '3万以上', key: 5},
+              ]
+            },
+            {
+              title: '入住率(%)',
+              key: 'occupancyRate',
+              types: [
+                {label: '70-80%', key: 0},
+                {label: '80%-90%', key: 1},
+                {label: '90%以上', key: 2},
+              ]
+            },
+            {
+              title: '楼龄(年)',
+              key: 'buildingAge',
+              types: [
+                {label: '5年以内', key: 0},
+                {label: '5-10年', key: 1},
+                {label: '10年以上', key: 2}
+              ]
+            },
+            {
+              title: '车位数(个)',
+              key: 'parkingNum',
+              types: [
+                {label: '低于200', key: 0},
+                {label: '200-500', key: 1},
+                {label: '5000-800', key: 2},
+                {label: '800以上', key: 2}
+              ]
+            },
+            {
+              title: '物业费(元)',
+              key: 'propertyRent',
+              types: [
+                {label: '2元以下', key: 0},
+                {label: '2-3元', key: 1},
+                {label: '3元以上', key: 2}
+              ]
+            },
+          ]
+        },
+        activeTab: 0,
+        tabData: [
+          {name: '人群洞察', value: 0},
+          {name: '楼盘筛选', value: 1},
+          {name: '门店导入', value: 2},
+        ],
+        points: [], // 当前所有的楼盘点位数据
+        cityDatas: [], // 城市数据
+        isShow: { // 控制左边弹出框显示
+          0: false,
+          1: true
+        },
         cityFilter: { // 当前城市信息
           cityCode: null,
           name: null
@@ -153,7 +272,7 @@
     },
     watch: {
       cityFilter(val) {
-        // console.log(val)
+        this.$refs.dbmap.setCity(val)
       },
     },
     computed: {
@@ -173,6 +292,57 @@
       }
     },
     methods: {
+      // 筛选中菜单改变
+      changeTab(val) {
+        this.activeTab = val.value
+      },
+      returnResult(val, index) {
+        if (index === 0) {
+          this.cityFilter = val
+          this.loadData()
+        } else if (index === 1) {
+          this.buildingFilter = val
+          this.loadData()
+          this.hide(index)
+        }
+        console.log(val, index)
+      },
+      hideAll() {
+        for (let key in this.isShow) {
+          this.isShow[key] = false
+        }
+      },
+      toggle(val) {
+        if (this.isShow[val]) {
+          this.hide(val)
+        } else {
+          this.hideAll()
+          this.isShow[val] = true
+        }
+      },
+      hide(val) {
+        this.isShow[val] = false
+      },
+      getCityFilter() {
+        this.$refs.dbmap.location().then((data) => {
+          this.cityFilter = Object.assign({}, this.cityFilter, {name: data.name})
+        })
+      },
+      loadCitys() {
+        new Promise((resolve, reject) => {
+          this.$api.CityList.TypeList().then((data) => {
+            if (data.result) {
+              this.cityDatas = data.result.map((item) => {
+                return {title: CITY_MAPPING[item.level], values: item.citys}
+              })
+            } else {
+              this.cityDatas = []
+            }
+            this.getCityFilter()
+            resolve()
+          })
+        })
+      },
       // 左边传出信息
       leftInfoCallBak(val, type) {
         console.log(val, type)
@@ -180,29 +350,22 @@
           this.cityFilter = val
         }
       },
-      // loadData() {
-      //   this.loading = true
-      //   this.$api.cityInsight.getPremisesByCity({cityCode: '510100', tag: this.filters}).then((data) => {
-      //     if (data.result) {
-      //       this.points = this.normalizePointsAll(data.result)
-      //       if (Object.keys(this.pathArr).length) {
-      //         for(let key in this.pathArr) {
-      //           this.pathArr[key].buildings = this.isInArea(this.pathArr[key])
-      //         }
-      //       }
-      //       // this.drawLabels(this.points)
-      //       this.drawDevicePoints()
-      //     } else {
-      //       this.clearPoints()
-      //     }
-      //     this.loading = false
-      //   })
-      // },
+      loadData() {
+        this.loading = true
+        this.$api.cityInsight.getPremisesByCity({cityCode: this.cityFilter.cityCode, tag: this.buildingFilter}).then((data) => {
+          if (data.result) {
+            this.points = data.result
+          } else {
+            this.points = []
+          }
+          this.loading = false
+        })
+      },
       // 初始化
       init() {
-        this.$refs.dbmap.location().then((data) => {
-          this.cityFilter = Object.assign({}, this.cityFilter.name, {name: data.name})
-        })
+        this.loadCitys()
+
+        // this.cityFilter = this.$refs.citySelect.findItem(this.cityFilter, this.cityDatas)
       },
       // 楼盘详情窗口点击返回按钮
       rightBack() {
@@ -236,7 +399,6 @@
       },
       // 地图组件返回搜索结果
       returnSearchResult(result) {
-        console.log(result)
         this.$refs.drawType.setSearchList(result)
       },
       bindEvent() {
@@ -326,8 +488,8 @@
   }
   .draw-type {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 20px;
+    left: 258px;
     z-index: 10;
   }
   .top-select {
@@ -357,6 +519,20 @@
     z-index: 3;
     top: 20px;
     left: 36px;
+    .filter-popup {
+      /*height: 490px;*/
+      background: #ffffff;
+    }
+    .select-style {
+      position: absolute;
+      top: 60px;
+    }
+    .city-select {
+      left: 0px;
+    }
+    .filter-container {
+      left: 40px;
+    }
   }
   .left-select {
     position: absolute;
