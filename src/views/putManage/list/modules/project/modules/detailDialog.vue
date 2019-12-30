@@ -2,18 +2,18 @@
   <!-- 详情 -->
   <el-tabs @tab-click="showPointDetails" class="thin-tab small" v-model="activeTab">
     <el-tab-pane label="方案信息" name="project">
-      <el-form v-loading="projectDetail.loading" label-position='left' label-width="150px">
+      <el-form class="info-form" v-loading="projectDetail.loading" label-position='left' label-width="150px">
         <el-form-item label="投放方案名称">
           <span class="color-text-1">{{projectDetail.data.name}}</span>
         </el-form-item>
         <el-form-item label="投放方案状态">
-          <span class="color-text-1">{{projectDetail.data.status}}</span>
+          <span class="color-text-1">{{projectStatus[projectDetail.data.status]}}</span>
         </el-form-item>
         <el-form-item label="投放方案行业">
-          <span class="color-text-1">{{projectDetail.data.industry}}</span>
+          <span class="color-text-1">{{$tools.getObjectItemFromArray(indurstryList, 'industryId', projectDetail.data.industry).name}}</span>
         </el-form-item>
         <el-form-item label="投放类型">
-          <span class="color-text-1">{{projectDetail.data.projectType}}</span>
+          <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.putType, 'value', projectDetail.data.projectType).name}}</span>
         </el-form-item>
         <el-form-item label="投放时间">
           <span class="color-text-1">
@@ -22,17 +22,17 @@
             {{$tools.getFormatDate('YY-mm-dd', projectDetail.data.endTime)}}
           </span>
         </el-form-item>
-        <el-form-item label="投放方式">
-          <span class="color-text-1">{{projectDetail.data.deliveryMode}}</span>
-        </el-form-item>
+        <!-- <el-form-item label="投放方式">
+          <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.putWay, 'value', projectDetail.data.deliveryMode).name}}</span>
+        </el-form-item> -->
         <el-form-item label="投放频次">
-          <span class="color-text-1">{{projectDetail.data.count}}</span>
+          <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.putFrequency, 'value', projectDetail.data.count).name}}</span>
         </el-form-item>
         <el-form-item label="投放时长">
-          <span class="color-text-1">{{projectDetail.data.second}}</span>
+          <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.putDuration, 'value', projectDetail.data.second).name}}</span>
         </el-form-item>
         <el-form-item label="屏幕类型">
-          <span class="color-text-1">{{projectDetail.data.type}}</span>
+          <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.screenType, 'value', projectDetail.data.type).name}}</span>
         </el-form-item>
         <el-form-item label="总计">
           <span class="color-red">{{projectDetail.data.totalCost}}</span>
@@ -41,50 +41,45 @@
     </el-tab-pane>
 
     <el-tab-pane label="点位信息" name="point">
-      <div class="build-msg-list">
-        <div class="build-title mid-between">
-          <div>
-            <span>已选择楼盘 <span class="color-main font16">78</span> 个</span>,
-            <span> 可售设备 <span class="color-main font16">67</span> 个</span>
-          </div>
-        </div>
-        <ul class="build-msg-item-box">
-          <li class="item mid color-text" v-for="(item, index) in pointDetail.data" :key="index">
-            <div class="left-info">
-              <p class="name">{{item.name}}</p>
-            </div>
-            <span>{{item.count}} 部</span>
-          </li>
-          <!-- <li class="item clearfix">
-            <el-pagination
-              class="float-right"
-              background
-              layout="total, sizes, prev, pager, next"
-              :total="20">
-            </el-pagination>
-          </li> -->
-        </ul>
-        
-      </div>
+        <SelectedList 
+          :loading="projectDetail.loading"
+          :buildingDirectionActiveType="'list'"/>
     </el-tab-pane>
   </el-tabs>
 </template>
 
 <script>
+import { projectConst, projectStatus } from '../../../../../../utils/static'
+import SelectedList from '../../../../create/modules/project/modules/SelectedList'
+import { mapGetters, mapMutations } from 'vuex'
+
 export default {
   props: {
     projectId: {
       type: Number,
       required: true
+    },
+    activeTab: {
+      type: String,
+      default: 'project'
     }
+  },
+
+  components: {
+    SelectedList
   },
 
   data() {
     return {
+      projectConst,
+      projectStatus,
+
       projectDetail: {
         loading: true,
         data: ''
       },
+
+      indurstryList: [],
 
       pointDetail: {
         param: {
@@ -98,7 +93,6 @@ export default {
         loading: true,
         data: []
       },
-      activeTab: 'project'
     }
   },
 
@@ -107,6 +101,8 @@ export default {
   },
 
   methods: {
+    ...mapMutations(['setBuildsList']),
+
     ProjectDetailById(projectId) {
       this.projectDetail = {
         loading: true,
@@ -118,6 +114,7 @@ export default {
               loading: false,
               data: res.result
             }
+          this.setBuildsList(this.projectDetail.data.premiseVOS)
         })
         .catch(res => {
           this.projectDetail = {
@@ -142,11 +139,20 @@ export default {
           this.pointDetail.data = [];
         })
     },
+
+    getIndustryList() {
+      if (this.indurstryList.length > 0) return;
+      this.$api.IndustryList.AllList()
+        .then(res => {
+          this.indurstryList = res.result;
+        })
+    }
   },
 
   watch: {
     projectId: function(oldVal, newVal){
       this.ProjectDetailById(newVal)
+      this.getIndustryList()
     }
   }
 }

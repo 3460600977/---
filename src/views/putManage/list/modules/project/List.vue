@@ -73,10 +73,7 @@
 
         <el-table-column prop="status" label="投放方案状态">
           <template slot-scope="scope">
-            <template v-if="scope.row.status == 0">待投放</template>
-            <template v-if="scope.row.status == 1">投放中</template>
-            <template v-if="scope.row.status == 2">已完成</template>
-            <template v-if="scope.row.status == 3">已取消</template>
+            {{projectStatus[scope.row.status]}}
           </template>
         </el-table-column>
 
@@ -121,7 +118,7 @@
           <template slot-scope="scope">
             <span 
               class="icon-space hand" 
-              @click="detailDialog.projectId=+scope.row.projectId; detailDialog.show=true"
+              @click="detailDialog.projectId=+scope.row.projectId; detailDialog.show=true; detailDialog.activeTab='project'"
             >
               <i class="iconfont icon-shuxingliebiaoxiangqing2 icon-color"></i>详情
             </span>
@@ -132,14 +129,15 @@
               </router-link>
             </span>
 
-            <span v-if="scope.row.status == 1 || scope.row.status == 2" class="icon-space hand">
-              <router-link :to="`/putManage/create/plan?editPlanId=${scope.row.id}`">
-                <i class="iconfont icon-ziyuan icon-color"></i>点位明细
-              </router-link>
+            <span 
+              @click="detailDialog.projectId=+scope.row.projectId; detailDialog.show=true; detailDialog.activeTab='point'"
+              v-if="scope.row.status == 1 || scope.row.status == 2" 
+              class="icon-space hand">
+              <i class="iconfont icon-ziyuan icon-color"></i>点位明细
             </span>
 
             <span v-if="scope.row.status == 1 || scope.row.status == 2" class="icon-space hand">
-              <router-link :to="`/reportList/plan?campaignId=${scope.row.id}`">
+              <router-link :to="`/reportList/project?projectId=${scope.row.projectId}`">
                 <i class="iconfont icon-baobiao icon-color"></i>报表
               </router-link>
             </span>
@@ -168,7 +166,7 @@
       title="投放计划详情"
       :visible.sync="detailDialog.show"
       width="1000px">
-      <detailDialog :projectId="detailDialog.projectId"/>
+      <detailDialog :activeTab="detailDialog.activeTab" :projectId="detailDialog.projectId"/>
       <span slot="footer" class="dialog-footer center">
         <el-button style="width: 136px;" type="primary" @click="detailDialog.show = false">确定</el-button>
       </span>
@@ -177,7 +175,7 @@
 </template>
 
 <script>
-import { PutGoal, projectConst } from '../../../../../utils/static'
+import { projectConst, projectStatus } from '../../../../../utils/static'
 import detailDialog from './modules/detailDialog'
 export default {
   name: "planList",
@@ -188,8 +186,8 @@ export default {
 
   data() {
     return {
-      PutGoal,
       screenType: projectConst.screenType,
+      projectStatus,
 
       planNameList: {
         loading: true,

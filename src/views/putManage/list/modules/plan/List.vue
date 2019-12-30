@@ -127,12 +127,12 @@
 </template>
 
 <script>
-import { PutGoal } from '../../../../../utils/static'
+import { PutGoal, projectConst, MonitorData } from '../../../../../utils/static'
 export default {
   name: "planList",
   data() {
     return {
-      PutGoal,
+      PutGoal, projectConst, MonitorData,
       planNameList: {
         loading: true,
         data: []
