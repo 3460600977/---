@@ -107,11 +107,12 @@
             opacity: 0
           },
           content: [
-            {name: '首页', path: '/'},
-            {name: '城市洞察', path: '/cityInsight'},
+            {name: '首页', path: '/home'},
+            {name: '人群洞察', path: ''},
+            {name: '媒体智选', path: '/cityInsight'},
             {name: '投放管理', path: '/putManage'},
             {name: '报表中心', path: '/reportList'},
-            {name: '工具箱', path: '/toolBox'},
+            {name: '财务管理', path: ''},
             {name: '审核管理', path: '/auditList'},
           ]
         },

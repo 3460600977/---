@@ -59,9 +59,15 @@
               let val = []
               if (allVal.length > 0) {
                 val = allVal.shift()
+                let showVal = 0;
+                if (chartParam.sortField === 'cost') {
+                  showVal = that.$tools.toThousands(val.data, 2);
+                } else {
+                  showVal = that.$tools.toThousands(val.data, 0);
+                }
                 return val.name + '<br/>' +
                   '<div style="width: 12px; height: 12px;background: #2D5AFF;border-radius: 50%;border: 1px solid #2D5AFF;display: inline-block;margin-right: 20px"></div>'
-                  + that.$tools.toThousands(val.data, 0)
+                  + showVal
               }
             },
             padding: [10, 20]
@@ -90,7 +96,6 @@
             axisLine: {show: false},
             type: 'value',
             max: chartParam.yAxis.max,
-            data: chartParam.yAxis.data,
             splitNumber: chartParam.yAxis.splitNumber,
             axisTick: {show: false},
             axisLabel: {
@@ -99,6 +104,12 @@
               fontWeight: 'normal',
               fontFamily: 'DINMittelschrift',
               margin: 20,
+              formatter: function (value, index) {
+                if (chartParam.sortField === 'cost') {
+                  return value.toFixed(2);
+                }
+                return value
+              }
             },
           },
           series: [
@@ -145,6 +156,11 @@
     watch: {
       axisData: {
         handler: function (newVal, oldVal) {
+          if (newVal.sortField === 'cost') {
+            newVal.series.data.forEach((item, index, arr) => {
+              arr[index] = this.$tools.formatCentToYuan(item)
+            })
+          }
           this.initChart(newVal)
         }
         ,
