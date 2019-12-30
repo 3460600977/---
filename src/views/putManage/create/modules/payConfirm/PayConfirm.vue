@@ -60,7 +60,7 @@
       <div class="mid-between">
         <div>总计: <span class="color-red">¥ {{this.$tools.toThousands(project.data.totalCost / 100)}}</span></div>
         <div>
-          <el-button style="width: 136px;" @click="cancleConfirm">取消投放</el-button>
+          <el-button style="width: 136px;" @click="backToList">取消投放</el-button>
           <el-button style="width: 136px;" @click="confirmPay" type="primary">确认并支付</el-button>
         </div>
       </div>
