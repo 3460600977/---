@@ -73,10 +73,7 @@
 
         <el-table-column prop="status" label="投放方案状态">
           <template slot-scope="scope">
-            <template v-if="scope.row.status == 0">待投放</template>
-            <template v-if="scope.row.status == 1">投放中</template>
-            <template v-if="scope.row.status == 2">已完成</template>
-            <template v-if="scope.row.status == 3">已取消</template>
+            {{projectStatus[scope.row.status]}}
           </template>
         </el-table-column>
 
@@ -177,7 +174,7 @@
 </template>
 
 <script>
-import { PutGoal, projectConst } from '../../../../../utils/static'
+import { projectConst, projectStatus } from '../../../../../utils/static'
 import detailDialog from './modules/detailDialog'
 export default {
   name: "planList",
@@ -188,8 +185,8 @@ export default {
 
   data() {
     return {
-      PutGoal,
       screenType: projectConst.screenType,
+      projectStatus,
 
       planNameList: {
         loading: true,
