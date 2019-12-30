@@ -39,13 +39,8 @@
         isShow: true
       }
     },
-    created() {
-      // this.filtersCopy = this.$tools.deepCopy(this.filters)
-      // this.currentItem = this.findItem(this.filters, this.selectDatas)
-    },
     watch: {
       filters(val) {
-        // console.log(val)
         this.currentItem = this.findItem(this.filters, this.selectDatas)
       },
       currentItem(val) {

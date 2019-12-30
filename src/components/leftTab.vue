@@ -1,5 +1,5 @@
 <template>
-    <ul class="lt hand">
+    <ul class="lt hand" :style="{'lineHeight': lineHeight + 'px'}">
        <li
          v-for="(item, index) in tabData"
          :key="index"
@@ -13,6 +13,10 @@
   export default {
     name: "leftTab",
     props: {
+      lineHeight: {
+        type: Number,
+        default: 60
+      },
       tabData: {
         type: Array,
         required: true
@@ -40,9 +44,8 @@
 
 <style scoped lang='scss'>
   .lt {
-    line-height: 60px;
     color: $color-text-1;
-    font-size: 16px;
+    font-size: inherit;
     height: 100%;
     width:100%;
     text-align: center;
