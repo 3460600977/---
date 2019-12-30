@@ -36,7 +36,7 @@ export default {
   },
   
   beforeMount() {
-    this.setLeftStep({rootActiveIndex: 2, subActiveIndex: 0})
+    this.setLeftStep({rootActiveIndex: 3, subActiveIndex: 0})
   }
 }
 </script>

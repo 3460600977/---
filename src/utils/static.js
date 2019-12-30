@@ -51,9 +51,9 @@ export const projectConst = {
   
   // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
   screenType: [
+    {name: '联动', value: '003', creativeVal: 2},
     {name: '上屏', value: '001', creativeVal: 0},
-    {name: '下屏', value: '002', creativeVal: 1},
-    {name: '联动', value: '003', creativeVal: 2}
+    {name: '下屏', value: '002', creativeVal: 1}
   ]
 }
 
@@ -75,9 +75,10 @@ export const fileType = [
 // 投放目的
 export const PutGoal = [
   {name: '品牌宣传', value: 0, icon: require('../assets/images/plan_title_1.png')},
-  {name: '新品上线', value: 1, icon: require('../assets/images/plan_title_2.png')},
-  {name: '活动宣传', value: 2, icon: require('../assets/images/plan_title_3.png')},
-  {name: '其他', value: 3, icon: require('../assets/images/plan_title_4.png')}
+  {name: '产品促销', value: 1, icon: require('../assets/images/plan_title_2.png')},
+  {name: '到店引流', value: 2, icon: require('../assets/images/plan_title_3.png')},
+  {name: '搜索热度提升', value: 3, icon: require('../assets/images/plan_title_4.png')},
+  {name: '新品上市', value: 4, icon: require('../assets/images/plan_title_4.png')}
 ]
 
 // 投放预算分类

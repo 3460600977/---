@@ -839,7 +839,7 @@
   box-sizing: border-box;
   margin: 5px 0; }
   .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
-    color: #2D5AFF;
+    color: #F44A4A;
     background-color: #FFFFFF; }
     .el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover {
       background-color: #F6F6F6; }
@@ -1156,7 +1156,7 @@
       border-color: #C0C4CC; }
     .el-textarea__inner:focus {
       outline: none;
-      border-color: #2D5AFF; }
+      border-color: #F44A4A; }
   .el-textarea .el-input__count {
     color: #999999;
     background: #FFFFFF;
@@ -1256,7 +1256,7 @@
       border-color: #C0C4CC; }
     .el-input__inner:focus {
       outline: none;
-      border-color: #2D5AFF; }
+      border-color: #F44A4A; }
   .el-input__suffix {
     position: absolute;
     height: 100%;
@@ -1295,7 +1295,7 @@
     pointer-events: none; }
   .el-input.is-active .el-input__inner {
     outline: none;
-    border-color: #2D5AFF; }
+    border-color: #F44A4A; }
   .el-input.is-disabled .el-input__inner {
     background-color: rgba(197, 200, 206, 0.24);
     border-color: #E5E7E9;
@@ -1658,15 +1658,15 @@
 /* Break-point
 --------------------------*/
 .el-tag {
-  background-color: #eaefff;
-  border-color: #d5deff;
-  color: #2d5aff;
+  background-color: #feeded;
+  border-color: #fddbdb;
+  color: #f44a4a;
   display: inline-block;
   height: 32px;
   padding: 0 10px;
   line-height: 30px;
   font-size: 12px;
-  color: #2D5AFF;
+  color: #F44A4A;
   border-width: 1px;
   border-style: solid;
   border-radius: 4px;
@@ -1674,12 +1674,12 @@
   box-sizing: border-box;
   white-space: nowrap; }
   .el-tag.is-hit {
-    border-color: #2D5AFF; }
+    border-color: #F44A4A; }
   .el-tag .el-tag__close {
-    color: #2d5aff; }
+    color: #f44a4a; }
     .el-tag .el-tag__close:hover {
       color: #FFFFFF;
-      background-color: #2d5aff; }
+      background-color: #f44a4a; }
   .el-tag.el-tag--info {
     background-color: whitesmoke;
     border-color: #ebebeb;
@@ -1692,16 +1692,16 @@
         color: #FFFFFF;
         background-color: #999999; }
   .el-tag.el-tag--success {
-    background-color: #eaefff;
-    border-color: #d5deff;
-    color: #2d5aff; }
+    background-color: #feeded;
+    border-color: #fddbdb;
+    color: #f44a4a; }
     .el-tag.el-tag--success.is-hit {
-      border-color: #2D5AFF; }
+      border-color: #F44A4A; }
     .el-tag.el-tag--success .el-tag__close {
-      color: #2d5aff; }
+      color: #f44a4a; }
       .el-tag.el-tag--success .el-tag__close:hover {
         color: #FFFFFF;
-        background-color: #2d5aff; }
+        background-color: #f44a4a; }
   .el-tag.el-tag--warning {
     background-color: #fffae6;
     border-color: #fff5cc;
@@ -1739,16 +1739,16 @@
     .el-tag .el-icon-close::before {
       display: block; }
   .el-tag--dark {
-    background-color: #2d5aff;
-    border-color: #2d5aff;
+    background-color: #f44a4a;
+    border-color: #f44a4a;
     color: white; }
     .el-tag--dark.is-hit {
-      border-color: #2D5AFF; }
+      border-color: #F44A4A; }
     .el-tag--dark .el-tag__close {
       color: white; }
       .el-tag--dark .el-tag__close:hover {
         color: #FFFFFF;
-        background-color: #577bff; }
+        background-color: #f66e6e; }
     .el-tag--dark.el-tag--info {
       background-color: #999999;
       border-color: #999999;
@@ -1761,16 +1761,16 @@
           color: #FFFFFF;
           background-color: #adadad; }
     .el-tag--dark.el-tag--success {
-      background-color: #2d5aff;
-      border-color: #2d5aff;
+      background-color: #f44a4a;
+      border-color: #f44a4a;
       color: white; }
       .el-tag--dark.el-tag--success.is-hit {
-        border-color: #2D5AFF; }
+        border-color: #F44A4A; }
       .el-tag--dark.el-tag--success .el-tag__close {
         color: white; }
         .el-tag--dark.el-tag--success .el-tag__close:hover {
           color: #FFFFFF;
-          background-color: #577bff; }
+          background-color: #f66e6e; }
     .el-tag--dark.el-tag--warning {
       background-color: #ffcc00;
       border-color: #ffcc00;
@@ -1795,15 +1795,15 @@
           background-color: #f66e6e; }
   .el-tag--plain {
     background-color: white;
-    border-color: #abbdff;
-    color: #2d5aff; }
+    border-color: #fbb7b7;
+    color: #f44a4a; }
     .el-tag--plain.is-hit {
-      border-color: #2D5AFF; }
+      border-color: #F44A4A; }
     .el-tag--plain .el-tag__close {
-      color: #2d5aff; }
+      color: #f44a4a; }
       .el-tag--plain .el-tag__close:hover {
         color: #FFFFFF;
-        background-color: #2d5aff; }
+        background-color: #f44a4a; }
     .el-tag--plain.el-tag--info {
       background-color: white;
       border-color: #d6d6d6;
@@ -1817,15 +1817,15 @@
           background-color: #999999; }
     .el-tag--plain.el-tag--success {
       background-color: white;
-      border-color: #abbdff;
-      color: #2d5aff; }
+      border-color: #fbb7b7;
+      color: #f44a4a; }
       .el-tag--plain.el-tag--success.is-hit {
-        border-color: #2D5AFF; }
+        border-color: #F44A4A; }
       .el-tag--plain.el-tag--success .el-tag__close {
-        color: #2d5aff; }
+        color: #f44a4a; }
         .el-tag--plain.el-tag--success .el-tag__close:hover {
           color: #FFFFFF;
-          background-color: #2d5aff; }
+          background-color: #f44a4a; }
     .el-tag--plain.el-tag--warning {
       background-color: white;
       border-color: #ffeb99;
@@ -2141,7 +2141,7 @@
   .el-select-dropdown__item.hover, .el-select-dropdown__item:hover {
     background-color: #F6F6F6; }
   .el-select-dropdown__item.selected {
-    color: #2D5AFF;
+    color: #F44A4A;
     font-weight: bold; }
 
 /* BEM support Func
@@ -2730,7 +2730,7 @@
     cursor: pointer;
     padding-right: 35px; }
     .el-select .el-input__inner:focus {
-      border-color: #2D5AFF; }
+      border-color: #F44A4A; }
   .el-select .el-input .el-select__caret {
     color: #C0C4CC;
     font-size: 14px;
@@ -2760,7 +2760,7 @@
     .el-select .el-input.is-disabled .el-input__inner:hover {
       border-color: #E5E7E9; }
   .el-select .el-input.is-focus .el-input__inner {
-    border-color: #2D5AFF; }
+    border-color: #F44A4A; }
   .el-select > .el-input {
     display: block; }
   .el-select__input {

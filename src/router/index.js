@@ -35,6 +35,10 @@ const router = new Router({
       component: () => import('@/views/login/login')
     },
     {
+      path: '/tokenLogin',
+      component: () => import('@/views/login/login')
+    },
+    {
       path: '/404',
       component: () => import('@/views/errorPage/404')
     },
