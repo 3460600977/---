@@ -169,7 +169,7 @@ export default {
     // 导出列表
     buildsListExport() {
       let param = [];
-      this.list.forEach(item => {
+      this.localProject.list.forEach(item => {
         param.push({
           address: item.address,
           deviceNum: item.deviceNum,
