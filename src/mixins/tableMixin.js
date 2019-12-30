@@ -7,7 +7,7 @@ export const tableMixin = {
       totalCount: 0, // 总共条数
       resultData: null,
       pageIndex: 1,
-      pageSize: 10,
+      pageSize: PAGE_SIZE[0],
       filterData: {
         pageIndex: 1,
         sortList: []
@@ -68,8 +68,9 @@ export const tableMixin = {
       this.pageSize = size
       this.resetLoad()
     },
-    handleCurrentChange() {
-      this.filterData.pageIndex = this.pageIndex
+    handleCurrentChange(val) {
+      this.filterData.pageIndex = val
+      this.pageIndex = val
       this._loadData(this.filterData)
     }
   }

@@ -112,5 +112,22 @@ export const PutProject = {
     });
   },
 
+  // GET方案确认支付接口
+  ConfirmPay: (data) => {
+    return request({
+      url: "/dpapi/project/confirmPay/" + data,
+      method: "get",
+    });
+  },
+
+  // POST投放方案楼盘设备列表
+  GetBuildDevice: (data) => {
+    return request({
+      url: "/dpapi/project/premise/device",
+      method: "post",
+      data
+    });
+  },
+
 
 }

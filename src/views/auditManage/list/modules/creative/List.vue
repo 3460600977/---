@@ -54,14 +54,14 @@
               <span v-if="scope.row[scope.column.property] === 1" class="deny status">审核拒绝</span>
             </div>
             <div v-else-if="col.prop === 'screenType'">
-              <div v-if="scope.row.screenType === 0">
+              <div v-if="parseInt(scope.row.screenType) === 1">
                 <span>上屏</span>
               </div>
-              <div v-else-if="scope.row.screenType  === 1">
+              <div v-else-if="parseInt(scope.row.screenType)  === 2">
                 <span>下屏</span>
               </div>
-              <div v-else-if="scope.row.screenType  === 2">
-                <span>上下屏</span>
+              <div v-else-if="parseInt(scope.row.screenType)  === 3">
+                <span>联动</span>
               </div>
               <div v-else>
                 <span>暂无</span>
@@ -104,8 +104,7 @@
         <el-form-item :label-width="formLabelWidth" v-for="(denyItem,denyIndex) in DenyDialogReason" :key="denyIndex"
                       :denyIndex="denyIndex">
           <h3 class="deny-title">{{denyIndex+1+'、'+denyItem.title}}</h3>
-          <el-checkbox-group v-model="checkReason" class="deny-reason-group"
-                             @change="handleCheckedReasonChange" :min="0">
+          <el-checkbox-group v-model="checkReason" class="deny-reason-group" :min="0" @change="handleCheckedChange">
             <el-checkbox-button v-for="(reason,reasonIndex) in denyItem.reasons" :key="reasonIndex"
                                 :label="denyIndex +'-'+ reasonIndex">
               {{reason.value}}
@@ -114,14 +113,15 @@
         </el-form-item>
       </el-form>
       <div class="choose-deny-list">
-        {{denyDialogReasonList}}
-        <el-tag closable v-for="(item,reasonIndex) in denyDialogReasonList" :key="reasonIndex" :index="reasonIndex">
-          {{item}}
+        <el-tag closable :class="{'showTag': item.select,'displayTag':true}" :disable-transitions="false"
+                @close="handleClose(item.index)"
+                v-for="(item,reasonIndex) in denyDialogReasonList" :key="reasonIndex" :index="item.index">
+          {{item.name}}
         </el-tag>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDenyVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitDengyCreative()">确 定</el-button>
+        <el-button type="primary" @click="submitDenyCreative()" :loading="submitCreative.loading">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="创意内容" :visible.sync="dialogShowContent" class="creative-dialog">
@@ -184,8 +184,8 @@
 
 <script>
   const PAGE_SIZE = [10, 20, 30, 40, 50];
-  import {Notification} from 'element-ui'
-  import {DenyDialogReason} from '../../../../../utils/static'
+  import { Notification } from 'element-ui'
+  import { DenyDialogReason } from '../../../../../utils/static'
 
   export default {
     name: "auditList",
@@ -193,6 +193,7 @@
       return {
         DenyDialogReason,
         checkReason: [],
+        checkReasonHistory: [],
         downloadVideoSrc: '',
         activeName: 'aptitude',
         dialogDenyVisible: false,
@@ -205,7 +206,7 @@
         },
         //屏幕类型
         screenTypeList: [
-          {id: '001', type: '上屏'}, {id: '002', type: '下屏'}, {id: '003', type: '上下屏'}
+          {id: '001', type: '上屏'}, {id: '002', type: '下屏'}, {id: '003', type: '联动'}
         ],
         //创意审核列表
         reviewCreativeList: {
@@ -285,18 +286,24 @@
     },
     created() {
       this.getAuditCreativeList()
-      console.log(this.denyDialogReasonList)
     },
     computed: {
       denyDialogReasonList: function () {
         let tmp = []
         this.DenyDialogReason.forEach((item, itemIndex) => {
           item.reasons.forEach((reason, reasonIndex) => {
-            tmp.push({name: reason.value, index: `${itemIndex}-${reasonIndex}`})
+            tmp.push({name: reason.value, index: `${itemIndex}-${reasonIndex}`, select: false})
+          })
+        })
+        tmp.forEach(denyItem => {
+          this.checkReason.forEach(item => {
+            if (denyItem.index === item) {
+              denyItem.select = true
+            }
           })
         })
         return tmp
-      }
+      },
     },
     methods: {
       //查询创意
@@ -313,13 +320,13 @@
             }
             //请求方案报表列表查询接口
             this.$api.AuditCreative.getAuditCreativeList(queryParam)
-              .then(res => {
-                this.creativeNameList.loading = false
-                this.creativeNameList.data = res.result
-              })
-              .catch(res => {
-                this.creativeNameList.loading = false
-              })
+                .then(res => {
+                  this.creativeNameList.loading = false
+                  this.creativeNameList.data = res.result
+                })
+                .catch(res => {
+                  this.creativeNameList.loading = false
+                })
           }, 200);
         } else {
           this.creativeNameList.data = []
@@ -361,31 +368,31 @@
         //请求方案报表列表查询接口
         this.reviewCreativeList.loading = true
         this.$api.AuditCreative.getAuditCreativeList(queryParam)
-          .then(res => {
-            this.reviewCreativeList.loading = false
-            this.totalCount = res.page.totalCount;
-            res.result.forEach(item => {
-              if (item.reviewTime === null || item.reviewTime === undefined) {
-                item.reviewTime = '暂无'
-              } else {
-                item.reviewTime = this.$tools.formatDate(item.reviewTime, 'yyyy-MM-dd')
-              }
-              if (item.createTime === null || item.createTime === undefined) {
-                item.createTime = '暂无'
-              } else {
-                item.createTime = this.$tools.formatDate(item.createTime, 'yyyy-MM-dd')
-              }
-              if (item.screenType === null || item.screenType === undefined) {
-                item.screenType = -1
-              } else {
-                item.screenType = parseInt(item.screenType)
-              }
+            .then(res => {
+              this.reviewCreativeList.loading = false
+              this.totalCount = res.page.totalCount;
+              res.result.forEach(item => {
+                if (item.reviewTime === null || item.reviewTime === undefined) {
+                  item.reviewTime = '暂无'
+                } else {
+                  item.reviewTime = this.$tools.formatDate(item.reviewTime, 'yyyy-MM-dd')
+                }
+                if (item.createTime === null || item.createTime === undefined) {
+                  item.createTime = '暂无'
+                } else {
+                  item.createTime = this.$tools.formatDate(item.createTime, 'yyyy-MM-dd')
+                }
+                if (item.screenType === null || item.screenType === undefined) {
+                  item.screenType = -1
+                } else {
+                  item.screenType = parseInt(item.screenType)
+                }
+              })
+              this.reviewCreativeList.data = res.result
             })
-            this.reviewCreativeList.data = res.result
-          })
-          .catch(res => {
-            this.reviewCreativeList.loading = false
-          })
+            .catch(res => {
+              this.reviewCreativeList.loading = false
+            })
       },
       // 审核创意素材下载
       downloadAuditCreative() {
@@ -396,30 +403,30 @@
         //请求方案报表列表查询接口
         this.downloadCreative.loading = true
         this.$api.AuditCreative.downloadAuditCreative(queryParam)
-          .then(res => {
-            let videoList = res.result
-            this.downloadCreative.loading = false
-            if (videoList.top != null && 0 in videoList.top) {
-              this.downloadCreative.data.topList = videoList.top[0]
-            }
-            if (videoList.down != null) {
-              if (0 in videoList.down) {
-                this.downloadCreative.data.downList.strList1 = [videoList.down[0].previewUrl]
-                this.downloadCreative.data.downList.url1 = videoList.down[0].previewUrl
+            .then(res => {
+              let videoList = res.result
+              this.downloadCreative.loading = false
+              if (videoList.top != null && 0 in videoList.top) {
+                this.downloadCreative.data.topList = videoList.top[0]
               }
+              if (videoList.down != null) {
+                if (0 in videoList.down) {
+                  this.downloadCreative.data.downList.strList1 = [videoList.down[0].previewUrl]
+                  this.downloadCreative.data.downList.url1 = videoList.down[0].previewUrl
+                }
 
-              if (1 in videoList.down) {
-                this.downloadCreative.data.downList.strList2 = [videoList.down[1].previewUrl]
-                this.downloadCreative.data.downList.url2 = videoList.down[1].previewUrl
+                if (1 in videoList.down) {
+                  this.downloadCreative.data.downList.strList2 = [videoList.down[1].previewUrl]
+                  this.downloadCreative.data.downList.url2 = videoList.down[1].previewUrl
+                }
               }
-            }
-            this.downloadCreative.data.screenType = videoList.screenType
-            console.log('downloadCreative', this.downloadCreative.data.topList, this.downloadCreative.data.downList, this.downloadCreative.data.screenType)
-          })
-          .catch(res => {
-            console.log('downloadCreative', 'false')
-            this.downloadCreative.loading = false
-          })
+              this.downloadCreative.data.screenType = videoList.screenType
+              console.log('downloadCreative', this.downloadCreative.data.topList, this.downloadCreative.data.downList, this.downloadCreative.data.screenType)
+            })
+            .catch(res => {
+              console.log('downloadCreative', 'false')
+              this.downloadCreative.loading = false
+            })
       },
       // 审核创意资质查看
       getAuditCreativeReviewDetail() {
@@ -430,37 +437,36 @@
         //请求方案报表列表查询接口
         this.reviewCreativeDetail.loading = true
         this.$api.AuditCreative.getAuditCreativeReviewDetail(queryParam)
-          .then(res => {
-            this.reviewCreativeDetail.loading = false
-            let reviewList = res.result
-            this.reviewCreativeDetail.data.forEach(item => {
-              let property = item.field
-              if (reviewList.hasOwnProperty(property)) {
-                if (property === "industryIdentify") {
-                  item.srcList = ["http://digital-publish.obs.cn-east-2.myhuaweicloud.com/industry/INDUSTRY_0_9958d63090e4473e936e1844faa9334a_INDUSTRYIMAGE.jpg"]
-                  item.value = "http://digital-publish.obs.cn-east-2.myhuaweicloud.com/industry/INDUSTRY_0_9958d63090e4473e936e1844faa9334a_INDUSTRYIMAGE.jpg"
-                } else if (property === "screenType") {
-                  let screenType = reviewList[property]
-                  this.screenTypeList.forEach((screen, index) => {
-                    if (screen['id'] === screenType) {
-                      item.value = screen['type']
-                    }
-                  })
-                } else if (reviewList[property] === "" || reviewList[property] === null) {
-                  item.value = 0;
-                } else {
-                  item.value = reviewList[property]
+            .then(res => {
+              this.reviewCreativeDetail.loading = false
+              let reviewList = res.result
+              this.reviewCreativeDetail.data.forEach(item => {
+                let property = item.field
+                if (reviewList.hasOwnProperty(property)) {
+                  if (property === "industryIdentify") {
+                    item.srcList = ["http://digital-publish.obs.cn-east-2.myhuaweicloud.com/industry/INDUSTRY_0_9958d63090e4473e936e1844faa9334a_INDUSTRYIMAGE.jpg"]
+                    item.value = "http://digital-publish.obs.cn-east-2.myhuaweicloud.com/industry/INDUSTRY_0_9958d63090e4473e936e1844faa9334a_INDUSTRYIMAGE.jpg"
+                  } else if (property === "screenType") {
+                    let screenType = reviewList[property]
+                    this.screenTypeList.forEach((screen, index) => {
+                      if (screen['id'] === screenType) {
+                        item.value = screen['type']
+                      }
+                    })
+                  } else if (reviewList[property] === "" || reviewList[property] === null) {
+                    item.value = 0;
+                  } else {
+                    item.value = reviewList[property]
+                  }
                 }
-              }
+              })
             })
-          })
-          .catch(res => {
-            this.reviewCreativeDetail.loading = false
-          })
+            .catch(res => {
+              this.reviewCreativeDetail.loading = false
+            })
       },
       //点击通过,创意变为通过
       passCreative(id, name) {
-        console.log(id, name)
         this.submit.id = id
         this.submit.status = 2
         this.submit.rejectReason = ''
@@ -473,15 +479,31 @@
         this.submit.status = 1
         this.submit.name = name
         this.dialogDenyVisible = true
+        if (this.submit.id in this.checkReasonHistory) {
+          this.checkReason = this.checkReasonHistory[this.submit.id]
+        } else {
+          this.checkReason = []
+        }
       },
-      //选择拒绝原因
-      handleCheckedReasonChange(checkItem) {
-
-        console.log(checkItem, this.checkReason)
+      //用户选择拒绝原因
+      handleCheckedChange() {
+        this.checkReasonHistory.splice(this.submit.id, 1, this.checkReason)
+      },
+      //拒绝原因，删除
+      handleClose(closeIndex) {
+        let index = this.checkReason.indexOf(closeIndex);
+        this.checkReason.splice(index, 1)
       },
       //用户选择完拒绝原因，点击提交按钮
       submitDenyCreative() {
-        this.submitAuditCreative()
+        this.submit.rejectReason = []
+        this.denyDialogReasonList.forEach(item => {
+          if (item.select === true) {
+            this.submit.rejectReason.push({index: item.index, reason: item.reason})
+          }
+        })
+        this.submit.rejectReason = JSON.stringify(this.submit.rejectReason)
+        this.submitAuditCreative(this.submit.name)
       },
       //创意审核提交
       submitAuditCreative(creativeName) {
@@ -492,28 +514,34 @@
           rejectReason: this.submit.rejectReason,
         }
         //请求创意审核提交接口
+        this.reviewCreativeList.loading = true
+        this.submitCreative.loading = true
         this.$api.AuditCreative.submitAuditCreative(queryParam)
-          .then(res => {
-            console.log(queryParam, res.result)
-            if (this.submit.status === 2) {
-              Notification({
-                title: '成功',
-                message: '创意:' + creativeName + ',通过审查',
-                type: 'success'
-              });
-            }
-            if (this.submit.status === 1) {
-              Notification({
-                title: '失败',
-                message: '创意:' + creativeName + ',审核拒绝',
-                type: 'error'
-              });
-            }
-            this.getAuditCreativeList()
-          })
-          .catch(res => {
-            this.reviewCreativeList.loading = false
-          })
+            .then(res => {
+              console.log(queryParam, res.result)
+              if (this.submit.status === 2) {
+                Notification({
+                               title: '成功',
+                               message: '创意:' + creativeName + ',通过审查',
+                               type: 'success'
+                             });
+              }
+              if (this.submit.status === 1) {
+                Notification({
+                               title: '审核拒绝成功',
+                               message: '创意:' + creativeName + ',审核拒绝',
+                               type: 'info'
+                             });
+                this.dialogDenyVisible = false
+              }
+              this.submitCreative.loading = false
+              this.reviewCreativeList.loading = false
+              this.getAuditCreativeList()
+            })
+            .catch(res => {
+              this.submitCreative.loading = false
+              this.reviewCreativeList.loading = false
+            })
       },
       //查看创意
       showContent(id) {
@@ -576,7 +604,6 @@
       border-radius: 4px;
       background-color: $color-bg-3;
       padding: 30px 0 37px 38px;
-
       .report-divider {
         .el-divider {
           background-color: $color-blue;
@@ -584,42 +611,33 @@
           width: 3px;
           margin: 0 5px 0 0;
         }
-
         .report-form-title {
           font-size: 16px;
           font-weight: bold;
           color: $color-text;
         }
       }
-
       .report-query-form {
         margin-top: 41px;
-
         .el-input {
           width: 200px;
         }
-
         .el-range-separator {
           width: 10%;
         }
-
         .item-space-1 {
           margin: 0 50px 0 0;
         }
-
         .item-space-end {
           margin: 0px 20px 0 0;
         }
-
         .el-select .el-input .el-select__caret {
           color: $color-blue;
         }
       }
     }
-
     .query_result {
       background-color: $color-bg;
-
       .list_table {
         .status {
           display: inline-block;
@@ -627,91 +645,73 @@
           width: 70px;
           height: 24px;
           text-align: center;
-
           &.pass {
             background: $color-blue;
             box-shadow: 0px 2px 4px 0px $color-shadow-2;
             color: $color-bg-3;
           }
-
           &.pending {
             background: $color-bg-2;
             box-shadow: 0px 2px 4px 0px $color-shadow-1;
           }
-
           &.deny {
             background: $color-red;
             box-shadow: 0px 2px 4px 0px $color-shadow-3;
             color: $color-bg-3;
           }
         }
-
         span i.icon-color {
           color: $color-blue;
           margin-right: 8px;
         }
-
         span.icon-space {
           display: inline-block;
           margin: 10px 35px 10px 0;
           cursor: pointer;
         }
       }
-
       .list_table {
         background-color: $color-bg;
-
         .cell {
           padding-left: 1px;
           padding-right: 1px;
           word-break: break-word;
           white-space: initial;
         }
-
         td, th {
           font-size: 14px;
           color: $color-text;
           text-align: center;
           padding: 25px 0;
         }
-
         td {
           padding: 5px 0;
           border-top: 10px solid $color-bg;
         }
-
-
         tr:first-child td {
           border-top: 0;
         }
-
         tr td:first-child {
           border-radius: 4px;
         }
-
         tr td:last-child {
           border-radius: 4px;
         }
-
         th {
           background-color: $color-bg;
           color: $color-table-title;
           border-bottom: 0;
         }
-
         tr:hover > td {
           background-color: $color-bg-3 !important
         }
-
         tr > td {
           background-color: $color-bg-3 !important
         }
-
         .show-contents {
           font-size: 14px;
           font-weight: 400;
           cursor: pointer;
-
           a {
             color: $color-blue;
             text-decoration: none;
@@ -719,7 +719,6 @@
         }
       }
     }
-
     .report-page {
       background-color: $color-bg-3;
       padding: 43px 0;
@@ -728,52 +727,42 @@
       height: 120px;
       margin-top: 30px;
       font-weight: 400;
-
       .el-pagination__total {
         font-size: 14px;
         color: $color-text-1;
       }
-
       .el-pagination {
         font-size: 14px;
         font-weight: 400;
       }
-
       .el-input__inner {
         font-size: 14px;
         font-weight: 400;
         color: $color-text-1;
       }
-
       ul.el-pager li, .btn-prev, .btn-next {
         background-color: $color-bg-3;
         border: 1px solid $color-border;
         border-radius: 2px;
       }
-
       .btn-prev:hover, .btn-next:hover {
         background-color: $color-bg-3;
         border: 1px solid $color-blue;
-
         i {
           color: $color-blue;
         }
       }
-
       .btn-prev i, .btn-next i {
         color: $color-split-line2;
       }
-
       li.active {
         background-color: $color-blue !important;
       }
     }
-
     .deny-dialog {
       .deny-from {
         .el-form-item__content {
           margin-left: 0 !important;
-
           .deny-title {
             font-size: 14px;
             font-weight: 400;
@@ -781,7 +770,6 @@
             height: 13px;
             line-height: 13px;
           }
-
           .deny-reason-group {
             .el-checkbox-button {
               background-color: $color-bg-3;
@@ -789,8 +777,6 @@
               margin-right: 10px;
               margin-top: 10px;
             }
-
-
             .el-checkbox-button__inner {
               font-size: 12px;
               font-weight: 400;
@@ -799,7 +785,6 @@
               border: 1px solid $color-bg-7;
               background-color: $color-bg-7;
             }
-
             .is-checked {
               .el-checkbox-button__inner {
                 background-color: $color-blue;
@@ -810,38 +795,31 @@
           }
         }
       }
-
       .el-dialog__header {
         border-bottom: 1px solid $color-border;
         padding: 24px 0 21px 30px;
-
         .el-dialog__title {
           font-size: 16px;
           font-weight: 400;
           color: $color-text;
         }
       }
-
       .dialog-footer {
         text-align: center;
-
         .el-button {
           width: 136px;
           height: 34px;
           border-radius: 2px;
-
           + .el-button {
             margin-left: 45px;
           }
         }
       }
-
       .choose-deny-list {
         min-height: 160px;
         background: $color-bg-7;
         border-radius: 4px;
         padding: 20px;
-
         .el-tag {
           background: $color-blue;
           border-radius: 12px;
@@ -850,7 +828,6 @@
           color: $color-bg-3;
           position: relative;
         }
-
         i.el-icon-close {
           padding: 5px;
           position: absolute;
@@ -858,40 +835,40 @@
           background-color: $color-bg-3;
           color: $color-blue;
         }
-
         i.el-icon-close:hover {
           background-color: $color-blue;
           color: $color-bg-3;
         }
-
         .el-tag .el-icon-close::before {
           position: absolute;
           top: 6%;
           left: 13%;
         }
+        .displayTag {
+          display: none;
+        }
+        .showTag {
+          display: inline-block;
+          margin: 0 40px 10px 0
+        }
       }
     }
-
     .creative-dialog {
       .el-dialog {
         margin-top: 10vh !important;
       }
-
       .el-dialog__header {
         border-bottom: 1px solid $color-border;
         padding: 24px 20px 21px 30px;
-
         .el-dialog__title {
           font-size: 16px;
           font-weight: 400;
           color: $color-text;
         }
       }
-
       .el-dialog__body {
         padding: 24px 30px 24px 30px;
       }
-
       .aptitude {
         .text-col {
           font-size: 14px;
@@ -899,21 +876,17 @@
           margin-top: 31px;
           display: flex;
         }
-
         .text-title {
           color: $color-table-title;
         }
-
         .text-info {
           color: $color-text-1;
           margin-left: 90px;
         }
-
         .demo-image__preview {
           margin-left: 90px;
         }
       }
-
       .material {
         .top-screen {
           a {
@@ -941,20 +914,16 @@
             font-size: 12px;
             border-radius: 2px;
           }
-
           a:hover, a:active, a:link, a:visited {
             color: $color-blue;
           }
         }
-
         .bottom-screen {
           margin-top: 50px;
-
           .bottom-screen-box {
             display: flex;
             margin-top: 24px;
           }
-
           .left-pre {
             display: inline-block;
             width: 260px;
@@ -963,7 +932,6 @@
             border: 1px solid rgba(229, 231, 233, 1);
             border-radius: 2px;
           }
-
           .right-pre {
             display: inline-block;
             width: 260px;

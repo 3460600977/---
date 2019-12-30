@@ -27,5 +27,12 @@ export const cityInsight = {
       url: "/dpapi/cityInsight/" + data,
       method: "get",
     });
+  },
+  searchBuildingByWord: data => {
+    return request({
+      url: '/dpapi/crowd/premisesQuery',
+      method: "POST",
+      data
+    });
   }
 }

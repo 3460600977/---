@@ -294,7 +294,8 @@ let tools = {
       "d+": date.getDate().toString(),            // 日
       "H+": date.getHours().toString(),           // 时
       "M+": date.getMinutes().toString(),         // 分
-      "S+": date.getSeconds().toString()          // 秒
+      "S+": date.getSeconds().toString(),          // 秒
+      "c+": date.getMilliseconds().toString()     // 毫秒
       // 有其他格式化字符需求可以继续添加，必须转化成字符串
     };
     for (let k in opt) {
@@ -402,27 +403,44 @@ let tools = {
     const start = new Date(now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate() + ' 00:00:00');
     return [start, end];
   },
-
+  // 去抖函数
   debounce(fn, delay) {
 
-  // 定时器，用来 setTimeout
-  var timer
-  // 返回一个函数，这个函数会在一个时间区间结束后的 delay 毫秒时执行 fn 函数
-  return function () {
+    // 定时器，用来 setTimeout
+    var timer
+    // 返回一个函数，这个函数会在一个时间区间结束后的 delay 毫秒时执行 fn 函数
+    return function () {
 
-    // 保存函数调用时的上下文和参数，传递给 fn
-    var context = this
-    var args = arguments
-    // 每次这个返回的函数被调用，就清除定时器，以保证不执行 fn
-    clearTimeout(timer)
+      // 保存函数调用时的上下文和参数，传递给 fn
+      var context = this
+      var args = arguments
+      // 每次这个返回的函数被调用，就清除定时器，以保证不执行 fn
+      clearTimeout(timer)
 
-    // 当返回的函数被最后一次调用后（也就是用户停止了某个连续的操作），
-    // 再过 delay 毫秒就执行 fn
-    timer = setTimeout(function () {
-      fn.apply(context, args)
-    }, delay)
-  }
-}
+      // 当返回的函数被最后一次调用后（也就是用户停止了某个连续的操作），
+      // 再过 delay 毫秒就执行 fn
+      timer = setTimeout(function () {
+        fn.apply(context, args)
+      }, delay)
+    }
+  },
+
+  // 二分算法
+  binarySearch(index, data, key) {
+    let l = 0, r = data.length - 1;
+    while (l <= r) {
+      let mid = Math.floor((l + r) / 2);
+      let currentP = data[mid][key];
+      if (currentP < index) {
+        l = mid + 1;
+      } else if (currentP > index) {
+        r = mid - 1;
+      } else {
+        return mid;
+      }
+    }
+    return l;
+  },
 
 
 }

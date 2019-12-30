@@ -1,67 +1,64 @@
 <template>
-    <div class="right-info-wrapper">
-      <p class="font-16">投放预算</p>
-      <div class="mid-between color-text-1 margin2">
-        <span>低</span>
-        <el-slider
-          class="flex1 slider"
-          v-model="val"
-          @change="budgetChange"
-          :format-tooltip="formatTooltip"
-        ></el-slider>
-        <span>高</span>
-      </div>
-      <p class="font-16 margin1">投放预估数</p>
-      <div class="content">
-        <div class="clearfix">
-          <div class="float-left buldingNum">
-            <p class="color-text-1">楼盘数</p>
-            <p class="margin-top-10"><span class="font-number font-20">{{selectedBuildings.length}}</span>个</p>
-          </div>
-          <div class="float-left">
-            <p class="color-text-1">设备数</p>
-            <p class="margin-top-10"><span class="font-number font-20">{{deviceCount}}</span>个</p>
-          </div>
-        </div>
-      </div>
-      <div class="text-center">
-        <div class="chart">
-          <dash-board :displayData="coveredPeople" :total="120" :value="selectedBuildings.length"></dash-board>
-        </div>
-      </div>
-      <div class="margin1" v-show="pathArrCopy.length">
-        <p>选点</p>
-        <ul class="list margin2 border-bottom">
-          <li class="list-item mid-between" v-for="(item, index) in pathArrCopy" :key="index">
-            <p>选点{{item.index}}</p>
-            <span class="iconfont icon-remove icon-error" @click="deletePath(item)"></span>
+    <div class="right-info-wrapper mid-column">
+<!--      <p class="font-16">投放预算</p>-->
+<!--      <div class="mid-between color-text-1 margin2">-->
+<!--        <span>低</span>-->
+<!--        <el-slider-->
+<!--          class="flex1 slider"-->
+<!--          v-model="val"-->
+<!--          @change="budgetChange"-->
+<!--          :format-tooltip="formatTooltip"-->
+<!--        ></el-slider>-->
+<!--        <span>高</span>-->
+<!--      </div>-->
+      <div class="padding padding1">
+        <p class="margin1 bold">投放预估数</p>
+        <ul class="desc">
+          <li class="mid-start">
+            <p class="label">楼盘数</p>
+            <p class="font-number font-16">{{selectedBuildings.length}}个</p>
+          </li>
+          <li class="mid-start">
+            <p class="label">单元数</p>
+            <p class="font-number font-16">{{unitNum}}个</p>
+          </li>
+          <li class="mid-start">
+            <p class="label">点位数</p>
+            <p class="font-number font-16">{{deviceCount}}个</p>
+          </li>
+          <li class="mid-start">
+            <p class="label">覆盖人次</p>
+            <p class="font-number font-16">{{coveredPeople}}个</p>
           </li>
         </ul>
+
+        <div class="mid-between margin1">
+          <p class="bold">媒体资源</p>
+          <el-button type="primary" plain icon="el-icon-plus" @click="addBtnClick">添加</el-button>
+        </div>
       </div>
-      <div style="margin-top: 14px;text-align: center">
-        <el-button type="primary" class="btn">创建资源包</el-button>
+      <ul class="list margin2 border-bottom flex1 customScroll">
+        <li class="list-item" v-for="(item, index) in selectedBuildings" :key="item.premisesId">
+          <p>{{item.premisesName}}</p>
+          <div class="mid-start list-item-2">
+            <p class="list-item-1">点位数：{{item.signElevatorNum}}</p>
+            <p>约覆盖人数：{{item.totalPeople}}</p>
+          </div>
+          <span class="iconfont icon-remove icon-error hand" @click="deleteItem(item)"></span>
+        </li>
+      </ul>
+      <div style="margin-top: 14px;text-align: center" class="padding padding2">
+        <el-button type="primary" class="btn" @click="createPackage">创建资源包</el-button>
       </div>
     </div>
 </template>
 
 <script>
-  import DashBoard from "../../../components/chart/DashBoard";
   export default {
     name: "info",
-    components: {
-      DashBoard
-    },
     props: {
-      budget: {
-        type: Number,
-        required: true
-      },
       selectedBuildings: {
         type: Array,
-        required: true
-      },
-      pathArr: {
-        type: Object,
         required: true
       },
     },
@@ -71,67 +68,114 @@
         maxVal: 100,
         deviceCount: 0,
         coveredPeople: 0,
-        pathArrCopy: [],
+        unitNum: 0,
       }
     },
     created() {
-      this.val = this.budget * this.maxVal
       this.renderDatas(this.selectedBuildings)
-      this.pathArrCopy = Object.values(this.pathArr)
-      console.log(this.pathArrCopy)
     },
     watch: {
       selectedBuildings(val) {
         this.renderDatas(val)
       },
-      pathArr(val) {
-        console.log(val)
-        this.pathArrCopy = Object.values(val)
-        console.log(this.pathArrCopy)
-      },
     },
     methods: {
-      formatTooltip(val) {
-        return val+'%'
-      },
-      budgetChange(val) {
-        this.$emit('budgetChange', val / this.maxVal)
-      },
       renderDatas(arr) {
         this.deviceCount = 0
         this.coveredPeople = 0
+        this.unitNum = 0
         arr.forEach((item) => {
           this.deviceCount += item.signElevatorNum
           this.coveredPeople += item.totalPeople
+          this.unitNum += item.unitNum? item.unitNum: 0
         })
       },
-      deletePath(key) {
-        this.$emit('deletePath', key)
+      addBtnClick() {
+        this.$emit('addBtnClick')
       },
+      createPackage() {
+        this.$emit('createPackage')
+      },
+      deleteItem(item) {
+        this.$emit('deleteItem', item)
+      }
     }
   }
 </script>
 
 <style scoped lang='scss'>
+  .padding {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .padding1 {
+    padding-top: 10px;
+  }
+  .padding2 {
+    padding-bottom: 15px;
+  }
 .right-info-wrapper {
-  width: 312px;
+  width:352px;
+  position: relative;
+  height: 100%;
+  background: #fff;
   line-height: 1.15;
-  padding: 20px 20px 15px;
+  /*padding: 20px 20px 15px;*/
+  .slider-item {
+    position: absolute;
+    left: -40px;
+    background-color: #fff;
+    width: 40px;
+    top: 50%;
+    transform: translateY(23px);
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    z-index: 1;
+  }
+  .desc {
+    color: $color-text-1;
+    li {
+      margin-top: 20px;
+    }
+    .label {
+      width: 178px;
+    }
+  }
   .btn {
     width: 194px;
   }
   .list {
+    overflow-y: auto;
+    position: relative;
+    padding-left: 20px;
     padding-bottom: 10px;
+    .list-item-1 {
+      width: 122px
+    }
+    .list-item-2 {
+      font-size: 12px;
+      color: $color-text-1;
+      margin-top: 10px;
+    }
     .list-item {
-      line-height:36px;
-      color: $color-main;
-      padding: 0 11px;
-      margin-bottom: 12px;
+      position: relative;
+      margin-right: 20px;
+      padding: 10px 20px 10px 30px;
+      margin-bottom: 10px;
+      border: 1px dashed $color-main;
       background:rgba(255,255,255,1);
-      box-shadow:0px 4px 10px 0px rgba(118,118,118,0.16);
-      border-radius:2px;
       .icon-remove {
-        width: 18px;
+        font-size: 18px;
+        background: #ffffff;
+        position: absolute;
+        top: 50%;
+        color: $color-main;
+        z-index: 100;
+        transform: translateY(-50%);
+        right: -9px;
       }
     }
   }
@@ -143,20 +187,6 @@
   }
   .margin2 {
     margin-top: 20px;
-  }
-  .content {
-    padding: 22px 0 29px;
-    .buldingNum {
-      margin-right: 113px;
-    }
-    .margin-top-10 {
-      margin-top: 10px;
-    }
-  }
-  .chart {
-    width:154px;
-    height:154px;
-    display: inline-block;
   }
 }
 </style>

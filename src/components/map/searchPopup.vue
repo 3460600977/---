@@ -5,22 +5,22 @@
       <span class="iconfont icon1 icon-error2 hand" @click="hide"></span>
     </p>
     <div class="remote">
-      <div>
-        <el-input v-model="val" placeholder="输入地点"></el-input>
-      </div>
-      <ul class="ul">
-        <li @click="handleSelect(item)"  v-for="(item, index) in lists" :key="index">
-          <p>{{item.title}}</p>
-          <p class="color-text-1 margin">{{item.address}}</p>
-        </li>
-      </ul>
+      <search-input
+        ref="searchInput"
+        @querySearchAsync="querySearchAsync"
+        @selectLocation="selectLocation"
+      ></search-input>
     </div>
   </div>
 </template>
 
 <script>
+  import searchInput from "../searchInput";
   export default {
     name: "searchPopup",
+    components: {
+      searchInput
+    },
     props: {
       title: {
         type: String,
@@ -29,36 +29,22 @@
     },
     data() {
       return {
-        val: '',
-        lists: [],
-        timeout:  null
       }
     },
     created() {
-      this.$watch('val', this.$tools.debounce((newQuery) => {
-        if (newQuery === '') {
-          this.lists = []
-        } else {
-          this.$emit('querySearchAsync', newQuery)
-        }
-      }, 500))
     },
     methods: {
       hide() {
         this.$emit('hide')
       },
       setSearchList(lists) {
-        this.lists = lists
+        this.$refs.searchInput.setSearchList(lists)
       },
-      // querySearchAsync(queryString) {
-      //   this.$tools.debounce(() => {
-      //     console.log(queryString)
-      //   }, 1000)()
-      //   // this.$emit('querySearchAsync', queryString)
-      // },
-      handleSelect(item) {
+      querySearchAsync(queryString) {
+        this.$emit('querySearchAsync', queryString)
+      },
+      selectLocation(item) {
         this.$emit('selectLocation', item)
-        this.val = ''
         this.hide()
       },
     }
@@ -100,36 +86,10 @@
           background:rgba(241,242,246,1);
         }
       }
-
-      &::-webkit-scrollbar    //滚动条整体部分
-      {
-        width: 5px;
-        height:10px;
-        background-color:rgba(242,242,242,1);
-      }
-      &::-webkit-scrollbar-track       //scroll轨道背景
-      {
-        -webkit-box-shadow: inset 0 0 6px rgba(242,242,242,1);
-        border-radius: 10px;
-        background-color:rgba(242,242,242,1);
-
-      }
-      &::-webkit-scrollbar-thumb  // 滚动条中能上下移动的小块
-      {
-        border-radius: 10px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color:rgba(223,223,223,1);;
-      }
     }
     .remote {
       padding: 20px;
       width: 432px;
-      & /deep/ .el-input {
-        width: 100%;
-      }
-      & /deep/ .el-input__inner {
-        padding: 0 20px;
-      }
     }
   }
 </style>

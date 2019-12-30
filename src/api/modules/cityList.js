@@ -20,5 +20,15 @@ export const CityList = {
       url: "/dpapi/typeList",
       method: "GET"
     });
-  }
+  },
+  
+  //POST根据订单信息计算预估总价
+  EstimateTotalPrice: (data) => {
+    return request({
+      url: "/dpapi/estimate/totalPrice",
+      method: "post",
+      data
+    });
+  },
+
 }

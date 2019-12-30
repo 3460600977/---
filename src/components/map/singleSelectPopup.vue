@@ -1,11 +1,11 @@
 <template>
-  <div class="selectPopUp">
+  <div class="selectPopUp" v-show="isShow">
     <p class="title border-bottom padding mid-between">
       <span>{{title}}</span>
       <span class="iconfont icon1 icon-error2 hand" @click="hide"></span>
     </p>
     <p class="current padding margin3">当前城市：<span class="color-main">{{currentItem.name}}</span></p>
-    <div class="content padding">
+    <div class="content padding customScroll">
       <div class="item" v-for="(item, index) in selectDatas" :key="index">
         <p class="type">{{item.title}}</p>
         <ul class="ul hand">
@@ -13,11 +13,6 @@
         </ul>
       </div>
     </div>
-<!--    <div class="btns padding text-right">-->
-<!--      <el-button type="text" @click="operate(0)">清空</el-button>-->
-<!--      <el-button class="btn" size="mini" @click="operate(1)">取消</el-button>-->
-<!--      <el-button class="btn" type="primary" size="mini" @click="operate(2)" plain>确定</el-button>-->
-<!--    </div>-->
   </div>
 </template>
 
@@ -40,27 +35,33 @@
     },
     data() {
       return {
-        currentItem: {}
+        currentItem: {},
+        isShow: true
       }
     },
-    created() {
-      // this.filtersCopy = this.$tools.deepCopy(this.filters)
-      this.currentItem = this.findItem(this.filters, this.selectDatas)
+    watch: {
+      filters(val) {
+        this.currentItem = this.findItem(this.filters, this.selectDatas)
+      },
+      currentItem(val) {
+        this.$emit('returnResult', val)
+      },
     },
     methods: {
       findItem(val, arr) {
-        let arrTotal = this.$tools.FilterByKey(arr, 'values')
+        let arrTotal = this.$tools.operation(arr, 'values')
         let result =  arrTotal.find((item) => {
-          return item.cityCode == val.cityCode
+          return item.name == val.name
         })
         return result
       },
       hide() {
+        // this.isShow = false
         this.$emit('hide')
       },
       typeClick(val) {
         this.currentItem = val
-        this.$emit('returnResult', val)
+        this.hide()
       },
     }
   }

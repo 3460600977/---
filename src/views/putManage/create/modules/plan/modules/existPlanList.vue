@@ -2,8 +2,8 @@
   <div class="exist-creative-list clearfix">
     <div class="box-top">
       <div class="search-box mid">
-        <el-input class="search-text" clearable v-model="search" placeholder="输入投放计划名称"></el-input>
-        <el-button @click="searchPlanByName" type="primary" plain>查询</el-button>
+        <el-input class="search-text" clearable v-model.trim="param.name" placeholder="输入投放计划名称"></el-input>
+        <el-button @click="getExistPlanList" type="primary" plain>查询</el-button>
       </div>
 
       <div class="list-box">
@@ -18,6 +18,7 @@
             <el-pagination
               class="float-right"
               background
+              :pagerCount="5"
               layout="total, sizes, prev, pager, next"
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
@@ -54,7 +55,6 @@ export default {
   name: 'existCreativeList',
   data() {
     return {
-      search: '',
       list: {
         loading: false,
         choosedItem: '',
@@ -62,22 +62,22 @@ export default {
         data: '',
         page: ''
       },
-    }
-  },
-
-  methods: {
-    getExistPlanList(name, pageIndex, pageSize) {
-      let param = {
-        name, 
-        pageIndex, 
-        pageSize, 
+      param: {
+        name: '', 
+        pageIndex: '', 
+        pageSize: 10, 
         record: 0,
         startIndex: 0, 
         startindex: 0, 
         totalPageCount: 0
       }
+    }
+  },
+
+  methods: {
+    getExistPlanList() {
       this.list.loading = true;
-      this.$api.PutPlan.PlanList(param)
+      this.$api.PutPlan.PlanList(this.param)
         .then(res => {
           this.list.loading = false;
           this.list.data = res.result;
@@ -90,15 +90,13 @@ export default {
     },
 
     handleSizeChange(size) {
-      this.getExistPlanList('', '', size)
+      this.param.pageSize = size;
+      this.getExistPlanList()
     },
 
     handleCurrentChange(cur) {
-      this.getExistPlanList('', cur, '')
-    },
-
-    searchPlanByName() {
-      this.getExistPlanList(this.search, 0, 0)
+      this.param.pageIndex = cur;
+      this.getExistPlanList()
     },
 
     nextStep() {

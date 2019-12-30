@@ -68,16 +68,29 @@
       <!-- 覆盖效果 -->
       <div class="hover-move-block" :style="{...rightMsg.hoverBlock.style}"></div>
     </div>
+    <el-dialog
+      :visible.sync="dialogEditPass"
+      width="780px"
+      title="修改密码" class="edit-pass-dialog">
+      <edit-pass-index @changeDialogEditPass="changeEditPass"></edit-pass-index>
+    </el-dialog>
   </header>
 </template>
 
 <script>
-  import {removeUserInfo} from '@/utils/auth';
+  import { removeUserInfo, getUserInfo } from '@/utils/auth';
+  import { MenuList } from '../../../utils/static'
+  import editPassIndex from "../../../components/EditPass";
 
   export default {
     name: 'TopHeader',
+    components: {
+      editPassIndex
+    },
     data() {
       return {
+        MenuList,
+        dialogEditPass: false,
         loading: false,
         images: {
           logo: require('../../../assets/images/icon_logo.png'),
@@ -94,12 +107,12 @@
             opacity: 0
           },
           content: [
-            {name: '首页', path: '/'},
-            {name: '城市洞察', path: '/cityInsight'},
+            {name: '首页', path: '/home'},
             {name: '人群洞察', path: '/peopleInsight'},
+            {name: '媒体智选', path: '/cityInsight'},
             {name: '投放管理', path: '/putManage'},
             {name: '报表中心', path: '/reportList'},
-            {name: '工具箱', path: '/toolBox'},
+            {name: '财务管理', path: ''},
             {name: '审核管理', path: '/auditList'},
           ]
         },
@@ -180,28 +193,31 @@
         this.$router.replace('/toolBox/account')
       },
       handleToPass() {
-        this.$router.replace('/toolBox/editPass')
+        this.dialogEditPass = true
       },
       handleToLogout() {
         this.$api.Login.LoginOut()
-          .then(res => {
-            this.loading = false;
-            store.dispatch('FedLogOut').then(() => {
+            .then(res => {
+              this.loading = false;
+              store.dispatch('FedLogOut').then(() => {
+
+              })
 
             })
-
-          })
-          .catch(res => {
-            this.loading = false;
-          })
+            .catch(res => {
+              this.loading = false;
+            })
       },
+      changeEditPass(val) {
+        this.dialogEditPass = val
+      }
     },
     mounted() {
       //请求验证码接口
-      // let userInfo = getUserInfo()
-      // if (!userInfo.avatar || userInfo.avatar.match(/^[ ]*$/)) { // "",null,undefined,NaN
-      //     this.images.up = userInfo.avatar
-      // }
+      let userInfo = getUserInfo()
+      if (!userInfo.avatar || userInfo.avatar.match(/^[ ]*$/) || userInfo.avatar != null) { // "",null,undefined,NaN
+        this.images.up = userInfo.avatar
+      }
     },
     beforeMount() {
       this.setActiveTopMenu()
@@ -215,35 +231,29 @@
     flex-shrink: 0;
     min-height: $headerHeight;
     background-color: #2A2F4D;
-
     .logo {
       float: left;
       height: $headerHeight;
       margin-left: 30px;
       cursor: pointer;
       user-select: none;
-
       .logo-xinchao {
         width: 124px;
       }
-
       .logo-split {
         width: 1px;
         height: 20px;
         margin: 0 12px;
         background: rgba(87, 94, 135, 1);
       }
-
       .company-name {
         margin-right: 50px;
       }
     }
-
     .my-menu {
       height: $headerHeight;
       float: left;
       color: #D4D4D4;
-
       .item {
         position: relative;
         z-index: 2;
@@ -261,18 +271,15 @@
           background: #242945;
           color: #fff;
         }
-
         .menu-text {
           height: $headerHeight - 4px;
           user-select: none;
           padding-bottom: $headerHeight - 4px;
-
           &.active {
             border-bottom: 4px solid rgba(45, 90, 255, 1);
           }
         }
       }
-
       .hover-move-block {
         position: absolute;
         z-index: 1;
@@ -282,12 +289,10 @@
         background: #333A61;
       }
     }
-
     .user-msg {
       float: right;
       height: $headerHeight;
       margin-right: 28px;
-
       .item {
         position: relative;
         z-index: 2;
@@ -300,24 +305,19 @@
         // }
         .user-head {
           height: 100%;
-
           .head {
             float: left;
           }
-
           .operation-box {
             float: left;
             height: $headerHeight;
-
             .user-name {
               margin: 0 10px;
               color: #979EBA;
             }
-
             .up-icon, .drop-box {
               transition: 0.3s;
             }
-
             &:hover {
               // .drop-box{
               //   display: block;
@@ -326,7 +326,6 @@
                 transform: rotate(180deg);
               }
             }
-
             .drop-box {
               // display: none;
               top: $headerHeight;
@@ -336,7 +335,6 @@
               background: rgba(255, 255, 255, 1);
               border: 1px solid rgba(233, 233, 233, 1);
               border-radius: 4px;
-
               .o-item {
                 padding: 18px 0;
                 color: #999999;
@@ -346,7 +344,6 @@
           }
         }
       }
-
       .hover-move-block {
         position: absolute;
         z-index: 1;
@@ -357,7 +354,6 @@
       }
     }
   }
-
   @media screen and (max-width: 1280px) {
     .logo-split, .company-name {
       display: none;

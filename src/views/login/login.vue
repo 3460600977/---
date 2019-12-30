@@ -1,5 +1,5 @@
 <template>
-  <div class="login-page" v-bind:style="{ backgroundImage: 'url('+this.logo_back_img+')'}">
+  <div v-loading="pageLoading" class="login-page" v-bind:style="{ backgroundImage: 'url('+this.logo_back_img+')'}">
     <div class="login-box">
       <div class="box-center" v-bind:style="{ width: loginFormWidth +'px' }">
         <div class="xinchao-logo" v-bind:style="{ width: imageWidth +'px' }">
@@ -50,7 +50,7 @@
 </template>
 
 <script>
-  import {setUserInfo} from '@/utils/auth';
+  import { setUserInfo } from '@/utils/auth';
 
   export default {
     name: 'login',
@@ -67,6 +67,7 @@
           verifyValue: ''
         },
         loading: false,
+        pageLoading: true, // 整个页面转圈, token登录用
         rules: {
           username: [
             {required: true, message: '请输入账号名', trigger: ['blur', 'change']},
@@ -83,11 +84,25 @@
     computed: {
       loginFormWidth: function () {
         return this.imageWidth * 2 + 20;
+      },
+      isTokenLogin() {
+        return !!this.$route.query.advertiserId && !!this.$route.query.saleAccessToken
       }
     },
+
+    beforeMount() {
+      if (this.isTokenLogin) {
+        this.tokenLogin()
+      } else {
+        this.pageLoading = false;
+      }
+    },
+
     mounted() {
-      //请求验证码接口
-      this.changeCaptureNUm()
+      if (!this.isTokenLogin) {
+        this.changeCaptureNUm()
+      }
+
     },
     methods: {
       onSubmit(formName) {
@@ -105,30 +120,52 @@
             //请求登录接口
             this.loading = true;
             this.$api.Login.LoginIn(param)
-              .then(res => {
-                console.log(res.result)
-                let info = res.result
-                this.$router.replace({
-                  path: '/home',
-                  query: {}
+                .then(res => {
+                  let info = res.result
+                  this.$router.replace({path: '/home', query: {}})
+                  this.loading = false;
+                  this.$store.commit('setToken', info.token)
+                  setUserInfo(info)
                 })
-                this.loading = false;
-                this.$store.commit('setToken', info.token)
-                setUserInfo(info)
-              })
-              .catch(res => {
-                this.loading = false;
-              })
+                .catch(res => {
+                  this.loading = false;
+                })
           }
         });
       },
+
+      // 根据url中token和id登录
+      tokenLogin() {
+        let param = {
+          advertiserId: this.$route.query.advertiserId,
+	        saleAccessToken: this.$route.query.saleAccessToken
+        }
+        this.$api.Login.LoginInByToken(param)
+          .then(res => {
+              console.log(res.result)
+              let info = res.result
+              this.pageLoading = false;
+              this.$router.replace({
+                path: '/home',
+                query: {}
+              })
+              this.loading = false;
+              this.$store.commit('setToken', info.token)
+              setUserInfo(info)
+          })
+          .catch(res => {
+            this.pageLoading = false;
+            this.changeCaptureNUm()
+          })
+      },
+
       changeCaptureNUm() {
         //请求验证码接口
         this.$api.Login.GetVerifyCode()
-          .then(res => {
-            this.login_capture_img = res.result.image
-            this.loginForm.verifyToken = res.result.verifyToken
-          }).catch(res => {
+            .then(res => {
+              this.login_capture_img = res.result.image
+              this.loginForm.verifyToken = res.result.verifyToken
+            }).catch(res => {
         })
       }
     }
@@ -142,34 +179,28 @@
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
-
     .login-box {
       height: 100%;
-
       .box-center {
         position: relative;
         margin: 0 auto;
         top: 18%;
       }
     }
-
     .xinchao-logo {
       position: absolute;
       z-index: 3;
       top: -12.5%;
       left: -0.6%;
     }
-
     .logo-form {
       background: $color-bg-3;
       border-radius: 14px;
-
       .login-title {
         font-size: 32px;
         font-weight: 300;
         color: $color-table-title;
       }
-
       .login-des {
         font-size: 14px;
         font-weight: 300;
@@ -177,33 +208,27 @@
         display: inline-block;
         margin-top: 18px;
       }
-
       .loginForm {
         margin-top: 44px;
       }
-
       .el-input {
         width: 320px;
         height: 36px;
       }
-
       .el-input__inner {
         width: 320px;
         height: 36px;
         background-color: $color-bg-8;
         border-radius: 18px;
       }
-
       input::-webkit-input-placeholder {
         font-size: 14px;
         font-weight: 300;
         color: $color-text-1;
       }
-
       .loading-button button {
         border: none;
       }
-
       .el-button {
         width: 320px;
         height: 40px;
@@ -211,7 +236,6 @@
         border-radius: 20px;
         margin: 50px 0;
       }
-
       .el-loading-spinner {
         width: 320px;
         height: 40px;
@@ -219,29 +243,24 @@
         border: 1px solid $color-blue;
         border-radius: 20px;
       }
-
       .loginCapture {
         margin-bottom: 0;
         display: flex;
-
         .el-input, .el-input__inner {
           display: inline-block;
           width: 220px;
           height: 36px;
         }
-
         .captureNum {
           width: 90px;
           display: inline-block;
           margin-left: 12px;
           position: absolute;
           top: 10%;
-
           img {
             width: 100%;
             cursor: pointer;
           }
-
           .image-slot {
             font-size: 20px;
             background-color: $color-bg-4;
@@ -251,7 +270,6 @@
           }
         }
       }
-
       .submit-login {
         margin-bottom: 0;
       }

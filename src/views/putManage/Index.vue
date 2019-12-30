@@ -3,15 +3,15 @@
     <el-tabs @tab-click="changeTab" v-model="activeName" class="my-tabs" type="border-card">
 
       <el-tab-pane label="投放计划" name="plan">
-        <planList />
+        <planList :active="activeName === 'plan'" />
       </el-tab-pane>
 
       <el-tab-pane label="投放方案" name="project">
-        <projectList />
+        <projectList :active="activeName === 'project'" />
       </el-tab-pane>
 
       <el-tab-pane label="广告创意" name="creative">
-        <creativeList />
+        <creativeList :active="activeName === 'project'" />
       </el-tab-pane>
 
     </el-tabs>
