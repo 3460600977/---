@@ -7,10 +7,12 @@
           <span class="color-text-1">{{projectDetail.data.name}}</span>
         </el-form-item>
         <el-form-item label="投放方案状态">
-          <span class="color-text-1">{{projectStatus[projectDetail.data.status]}}</span>
+          <label class="put-status-box">
+            {{projectStatus[projectDetail.data.status]}}
+          </label>
         </el-form-item>
         <el-form-item label="投放方案行业">
-          <span class="color-text-1">{{$tools.getObjectItemFromArray(indurstryList, 'industryId', projectDetail.data.industry).name}}</span>
+          <span class="color-text-1">{{$tools.getObjectItemFromArray(indurstryList, 'industryId', projectDetail.data.industry).name || '加载中'}}</span>
         </el-form-item>
         <el-form-item label="投放类型">
           <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.putType, 'value', projectDetail.data.projectType).name}}</span>
@@ -35,13 +37,14 @@
           <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.screenType, 'value', projectDetail.data.type).name}}</span>
         </el-form-item>
         <el-form-item label="总计">
-          <span class="color-red">{{projectDetail.data.totalCost}}</span>
+          <span class="color-red">¥ {{projectDetail.data.totalCost}}</span>
         </el-form-item>
       </el-form>
     </el-tab-pane>
 
     <el-tab-pane label="点位信息" name="point">
         <SelectedList 
+          :projectId="projectId"
           :loading="projectDetail.loading"
           :buildingDirectionActiveType="'list'"/>
     </el-tab-pane>
@@ -159,32 +162,11 @@ export default {
 </script>
 
 <style lang="scss">
-.build-msg-list{
-  margin-top: 40px;
-  width:538px;
-  border:1px solid rgba(229,231,233,1);
-  .build-title{
-    height: 48px;
-    padding: 0 11px;
-    line-height: 44px;
-    font-weight: bold;
-    background:rgba(249,252,255,1);
-  }
-  .build-msg-item-box{
-    max-height: 482px;
-    overflow-y: auto;
-    .item{
-      position: relative;
-      border-top:1px solid rgba(229,231,233,1);
-      padding: 14px 11px;
-      .left-info{
-        width: 440px;
-        .name{
-          height: 14px;
-          line-height: 14px;
-        }
-      }
-    }
-  }
+.put-status-box{
+  padding: 4px 10px;
+  background: $color-main;
+  font-size: 14px;
+  color: #fff;
+  border-radius:12px 12px 12px 0px;
 }
 </style>

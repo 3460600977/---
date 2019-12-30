@@ -3,6 +3,10 @@
 }
 
 .list_table {
+  a {
+    color: $color-text;
+    text-decoration: none;
+  }
   ::after, ::before {
     background-color: $color-bg-3;
   }
