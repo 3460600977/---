@@ -5,7 +5,29 @@ export const peopleInsight = {
   getMenuList:(data) => {
     return request({
       url: "/dpapi/crowd/topTags",
-      method: "GET"
+      method: "get",
+      data,
     });
   },
+  getCrowdList:(data) => {
+    return request({
+      url: "/dpapi/crowd/query",
+      method: "post",
+      data,
+    });
+  },
+  deleteCrowdById:(data)=> {
+    return request({
+      url: "/dpapi/crowd/del",
+      method: "post",
+      data,
+    });
+  },
+  getChildTags:(data)=> {
+    return request({
+      url: "/dpapi/crowd/childTags?tid="+data,
+      method: "get",
+    });
+  },
+
 }

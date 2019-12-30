@@ -22,7 +22,7 @@ service.interceptors.request.use(
     } else {
       config.headers['token'] = '';
     }
-    config.headers['token'] = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJXQjE4MDUyNDMiLCJleHAiOjE1Nzc5NTE1Njd9.joN07JA-ZyC2AwZJHxbIy22FcLsKIxNOOtxvePPqw9M';
+    config.headers['token'] = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJXQjE4MDUyNzAiLCJleHAiOjE1NzgyNzQzODh9.pbL9uw7gO0Rro4Ro3sJAKvjbzT9qsDLne67L6Otm3dM';
     return config
   },
   error => {

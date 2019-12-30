@@ -46,7 +46,7 @@
   import demographicAttr from "./demographicAttr";
   import createForm from "./createForm";
 
-  const seriesValue = 'tid'
+  const seriesValue = 'tid';
 
   export default {
     name: "createPeoplePackage",
@@ -67,10 +67,10 @@
         tabData: [],
         currentTabComponent: '',
         tabMapping: {
-          110: demographicAttr,
-          111: locationAttr,
-          112: Hobby,
-          113: industryConsume
+          133: demographicAttr,
+          105: locationAttr,
+          42: Hobby,
+          30000001: industryConsume
         },
       }
     },

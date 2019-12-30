@@ -96,6 +96,7 @@
           content: [
             {name: '首页', path: '/'},
             {name: '城市洞察', path: '/cityInsight'},
+            {name: '人群洞察', path: '/peopleInsight'},
             {name: '投放管理', path: '/putManage'},
             {name: '报表中心', path: '/reportList'},
             {name: '工具箱', path: '/toolBox'},
