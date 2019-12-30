@@ -141,9 +141,8 @@
         return new Promise((resolve) => {
           let myCity = new BMap.LocalCity();
           myCity.get((result) => {
+            this.initMouse()
             resolve(result)
-            // this.initMouse()
-            // this.loadData()
           });
         })
         // let geolocation = new BMap.Geolocation();
