@@ -133,7 +133,7 @@
     components: {BarGraph},
     data() {
       return {
-        companyName: '',
+        companyName: '未知公司名',
         planId: null,
         reportPlanList: {data: [], loading: false},
         reportSelectCard: {
@@ -143,35 +143,35 @@
               name: "花费总数（元）",
               value: "暂无数据",
               field: "cost",
-              title: "花费总数"
+              title: "花费总数（元）"
             },
             {
               id: 1,
               name: "曝光总数（次）",
               value: "暂无数据",
               field: "showTimes",
-              title: "曝光总数"
+              title: "曝光总数（次）"
             },
             {
               id: 2,
               name: "设备总数（个）",
               value: "暂无数据",
               field: "deviceNum",
-              title: "设备总数"
+              title: "设备总数（个）"
             },
             {
               id: 3,
               name: "受众总人数（人）",
               value: "暂无数据",
               field: "totalPeople",
-              title: "受众总人数"
+              title: "受众总人数（人）"
             },
             {
               id: 4,
               name: "受众观看总次数（次）",
               value: "暂无数据",
               field: "watchedTimes",
-              title: "受众观看总次数"
+              title: "受众观看总次数（次）"
             }
           ],
           loading: false,
@@ -234,7 +234,7 @@
       this.planList.endTime = this.$tools.getMonthLastDay();
       this.planList.selectTime = [this.planList.startTime, this.planList.endTime];
       let userInfo = getUserInfo()
-      if (!userInfo.company || userInfo.company.match(/^[ ]*$/) || userInfo.company != null) { // "",null,undefined,NaN
+      if (!userInfo.company || userInfo.company.match(/^[ ]*$/) || userInfo.company != null || userInfo.company != undefined) { // "",null,undefined,NaN
         this.companyName = userInfo.company
       }
       //获取计划名称列表
@@ -262,8 +262,8 @@
       },
       //清空投放计划
       clearPlanValue() {
-        this.planList.campaignId = 0;
-        this.planList.selectPlan = "";
+        this.planList.campaignId = '';
+        this.planList.selectPlan = '';
       },
       //top5 top10更换
       getBarSelectData(chooseValue) {
@@ -378,9 +378,10 @@
               let sdata = [];
               let sdataShadow = [];
               let ymax = 0;
+              let _that = this;
               res.result.forEach((item, index) => {
                 xdata[index] = item.campaignName;
-                sdata[index] = item.data;
+                sdata[index] = item.data
                 if (ymax < item.data) {
                   ymax = item.data;
                 }
@@ -391,6 +392,7 @@
               // }
 
               this.barGraphData.data = {
+                sortField: this.planList.sortField,
                 topStatus: this.planList.topStatus,
                 title: this.getCardName(),
                 xAxis: {
@@ -409,6 +411,7 @@
             })
             .catch(res => {
               this.barGraphData.data = {
+                sortField: this.planList.sortField,
                 topStatus: this.planList.topStatus,
                 title: this.getCardName(),
                 xAxis: {
@@ -446,9 +449,12 @@
         this.$api.Report.getPlanDownloadList(queryParam)
             .then(res => {
               this.reportDownload.loading = false;
+              if (this.companyName === undefined) {
+                this.companyName = '未知公司'
+              }
               this.$tools.downLoadFileFlow(
                 res,
-                `投放计划报表${this.companyName}${this.$tools.getFormatDate("YYmmdd_HHMMSSccc")}.xls`
+                `投放计划报表+${this.companyName}+${this.$tools.getFormatDate("YYmmdd_HHMMSSccc")}.xls`
               );
             })
             .catch(res => {
@@ -515,8 +521,7 @@
           let property = item.field;
           let sortFieldName = this.planList.sortField;
           if (property === sortFieldName) {
-            return (cardName = item.title
-            );
+            return cardName = item.title;
           }
         });
         return cardName;

@@ -60,6 +60,10 @@
   justify-content: flex-start;
   align-items: baseline;
 }
+.mid-around {
+  display: flex;
+  justify-content: space-around;
+}
 .flex1{
   flex: 1;
   -webkit-box-flex:1

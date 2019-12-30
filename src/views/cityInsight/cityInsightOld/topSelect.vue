@@ -149,13 +149,13 @@
       }
     },
     created() {
-      this.$api.CityList.TypeList().then((data) => {
-        if (data.result) {
-          this.cityDatas = data.result.map((item) => {
-            return {title: CITY_MAPPING[item.level], values: item.citys}
-          })
-        }
-      })
+      // this.$api.CityList.TypeList().then((data) => {
+      //   if (data.result) {
+      //     this.cityDatas = data.result.map((item) => {
+      //       return {title: CITY_MAPPING[item.level], values: item.citys}
+      //     })
+      //   }
+      // })
     },
     methods: {
       drawTypeSelect(e, type) {

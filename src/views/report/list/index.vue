@@ -38,57 +38,56 @@
 </template>
 
 <script>
-    export default {
-        name: "reportIndex",
-        data() {
-            return {
-                default_path: 'reportList',
-                menuActiveIndex: 0,
-                isShowReportRoute: true,
-                menuCollapse: false,
-                report: {
-                    menu_index: 0,
-                    default_name: '投放报表',
-                    menu: [
-                        {
-                            name: '投放报表',
-                            sub_menu: [
-                                {
-                                    name: '投放计划报表',
-                                    path: '/reportList/plan',
-                                },
-                                {
-                                    name: '投放方案报表',
-                                    path: '/reportList/project',
-                                }
-                            ]
-                        }
-                    ]
-
+  export default {
+    name: "reportIndex",
+    data() {
+      return {
+        default_path: 'reportList',
+        menuActiveIndex: 0,
+        isShowReportRoute: true,
+        menuCollapse: false,
+        report: {
+          menu_index: 0,
+          default_name: '投放报表',
+          menu: [
+            {
+              name: '投放报表',
+              sub_menu: [
+                {
+                  name: '投放计划报表',
+                  path: '/reportList/plan',
+                },
+                {
+                  name: '投放方案报表',
+                  path: '/reportList/project',
                 }
+              ]
             }
-        },
+          ]
 
-        computed: {
-            onRoutes() {
-                // 当前激活菜单的 index
-                let route_name = this.$route.path.replace('/', '')
-                return route_name
-            },
-        },
-        methods: {
-            /**
-             * 手动跳转
-             */
-            handleTo(path, index) {
-                this.$router.push(path)
-            },
-            handleShow() {
-                this.menuCollapse = !this.menuCollapse
-                this.isShowReportRoute = !this.isShowReportRoute
-            }
         }
+      }
+    },
+
+    computed: {
+      onRoutes() {
+        // 当前激活菜单的 index
+        return this.$route.path.replace('/', '')
+      },
+    },
+    methods: {
+      /**
+       * 手动跳转
+       */
+      handleTo(path, index) {
+        this.$router.push(path)
+      },
+      handleShow() {
+        this.menuCollapse = !this.menuCollapse
+        this.isShowReportRoute = !this.isShowReportRoute
+      }
     }
+  }
 </script>
 
 <style lang="scss">
@@ -98,7 +97,6 @@
     flex-direction: row;
     background-color: $color-bg;
     overflow-x: hidden;
-
     .left-menu {
       width: 220px;
       height: calc(100vh - 76px);
@@ -107,37 +105,28 @@
       background: $color-bg-3;
       transition: .4s;
       position: relative;
-
       .left-report-menu {
         border: none;
       }
-
       a {
         text-decoration: none;
         color: inherit;
       }
-
       .el-menu-item {
         color: $color-blue;
       }
-
       .is-active, .item_active {
         background-color: $color-bg-4;
       }
-
       .el-submenu {
         background-color: $color-bg-3;
-
         i {
           margin-right: 30px;
         }
-
         li.el-menu-item a {
           margin-left: 30px;
         }
       }
-
-
       /* .el-menu-item:hover {
        background-color: $color-bg-4
      }
@@ -149,74 +138,60 @@
      .el-menu-active {
        background-color: $color-bg-4
      }*/
-
       &.hide {
         width: 84px;
       }
-
       .el-submenu__title i {
         color: $color-blue;
-
         &.el-submenu__icon-arrow {
           display: none;
         }
       }
-
       .step_arrow {
         position: relative;
         height: 31px;
         border-bottom: 1px solid $color-split-line2;
-
         .step_arrow_span {
           position: absolute;
           display: inline-block;
           top: 15%;
           right: 0;
-
           i {
             color: $color-split-line2;
             font-size: 22px;
             cursor: pointer;
             transition: .3s;
-
             &.rotate {
               transform: rotate(180deg);
             }
           }
         }
       }
-
       .show_menu {
         font-size: 24px;
         position: absolute;
         top: 32px;
         left: 32px;
       }
-
       .hide_text {
         display: none;
       }
-
       .hide_font {
         margin: 0;
         width: 100%;
         text-align: center;
-
         .el-menu--vertical {
           display: none;
         }
-
         .item_active {
           background-color: $color-bg-3;
         }
-
         .el-submenu__title {
           padding: 0 !important;
           margin: 0 !important;
         }
       }
     }
-
     .right-content {
       padding: 20px 20px 0;
       height: 100%;
@@ -225,17 +200,14 @@
       flex-grow: 1;
     }
   }
-
   .el-menu--popup-right-start {
     a {
       text-decoration: none;
       color: inherit;
     }
-
     .el-menu-item {
       color: $color-blue;
     }
-
     .is-active, .item_active {
       background-color: $color-bg-4;
     }

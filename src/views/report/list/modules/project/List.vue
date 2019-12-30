@@ -162,28 +162,28 @@
               name: "花费总数（元）",
               value: "暂无数据",
               field: "cost",
-              title: "花费总数"
+              title: "花费总数（元）"
             },
             {
               id: 1,
               name: "曝光总数（次）",
               value: "暂无数据",
               field: "showTimes",
-              title: "曝光总数"
+              title: "曝光总数（次）"
             },
             {
               id: 2,
               name: "设备总数（个）",
               value: "暂无数据",
               field: "deviceNum",
-              title: "设备总数"
+              title: "设备总数（个）"
             },
             {
               id: 3,
               name: "受众总人数（人）",
               value: "暂无数据",
               field: "totalPeople",
-              title: "受众总人数"
+              title: "受众总人数（人）"
             },
             {
               id: 4,
@@ -489,6 +489,7 @@
                 sdataShadow[i] = ymax;
               }
               this.barGraphData.data = {
+                sortField: this.projectList.sortField,
                 topStatus: this.projectList.topStatus,
                 title: this.getCardName(),
                 xAxis: {
@@ -507,6 +508,7 @@
             })
             .catch(res => {
               this.barGraphData.data = {
+                sortField: this.projectList.sortField,
                 topStatus: this.projectList.topStatus,
                 title: this.getCardName(),
                 xAxis: {
@@ -546,9 +548,12 @@
         this.$api.Report.getProjectDownloadList(queryParam)
             .then(res => {
               this.reportDownload.loading = false;
+              if (this.companyName === undefined) {
+                this.companyName = '未知公司'
+              }
               this.$tools.downLoadFileFlow(
                 res,
-                `投放方案报表${this.companyName}${this.$tools.getFormatDate("YYmmdd_HHMMSSccc")}.xls`
+                `投放方案报表+${this.companyName}+${this.$tools.getFormatDate("YYmmdd_HHMMSSccc")}.xls`
               );
             })
             .catch(res => {

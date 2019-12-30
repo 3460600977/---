@@ -1,51 +1,61 @@
 <template>
   <div class="selectPopUp">
-    <p class="title border-bottom padding mid-between">
-      <span>{{title}}</span>
-      <span class="iconfont icon1 icon-error2 hand" @click="hide"></span>
-    </p>
     <div class="remote">
-      <search-input
-        ref="searchInput"
-        @querySearchAsync="querySearchAsync"
-        @selectLocation="selectLocation"
-      ></search-input>
+      <div>
+        <el-input v-model="val" placeholder="输入地点"></el-input>
+      </div>
+      <ul class="ul customScroll">
+        <li @click="handleSelect(item)" class="hand"  v-for="(item, index) in lists" :key="index">
+          <p>{{item[firstLabel]}}</p>
+          <p class="color-text-1 margin">{{item[secondLabel]}}</p>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
 
+
 <script>
-  import searchInput from "../searchInput";
   export default {
     name: "searchPopup",
-    components: {
-      searchInput
-    },
     props: {
-      title: {
+      firstLabel: {
         type: String,
-        required: true
+        default: 'title'
+      },
+      isClear: {
+        type: Boolean,
+        default: true
+      },
+      secondLabel: {
+        type: String,
+        default: 'address'
       },
     },
     data() {
       return {
+        val: '',
+        lists: []
       }
     },
     created() {
+      this.$watch('val', this.$tools.debounce((newQuery) => {
+        if (newQuery === '') {
+          this.lists = []
+        } else {
+          this.$emit('querySearchAsync', newQuery)
+        }
+      }, 300))
     },
     methods: {
-      hide() {
-        this.$emit('hide')
-      },
       setSearchList(lists) {
-        this.$refs.searchInput.setSearchList(lists)
+        this.lists = lists
       },
-      querySearchAsync(queryString) {
-        this.$emit('querySearchAsync', queryString)
-      },
-      selectLocation(item) {
+      handleSelect(item) {
         this.$emit('selectLocation', item)
-        this.hide()
+        if (this.isClear) {
+          this.val = ''
+        }
       },
     }
   }
@@ -88,8 +98,13 @@
       }
     }
     .remote {
-      padding: 20px;
-      width: 432px;
+      width: 100%;
+      & /deep/ .el-input {
+        width: 100%;
+      }
+      & /deep/ .el-input__inner {
+        padding: 0 20px;
+      }
     }
   }
 </style>

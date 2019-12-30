@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-loading="loading">
     <div ref="container" class="container"></div>
   </div>
 </template>
@@ -10,7 +10,7 @@
     name: "index",
     data() {
       return {
-        labelsArr: [], // 存储label覆盖物的变量 用于清楚label
+        loading: false,
         map: null,
         pathArr: {},
         indexArr: [],
@@ -18,14 +18,13 @@
           selectedOverlay: null,
           unSelectedOverlay: null
         },
-        showLabel: 17,
+        showHotMapLevel: 12,
         heatmapOverlay: null,
         activePath: null,
         points: null, // 楼盘设备数据
         defaultRadius: 3000,
         drawingManager: null,
         selectedBuildings: [], //当前选中楼盘
-        unSelectedBuildings: [], // 当前未选中楼盘
         pointsOptions: {
           0: {
             shape: BMAP_POINT_SHAPE_CIRCLE,
@@ -91,101 +90,45 @@
     mounted() {
       let map = new BMap.Map(this.$refs.container, {enableMapClick: false});
       this.map = map
-
+      // var geolocation = new BMap.Geolocation();
+      // geolocation.getCurrentPosition(function(r){
+      //   if(this.getStatus() == BMAP_STATUS_SUCCESS){
+      //     console.log(r)
+      //     var mk = new BMap.Marker(r.point);
+      //     map.addOverlay(mk);
+      //     map.panTo(r.point);
+      //   }
+      //   else {
+      //     alert('failed'+this.getStatus());
+      //   }
+      // });
+      var myCity = new BMap.LocalCity();
+      myCity.get((result) => {
+        map.centerAndZoom(result.name,10);
+        this.initMouse()
+        this.loadData()
+      });
       map.enableScrollWheelZoom();
       map.addControl(new BMap.ScaleControl());
       this.mapBindEvent()
     },
     methods:{
-      location() {
-        return new Promise((resolve) => {
-          let myCity = new BMap.LocalCity();
-          myCity.get((result) => {
-            this.map.centerAndZoom(result.center, result.level);
-            resolve(result)
-            // this.initMouse()
-            // this.loadData()
-          });
-        })
-        // let geolocation = new BMap.Geolocation();
-        // let that = this
-        // geolocation.getCurrentPosition(function(r){
-        //   if(this.getStatus() == BMAP_STATUS_SUCCESS){
-        //     console.log(r)
-        //     that.map.centerAndZoom(r.point, 12);
-        //   }
-        //   else {
-        //     alert('failed'+this.getStatus());
-        //   }
-        // });
-      },
-      // 添加弹窗覆盖物
-      drawLabels(arr) {
-        arr.forEach((item) => {
-          this.addLabel(item)
-        })
-      },
-      /*
-      * 像已选楼盘中添加楼盘
-      * */
-      addItem(item) {
-        let isExist = false
-        isExist = this.checkPointIsExist(item, this.selectedBuildings) !== -1? true : false
-
-        if (!isExist) { // 如果item没在当前选中的楼盘中
-          this.addPointInSelectedBuildings(item)
-        }
-        setTimeout(() => {
-          this.drawPoints(this.selectedBuildings, this.unSelectedBuildings)
-        }, 0)
-
-        return isExist
-      },
-      // 判断一个点是否在可视区域内
-      addSigleLabel(item) {
-        let bounds = this.map.getBounds()
-        let isIn = bounds.containsPoint(item.point)
-        if (isIn) {
-          this.addLabel(item)
-        }
-      },
-      // 像已选楼盘中加一个点，并且如果他存在在未选楼盘中将他删除
-      addPointInSelectedBuildings(item) {
-        let index = this.checkPointIsExist(item, this.points)
-        if (index === -1) { // 如果不在当前楼盘列表中 添加他的label
-          this.addSigleLabel(item)
-        }
-        let i = this.checkPointIsExist(item, this.unSelectedBuildings)
-        if (i !== -1) { // 如果在未选中楼盘列表中 将他删除
-          this.unSelectedBuildings.splice(i, 1)
-        }
-        this.selectedBuildings.push(item)
-      },
-      // 检测某一个点是否已存在在已选楼盘中
-      checkPointIsExist(item, arr) {
-        let i = arr.findIndex((val) => {
-          return val.premisesId === item.premisesId
-        })
-        return i
-      },
-      /*
-      * 在已选楼盘中删除选中的点
-      * */
-      deleteItem(item) {
-        for (let i = 0; i < this.selectedBuildings.length; i++) {
-          if (item.premisesId === this.selectedBuildings[i].premisesId) {
-            this.selectedBuildings.splice(i, 1)
-            break;
+      loadData() {
+        this.loading = true
+        this.$api.cityInsight.getPremisesByCity({cityCode: '510100', tag: this.filters}).then((data) => {
+          if (data.result) {
+            this.points = this.normalizePointsAll(data.result)
+            if (Object.keys(this.pathArr).length) {
+              for(let key in this.pathArr) {
+                this.pathArr[key].buildings = this.isInArea(this.pathArr[key])
+              }
+            }
+            this.drawDevicePoints()
+          } else {
+            this.clearPoints()
           }
-        }
-        this.unSelectedBuildings.push(item)
-        this.drawPoints(this.selectedBuildings, this.unSelectedBuildings)
-      },
-      // 根据传入的以选中和未选中楼盘重新画数据
-      drawPoints(selectP, unSelectP) {
-        console.log(selectP, unSelectP)
-        this.setDevicePoints(selectP, 0)
-        this.setDevicePoints(unSelectP, 1)
+          this.loading = false
+        })
       },
       /*
       * 根据关键字搜索
@@ -473,37 +416,14 @@
         }
       },
 
-      getVisualPoint() {
-        let bounds = this.map.getBounds()
-        let arr = this.points.filter((item) => {
-          return bounds.containsPoint(item.point)
-        })
-        this.drawLabels(arr)
-      },
-      removeLabels() {
-        if (this.labelsArr.length) return
-        this.labelsArr.forEach((item) => {
-          this.map.removeOverlay(item)
-        })
-        this.labelsArr = []
-      },
-      drawLabelsByVisual() {
-        let zoom = this.map.getZoom()
-        if (zoom >= this.showLabel) {
-          this.removeLabels()
-          setTimeout(() => {
-            this.getVisualPoint()
-          }, 0)
-        } else {
-          this.removeLabels()
-        }
-      },
       mapBindEvent() {
-        this.map.addEventListener('dragend', () => {
-          this.drawLabelsByVisual()
-        })
         this.map.addEventListener('zoomend', (type, target) => {
-          this.drawLabelsByVisual()
+          let zoom = this.map.getZoom()
+          // if (zoom < this.showHotMapLevel) {
+          //   this.heatmapOverlay.show()
+          // } else {
+          //   this.heatmapOverlay.hide()
+          // }
           this.zoomChangeAllPath()
         })
         this.map.addEventListener('click', ({point}) => {
@@ -558,6 +478,13 @@
         this.heatmapOverlay.setDataSet({data:arr, max:100});
       },
 
+      normalizePoints(arr) {
+        let result = arr.map((item) => {
+          return item.point
+        })
+        return result
+      },
+
       normalizePointsAll(arr) {
         let result = arr.map((item) => {
           return {point: new BMap.Point(item.lng, item.lat), ...item}
@@ -570,10 +497,14 @@
       drawDevicePoints() {
         if (!Object.keys(this.pathArr).length) {
           if (this.budget === 1) {
-            this.drawBg(this.points, [])
+            this.setDevicePoints(this.normalizePoints(this.points), 0)
+            this.setDevicePoints([], 1)
+            this.selectedBuildings = this.points
           } else {
             let [selectP, unSelectP] = this.getRandomBuildings(this.points, this.budget)
-            this.drawBg(selectP, unSelectP)
+            this.setDevicePoints(selectP, 0)
+            this.setDevicePoints(unSelectP, 1)
+            this.selectedBuildings = selectP
           }
         } else {
           let selectedBuildings = []
@@ -589,6 +520,7 @@
             }
           }
           let result = this.unique(selectedBuildings)
+          this.selectedBuildings = result
           this.separateBgPonits(result)
         }
       },
@@ -605,7 +537,7 @@
             unSelected[item.premisesId] = item
           }
         })
-        this.drawBg(Object.values(selected), Object.values(unSelected))
+        this.drawBg(selected, unSelected)
       },
       /*
       * 传已选及未选的点画背景点
@@ -613,10 +545,11 @@
       /*
       * 画背景点
       * */
-      drawBg(selectP, unSelectP) {
-        this.selectedBuildings = selectP
-        this.unSelectedBuildings = unSelectP
-        this.drawPoints(selectP, unSelectP)
+      drawBg(selected, unSelected) {
+        let selectP = this.normalizePoints(Object.values(selected))
+        let unSelectP = this.normalizePoints(Object.values(unSelected))
+        this.setDevicePoints(selectP, 0)
+        this.setDevicePoints(unSelectP, 1)
       },
       /*
       * 根据pointsOverlayObj里面存在的背景海量点 清空海量点图层
@@ -644,78 +577,7 @@
         }
         return [result, arrCopy]
       },
-      // 添加lable
-      addLabel(point) {
-        let labelStyle = {
-          border: 'none',
-          transform: 'translateY(-100%) translateX(-50%)'
-        };
-        let content = `
-          <div style="
-            padding: 17px 0 21px;
-            background: #fff;
-            font-size:14px;
-            line-height: 1.15;
-            width:170px;
-            border:1px solid rgba(229,231,233,1);
-            box-shadow:0px 3px 5px 0px rgba(0, 0, 0, 0.1);
-            border-radius:4px;"
-          >
-              <div style="padding: 0 15px 14px;border-bottom: 1px solid #FFE5E7E9">
-                <div class="mid-between">
-                  <p>${point.premisesName}</p>
-                  <i style="height: 16px;width: 16px;color: #ededed;display: block" class="icon-error2 iconfont"></i>
-                </div>
-              </div>
-              <div style="padding: 0 15px 0;">
-                <div class="mid-between" style="color: #999999FF;margin-top: 15px">
-                  <p>楼栋数</p>
-                  <p class="font-number">${point.buildNum}</p>
-                </div>
-                <div class="mid-between" style="color: #999999FF;margin-top: 15px">
-                  <p>单元数</p>
-                  <p class="font-number">${point.unitNum}</p>
-                </div>
-                <div class="mid-between" style="color: #999999FF;margin-top: 15px">
-                  <p>点位数</p>
-                  <p class="font-number">${point.signElevatorNum}</p>
-                </div>
-                <div class="mid-between" style="color: #999999FF;margin-top: 15px">
-                  <p>覆盖人数</p>
-                  <p class="font-number">${point.totalPeople}</p>
-                </div>
-<!--                <p class="color-main text-center" style="margin-top: 34px">更多</p>-->
-              </div>
-            </div>
-        `
-        //用于设置样式
-        let label = new BMap.Label(content, {
-          offset: new BMap.Size(-5, -15),
-          position: point.point
-        });
-        label.setStyle(labelStyle);
-        label.addEventListener('click', () => {
-          this.$emit('buildingClick', point)
-          // this.currentPoint = this.visualPoint[index]
-        })
-        this.labelsArr.push(label)
-        this.map.addOverlay(label)
-      },
 
-      // 为海量点添加点击事件
-      selectedEvent(event) {
-        console.log(event)
-      },
-      unSelectedEvent(event) {
-        console.log(event)
-      },
-      pointAddEvent(overlay, type) {
-        if (type === 0) {
-          overlay.addEventListener('click',  this.selectedEvent);
-        } else {
-          overlay.addEventListener('click',  this.unSelectedEvent);
-        }
-      },
       /*
       * 画背景点方法 0：已选 1：未选
       * */
@@ -725,13 +587,10 @@
         if (!this.pointsOverlayObj[overlay]) {
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
-          // this.pointAddEvent(pointsOverlay, type)
           this.map.addOverlay(pointsOverlay);
-
         } else {
           if (points.length === 0) {
             this.pointsOverlayObj[overlay].clear()
-            // this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointsEvent(type));
           } else {
             this.pointsOverlayObj[overlay].clear()
             this.pointsOverlayObj[overlay].setPoints(points)
