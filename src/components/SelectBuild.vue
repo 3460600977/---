@@ -2,14 +2,14 @@
   <!-- 选点结果列表 -->
   <div class="map-choosed-list">
     <el-radio-group v-model="mapListShowType" style="margin-bottom: 10px;" @change="selectCheckedList">
-      <el-radio-button label="inCircle">圈内楼盘 {{selectedBuildings.length || 0}}</el-radio-button>
+      <el-radio-button label="inCircle">圈内楼盘 {{allBuildings.length || 0}}</el-radio-button>
       <el-radio-button label="inSelect">已选楼盘 {{selectedBuildings.length || 0}}</el-radio-button>
     </el-radio-group>
 
     <!-- 圈内列表 -->
     <div class="list-box-1" :class="{showListBox:mapListShowType === 'inSelect'}">
       <div class="top-title">
-        <el-table v-if="tableCheckedListSum.list.length > 0" border class="build-list-table"
+        <el-table border class="build-list-table"
                   ref="multipleCircleTable"
                   :data="tableCheckedListSum.list"
                   height="400"
@@ -28,16 +28,17 @@
             width="170px">
           </el-table-column>
         </el-table>
-        <el-pagination v-if="selectedBuildings.length > 0"
+        <el-pagination v-if="allBuildings.length > 0 && mapListShowType === 'inCircle'"
                        background
                        layout="prev, pager, next"
                        :current-page="tableCheckedListSum.currentPage"
-                       :total="selectedBuildings.length"
+                       :total="allBuildings.length"
                        @current-change="handleCircleCurrentChange"
                        class="list-page"
-                       :pager-count="3"
+                       :page-size="tableCheckedListSum.pageSize"
+                       :pager-count="5"
         ></el-pagination>
-        <div v-if="selectedBuildings.length <= 0" class="nodata text-center">
+        <div v-if="allBuildings.length <= 0" class="nodata text-center">
           暂无数据
         </div>
       </div>
@@ -61,14 +62,15 @@
           </tr>
           </tbody>
         </table>
-        <el-pagination v-if="selectedBuildings.length > 0"
+        <el-pagination v-if="selectedBuildings.length > 0 && mapListShowType === 'inSelect'"
                        background
                        layout="prev, pager, next"
                        :current-page="selectCheckedListSum.currentPage"
                        :total="selectedBuildings.length"
                        @current-change="handleCurrentChange"
                        class="list-page"
-                       :pager-count="3"
+                       :page-size="selectCheckedListSum.pageSize"
+                       :pager-count="5"
         ></el-pagination>
         <div v-if="selectedBuildings.length <= 0" class="nodata text-center">
           暂无数据
@@ -118,38 +120,64 @@
     watch: {
       selectedBuildings: {
         handler: function (newVal, oldVal) {
+          console.log('selectedBuildings', newVal)
           this.selectCheckedList()
+        }
+        ,
+        deep: true
+      },
+      allBuildings: {
+        handler: function (newVal, oldVal) {
+          this.selectTableList()
+          this.$refs.multipleCircleTable.toggleAllSelection();
         }
         ,
         deep: true
       }
     },
     methods: {
-      handleSelectionChange: function (selection) {
-        this.selectedBuildings = selection
+      handleSelectionChange: function (rows, row) {
+        let selected = rows.length && rows.indexOf(row) !== -1
+        if (selected) {
+          this.addItem(row)
+        } else {
+          this.deleteItem(row)
+        }
+        console.log('handleSelectionChange', rows, row)
+        //this.selectedBuildings = selection
       },
-      handleSelectionAllChange: function (selection) {
-        this.selectedBuildings = selection
+      handleSelectionAllChange: function (rows) {
+        if (rows.length === 0) {
+          //取消所有选点
+          //this.selectedBuildings = []
+        }
+        console.log('handleSelectionAllChange', rows)
+        //this.selectedBuildings = selection
       },
       handleCircleCurrentChange(page) {
         this.tableCheckedListSum.currentPage = page
+        this.selectTableList()
       },
       handleCurrentChange(page) {
         this.selectCheckedListSum.currentPage = page
         this.selectCheckedList()
       },
-      toggleSelection(rows) {
-        if (rows) {
-          rows.forEach(row => {
-            this.$refs.multipleCircleTable.toggleRowSelection(row);
-          });
-        }
-      },
       selectCheckedList() {
-        // 這樣就是根據 type 來過濾
         let result = this.$tools.getFrontEndPage(this.selectedBuildings, this.selectCheckedListSum.pageSize, this.selectCheckedListSum.currentPage)
         this.selectCheckedListSum.list = result.results;
-      }
+      },
+      selectTableList() {
+        let result = this.$tools.getFrontEndPage(this.allBuildings, this.tableCheckedListSum.pageSize, this.tableCheckedListSum.currentPage)
+        this.tableCheckedListSum.list = result.results;
+      },
+      //触发父级组件的删除某个楼盘方法
+      deleteItem(item) {
+        this.$emit('deleteItem', item)
+      },
+      //触发父级组件的增加某个楼盘方法
+      addItem(item) {
+        this.$emit('addItem', item)
+      },
     }
   }
 </script>
@@ -185,12 +213,18 @@
       position: relative;
       z-index: 1;
       margin-top: -2px;
+      margin-bottom: 20px;
     }
     .el-table--border {
       border-bottom: 1px solid $color-border;
     }
     .el-table__header-wrapper {
       border-bottom: 1px solid $color-border;
+    }
+  }
+  .list-box-1 {
+    .list-page {
+      text-align: center;
     }
   }
   .list-box-2 {
