@@ -327,7 +327,9 @@
         </div>
 
         <div v-else class="mid-between">
-          <el-button style="width: 120px" plain>取消</el-button>
+          <router-link to="/putManage?active=project">
+            <el-button style="width: 120px" plain>取消</el-button>
+          </router-link>
           <el-button :disabled="deviceNumber === 0 || !validataForm()" :loading="formData.confirming"
                      @click="confirmProject" style="width: 120px" type="primary">确认投放
           </el-button>
