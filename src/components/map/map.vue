@@ -11,6 +11,7 @@
     name: "index",
     data() {
       return {
+        isInit: true, // 控制只初始化促发事件
         labelsArr: [], // 存储label覆盖物的变量 用于清楚label
         map: null,
         points: [],
@@ -78,7 +79,6 @@
       buildings(val) {
         // this.clearMap()
         if (val.length) {
-          this.initHotMap()
           this.initMap(val)
         }
       },
@@ -169,9 +169,12 @@
         this.map.centerAndZoom(city.name, 12);
       },
       initHotMap() {
-        let heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
-        this.map.addOverlay(heatmapOverlay);
-        this.heatmapOverlay = heatmapOverlay
+        if (this.isInit) {
+          let heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
+          this.map.addOverlay(heatmapOverlay);
+          this.heatmapOverlay = heatmapOverlay
+          this.isInit = false
+        }
       },
       location() {
         return new Promise((resolve) => {
@@ -399,7 +402,6 @@
        */
       overlayBindEvent(path) {
         path.overlay.addEventListener('click', (e) => {
-          console.log(e)
           this.pathArr[path.index].location = e.point
           this.activePath = this.pathArr[path.index]
         })
@@ -602,12 +604,16 @@
           this.$emit('drawCancle')
         }
       },
+      tilesloaded() {
+        this.initHotMap()
+      },
       mapBindEvent() {
         this.map.addEventListener('dragend', this.drawLabelsByVisual)
         this.map.addEventListener('zoomend', this.mapZoomEnd)
         this.map.addEventListener('click', this.mapLeftClick)
         this.map.addEventListener('mousemove', this.mapMouseMove)
         this.map.addEventListener('rightclick', this.mapRightClick)
+        this.map.addEventListener('tilesloaded', this.tilesloaded)
       },
       drawCircle(point, info) {
         let marker = this.addMarker(point)
@@ -667,7 +673,6 @@
        * 根据预算随机得到已选的楼盘数据
        * */
       drawDevicePoints() {
-        console.log(this.pathArr)
         if (!Object.keys(this.pathArr).length) {
           if (this.budget === 1) {
             this.drawBg(this.points, [])
@@ -829,7 +834,6 @@
       setDevicePoints(points, type) {
         let str = type === 0 ? 'selected' : 'unSelected'
         let overlay = `${str}Overlay`
-        console.log(this.pointsOverlayObj[overlay])
         if (!this.pointsOverlayObj[overlay]) {
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
@@ -840,7 +844,6 @@
             this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointEvent);
             this.pointsOverlayObj[overlay].clear()
           } else {
-            console.log('44444')
             this.pointsOverlayObj[overlay].clear()
             this.pointsOverlayObj[overlay].setPoints(points)
           }

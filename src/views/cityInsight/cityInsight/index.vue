@@ -367,7 +367,6 @@
         this.$refs.peopleInsight.resetSelect()
       },
       resetTags() {
-        console.log(this.buildingFilterSelected)
         if (this.buildingFilterSelected) { // 如果标签选择过，则清空标签选择结果
           this.$refs.dbmap.clearMap()
           this.$refs.tagsSelect.operate(0)
@@ -398,7 +397,6 @@
       },
       // 各种弹窗返回数据触发方法 type表示楼盘标签是 0清空还是2选择
       returnResult(val, index, type) {
-        console.log(val, index, type)
         if (index === 0) { // 城市切换
           this.cityFilter = val
         } else if (index === 1) { // 楼盘标签选择
@@ -407,7 +405,6 @@
           } else {
             this.buildingFilterSelected = true
           }
-          console.log(this.buildingFilterSelected)
           this.$refs.dbmap.setCity(this.cityFilter)
           this.buildingFilter = val
           this.loadData()
@@ -444,7 +441,6 @@
         }
       },
       hide(val) {
-        console.log(val)
         this.isShow[val] = false
       },
       getCityFilter() {
@@ -470,7 +466,6 @@
       },
       // 左边传出信息
       leftInfoCallBak(val, type) {
-        console.log(val, type)
         if (type === 0) {
           this.cityFilter = val
         }
@@ -578,7 +573,6 @@
           this.currentSelectType = {type: type}
           this.$refs.dbmap.closeDrawingManager()
         } else if (type === 'select') {
-          console.log(location)
           this.$refs.dbmap.closeDrawingManager()
           this.$refs.dbmap.drawCircle(location.point, location)
         } else {
