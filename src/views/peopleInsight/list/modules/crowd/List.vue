@@ -47,9 +47,10 @@
 
         <el-table-column prop="city" label="城市">
           <template slot-scope="scope">
-            <template v-for="item in cityList">
+            {{scope.row.city}}
+           <!-- <template v-for="item in cityList">
               <template v-if="item.cityCode === scope.row.city">{{item.name}}</template>
-            </template>
+            </template>-->
           </template>
         </el-table-column>
 
