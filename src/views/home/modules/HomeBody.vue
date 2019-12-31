@@ -10,7 +10,7 @@
         <div class="accouint-title">现金账户</div>
         <div class="account-val font-number">{{$tools.toThousands(accountBalance)}}</div>
       </div>
-      <el-button class="create-put" type="primary" icon="el-icon-plus">创建投放方案</el-button>
+      <el-button class="create-put" type="primary" icon="el-icon-plus" @click="ToPathPlan">创建投放计划</el-button>
     </el-card>
     <el-card class="box-card no-data mid-center shadow">
       <div>
@@ -26,7 +26,8 @@
 </template>
 
 <script>
-  import {getUserInfo} from '@/utils/auth';
+  import { getUserInfo } from '@/utils/auth';
+
   export default {
     data() {
       return {
@@ -46,6 +47,11 @@
       this.company = userInfo.company
       this.accountBalance = userInfo.accountBalance
     },
+    methods: {
+      ToPathPlan() {
+        this.$router.push('putManage/create/plan')
+      }
+    }
   }
 </script>
 
@@ -53,14 +59,11 @@
   .home-body {
     width: 1200px;
     margin: 0 auto;
-
     .box-card {
       position: relative;
-
       .company-msg {
         float: left;
         height: 100px;
-
         .company-name {
           margin: 0 33px 0 14px;
           width: 168px;
@@ -68,13 +71,11 @@
           color: rgba(24, 24, 25, 1);
         }
       }
-
       .accouint-title {
         height: 14px;
         font-size: 14px;
         line-height: 14px;
       }
-
       .account-money-box {
         float: left;
         padding: 28px 24px;
@@ -82,7 +83,6 @@
         height: 124px;
         border-radius: 2px;
         background-size: cover;
-
         .account-val {
           margin-top: 19px;
           height: 26px;
@@ -91,17 +91,14 @@
           font-weight: normal;
         }
       }
-
       .create-put {
         position: absolute;
         top: 73px;
         right: 30px;
         box-shadow: 3px 4px 14px 0px rgba(44, 98, 253, 0.3);
       }
-
       &.no-data {
         height: calc(100vh - 305px);
-
         .description {
           font-size: 18px;
           color: #979EBA;
