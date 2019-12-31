@@ -53,8 +53,8 @@ export const putProject = {
       let result = [];
       state.list.forEach(item => {
         result.push({ 
-          deviceNum: item.deviceNum,
-          premiseId: item.premiseId
+          deviceNum: 'deviceNum' in item ? +item.deviceNum : +item.signElevatorNum,
+          premiseId: 'premiseId' in item ? +item.premiseId : +item.premisesId
         })
       })
       return result;
