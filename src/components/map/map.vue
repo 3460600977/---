@@ -11,6 +11,7 @@
     name: "index",
     data() {
       return {
+        isInit: true, // 控制只初始化促发事件
         labelsArr: [], // 存储label覆盖物的变量 用于清楚label
         map: null,
         points: [],
@@ -76,9 +77,8 @@
     },
     watch: {
       buildings(val) {
-        this.clearMap()
+        // this.clearMap()
         if (val.length) {
-          this.initHotMap()
           this.initMap(val)
         }
       },
@@ -158,15 +158,23 @@
       },
       initMap(val) {
         this.points = this.normalizePointsAll(val)
+        if (Object.keys(this.pathArr).length) {
+          for(let key in this.pathArr) {
+            this.pathArr[key].buildings = this.isInArea(this.pathArr[key])
+          }
+        }
         this.drawDevicePoints()
       },
       setCity(city) {
         this.map.centerAndZoom(city.name, 12);
       },
       initHotMap() {
-        let heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
-        this.map.addOverlay(heatmapOverlay);
-        this.heatmapOverlay = heatmapOverlay
+        if (this.isInit) {
+          let heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
+          this.map.addOverlay(heatmapOverlay);
+          this.heatmapOverlay = heatmapOverlay
+          this.isInit = false
+        }
       },
       location() {
         return new Promise((resolve) => {
@@ -596,12 +604,16 @@
           this.$emit('drawCancle')
         }
       },
+      tilesloaded() {
+        this.initHotMap()
+      },
       mapBindEvent() {
         this.map.addEventListener('dragend', this.drawLabelsByVisual)
         this.map.addEventListener('zoomend', this.mapZoomEnd)
         this.map.addEventListener('click', this.mapLeftClick)
         this.map.addEventListener('mousemove', this.mapMouseMove)
         this.map.addEventListener('rightclick', this.mapRightClick)
+        this.map.addEventListener('tilesloaded', this.tilesloaded)
       },
       drawCircle(point, info) {
         let marker = this.addMarker(point)

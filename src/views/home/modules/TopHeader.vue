@@ -203,10 +203,10 @@
           type: 'warning'
         }).then(() => {
           this.$api.Login.LoginOut().then(res => {
+            console.log('logout', res);
             this.loading = false;
-            store.dispatch('FedLogOut').then(() => {
-              location.replace('/login') // 为了重新实例化vue-router对象 避免bug
-            })
+            store.dispatch('FedLogOut');
+            this.$router.replace('/login');
           }).catch(res => {
             this.loading = false;
           })
