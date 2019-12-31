@@ -242,7 +242,7 @@
       //获取默认状态下的卡片数据
       this.getPlanTotal();
       //获取默认状态下的柱状图数据
-      this.getPlanBarChart();
+      // this.getPlanBarChart();
       //获取默认状态下的列表数据
       this.getPlanList();
     },

@@ -525,7 +525,6 @@
       submitSelectedBuildPoint(selectedList, city) {
         this.formData.projectCity = city.cityCode;
         this.setBuildsList(selectedList)
-        this.estimatePrice();
       },
 
       // 根据id获取计划详情
@@ -567,7 +566,6 @@
                 type: this.$tools.getObjectItemFromArray(projectConst.screenType, 'value', resData.type), // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
                 confirming: false
               }
-              this.estimatePrice()
             })
             .catch(res => {
               this.planData.name = '加载失败请刷新页面或重新进入';
@@ -710,7 +708,6 @@
               this.setBuildsList(res.result)
               this.buildingDirection.builds.data = res.result;
               this.buildingDirection.builds.loading = false;
-              this.estimatePrice()
             })
             .catch(res => {
               this.setBuildsList([])
@@ -722,6 +719,7 @@
 
       // POST根据订单信息计算预估总价
       estimatePrice() {
+        this.planData.loading = true;
         let param = {
           beginTime: this.formData.projectType.value == 0 ? this.formData.dateForWeekBegin : this.formData.dateForDay[0],
           endTime: this.formData.projectType.value == 0 ? this.formData.dateForWeekEnd : this.formData.dateForDay[1],
@@ -733,10 +731,11 @@
         }
         this.$api.CityList.EstimateTotalPrice(param)
             .then(res => {
+              this.planData.loading = false;
               this.buildingDirection.estimatePrice = res.result;
             })
             .catch(res => {
-
+              this.planData.loading = false;
             })
       },
 
@@ -968,6 +967,14 @@
       },
 
     },
+
+    watch: {
+      deviceNumber(val) {
+        if(val) {
+          this.estimatePrice()
+        }
+      }
+    }
 
   }
 </script>
