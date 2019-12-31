@@ -70,6 +70,7 @@
     </div>
     <el-dialog
       :visible.sync="dialogEditPass"
+      :modal-append-to-body="false"
       width="780px"
       title="修改密码" class="edit-pass-dialog">
       <edit-pass-index @changeDialogEditPass="changeEditPass"></edit-pass-index>
