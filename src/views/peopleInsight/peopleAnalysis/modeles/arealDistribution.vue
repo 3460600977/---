@@ -195,8 +195,11 @@ export default {
         flex-grow: 1;
         .thin-tab{
           .map-list{
+            margin-top: 10px;
             .map-list-item{
-              margin-top: 40px;
+              &+.map-list-item{
+                margin-top: 40px;
+              }
               .t-name{
                 display: inline-block;
                 width: 190px;

@@ -2,7 +2,10 @@
 <template>
   <div class="upload-creative">
     <!-- 上传素材 -->
-    <PutMangeCard class="form-box creative" :style="createType === 'single' ? 'min-height: 715px;' : !haveProject ? 'min-height: 715px;' : ''" v-loading="pageLoading" :title="'制作创意'">
+    <PutMangeCard 
+      class="form-box creative" 
+      :style="createType === 'single' ? 'min-height: 715px;' : !haveProject ? 'min-height: 504px;' : ''" 
+      v-loading="pageLoading" :title="'制作创意'">
       <!-- 上屏 -->
       <el-form  
         ref="creativeFormMaterialTop"
@@ -106,7 +109,7 @@
             :innerWidth="108" 
             :top="previewInfo.top" 
             :bottom="previewInfo.bottom880"/>
-          <p class="decription color-text-1 font-12"><span class="color-red">*</span>AVI格式暂不支持预览</p>
+          <p class="description color-text-1 font-12"><span class="color-red">*</span>AVI格式暂不支持预览</p>
         </div>
 
       </el-form>
@@ -863,7 +866,7 @@ export default {
     position: absolute;
     bottom:0;
     margin:0 0 80px 558px;
-    .decription{
+    .description{
       margin-top: 40px;
     }
   }

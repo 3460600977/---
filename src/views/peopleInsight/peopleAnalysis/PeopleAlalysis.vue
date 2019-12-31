@@ -4,10 +4,10 @@
     <headerCondition />
 
     <!-- 地域分析 -->
-    <!-- <arealDistribution/> -->
+    <arealDistribution/>
 
     <!-- 常规属性 -->
-    <!-- <el-card class="box-card area-distibution">
+    <el-card class="box-card area-distibution">
       <div class="report-form-title">常规属性</div>
       <div class="chart-box">
         <div class="normal-box">
@@ -65,7 +65,7 @@
         </div>
       </div>
 
-    </el-card> -->
+    </el-card>
 
 
     <!-- 社区商品交易指数 -->
@@ -76,7 +76,21 @@
           width="100%"
           height="100%"
           :color="colorType[2]"
-          :data="ageArr"
+          :data="ageArrBig"
+        ></histogram>
+      </div>
+    </el-card>
+
+
+    <!-- 社区兴趣爱好指数 -->
+    <el-card class="box-card">
+      <div class="report-form-title">社区兴趣爱好指数</div>
+      <div class="big-box">
+        <histogram
+          width="100%"
+          height="100%"
+          :color="colorType[2]"
+          :data="ageArrBig"
         ></histogram>
       </div>
     </el-card>
@@ -270,6 +284,48 @@ export default {
       },
 
       ageArr: {
+        "xAxis": [
+          "18以下",
+          "18-24",
+          "25-34",
+          "35-44",
+          "45-54",
+          "55-64",
+          "65以上"
+        ],
+        "yAxis": [
+          {
+            "name": "长信综合楼",
+            "type": "bar",
+            "data": [
+              0.0434,
+              0.2486,
+              0.3137,
+              0.2269,
+              0.152,
+              0.0126,
+              0.0028
+            ],
+            "barWidth": 18
+          },
+          {
+            "name": "成都市",
+            "type": "bar",
+            "data": [
+              0.0573,
+              0.1685,
+              0.305,
+              0.2182,
+              0.2198,
+              0.0258,
+              0.0054
+            ],
+            "barWidth": 18
+          }
+        ]
+      },
+
+      ageArrBig: {
         "xAxis": [
           "18以下",
           "18-24",
