@@ -2,42 +2,82 @@
   <div class="container">
     <div class="mid-start">
       <p class="label">城市：</p>
-      <el-select v-model="value" placeholder="请选择" class="flex1 select content">
-        <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
+      <el-cascader
+        ref="location"
+        v-model="cities"
+        multiple placeholder="请选择"
+        class="flex1 select content"
+        :options="options"
+        :props="props"
+        clearable
+        @change="setLocation(cities)"
+      >
+      </el-cascader>
     </div>
   </div>
 </template>
 
 <script>
+  import {mapMutations} from "vuex";
+
   export default {
     name: "locationAttr",
     data() {
       return {
-        value: [],
-        options: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }],
+        props: {
+          multiple: true,
+          checkStrictly : true,
+          value: 'tid',
+          label:'name',
+          children:'childTags',
+        },
+        options: [],
+        cities:[],
       }
     },
+    methods: {
+      ...mapMutations(["setTagNamesWithUpdate","removeTagNamesByName"]),
+
+      getChildren(){
+        this.$api.peopleInsight.getChildTags(105)
+          .then(res => {
+            this.options = res.result;
+          })
+          .catch(res => {
+            this.options = null
+          })
+      },
+
+      setLocation(locationConsume){
+        let tagNames = [];
+        let tagTid = "";
+        let tagValues = [];
+        tagTid += "(";
+        let tagObj = {'name':'城市'};
+        if (locationConsume.length > 0){
+          locationConsume.forEach((item,index)=>{
+            tagTid += item[item.length-1];
+            if (index < locationConsume.length-1){
+              tagTid += "|";
+            }
+            tagValues.push(this.$refs['location'].getCheckedNodes()[index].pathLabels.join("/"))
+          });
+          tagTid += ")";
+          tagObj.value = tagValues;
+          tagNames.push(tagObj);
+          //set方式不一样  这里是tag组只能有一个
+          this.setTagNamesWithUpdate(tagNames);
+        }else {
+          //移除当前tag组
+          this.removeTagNamesByName({'name':'城市'});
+        }
+
+      }
+
+    },
+    created() {
+      this.getChildren();
+    }
   }
 </script>
 
