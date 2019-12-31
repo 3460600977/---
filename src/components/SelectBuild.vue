@@ -103,33 +103,41 @@
         tableCheckedListSum: {
           pageSize: 100,
           currentPage: 1,
-          list: []
+          list: [],
+          init: [],
         },
         //右侧2列表选点数据=>已选楼盘
         selectCheckedListSum: {
           pageSize: 100,
           currentPage: 1,
-          list: []
+          list: [],
+          init: [],
         },
-        multipleSelection: []
+        multipleSelection: [],
+        firstLoad: 0,
       }
     },
     created() {
       this.selectCheckedList()
+      this.firstLoad = 1;
     },
     watch: {
       selectedBuildings: {
         handler: function (newVal, oldVal) {
-          console.log('selectedBuildings', newVal)
           this.selectCheckedList()
+          return newVal
         }
         ,
         deep: true
       },
       allBuildings: {
         handler: function (newVal, oldVal) {
-          this.selectTableList()
-          this.$refs.multipleCircleTable.toggleAllSelection();
+          if (newVal.length > 0) {
+            this.selectTableList();
+            this.firstLoad = 1
+            this.$refs.multipleCircleTable.toggleAllSelection();
+          }
+          return newVal;
         }
         ,
         deep: true
@@ -143,16 +151,20 @@
         } else {
           this.deleteItem(row)
         }
-        console.log('handleSelectionChange', rows, row)
-        //this.selectedBuildings = selection
       },
       handleSelectionAllChange: function (rows) {
+        if (this.firstLoad === 1) {
+          this.firstLoad++
+          return false
+        }
         if (rows.length === 0) {
           //取消所有选点
-          //this.selectedBuildings = []
+          let deleteBatch = this.selectedBuildings
+          this.deleteBathItem(deleteBatch)
+        } else {
+          let addBatch = this.allBuildings
+          this.addBatchItem(addBatch)
         }
-        console.log('handleSelectionAllChange', rows)
-        //this.selectedBuildings = selection
       },
       handleCircleCurrentChange(page) {
         this.tableCheckedListSum.currentPage = page
@@ -177,6 +189,14 @@
       //触发父级组件的增加某个楼盘方法
       addItem(item) {
         this.$emit('addItem', item)
+      },
+      //触发父级组件,批量删除多个楼盘
+      deleteBathItem(allList) {
+        this.$emit('deleteBathItem', allList)
+      },
+      //触发父级组件,批量增加多个楼盘
+      addBatchItem(allList) {
+        this.$emit('addBatchItem', allList)
       },
     }
   }
