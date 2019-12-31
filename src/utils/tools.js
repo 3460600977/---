@@ -22,7 +22,6 @@ let tools = {
         console.log('avi格式不支持前端校验')
         return resolve({
           msg: '添加视频成功',
-          durationType: '003'
         });
       }
 
@@ -40,8 +39,6 @@ let tools = {
         let videoHeight = e.target.videoHeight;
         let durationToSecondes = (videoTime / 1000).toFixed(0);
         // 001-5s/次，002-10s/次，003-15s/次 依次类推
-        let durationType = durationToSecondes == 15 ? '003'
-          : durationToSecondes == 10 ? '002' : '001';
 
         video.remove()
 
@@ -56,7 +53,6 @@ let tools = {
         }
         return resolve({
           msg: '添加视频成功',
-          durationType: durationType
         });
       })
     })

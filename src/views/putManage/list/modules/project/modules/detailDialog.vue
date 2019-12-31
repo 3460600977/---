@@ -8,7 +8,7 @@
         </el-form-item>
         <el-form-item label="投放方案状态">
           <label class="put-status-box">
-            {{projectStatus[projectDetail.data.status]}}
+            {{$tools.getObjectItemFromArray(projectStatus, 'value', projectDetail.data.status).name}}
           </label>
         </el-form-item>
         <el-form-item label="投放方案行业">

@@ -81,12 +81,13 @@ export const PutGoal = [
   { name: '新品上市', value: 4, icon: require('../assets/images/plan_title_4.png') }
 ]
 
-// 投放方案状态 0待投放，1投放中，2已完成，3已取消
+// 投放状态，0待投放，1投放中，2已完成，3已取消, 4未支付
 export const projectStatus = [
-  '待投放',
-  '投放中',
-  '已完成',
-  '已取消'
+  { name: '待投放', value: 0 },
+  { name: '投放中', value: 1 },
+  { name: '已完成', value: 2 },
+  { name: '已取消', value: 3 },
+  { name: '待支付', value: 4 },
 ]
 
 // 投放预算分类
