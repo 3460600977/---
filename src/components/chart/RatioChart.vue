@@ -34,7 +34,6 @@
         let w = (item.value / this.total * 100).toFixed(2)
         return {...item, style: `${item.style}width: ${w}%`, width: `${w}%`}
       })
-      console.log(this.ratioArr)
     }
   }
 </script>

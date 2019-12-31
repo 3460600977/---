@@ -1,6 +1,9 @@
 <template>
   <div  v-loading="loading" class="container customScroll">
-    <p class="back border-bottom margin1 hand" @click="back"><span class="iconfont icon-icon-test icon"></span>返回</p>
+    <p class="back border-bottom margin1 hand" @click="back">
+      <span class="iconfont icon-icon-test icon"></span>
+      返回
+    </p>
     <div v-if="buildDetail">
       <div class="wrapper border-bottom">
         <p class="bold">{{buildDetail.name}}</p>
@@ -377,8 +380,6 @@
           })
           result.yAxis.push({name: this.buildDetail.cityName, type: 'bar', data: data1, barWidth: 18})
         }
-        debugger
-        console.log(result)
         return result
       },
       renderPieChart(arr1, arr2) {
@@ -451,7 +452,7 @@
     }
     .icon {
       margin-right: 10px;
-      transform: rotateX(-90deg);
+      transform: rotate(90deg);
     }
     .wrapper {
       margin: 0px 20px;
