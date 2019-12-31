@@ -18,7 +18,7 @@
 </template>
 
 <script>
-  import {mapState} from "vuex";
+  import {mapMutations, mapState} from "vuex";
 
   export default {
     name: "createForm",
@@ -39,15 +39,17 @@
       }
     },
     methods: {
+      ...mapMutations(["removeAllState"]),
       submitForm(form) {
         this.$refs[form].validate((valid) => {
           if (valid) {
             if (this.crowdProject.city === ""){
               alert('城市必选!');
+              return false;
             }
             //拼接数据
             this.form.tags = this.crowdProject.tagTid.join(",");
-            this.form.tagsName = JSON.stringify(this.crowdProject.tagNames)
+            this.form.tagsName = JSON.stringify(this.crowdProject.tagNames);
             this.form.city = this.crowdProject.city;
             const h = this.$createElement;
             this.$msgbox({
@@ -67,8 +69,9 @@
             }).then(() => {
               this.$api.peopleInsight.createPeopleCrowd(this.form)
                 .then(res => {
+                  this.removeAllState();
                   //跳转至列表页
-                  this.$router.push('/peopleInsight')
+                  this.$router.push('/peopleInsight');
                 })
                 .catch(res => {
                   alert('保存失败!!');
@@ -80,7 +83,6 @@
               })
             });
           } else {
-            alert('保存失败!');
             return false;
           }
         });
