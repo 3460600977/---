@@ -94,7 +94,7 @@
         ></db-map>
       </div>
     </div>
-    <div slot="footer" class="dialog-footer right">
+    <div slot="footer" class="dialog-footer">
       <el-button class="map-btn" @click="hideMapPoint">取 消</el-button>
       <el-button class="map-btn" type="primary" @click="submitBuildPoint">保存</el-button>
       <!-- <el-button type="primary" @click="innerVisible = true">打开内层 Dialog</el-button> -->
