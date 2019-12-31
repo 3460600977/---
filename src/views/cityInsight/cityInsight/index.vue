@@ -1,11 +1,17 @@
 <template>
     <div class="container cityInsight" v-loading="loading">
-      <div class="left-info">
+      <div class="left-info mid">
         <left-info
           :isShow="isShow"
           :city="cityFilter"
           @toggle="toggle"
         ></left-info>
+        <draw-type
+          ref="drawType"
+          @searchDrawTypeClick="searchDrawTypeClick"
+          @drawTypeSelect="drawTypeSelect"
+          @querySearchAsync="querySearchAsync"
+        ></draw-type>
         <div class="city-select select-style" v-show="isShow[0]">
           <singleSelect-popup
             ref="citySelect"
@@ -50,15 +56,10 @@
       </div>
 <!--      <div>-->
 <!--        <top-select></top-select>-->
+<!--&lt;!&ndash;      </div>&ndash;&gt;-->
+<!--      <div class="draw-type">-->
+<!--        -->
 <!--      </div>-->
-      <div class="draw-type">
-        <draw-type
-          ref="drawType"
-          @searchDrawTypeClick="searchDrawTypeClick"
-          @drawTypeSelect="drawTypeSelect"
-          @querySearchAsync="querySearchAsync"
-        ></draw-type>
-      </div>
       <div class="mapPopup">
         <map-popup
           v-if="showPathCopy"
@@ -642,7 +643,7 @@
       left: 0px;
     }
     .filter-container {
-      left: 40px;
+      left: 113px;
     }
   }
   .left-select {

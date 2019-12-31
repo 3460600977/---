@@ -1,5 +1,5 @@
 <template>
-  <div class="ul border-right hand">
+  <div class="ul hand">
     <p class="border-right ul-p" :class="isShow[0]?'active': ''" @click="toggle(0)">
       <span class="iconfont icon2 icon-ziyuan"></span>
       <span class="text">{{city.name}}</span>
