@@ -475,7 +475,6 @@
               this.barGraphData.loading = false;
               let xdata = [];
               let sdata = [];
-              let sdataShadow = [];
               let ymax = 0;
               res.result.forEach((item, index) => {
                 xdata[index] = item.projectName;
@@ -484,10 +483,6 @@
                   ymax = item.data;
                 }
               });
-              ymax = this.getNumToSplit(ymax);
-              for (let i = 0; i < sdata.length; i++) {
-                sdataShadow[i] = ymax;
-              }
               this.barGraphData.data = {
                 sortField: this.projectList.sortField,
                 topStatus: this.projectList.topStatus,
@@ -626,20 +621,6 @@
         });
         return cardName;
       },
-      getNumToSplit(num) {
-        let strLen = num.toString().length;
-        let splitNumPlus = 1;
-        if (strLen >= 3) {
-          splitNumPlus = Math.pow(10, strLen - 2);
-        } else {
-          splitNumPlus = 1;
-        }
-        while (!(num % 8 === 0
-        )) {
-          num = num + splitNumPlus;
-        }
-        return num;
-      }
     }
   };
 </script>
