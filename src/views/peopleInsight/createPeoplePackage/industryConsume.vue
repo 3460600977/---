@@ -11,11 +11,12 @@
           :props="props"
           clearable>
         </el-cascader>
-        <el-button
-          type="success"
-          @click="setIndustryConsume(hotCons)"
-        >选择</el-button>
       </div>
+      <el-button
+        type="success"
+        class="success-button"
+        @click="setIndustryConsume(hotCons)"
+      >选择</el-button>
     </div>
 </template>
 
@@ -41,7 +42,7 @@
       ...mapMutations(["setTagNames","setTagTid"]),
 
       getChildren(){
-        this.$api.peopleInsight.getChildTags(30000001)
+        this.$api.peopleInsight.getChildTags(this.$parent.activeTab)
           .then(res => {
             this.options = res.result;
           })
@@ -90,4 +91,8 @@
     color: #ffffff;
   }
 }
+.success-button {
+  float: right;
+  width: 15%;
+ }
 </style>

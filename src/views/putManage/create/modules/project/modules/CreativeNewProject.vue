@@ -822,10 +822,10 @@
 
         if (!isformValidatePass) {
           return this.$notify({
-                                title: '警告',
-                                message: '还有必填字段未填写',
-                                type: 'warning'
-                              });
+            title: '警告',
+            message: '还有必填字段未填写',
+            type: 'warning'
+          });
         }
 
         this.planData.loading = true;
@@ -844,16 +844,17 @@
           projectType: this.formData.projectType.value, // 投放类型，0按周投放，1按天投放
           second: this.formData.second.value // 投放时长，001-5s/次，002-10s/次，003-15s/次 依次类推
         }
+
         if (this.isEdit) {
           this.$api.PutProject.EditProject({id: this.formData.id, name: this.formData.name})
               .then(res => {
                 this.formData.confirming = false;
                 this.planData.loading = false;
                 this.$notify({
-                               title: '成功',
-                               message: '修改方案成功',
-                               type: 'success'
-                             });
+                  title: '成功',
+                  message: '修改方案成功',
+                  type: 'success'
+                });
                 /**
                  * 若该方式的创意状态为“未上传、审核拒绝”，按钮为【下一步】，可跳转到创建广告创意页面；
                  * 创意状态 0未审核，1审核不通过，2审核通过
@@ -889,6 +890,7 @@
                 this.planData.loading = false;
               })
         }
+        
         if (!this.isEdit) {
           this.$api.PutProject.AddProject(param)
               .then(res => {

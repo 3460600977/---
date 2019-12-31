@@ -29,6 +29,13 @@ export const peopleInsight = {
       method: "get",
     });
   },
+  createPeopleCrowd:(data)=> {
+    return request({
+      url : "/dpapi/crowd/create",
+      method: "post",
+      data
+    });
+  },
 
   // 加载人群洞察包list数据
   getPeopleInsightHotMap:(data) => {

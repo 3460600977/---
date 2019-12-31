@@ -251,9 +251,9 @@
         sliderVal: 3000,
         currentSelectType: null,
         popUpHeight: {
-          'polyline': 329,
-          'polygon': 278,
-          'circle': 424 // 402 + 22圆形时弹窗位置为弹窗高度加图标高度
+          'polyline': 246,
+          'polygon': 121,
+          'circle': 310 // 402 + 22圆形时弹窗位置为弹窗高度加图标高度
         },
         allBuildings: []
       }
