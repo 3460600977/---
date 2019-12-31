@@ -94,6 +94,14 @@
         this.$emit('addBtnClick')
       },
       createPackage() {
+        if (!this.selectedBuildings.length) {
+          this.$notify({
+            title: '警告',
+            message: '没有选中的楼盘数据！',
+            type: 'warning'
+          });
+          return
+        }
         this.$emit('createPackage')
       },
       deleteItem(item) {

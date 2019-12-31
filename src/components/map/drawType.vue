@@ -44,10 +44,17 @@
 
 <script>
   import searchPopup from "./searchPopup";
+  const MAX_COUNT = 5
   export default {
     name: "drawType",
     components: {
       searchPopup
+    },
+    props: {
+      length: { // 当前选点的个数
+        type: Number,
+        required: true
+      },
     },
     data() {
       return {
@@ -66,6 +73,14 @@
         this.$emit('drawTypeSelect', val, 'select')
       },
       drawTypeSelect(e, type, index) {
+        if (this.length >= MAX_COUNT) {
+          this.$notify({
+            title: '警告',
+            message: '最多只能进行五次选点操作！',
+            type: 'warning'
+          });
+          return
+        }
         this.activeIndex = index
         this.isShow = false
         this.$emit('drawTypeSelect', {x: e.clientX, y: e.clientY}, type)
@@ -78,6 +93,14 @@
         this.cancleSelect()
       },
       showSearchPop(index) {
+        if (this.length >= MAX_COUNT) {
+          this.$notify({
+            title: '警告',
+            message: '最多只能进行五次选点操作！',
+            type: 'warning'
+          });
+          return
+        }
         this.activeIndex = index
         this.isShow = true
         this.$emit('searchDrawTypeClick')
