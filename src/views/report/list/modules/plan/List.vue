@@ -67,8 +67,7 @@
         ></el-option>
       </el-select>
       <div class="report-bar-graph-data">
-        <div v-if="barGraphData.data.length===0">暂无数据</div>
-        <BarGraph :axisData="barGraphData.data" :loading="barGraphData.loading" v-else></BarGraph>
+        <BarGraph :axisData="barGraphData.data" :loading="barGraphData.loading"></BarGraph>
       </div>
     </div>
     <div class="report-result-list">
@@ -239,11 +238,11 @@
       }
       //获取计划名称列表
       this.getPlanNameList();
-      //获取默认状态下的卡片数据
+      // //获取默认状态下的卡片数据
       this.getPlanTotal();
-      //获取默认状态下的柱状图数据
+      // //获取默认状态下的柱状图数据
       this.getPlanBarChart();
-      //获取默认状态下的列表数据
+      // //获取默认状态下的列表数据
       this.getPlanList();
     },
     methods: {
@@ -372,7 +371,6 @@
         this.barGraphData.loading = true;
         this.$api.Report.getPlanChartBar(queryParam)
             .then(res => {
-              // res.result = [...res.result, ...res.result, ...res.result, ...res.result]
               this.barGraphData.loading = false;
               let xdata = [];
               let sdata = [];
@@ -386,10 +384,6 @@
                   ymax = item.data;
                 }
               });
-              ymax = this.getNumToSplit(ymax);
-              // for (let i = 0; i < sdata.length; i++) {
-              //   sdataShadow[i] = ymax;
-              // }
 
               this.barGraphData.data = {
                 sortField: this.planList.sortField,
@@ -399,15 +393,16 @@
                   data: xdata
                 },
                 yAxis: {
+                  splitNumber: 8,
                   max: function (value) {
                     return value.max;
                   }
                 },
                 series: {
                   data: sdata,
-                  //dataShadow: sdataShadow
                 }
               };
+              console.log(this.barGraphData.data)
             })
             .catch(res => {
               this.barGraphData.data = {
@@ -418,6 +413,7 @@
                   data: []
                 },
                 yAxis: {
+                  splitNumber: 8,
                   max: 0
                 },
                 series: {
@@ -526,20 +522,6 @@
         });
         return cardName;
       },
-      getNumToSplit(num) {
-        let strLen = num.toString().length;
-        let splitNumPlus = 1;
-        if (strLen >= 3) {
-          splitNumPlus = Math.pow(10, strLen - 2);
-        } else {
-          splitNumPlus = 1;
-        }
-        while (!(num % 8 === 0
-        )) {
-          num = num + splitNumPlus;
-        }
-        return num;
-      }
     }
   };
 </script>
