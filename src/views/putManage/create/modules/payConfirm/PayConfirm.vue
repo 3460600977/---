@@ -19,6 +19,7 @@
       </div>
     </PutMangeCard>
 
+
     <!-- 方案信息 -->
     <PutMangeCard v-loading="project.loading">
       <div class="font-16" style="margin-bottom: 30px;">方案信息</div>
@@ -63,7 +64,7 @@
     <!-- 总计 取消投放 确认并支付 -->
     <PutMangeCard v-loading="project.loading">
       <div class="mid-between">
-        <div>总计: <span class="color-red">¥ {{this.$tools.toThousands(project.data.totalCost / 100)}}</span></div>
+        <div>总计: <span class="color-red">¥ {{this.$tools.toThousands(estimatePriceValue / 100)}}</span></div>
         <div v-if="hasCanceled">
           <router-link to="/putManage?active=project">
             <el-button style="width: 136px;" type="primary">返回列表</el-button>
@@ -110,7 +111,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 import PutMangeCard from '../../../templates/PutMangeCard' 
 import BuildList from '@/views/putManage/templates/BuildList' 
 import { projectConst } from '../../../../../utils/static'
@@ -136,6 +137,8 @@ export default {
         second: 0
       },
 
+      estimatePriceValue: 0,
+
       confirmPayCallBack: {
         show: false,
         data: ''
@@ -152,28 +155,6 @@ export default {
   methods: {
     ...mapMutations(['setLeftStep', 'setBuildsList']),
 
-    // 取消
-    cancleConfirm() {
-      this.$emit('closeDetail')
-      this.$api.PutProject.CancelProject({projectId: this.confirmWindowMsg.resData.projectId})
-        .then(res => {
-          this.$notify({
-            title: '成功',
-            message: res.msg,
-            type: 'success'
-          });
-          this.$router.push({
-            path: '/putManage',
-            query: {
-              'active': 'project'
-            }
-          })
-        })
-        .catch(res => {
-
-        })
-    },
-
     // 方案明细
     initConfirmPage: async function(projectId) {
       this.project = {
@@ -188,6 +169,7 @@ export default {
             data: res.result
           };
           this.setBuildsList(this.project.data.premiseVOS)
+          this.estimatePrice()
         })
         .catch(res => {
           this.project = {
@@ -195,6 +177,25 @@ export default {
             data: []
           }
         })
+    },
+
+    // POST根据订单信息计算预估总价
+    estimatePrice() {
+      let param = {
+        beginTime:  this.project.data.beginTime,
+        endTime:    this.project.data.endTime,
+        cityCode:   this.project.data.projectCity,
+        count:      this.project.data.count,
+        deviceNum:  this.deviceNumber,
+        second:     this.project.data.second,
+        type:       this.project.data.type
+      }
+      this.$api.CityList.EstimateTotalPrice(param)
+          .then(res => {
+            this.estimatePriceValue = res.result;
+          })
+          .catch(res => {
+          })
     },
 
     // 行业列表
@@ -283,6 +284,8 @@ export default {
   },
 
   computed: {
+    ...mapGetters(['deviceNumber']),
+
     hasCanceled() {
       let res = false;
       if (this.countDown.minute === 0 && this.countDown.second === 0) {

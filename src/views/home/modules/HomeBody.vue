@@ -8,7 +8,7 @@
       <!--  -->
       <div :style="`background-image:url('${images.moneyBg}')`" class="account-money-box color-white">
         <div class="accouint-title">现金账户</div>
-        <div class="account-val font-number">{{$tools.toThousands(accountBalance)}}</div>
+        <div class="account-val font-number">{{$tools.toThousands(accountBalance / 100)}}</div>
       </div>
       <el-button class="create-put" type="primary" icon="el-icon-plus" @click="ToPathPlan">创建投放计划</el-button>
     </el-card>

@@ -299,6 +299,7 @@
     <!-- 保存成功提示 -->
     <el-dialog
       title="创意审核"
+      @beforeClose="nextPage"
       :visible.sync="successDialog"
       width="568px">
       <span>创意已提交审核，请及时核实审核结果，以免因未按时审核通过，而造成方案取消！</span>
@@ -708,7 +709,6 @@ export default {
         path: '/putManage',
         query: {
           active: 'creative'
-          // 'active': this.createType !== 'step' ? 'creative' : 'project'
         }
       })
     }
