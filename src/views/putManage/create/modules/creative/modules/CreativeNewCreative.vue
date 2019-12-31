@@ -88,7 +88,7 @@
         <!-- 时长  -->
         <el-form-item prop="durationType" label="投放时长">
           <el-select class="width-100-p"
-            :disabled="this.createType === 'step'"
+            :disabled="this.createType === 'step' || haveProject"
             v-model="formData.durationType" 
             placeholder="请选择">
             <el-option
@@ -176,7 +176,7 @@
         <!-- 行业列表 -->
         <el-form-item prop="name" label="广告创意行业">
           <el-select 
-            :disabled="this.createType === 'step'"
+            :disabled="this.createType === 'step' || haveProject"
             class="width-100-p" 
             @change="generateCreativeName"
             v-model="formData.industry" 
