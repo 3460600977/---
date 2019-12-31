@@ -375,12 +375,12 @@
                 if (item.reviewTime === null || item.reviewTime === undefined) {
                   item.reviewTime = '暂无'
                 } else {
-                  item.reviewTime = this.$tools.formatDate(item.reviewTime, 'yyyy-MM-dd')
+                  item.reviewTime = this.$tools.formatDate(item.reviewTime, 'yyyy-MM-dd hh:mm:ss')
                 }
                 if (item.createTime === null || item.createTime === undefined) {
                   item.createTime = '暂无'
                 } else {
-                  item.createTime = this.$tools.formatDate(item.createTime, 'yyyy-MM-dd')
+                  item.createTime = this.$tools.formatDate(item.createTime, 'yyyy-MM-dd hh:mm:ss')
                 }
                 if (item.screenType === null || item.screenType === undefined) {
                   item.screenType = -1

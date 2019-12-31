@@ -1,78 +1,78 @@
 <template>
   <!-- 选点结果列表 -->
-  <div class="map-choosed-list panel panel-default animate-to-top ui-tab-container">
-    <el-radio-group v-model="mapListShowType" style="margin-bottom: 30px;">
-      <el-radio-button label="inCircle">圈内楼盘 {{resData.mapPointList.length || 0}}</el-radio-button>
-      <el-radio-button label="inSelect">已选楼盘 {{mapCheckedListSum.list.length || 0}}</el-radio-button>
+  <div class="map-choosed-list">
+    <el-radio-group v-model="mapListShowType" style="margin-bottom: 10px;" @change="selectCheckedList">
+      <el-radio-button label="inCircle">圈内楼盘 {{selectedBuildings.length || 0}}</el-radio-button>
+      <el-radio-button label="inSelect">已选楼盘 {{selectedBuildings.length || 0}}</el-radio-button>
     </el-radio-group>
 
     <!-- 圈内列表 -->
-    <div class="list-box" v-if="mapListShowType === 'inCircle'">
+    <div class="list-box-1" :class="{showListBox:mapListShowType === 'inSelect'}">
       <div class="top-title">
-        <table class="table table-bordered" style="margin-bottom:0">
-          <thead>
-          <tr>
-            <th style="width: 42px" class="text-center">
-              <input class="redcheckbtnall" v-if="mapAllChecked" type="checkbox" @click="checkAllMapPoint()"/>
-            </th>
-            <th>楼盘名称</th>
-          </tr>
-          </thead>
-        </table>
-      </div>
-
-      <div class="bottom-list" v-if="resData.mapPointList.length > 0">
-        <table class="table table-hover table-bordered">
-          <tbody>
-          <tr v-for="(buildItem,index) in resData.mapPointList">
-            <td
-              style="width: 42px;"
-              class="text-center"
-              @click="changeMapListCheck(buildItem)">
-              <input class="redcheckbtn" type="checkbox" ng-checked="buildItem.action === 1">
-            </td>
-            <td title="点击查看楼盘详情">
-              <a @click="showBuildDetail(buildItem)" href="javascript:;">{{buildItem}}</a>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="bottom-list" v-if="resData.mapPointList.length <= 0">
-        <div class="nodata text-center">
+        <el-table v-if="tableCheckedListSum.list.length > 0" border class="build-list-table"
+                  ref="multipleCircleTable"
+                  :data="tableCheckedListSum.list"
+                  height="400"
+                  tooltip-effect="dark"
+                  style="width: 100%;max-height:100%;overflow: auto"
+                  @select="handleSelectionChange"
+                  @select-all="handleSelectionAllChange"
+                  @row-click="handleCurrentChange">
+          <el-table-column
+            type="selection"
+            width="40">
+          </el-table-column>
+          <el-table-column
+            prop="premisesName"
+            label="楼盘名称"
+            width="170px">
+          </el-table-column>
+        </el-table>
+        <el-pagination v-if="selectedBuildings.length > 0"
+                       background
+                       layout="prev, pager, next"
+                       :current-page="tableCheckedListSum.currentPage"
+                       :total="selectedBuildings.length"
+                       @current-change="handleCircleCurrentChange"
+                       class="list-page"
+                       :pager-count="3"
+        ></el-pagination>
+        <div v-if="selectedBuildings.length <= 0" class="nodata text-center">
           暂无数据
         </div>
       </div>
     </div>
 
     <!-- 已选楼盘 -->
-    <div class="list-box" v-if="mapListShowType === 'inSelect'">
+    <div class="list-box-2" :class="{showListBox:mapListShowType === 'inCircle'}">
       <div class="top-title">
-        <table class="table table-bordered" style="margin-bottom:0">
+        <table v-if="selectedBuildings.length > 0" class="table table-bordered table-head" style="margin-bottom:0">
           <thead>
           <tr>
-            <!-- <th style="width: 42px" class="text-center"><input class="redcheckbtnall" type="checkbox" @click="checkAllMapPoint()"></th> -->
             <th>楼盘名称</th>
           </tr>
           </thead>
         </table>
-      </div>
-
-      <div class="bottom-list">
-        <table class="table table-hover table-bordered">
+        <table v-if="selectedBuildings.length > 0" class="table table-hover table-bordered"
+               style="margin-bottom:20px">
           <tbody>
-          <tr v-for="buildItem in mapCheckedListSum.list">
-            <!-- <td
-                style="width: 42px;"
-                class="text-center"
-                @click="dataExchange.delItemOuter($index)">
-                <label class="redcheckbtnall" checked="true"></label>
-            </td> -->
-            <td>{{buildItem.build_name}}</td>
+          <tr v-for="(buildItem,index) in selectCheckedListSum.list" :key="index">
+            <td>{{buildItem['premisesName']}}</td>
           </tr>
           </tbody>
         </table>
+        <el-pagination v-if="selectedBuildings.length > 0"
+                       background
+                       layout="prev, pager, next"
+                       :current-page="selectCheckedListSum.currentPage"
+                       :total="selectedBuildings.length"
+                       @current-change="handleCurrentChange"
+                       class="list-page"
+                       :pager-count="3"
+        ></el-pagination>
+        <div v-if="selectedBuildings.length <= 0" class="nodata text-center">
+          暂无数据
+        </div>
       </div>
     </div>
   </div>
@@ -81,57 +81,74 @@
 <script>
   export default {
     name: "SelectBuild",
+    props: {
+      selectedBuildings: {
+        type: Array,
+        default: []
+      },
+      allBuildings: {
+        type: Array,
+        default: []
+      }
+    },
     data() {
       return {
         isActive: true,
         mapAllChecked: false,
         selectedListLoading: false,
         mapListShowType: 'inCircle',
-        mapCheckedListSum: {
+        //右侧1列表选点数据=>圈内楼盘
+        tableCheckedListSum: {
+          pageSize: 100,
+          currentPage: 1,
           list: []
         },
-        resData: {
-          // 楼盘列表
-          buildList: [],
-          //buildList 分页
-          buildListPage: null,
-          // 楼盘详细
-          buildDetail: [],
-          // 地图点位
-          mapPointList: [],
-          // 已选点位
-          selected_point:
-            {
-              build_num: 0,
-              total_point_num: 0,
-              list: []
-            }
+        //右侧2列表选点数据=>已选楼盘
+        selectCheckedListSum: {
+          pageSize: 100,
+          currentPage: 1,
+          list: []
         },
+        multipleSelection: []
+      }
+    },
+    created() {
+      this.selectCheckedList()
+    },
+    watch: {
+      selectedBuildings: {
+        handler: function (newVal, oldVal) {
+          this.selectCheckedList()
+        }
+        ,
+        deep: true
       }
     },
     methods: {
-      setLocalStorage: function (name, data) {
-        return localStorage.setItem(name, JSON.stringify(data));
+      handleSelectionChange: function (selection) {
+        this.selectedBuildings = selection
       },
-
-      getLocalStorage: function (name) {
-        return JSON.parse(localStorage.getItem(name));
+      handleSelectionAllChange: function (selection) {
+        this.selectedBuildings = selection
       },
-      changeMapListShowType: function (showType) {
-        this.mapListShowType = showType;
+      handleCircleCurrentChange(page) {
+        this.tableCheckedListSum.currentPage = page
       },
-      checkAllMapPoint: function () {
-        this.removeAllMapPoint();
+      handleCurrentChange(page) {
+        this.selectCheckedListSum.currentPage = page
+        this.selectCheckedList()
       },
-      removeAllMapPoint: function () {
-
+      toggleSelection(rows) {
+        if (rows) {
+          rows.forEach(row => {
+            this.$refs.multipleCircleTable.toggleRowSelection(row);
+          });
+        }
       },
-      changeMapListCheck: function (buildItem) {
-
-      },
-      showBuildDetail: function (buildObj) {
-        // 点基础的信息
-        this.resData.buildDetail.parentData = buildObj;
+      selectCheckedList() {
+        // 這樣就是根據 type 來過濾
+        let result = this.$tools.getFrontEndPage(this.selectedBuildings, this.selectCheckedListSum.pageSize, this.selectCheckedListSum.currentPage)
+        this.selectCheckedListSum.list = result.results;
       }
     }
   }
@@ -140,110 +157,82 @@
 <style lang="scss">
   .map-choosed-list {
     position: absolute;
-    top: 54px;
+    top: 10px;
     right: 10px;
-    width: 250px;
+    width: 270px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
     background: #fff;
     height: auto;
     z-index: 1;
     transition: .35s;
-    overflow: hidden;
-    .title {
-      user-select: none;
+    .showListBox {
+      display: none;
     }
-    .active {
-      background: $color-bg;
-      color: $color-text;
+    .el-radio-group {
+      width: 100%;
+      .el-radio-button {
+        width: 50%;
+        .el-radio-button__inner {
+          width: 100%;
+        }
+      }
     }
-    .redcheckbtn {
+    .top-title {
+      padding: 0 10px;
+      margin: 10px 0 20px 0;
+    }
+    .build-list-table {
       position: relative;
-      text-align: center;
-      cursor: pointer;
-      line-height: 18px;
-      &::after {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        margin: -9px 0 0 -9px;
-        display: inline-block;
-        content: '';
-        width: 18px;
-        height: 18px;
-        background: #fff;
-        border: 1px solid #CBD5DD;
-      }
-      &:checked::after {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        margin: -9px 0 0 -9px;
-        display: inline-block;
-        content: '✔';
-        width: 18px;
-        height: 18px;
-        background: $color-blue;
-        color: #fff;
-        border: none;
-      }
+      z-index: 1;
+      margin-top: -2px;
     }
-    .redcheckbtnall {
+    .el-table--border {
+      border-bottom: 1px solid $color-border;
+    }
+    .el-table__header-wrapper {
+      border-bottom: 1px solid $color-border;
+    }
+  }
+  .list-box-2 {
+    .table-bordered {
+      width: 100%;
+      max-width: 100%;
+      border: 1px solid $color-border;
+    }
+    .table-bordered tbody tr td, .table-bordered thead tr th {
+      border: 1px solid $color-border;
+      padding: 12px 0 12px 10px;
+      min-width: 0;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      text-overflow: ellipsis;
+      vertical-align: middle;
       position: relative;
-      text-align: center;
-      color: #fff;
-      line-height: 20px;
-      cursor: pointer;
-      &::after {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        margin: -10px 0 0 -10px;
-        display: inline-block;
-        content: '＋';
-        width: 20px;
-        height: 20px;
-        background: $color-blue;
-      }
-      &:checked::after {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        margin: -10px 0 0 -10px;
-        display: inline-block;
-        content: '－';
-        width: 20px;
-        height: 20px;
-        background: $color-blue;
-      }
+      text-align: left;
     }
-    .list-box {
-      padding: 10px;
-      .top-title {
-        position: relative;
-        background: #fff;
-        z-index: 2;
-        td {
-          padding: 4px 10px;
-        }
-      }
-      .bottom-list {
-        position: relative;
-        z-index: 1;
-        margin-top: -2px;
-        // height: calc(100vh - 405px);
-        height: calc(100vh - 360px);
-        overflow-y: auto;
-        table {
-          margin-bottom: 0;
-          td {
-            // padding: 4px 10px;
-          }
-        }
-        .nodata {
-          line-height: calc(100vh - 415px);
-          border: 1px solid #ddd;
-        }
-      }
+    .table-bordered tbody tr td {
+      border-bottom: none;
+      border-left: none;
+    }
+    .table-hover tbody tr:first-child td {
+      border-top: none;
+    }
+    .table-hover tbody {
+      overflow-y: scroll;
+      height: 360px;
+      table-layout: fixed;
+      border-top: none;
+      display: flow-root;
+    }
+    .table-hover tbody tr {
+      width: 100%;
+      display: grid;
+    }
+    .table-head {
+      border-bottom: none;
+    }
+    .list-page {
+      text-align: center;
     }
   }
 </style>
