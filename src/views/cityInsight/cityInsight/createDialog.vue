@@ -90,8 +90,7 @@
         }
         this.$api.cityInsight.createCityInsight(param).then((data) => {
           if (data.result) {
-            this.$emit('createSuc')
-            this.hide()
+            this.$router.push('/toolBox/resourceBundle')
           }
         })
       },

@@ -118,7 +118,6 @@
           ref="createDialog"
           :city="cityFilter"
           :data="selectedBuildings"
-          @createSuc="createSuc"
         ></create-dialog>
       </div>
       <div class="add-dialog">
@@ -230,7 +229,7 @@
               types: [
                 {label: '低于200', key: 0},
                 {label: '200-500', key: 1},
-                {label: '5000-800', key: 2},
+                {label: '500-800', key: 2},
                 {label: '800以上', key: 3}
               ]
             },
