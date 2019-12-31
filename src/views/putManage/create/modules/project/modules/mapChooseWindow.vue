@@ -42,17 +42,20 @@
       <div class="draw-select">
         <draw-type
           ref="drawType"
+          :length="Object.keys(pathArr).length || 0"
           @searchDrawTypeClick="searchDrawTypeClick"
           @drawTypeSelect="drawTypeSelect"
           @querySearchAsync="querySearchAsync"
         ></draw-type>
       </div>
       <div class="mapPopup">
-        <map-popup v-if="showPathCopy"
-                   @sliderChange="sliderChange"
-                   @operate="operate"
-                   :item="showPathCopy"
-                   :style="{top: mapLocation.y+'px', left: mapLocation.x+ 'px'}"></map-popup>
+        <map-popup
+          v-if="showPathCopy"
+          @sliderChange="sliderChange"
+          @operate="operate"
+          :item="showPathCopy"
+          :style="{top: mapLocation.y+'px', left: mapLocation.x+ 'px'}"
+        ></map-popup>
       </div>
       <div class="mouseMove-text" :style="{
           'top': location.y + 10 + 'px',
@@ -61,8 +64,8 @@
         <mouseMove-text
           v-if="currentSelectType"
           ref="mouseMoveText"
-          :currentSelectType="currentSelectType">
-        </mouseMove-text>
+          :currentSelectType="currentSelectType"
+        ></mouseMove-text>
       </div>
       <div class="right-select-build">
         <select-build :selectedBuildings="selectedBuildings" :allBuildings="allBuildings" @deleteItem="deleteItem"
@@ -383,16 +386,17 @@
       },
       loadData() {
         this.loading = true
-        this.$api.cityInsight
-            .getPremisesByCity({cityCode: this.cityFilter.cityCode, tag: this.buildingFilter})
-            .then((data) => {
-              if (data.result) {
-                this.points = data.result
-              } else {
-                this.points = []
-              }
-              this.loading = false
-            })
+        this.$api.cityInsight.getPremisesByCity({
+          cityCode: this.cityFilter.cityCode,
+          tag: this.buildingFilter
+        }).then((data) => {
+          if (data.result) {
+            this.points = data.result
+          } else {
+            this.points = []
+          }
+          this.loading = false
+        })
       },
       // 初始化
       init() {

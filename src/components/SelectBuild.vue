@@ -16,8 +16,7 @@
                   tooltip-effect="dark"
                   style="width: 100%;max-height:100%;overflow: auto"
                   @select="handleSelectionChange"
-                  @select-all="handleSelectionAllChange"
-                  @row-click="handleCurrentChange">
+                  @select-all="handleSelectionAllChange">
           <el-table-column
             type="selection"
             width="40">
@@ -115,6 +114,7 @@
         },
         multipleSelection: [],
         firstLoad: 0,
+        deleteList: [],
       }
     },
     created() {
@@ -147,8 +147,16 @@
       handleSelectionChange: function (rows, row) {
         let selected = rows.length && rows.indexOf(row) !== -1
         if (selected) {
+          this.deleteList.forEach((item, index) => {
+            if (item.premisesId === row.premisesId) {
+              this.deleteList.splice(index, 1)
+            }
+          })
           this.addItem(row)
         } else {
+          console.log('handleSelectionChange!~~~~~~~~~~~~~~~~~~~~~~~~~')
+          this.deleteList.push(row)
+          console.log(this.deleteList, row)
           this.deleteItem(row)
         }
       },
@@ -158,10 +166,12 @@
           return false
         }
         if (rows.length === 0) {
-          //取消所有选点
+          //取消所有选点才触发
           let deleteBatch = this.selectedBuildings
           this.deleteBathItem(deleteBatch)
         } else {
+          //全选所有选点才触发
+          this.deleteList = []
           let addBatch = this.allBuildings
           this.addBatchItem(addBatch)
         }
@@ -169,6 +179,13 @@
       handleCircleCurrentChange(page) {
         this.tableCheckedListSum.currentPage = page
         this.selectTableList()
+        this.firstLoad = 1
+        this.$refs.multipleCircleTable.toggleAllSelection();
+        this.deleteList.forEach((item, index) => {
+          console.log('handleCircleCurrentChange~~~~~~~~~~~~~~~~~~~~~~')
+          console.log(this.$refs.multipleCircleTable, item)
+          //this.$refs.multipleCircleTable.toggleRowSelection(item, false);
+        })
       },
       handleCurrentChange(page) {
         this.selectCheckedListSum.currentPage = page
