@@ -78,9 +78,8 @@
     },
     created() {
       this.$api.peopleInsight.getMenuList().then((data) => {
-        this.tabData = data.result
+        this.tabData = data.result;
         this.activeTab = data.result[0][seriesValue]
-
       })
     },
     watch: {
