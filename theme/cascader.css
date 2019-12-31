@@ -2927,8 +2927,8 @@
   .el-radio__inner {
     border: 1px solid #E5E7E9;
     border-radius: 100%;
-    width: 22px;
-    height: 22px;
+    width: 14px;
+    height: 14px;
     background-color: #FFFFFF;
     position: relative;
     cursor: pointer;

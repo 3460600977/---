@@ -3,9 +3,9 @@
  * CAS-RMS ->  beike-rms
  */
 import axios from 'axios'
-import {Message, MessageBox, Notification} from 'element-ui'
+import { Message, MessageBox, Notification } from 'element-ui'
 import store from '@/store'
-// import { getToken } from '@/utils/auth'
+import { removeUserInfo } from '@/utils/auth';
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.BASE_API, // api 的 base_url
@@ -15,15 +15,13 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // Do something before request is sent
-
+    
     if (store.state.token.userToken) {
       // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
       config.headers['token'] = store.state.token.userToken;
     } else {
       config.headers['token'] = '';
     }
-    config.headers['token'] =
-      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJXQjE4MDUyNzAiLCJleHAiOjE1NzgzMTMwNjZ9.ySayQIjjTvjlPUtm3kaXBv9StnQaizqf7ml7n0w4beY"
     return config
   },
   error => {
@@ -57,9 +55,9 @@ service.interceptors.response.use(
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          store.dispatch('FedLogOut').then(() => {
-            location.replace('/login') // 为了重新实例化vue-router对象 避免bug
-          })
+          removeUserInfo()
+          this.$store.commit('setToken', '')
+          this.$router.replace('/login');
         })
       }
       Notification({

@@ -19,8 +19,6 @@
       }
     },
     mounted() {
-      console.log(this.$refs.container)
-      console.log(this.$refs.slot.style.width)
       this.width = this.$refs.container.style.width
     },
     methods: {

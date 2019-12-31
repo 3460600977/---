@@ -1,6 +1,9 @@
 <template>
   <div  v-loading="loading" class="container customScroll">
-    <p class="back border-bottom margin1 hand" @click="back"><span class="iconfont icon-icon-test icon"></span>返回</p>
+    <p class="back border-bottom margin1 hand" @click="back">
+      <span class="iconfont icon-icon-test icon"></span>
+      返回
+    </p>
     <div v-if="buildDetail">
       <div class="wrapper border-bottom">
         <p class="bold">{{buildDetail.name}}</p>
@@ -60,7 +63,7 @@
         </div>
       </div>
       <div class="charts margin1">
-        <div class="border-bottom box box1 mid-column padding1">
+        <div v-if="sexArr" class="border-bottom box box1 mid-column padding1">
           <p class="title" style="position: relative;top: 0">性别比例</p>
           <div class="mid-center flex1 fullContainer">
             <div class="sex-ratio">
@@ -95,7 +98,7 @@
             </div>
           </div>
         </div>
-        <div class="box2 box border-bottom">
+        <div v-if="ageArr" class="box2 box border-bottom">
           <p class="title">年龄分布</p>
           <div class="fullContainer">
             <histogram
@@ -108,7 +111,7 @@
             ></histogram>
           </div>
         </div>
-        <div class="box2 box border-bottom">
+        <div  v-if="marriageDist" class="box2 box border-bottom">
           <p class="title">婚姻状况</p>
           <div class="fullContainer">
             <histogram
@@ -122,7 +125,7 @@
             ></histogram>
           </div>
         </div>
-        <div class="box2 box border-bottom">
+        <div v-if="educationDist" class="box2 box border-bottom">
           <p class="title">学历分布</p>
           <div class="fullContainer">
             <histogram
@@ -136,7 +139,7 @@
             ></histogram>
           </div>
         </div>
-        <div class="box2 box border-bottom">
+        <div v-if="incomeDist" class="box2 box border-bottom">
           <p class="title">收入水平</p>
           <div class="fullContainer">
             <histogram
@@ -150,7 +153,7 @@
             ></histogram>
           </div>
         </div>
-        <div class="box2 box border-bottom">
+        <div v-if="consumptionDist" class="box2 box border-bottom">
           <p class="title">消费水平</p>
           <div class="fullContainer">
             <histogram
@@ -164,7 +167,7 @@
             ></histogram>
           </div>
         </div>
-        <div class="box2 box border-bottom">
+        <div v-if="privateCarDist" class="box2 box border-bottom">
           <p class="title">车产状况</p>
           <div class="fullContainer">
             <histogram
@@ -178,7 +181,7 @@
             ></histogram>
           </div>
         </div>
-        <div class="box3 box border-bottom">
+        <div v-if="hotSearch" class="box3 box border-bottom">
           <p class="title">行业热搜指数</p>
           <div class="fullContainer">
             <histogram
@@ -196,7 +199,7 @@
         </div>
       </div>
     </div>
-    <div v-else>
+    <div v-else class="text-center mt-20">
       没有楼盘详情数据！
     </div>
   </div>
@@ -328,9 +331,12 @@
         this.loading = true
         this.$api.cityInsight.getBuildingDetail({pid: id}).then((data) => {
           this.buildDetail = data.result
-          if (!this.buildDetail) {
-            this.loading = false
+          this.loading = false
+          if (!this.buildDetail || (this.buildDetail && !this.buildDetail.chat)) {
             return
+          }
+          if (!this.buildDetail.chat.cityAverage) {
+            return;
           }
           this.sexArr = this.renderSexChart(data.result.chat.genderDist)
           this.ageArr = this.renderHistogramChart(data.result.chat.ageDist, data.result.chat.cityAverage.ageAverageDist)
@@ -344,7 +350,6 @@
           this.incomeDist = this.renderHistogramChart(data.result.chat.incomeDist, data.result.chat.cityAverage.incomeAverageDist)
 
           this.educationDist = this.renderHistogramChart(data.result.chat.educationDist, data.result.chat.cityAverage.educationAverageDist)
-          this.loading = false
         })
       },
       renderSexChart(arr) {
@@ -447,7 +452,7 @@
     }
     .icon {
       margin-right: 10px;
-      transform: rotateX(-90deg);
+      transform: rotate(90deg);
     }
     .wrapper {
       margin: 0px 20px;

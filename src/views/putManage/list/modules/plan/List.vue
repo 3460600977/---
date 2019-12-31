@@ -239,3 +239,4 @@ export default {
 <style lang='scss'>
 @import '../listCommonStyle.scss';
 </style>
+ 

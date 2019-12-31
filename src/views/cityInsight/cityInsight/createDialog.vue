@@ -27,9 +27,9 @@
         </div>
         <p class="title bold">汇总数</p>
         <ul class="ul mid-between">
-          <li>已选楼盘数：<span class="font-number font-16 color-main">{{data.length}}</span></li>
-          <li>已选点位数：<span class="font-number font-16 color-main">{{deviceCount}}</span></li>
-          <li>覆盖人数：<span class="font-number font-16 color-main">{{coveredPeople}}</span></li>
+          <li>已选楼盘数：<span class="font-number font-16 color-main">{{data.length | toThousands}}</span></li>
+          <li>已选点位数：<span class="font-number font-16 color-main">{{deviceCount | toThousands}}</span></li>
+          <li>覆盖人数：<span class="font-number font-16 color-main">{{coveredPeople | toThousands}}</span></li>
         </ul>
         <p class="title bold" style="margin-bottom: 10px">资源包名称</p>
         <create-form
@@ -90,8 +90,7 @@
         }
         this.$api.cityInsight.createCityInsight(param).then((data) => {
           if (data.result) {
-            this.$emit('createSuc')
-            this.hide()
+            this.$router.push('/toolBox/resourceBundle')
           }
         })
       },

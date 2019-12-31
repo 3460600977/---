@@ -16,19 +16,19 @@
         <ul class="desc">
           <li class="mid-start">
             <p class="label">楼盘数</p>
-            <p class="font-number font-16">{{selectedBuildings.length}}个</p>
+            <p class="font-number font-16">{{selectedBuildings.length | toThousands}}个</p>
           </li>
           <li class="mid-start">
             <p class="label">单元数</p>
-            <p class="font-number font-16">{{unitNum}}个</p>
+            <p class="font-number font-16">{{unitNum | toThousands}}个</p>
           </li>
           <li class="mid-start">
             <p class="label">点位数</p>
-            <p class="font-number font-16">{{deviceCount}}个</p>
+            <p class="font-number font-16">{{deviceCount | toThousands}}个</p>
           </li>
           <li class="mid-start">
-            <p class="label">覆盖人次</p>
-            <p class="font-number font-16">{{coveredPeople}}个</p>
+            <p class="label">覆盖人数</p>
+            <p class="font-number font-16">{{coveredPeople | toThousands}}人</p>
           </li>
         </ul>
 
@@ -41,8 +41,8 @@
         <li class="list-item" v-for="(item, index) in selectedBuildings" :key="item.premisesId">
           <p>{{item.premisesName}}</p>
           <div class="mid-start list-item-2">
-            <p class="list-item-1">点位数：{{item.signElevatorNum}}</p>
-            <p>约覆盖人数：{{item.totalPeople}}</p>
+            <p class="list-item-1">点位数：{{item.signElevatorNum | toThousands}}</p>
+            <p>约覆盖人数：{{item.totalPeople | toThousands}}</p>
           </div>
           <span class="iconfont icon-remove icon-error hand" @click="deleteItem(item)"></span>
         </li>

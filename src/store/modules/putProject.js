@@ -4,7 +4,7 @@
  */
 export const putProject = {
   state: {
-    list: [], // 列表
+    list: [], // 楼盘列表
   },
 
   mutations: {
@@ -22,7 +22,7 @@ export const putProject = {
       let res = 0;
       if (state.list.length > 0) {
         state.list.forEach(item => {
-          res += +item.deviceNum;
+          res += ('deviceNum' in item) ? +item.deviceNum : +item.signElevatorNum;
         });
       }
       return res;
@@ -32,7 +32,7 @@ export const putProject = {
       let res = 0;
       if (state.list.length > 0) {
         state.list.forEach(item => {
-          res += +item.weekForPeople;
+          res += ('weekForPeople' in item) ? +item.weekForPeople : +item.totalPeople;
         });
       }
       return res;
@@ -53,8 +53,8 @@ export const putProject = {
       let result = [];
       state.list.forEach(item => {
         result.push({ 
-          deviceNum: item.deviceNum,
-          premiseId: item.premiseId
+          deviceNum: 'deviceNum' in item ? +item.deviceNum : +item.signElevatorNum,
+          premiseId: 'premiseId' in item ? +item.premiseId : +item.premisesId
         })
       })
       return result;

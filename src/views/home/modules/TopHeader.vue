@@ -204,9 +204,9 @@
         }).then(() => {
           this.$api.Login.LoginOut().then(res => {
             this.loading = false;
-            store.dispatch('FedLogOut').then(() => {
-              location.replace('/login') // 为了重新实例化vue-router对象 避免bug
-            })
+            removeUserInfo()
+            this.$store.commit('setToken', '')
+            this.$router.replace('/login');
           }).catch(res => {
             this.loading = false;
           })
@@ -232,6 +232,7 @@
   $headerHeight: 76px;
   .top-header {
     width: 100%;
+    z-index: 100;
     flex-shrink: 0;
     min-height: $headerHeight;
     background-color: #2A2F4D;
