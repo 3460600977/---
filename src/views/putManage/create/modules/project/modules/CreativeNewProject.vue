@@ -254,7 +254,7 @@
       </el-tabs>
 
       <!-- 楼盘定向->选中列表 -->
-      <SelectedList
+      <BuildList
         :buildingDirectionActiveType="buildingDirection.activeType"
         :loading="buildingDirection.builds.loading"/>
     </PutMangeCard>
@@ -353,7 +353,7 @@
 <script>
   import PutMangeCard from '../../../../templates/PutMangeCard'
   import MyRadio from '../../../../../../components/MyRadio'
-  import SelectedList from './SelectedList'
+  import BuildList from '@/views/putManage/templates/BuildList'
   import mapChooseWindow from './mapChooseWindow'
   import confirmWindow from './confirmWindow'
   import { projectConst } from '../../../../../../utils/static'
@@ -364,7 +364,7 @@
     components: {
       PutMangeCard,
       MyRadio,
-      SelectedList,
+      BuildList,
       mapChooseWindow,
       confirmWindow,
     },
@@ -512,7 +512,9 @@
 
     methods: {
       ...mapMutations(['setBuildsList']),
-
+      hideMapPoint(val) {
+        this.buildingDirection.mapChooseShow = val
+      },
       // 根据id获取计划详情
       getPlanDetailById(planid) {
         this.$api.PutPlan.PlanDetail(+planid)
@@ -894,10 +896,6 @@
                 this.planData.loading = false;
               })
         }
-      },
-
-      hideMapPoint(val) {
-        this.buildingDirection.mapChooseShow = val
       },
     },
 
