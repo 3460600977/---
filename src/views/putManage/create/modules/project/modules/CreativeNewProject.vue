@@ -341,7 +341,10 @@
       :visible.sync="buildingDirection.mapChooseShow"
       width="98%"
       class="map-choose">
-      <map-choose-window @hideMapPoint="hideMapPoint"></map-choose-window>
+      <map-choose-window @hideMapPoint="hideMapPoint"
+                         @submitSelectedBuildPoint="submitSelectedBuildPoint">
+
+      </map-choose-window>
     </el-dialog>
 
     <!-- 确认投放方案信息 -->
@@ -514,6 +517,9 @@
       ...mapMutations(['setBuildsList']),
       hideMapPoint(val) {
         this.buildingDirection.mapChooseShow = val
+      },
+      submitSelectedBuildPoint(selectedList) {
+        console.log('submitSelectedBuildPoint', selectedList)
       },
       // 根据id获取计划详情
       getPlanDetailById(planid) {
