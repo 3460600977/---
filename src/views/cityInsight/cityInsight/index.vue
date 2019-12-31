@@ -47,7 +47,7 @@
                 v-show="activeTab === 1"
                 :selectDatas="buildingDatas"
                 :filters="buildingFilter"
-                @returnResult="(val) => returnResult(val, 1)"
+                @returnResult="(val, type) => returnResult(val, 1, type)"
                 @hide="() => hide(1)"
               ></multiple-selectPopUp>
             </div>
@@ -276,6 +276,7 @@
           parkingNum: [],
           propertyRent: []
         },
+        buildingFilterSelected: false,
         location: {
           x: 0,
           y: 0
@@ -300,6 +301,7 @@
     watch: {
       cityFilter(val) {
         this.$refs.dbmap.setCity(val)
+        this.$refs.dbmap.clearMap()
       },
     },
     computed: {
@@ -317,6 +319,9 @@
           }
         }
       }
+    },
+    beforeDestroy() {
+      document.documentElement.removeEventListener('keydown', this.cancleCircleDrawType)
     },
     methods: {
       // 添加资源包成功后触发事件
@@ -362,13 +367,15 @@
         this.$refs.peopleInsight.resetSelect()
       },
       resetTags() {
-        if (this.buildingFilter.isSelected) { // 如果标签选择过，则清空标签选择结果
+        if (this.buildingFilterSelected) { // 如果标签选择过，则清空标签选择结果
+          this.$refs.dbmap.clearMap()
           this.$refs.tagsSelect.operate(0)
+        } else {
+          this.createSuc()
         }
       },
       resetLeftPopup(index) {
         if (index === 0) {
-          this.buildingFilter.isSelected = false
           this.buildingFilter = {
             buildType: [],
             premiseAvgFee: [],
@@ -377,6 +384,7 @@
             parkingNum: [],
             propertyRent: []
           }
+          this.buildingFilterSelected = false
           this.rightShow = 0
           this.activeTab = 0
           this.leftShow = new Array(this.leftShow.length).fill(false)
@@ -387,16 +395,15 @@
           this.resetTags()
         }
       },
-      // 各种弹窗返回数据触发方法 type表示楼盘标签是 false清空还是true选择
+      // 各种弹窗返回数据触发方法 type表示楼盘标签是 0清空还是2选择
       returnResult(val, index, type) {
-        console.log(val, index, type)
         if (index === 0) { // 城市切换
           this.cityFilter = val
         } else if (index === 1) { // 楼盘标签选择
           if (type === 0) {
-            this.buildingFilter.isSelected = false
+            this.buildingFilterSelected = false
           } else {
-            this.buildingFilter.isSelected = true
+            this.buildingFilterSelected = true
           }
           this.$refs.dbmap.setCity(this.cityFilter)
           this.buildingFilter = val
@@ -434,7 +441,6 @@
         }
       },
       hide(val) {
-        console.log(val)
         this.isShow[val] = false
       },
       getCityFilter() {
@@ -460,7 +466,6 @@
       },
       // 左边传出信息
       leftInfoCallBak(val, type) {
-        console.log(val, type)
         if (type === 0) {
           this.cityFilter = val
         }
@@ -515,15 +520,16 @@
       returnSearchResult(result) {
         this.$refs.drawType.setSearchList(result)
       },
-      bindEvent() {
-        document.documentElement.addEventListener('keydown', (e) => {
-          if (e.keyCode === 27) {
-            if (this.currentSelectType && this.currentSelectType.type === 'circle') {
-              this.currentSelectType = null
-              this.$refs.drawType.cancleSelect()
-            }
+      cancleCircleDrawType(e) {
+        if (e.keyCode === 27) {
+          if (this.currentSelectType && this.currentSelectType.type === 'circle') {
+            this.currentSelectType = null
+            this.$refs.drawType.cancleSelect()
           }
-        })
+        }
+      },
+      bindEvent() {
+        document.documentElement.addEventListener('keydown', this.cancleCircleDrawType)
       },
       returnBuildingTags(val) {
         this.buildingFilter = this.$tools.deepCopy(val)
@@ -567,7 +573,6 @@
           this.currentSelectType = {type: type}
           this.$refs.dbmap.closeDrawingManager()
         } else if (type === 'select') {
-          console.log(location)
           this.$refs.dbmap.closeDrawingManager()
           this.$refs.dbmap.drawCircle(location.point, location)
         } else {

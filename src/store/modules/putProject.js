@@ -22,7 +22,7 @@ export const putProject = {
       let res = 0;
       if (state.list.length > 0) {
         state.list.forEach(item => {
-          res += +item.deviceNum || +item.signElevatorNum;
+          res += item.deviceNum !== 'undefined' ? +item.deviceNum : +item.signElevatorNum;
         });
       }
       return res;
@@ -32,7 +32,7 @@ export const putProject = {
       let res = 0;
       if (state.list.length > 0) {
         state.list.forEach(item => {
-          res += +item.weekForPeople || +item.totalPeople;
+          res += item.weekForPeople !== 'undefined' ? +item.weekForPeople : +item.totalPeople;;
         });
       }
       return res;

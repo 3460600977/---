@@ -522,8 +522,8 @@
 
       // 获取地图返回点位
       submitSelectedBuildPoint(selectedList) {
-        console.log(selectedList)
         this.setBuildsList(selectedList)
+        this.estimatePrice();
       },
 
       // 根据id获取计划详情
@@ -590,7 +590,6 @@
               }
             })
       },
-
 
       // 生成方案名字
       generateProjectName() {
@@ -912,12 +911,12 @@
 
     computed: {
       ...mapGetters([
-                      'buildsNumber',
-                      'deviceNumber',
-                      'peopleNumber',
-                      'unitNum',
-                      'buildsDetails'
-                    ]),
+        'buildsNumber',
+        'deviceNumber',
+        'peopleNumber',
+        'unitNum',
+        'buildsDetails'
+      ]),
 
 
       // 限制时间选择器 按天 投放选择范围
