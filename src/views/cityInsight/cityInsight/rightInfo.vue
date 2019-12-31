@@ -27,7 +27,7 @@
             <p class="font-number font-16">{{deviceCount}}个</p>
           </li>
           <li class="mid-start">
-            <p class="label">覆盖人次</p>
+            <p class="label">覆盖人数</p>
             <p class="font-number font-16">{{coveredPeople}}个</p>
           </li>
         </ul>

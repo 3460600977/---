@@ -328,7 +328,7 @@
         this.loading = true
         this.$api.cityInsight.getBuildingDetail({pid: id}).then((data) => {
           this.buildDetail = data.result
-          if (!this.buildDetail) {
+          if (!this.buildDetail || !this.buildDetail.chat) {
             this.loading = false
             return
           }

@@ -12,6 +12,7 @@
       return {
         labelsArr: [], // 存储label覆盖物的变量 用于清楚label
         map: null,
+        // visualPoint: [], // 视图内的点
         points: [],
         pathArr: {},
         indexArr: [],
@@ -29,7 +30,7 @@
         pointsOptions: {
           0: {
             shape: BMAP_POINT_SHAPE_CIRCLE,
-            color: 'rgba(45,90,255,0.74)'
+            color: '#F44A4A'
           },
           1: {
             shape: BMAP_POINT_SHAPE_CIRCLE,
@@ -70,6 +71,9 @@
         }
       },
     },
+    beforeDestroy() {
+      this.removeEvent()
+    },
     watch: {
       buildings(val) {
         this.clearMap()
@@ -109,7 +113,6 @@
       // 清空pathArr数据 并且清楚覆盖物
       clearPathArr() {
         for (let key in this.pathArr) {
-          console.log(this.pathArr[key])
           this.map.removeOverlay(this.pathArr[key].overlay)
           if (this.pathArr[key].anotherOverlay) {
             this.map.removeOverlay(this.pathArr[key].anotherOverlay)
@@ -521,12 +524,13 @@
         let arr = this.points.filter((item) => {
           return bounds.containsPoint(item.point)
         })
+        // this.visualPoint = arr
         this.drawLabels(arr)
       },
       removeLabels() {
         if (!this.labelsArr.length) return
         this.labelsArr.forEach((item) => {
-          this.map.removeOverlay(item)
+          this.map.removeOverlay(item.label)
         })
         this.labelsArr = []
       },
@@ -539,43 +543,43 @@
           this.removeLabels()
         }
       },
-      // 地址逆解析
+      removeEvent() {
+        this.map.removeEventListener('dragend', this.drawLabelsByVisual)
+        this.map.removeEventListener('click', this.mapLeftClick)
+        this.map.removeEventListener('zoomend', this.mapZoomEnd)
+        this.map.removeEventListener('mousemove', this.mapMouseMove)
+        this.map.removeEventListener('rightclick', this.mapRightClick)
+      },
 
+      mapLeftClick(event) {
+        if (this.currentSelectType && this.currentSelectType.type === 'circle') {
+          // 地址逆解析
+          new BMap.Geocoder().getLocation(event.point, (rs) => {
+            this.drawCircle(event.point, rs.address)
+          })
+          this.$emit('drawCancle')
+        }
+      },
+      mapZoomEnd() {
+        this.drawLabelsByVisual()
+        this.zoomChangeAllPath()
+      },
+      mapMouseMove(event) {
+        if (this.currentSelectType !== null) {
+          this.$emit('currentMouseLocation',  event.pixel)
+        }
+      },
+      mapRightClick(event) {
+        if (this.currentSelectType && this.currentSelectType.type === 'circle') {
+          this.$emit('drawCancle')
+        }
+      },
       mapBindEvent() {
-        this.map.addEventListener('dragend', () => {
-          this.drawLabelsByVisual()
-        })
-        this.map.addEventListener('zoomend', (type, target) => {
-          this.drawLabelsByVisual()
-          this.zoomChangeAllPath()
-        })
-        this.map.addEventListener('click', ({point}) => {
-          if (this.currentSelectType && this.currentSelectType.type === 'circle') {
-            new BMap.Geocoder().getLocation(point, (rs) => {
-              console.log(rs)
-              this.drawCircle(point, rs.address)
-            })
-              this.$emit('drawCancle')
-          }
-        })
-        this.map.addEventListener('mousemove', ({type, target, point, pixel, overlay}) => {
-          if (this.currentSelectType !== null) {
-            this.$emit('currentMouseLocation',  pixel)
-          }
-        })
-        this.map.addEventListener('rightclick', (event) => {
-          if (this.currentSelectType && this.currentSelectType.type === 'circle') {
-            this.$emit('drawCancle')
-          }
-        })
-        // document.getElementsByClassName('labelHide').addEventListener('click',function (e) {
-        //   console.log('5555')
-        //   console.log(e)
-        // })
-        // labelHide
-        // this.map.addEventListener('tilesloaded', (event) => {
-        //   this.initHotMap()
-        // })
+        this.map.addEventListener('dragend', this.drawLabelsByVisual)
+        this.map.addEventListener('zoomend', this.mapZoomEnd)
+        this.map.addEventListener('click', this.mapLeftClick)
+        this.map.addEventListener('mousemove', this.mapMouseMove)
+        this.map.addEventListener('rightclick', this.mapRightClick)
       },
       drawCircle(point, info) {
         let marker = this.addMarker(point)
@@ -624,7 +628,6 @@
       },
       // 热力图
       drawHotMap(arr) {
-        console.log(arr)
         this.heatmapOverlay.setDataSet({data:arr, max:100});
       },
       normalizePointsAll(arr) {
@@ -637,9 +640,7 @@
       * 根据预算随机得到已选的楼盘数据
       * */
       drawDevicePoints() {
-        console.log(this.pathArr)
         if (!Object.keys(this.pathArr).length) {
-          console.log(this.budget)
           if (this.budget === 1) {
             this.drawBg(this.points, [])
           } else {
@@ -715,9 +716,6 @@
         }
         return [result, arrCopy]
       },
-      hideLabel(index) {
-        console.log(index)
-      },
       // 添加lable
       addLabel(point) {
         let labelStyle = {
@@ -774,28 +772,46 @@
         label.setStyle(labelStyle);
 
         label.addEventListener('click', (event) => {
-          console.log(event)
           this.$emit('buildingClick', point)
-          // this.currentPoint = this.visualPoint[index]
         })
-        this.labelsArr.push(label)
+        this.labelsArr.push({label: label, isShow: true})
         this.map.addOverlay(label)
       },
 
       // 为海量点添加点击事件
-      selectedEvent(event) {
-        console.log(event)
-      },
-      unSelectedEvent(event) {
-        console.log(event)
-      },
-      pointAddEvent(overlay, type) {
-        if (type === 0) {
-          overlay.addEventListener('click',  this.selectedEvent);
-        } else {
-          overlay.addEventListener('click',  this.unSelectedEvent);
+      pointEvent(event) {
+        let zoom = this.map.getZoom()
+        if (zoom >= this.showLabel) {
+          this.labelsArr.forEach((item, index) => {
+            if (item.label.getPosition().equals(event.point.point)) {
+              if (this.labelsArr[index].isShow) {
+                this.labelsArr[index].label.hide()
+                this.labelsArr[index].isShow = false
+              } else {
+                this.labelsArr[index].label.show()
+                this.labelsArr[index].isShow = true
+              }
+            }
+          })
         }
       },
+      // unSelectedEvent(event) {
+      //   console.log(event)
+      // },
+      // pointAddEvent(overlay, type) {
+      //   if (type === 0) {
+      //     overlay.addEventListener('click',  this.selectedEvent);
+      //   } else {
+      //     overlay.addEventListener('click',  this.unSelectedEvent);
+      //   }
+      // },
+      // pointRemoveEvent(overlay, type) {
+      //   if (type === 0) {
+      //     overlay.removeEventListener('click',  this.selectedEvent);
+      //   } else {
+      //     overlay.removeEventListener('click',  this.unSelectedEvent);
+      //   }
+      // },
       /*
       * 画背景点方法 0：已选 1：未选
       * */
@@ -805,13 +821,12 @@
         if (!this.pointsOverlayObj[overlay]) {
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
-          // this.pointAddEvent(pointsOverlay, type)
           this.map.addOverlay(pointsOverlay);
-
+          pointsOverlay.addEventListener('click',  this.pointEvent);
         } else {
           if (points.length === 0) {
+            this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointEvent);
             this.pointsOverlayObj[overlay].clear()
-            // this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointsEvent(type));
           } else {
             this.pointsOverlayObj[overlay].clear()
             this.pointsOverlayObj[overlay].setPoints(points)

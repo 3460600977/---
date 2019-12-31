@@ -86,7 +86,7 @@
       loadFunction(param) {
         const data = { ...param, name: this.name }
         return new Promise((resolve, reject) => {
-          this.$api.peopleInsight.getPeopleInsightList(data).then(res => {
+          this.$api.peopleInsight.getCrowdList(data).then(res => {
             resolve(res);
           }).catch((res) => {
             reject(res)
