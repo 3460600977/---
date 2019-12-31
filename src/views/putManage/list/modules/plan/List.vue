@@ -5,11 +5,11 @@
 
       <el-form-item class="line-space" label="投放计划名称">
         <div slot="label">投放计划名称</div>
-        <el-select 
+        <el-select
           @focus="getPlanNameList"
-          :loading="planNameList.loading" 
-          v-model="searchParam.name" 
-          placeholder="不限" 
+          :loading="planNameList.loading"
+          v-model="searchParam.name"
+          placeholder="不限"
           filterable
           clearable>
           <el-option
@@ -66,7 +66,7 @@
 
         <el-table-column prop="action" label="操作" fixed="right" width="400">
           <template slot-scope="scope">
-            <span class="icon-space hand" 
+            <span class="icon-space hand"
               @click="detailDialog.dataIndex=scope.$index; detailDialog.show=true"
             >
               <i class="iconfont icon-shuxingliebiaoxiangqing2 icon-color"></i>详情
@@ -150,12 +150,12 @@ export default {
       },
 
       searchParam: {
-        name: '', 
+        name: '',
         pageIndex: '',
         pageSize: '',
         record: '',
         startIndex: '',
-        startindex: '', 
+        startindex: '',
         totalPageCount: ''
       },
 

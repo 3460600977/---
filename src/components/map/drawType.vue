@@ -67,6 +67,7 @@
       },
       drawTypeSelect(e, type, index) {
         this.activeIndex = index
+        this.isShow = false
         this.$emit('drawTypeSelect', {x: e.clientX, y: e.clientY}, type)
       },
       setSearchList(list) {
@@ -79,6 +80,7 @@
       showSearchPop(index) {
         this.activeIndex = index
         this.isShow = true
+        this.$emit('searchDrawTypeClick')
       },
     }
   }

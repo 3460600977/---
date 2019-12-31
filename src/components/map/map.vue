@@ -72,9 +72,9 @@
     },
     watch: {
       buildings(val) {
-        console.log(val)
         this.clearMap()
         if (val.length) {
+          this.initHotMap()
           this.initMap(val)
         }
       },
@@ -100,12 +100,30 @@
       let map = new BMap.Map(this.$refs.container, {enableMapClick: false});
       this.map = map
 
+      this.setCity({name: '成都市'})
       map.enableScrollWheelZoom();
       map.addControl(new BMap.ScaleControl());
       this.mapBindEvent()
     },
     methods:{
+      // 清空pathArr数据 并且清楚覆盖物
+      clearPathArr() {
+        for (let key in this.pathArr) {
+          console.log(this.pathArr[key])
+          this.map.removeOverlay(this.pathArr[key].overlay)
+          if (this.pathArr[key].anotherOverlay) {
+            this.map.removeOverlay(this.pathArr[key].anotherOverlay)
+          }
+        }
+        this.pathArr = {}
+      },
       clearMap() {
+        this.activePath = null
+        this.labelsArr = []
+        this.selectedBuildings = [] //当前选中楼盘
+        this.unSelectedBuildings = [] // 当前未选中楼盘
+        this.indexArr = []
+        this.pathArr = {}
         this.map.clearOverlays()
         this.pointsOverlayObj =  {
           selectedOverlay: null,
@@ -116,26 +134,13 @@
         this.points = this.normalizePointsAll(val)
         this.drawDevicePoints()
       },
-      // initMap() {
-      //   this.loading = true
-      //   this.$api.cityInsight.getPremisesByCity({cityCode: '510100', tag: this.filters}).then((data) => {
-      //     if (data.result) {
-      //       this.points = this.normalizePointsAll(data.result)
-      //       if (Object.keys(this.pathArr).length) {
-      //         for(let key in this.pathArr) {
-      //           this.pathArr[key].buildings = this.isInArea(this.pathArr[key])
-      //         }
-      //       }
-      //       // this.drawLabels(this.points)
-      //       this.drawDevicePoints()
-      //     } else {
-      //       this.clearPoints()
-      //     }
-      //     this.loading = false
-      //   })
-      // },
       setCity(city) {
         this.map.centerAndZoom(city.name, 12);
+      },
+      initHotMap() {
+        let heatmapOverlay = new BMapLib.HeatmapOverlay({"radius":20});
+        this.map.addOverlay(heatmapOverlay);
+        this.heatmapOverlay = heatmapOverlay
       },
       location() {
         return new Promise((resolve) => {
@@ -159,8 +164,7 @@
       },
       // 添加弹窗覆盖物
       drawLabels(arr) {
-        console.log(arr)
-        arr.forEach((item) => {
+        arr.forEach((item, index) => {
           this.addLabel(item)
         })
       },
@@ -198,7 +202,7 @@
         if (i !== -1) { // 如果在未选中楼盘列表中 将他删除
           this.unSelectedBuildings.splice(i, 1)
         }
-        this.selectedBuildings.push(item)
+        this.selectedBuildings.push({point: new BMap.Point(item.lng, item.lat), ...item})
       },
       // 检测某一个点是否已存在在已选楼盘中
       checkPointIsExist(item, arr) {
@@ -535,6 +539,8 @@
           this.removeLabels()
         }
       },
+      // 地址逆解析
+
       mapBindEvent() {
         this.map.addEventListener('dragend', () => {
           this.drawLabelsByVisual()
@@ -545,7 +551,10 @@
         })
         this.map.addEventListener('click', ({point}) => {
           if (this.currentSelectType && this.currentSelectType.type === 'circle') {
-              this.drawCircle(point)
+            new BMap.Geocoder().getLocation(point, (rs) => {
+              console.log(rs)
+              this.drawCircle(point, rs.address)
+            })
               this.$emit('drawCancle')
           }
         })
@@ -559,8 +568,16 @@
             this.$emit('drawCancle')
           }
         })
+        // document.getElementsByClassName('labelHide').addEventListener('click',function (e) {
+        //   console.log('5555')
+        //   console.log(e)
+        // })
+        // labelHide
+        // this.map.addEventListener('tilesloaded', (event) => {
+        //   this.initHotMap()
+        // })
       },
-      drawCircle(point) {
+      drawCircle(point, info) {
         let marker = this.addMarker(point)
         let circle = new BMap.Circle(point,this.defaultRadius, this.styleOptions);
         this.map.addOverlay(circle);
@@ -573,6 +590,12 @@
           index: this.indexArr.length,
           radius: this.defaultRadius,
           points: circle.getCenter()
+        }
+        if (this.$tools.type(info) === 'object') {
+          path.name = info.title
+          path.address = info.address
+        } else {
+          path.address = info
         }
         this.getPopUpData(path)
         this.overlayBindEvent(path)
@@ -588,13 +611,22 @@
         this.map.addOverlay(marker);
         return marker
       },
+      // 隐藏热力图
+      hideHotMap() {
+        if (this.heatmapOverlay) {
+          this.heatmapOverlay.hide();
+        }
+      },
+      showHotMap() {
+        if (this.heatmapOverlay) {
+          this.heatmapOverlay.show();
+        }
+      },
       // 热力图
       drawHotMap(arr) {
-        this.heatmapOverlay = new BMapLib.HeatmapOverlay({"radius":15});
-        this.map.addOverlay(this.heatmapOverlay);
+        console.log(arr)
         this.heatmapOverlay.setDataSet({data:arr, max:100});
       },
-
       normalizePointsAll(arr) {
         let result = arr.map((item) => {
           return {point: new BMap.Point(item.lng, item.lat), ...item}
@@ -605,7 +637,9 @@
       * 根据预算随机得到已选的楼盘数据
       * */
       drawDevicePoints() {
+        console.log(this.pathArr)
         if (!Object.keys(this.pathArr).length) {
+          console.log(this.budget)
           if (this.budget === 1) {
             this.drawBg(this.points, [])
           } else {
@@ -681,12 +715,20 @@
         }
         return [result, arrCopy]
       },
+      hideLabel(index) {
+        console.log(index)
+      },
       // 添加lable
       addLabel(point) {
         let labelStyle = {
           border: 'none',
           transform: 'translateY(-100%) translateX(-50%)'
         };
+      // <i
+      //   style="height: 16px;width: 16px;color: #ededed;display: block"
+      // class="icon-error2 labelHide iconfont"
+      //   data-point = ${point}
+      // ></i>
         let content = `
           <div style="
             padding: 17px 0 21px;
@@ -700,8 +742,7 @@
           >
               <div style="padding: 0 15px 14px;border-bottom: 1px solid #FFE5E7E9">
                 <div class="mid-between">
-                  <p>${point.premisesName}</p>
-                  <i style="height: 16px;width: 16px;color: #ededed;display: block" class="icon-error2 iconfont"></i>
+                  <p style="max-width: 120px;" class="text-ellipsis">${point.premisesName}</p>
                 </div>
               </div>
               <div style="padding: 0 15px 0;">
@@ -731,7 +772,9 @@
           position: point.point
         });
         label.setStyle(labelStyle);
-        label.addEventListener('click', () => {
+
+        label.addEventListener('click', (event) => {
+          console.log(event)
           this.$emit('buildingClick', point)
           // this.currentPoint = this.visualPoint[index]
         })

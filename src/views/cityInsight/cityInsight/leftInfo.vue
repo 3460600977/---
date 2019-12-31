@@ -1,8 +1,8 @@
 <template>
-  <div class="ul border-right hand">
+  <div class="ul hand">
     <p class="border-right ul-p" :class="isShow[0]?'active': ''" @click="toggle(0)">
       <span class="iconfont icon2 icon-ziyuan"></span>
-      <span class="text">成都市</span>
+      <span class="text">{{city.name}}</span>
       <span class="iconfont icon1 icon-icon-test" :class="isShow[0]?'icon-down': 'icon-up'"></span>
     </p>
     <p class="border-right ul-p" :class="isShow[1]?'active': ''" @click="toggle(1)">
@@ -17,6 +17,10 @@
   export default {
     name: "leftInfo",
     props: {
+      city: {
+        type: Object,
+        required: true
+      },
       isShow: {
         type: Object,
         required: true

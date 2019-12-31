@@ -4,7 +4,7 @@
       <p class="db-title">资源包管理</p>
       <query-item :queryItems="queryItems" :queryFilters="checkFormInline" @handleReturnData="handleReturnData">
         <template #btn>
-          <el-button type="primary">主要按钮</el-button>
+          <el-button type="primary" class="actions" @click="toCityInSight">新建资源包</el-button>
         </template>
       </query-item>
 <!--      <el-form :inline="true" :model="checkFormInline" class="report-query-form" label-width="82px">-->
@@ -42,7 +42,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="pageIndex"
-        class="list-page"
+        class="my-list-page"
       ></el-pagination>
     </div>
     <el-dialog title="删除城市洞察包"
@@ -82,7 +82,8 @@
           {
             type: 'actions',
             actions: [
-              {label: '查询', key: 'search', type: 'primary', plain: true}
+              {label: '查询', key: 'search', type: 'primary', plain: true},
+              {type: 'slot', name: 'btn'}
             ]
           }
         ],
@@ -92,6 +93,9 @@
       }
     },
     methods: {
+      toCityInSight() {
+        this.$router.push('/cityInSight')
+      },
       handleReturnData(val) {
         this.checkFormInline = val
         this.resetLoad()
@@ -136,6 +140,7 @@
     width: 100px;
   }
   .creative-list {
+    padding: 20px;
     & /deep/ .actions {
       margin-left: 50px;
     }
