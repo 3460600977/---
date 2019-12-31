@@ -120,5 +120,14 @@ export const PutProject = {
     });
   },
 
+  // POST投放方案楼盘设备列表
+  GetBuildDevice: (data) => {
+    return request({
+      url: "/dpapi/project/premise/device",
+      method: "post",
+      data
+    });
+  },
+
 
 }

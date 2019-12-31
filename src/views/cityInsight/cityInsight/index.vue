@@ -1,10 +1,17 @@
 <template>
     <div class="container cityInsight" v-loading="loading">
-      <div class="left-info">
+      <div class="left-info mid">
         <left-info
           :isShow="isShow"
+          :city="cityFilter"
           @toggle="toggle"
         ></left-info>
+        <draw-type
+          ref="drawType"
+          @searchDrawTypeClick="searchDrawTypeClick"
+          @drawTypeSelect="drawTypeSelect"
+          @querySearchAsync="querySearchAsync"
+        ></draw-type>
         <div class="city-select select-style" v-show="isShow[0]">
           <singleSelect-popup
             ref="citySelect"
@@ -16,8 +23,8 @@
           ></singleSelect-popup>
         </div>
         <div class="filter-container select-style" v-show="isShow[1]">
-          <div class="mid-start filter-popup">
-            <div style="width: 106px;height: 100%">
+          <div class="filter-popup clearfix mid">
+            <div style="width: 106px;height: 100%;align-self: flex-start">
               <left-tab
                 :lineHeight="42"
                 :tabData="tabData"
@@ -25,8 +32,19 @@
                 @changeTab="changeTab"
               ></left-tab>
             </div>
-            <div class="flex1">
+            <div>
+              <people-insight
+                @hide="hide(1)"
+                v-if="leftShow[0]"
+                ref="peopleInsight"
+                v-show="activeTab === 0"
+                @switchChange="switchChange"
+                @returnResult="(val) => returnResult(val, 2)"
+              ></people-insight>
               <multiple-selectPopUp
+                v-if="leftShow[1]"
+                ref="tagsSelect"
+                v-show="activeTab === 1"
                 :selectDatas="buildingDatas"
                 :filters="buildingFilter"
                 @returnResult="(val) => returnResult(val, 1)"
@@ -38,14 +56,10 @@
       </div>
 <!--      <div>-->
 <!--        <top-select></top-select>-->
+<!--&lt;!&ndash;      </div>&ndash;&gt;-->
+<!--      <div class="draw-type">-->
+<!--        -->
 <!--      </div>-->
-      <div class="draw-type">
-        <draw-type
-          ref="drawType"
-          @drawTypeSelect="drawTypeSelect"
-          @querySearchAsync="querySearchAsync"
-        ></draw-type>
-      </div>
       <div class="mapPopup">
         <map-popup
           v-if="showPathCopy"
@@ -67,6 +81,7 @@
       </div>
       <div class="right-info">
         <slide-container
+          ref="slideCon"
         >
           <right-info
             v-show="rightShow === 0"
@@ -99,7 +114,12 @@
         ></db-map>
       </div>
       <div class="create-dialog">
-        <create-dialog ref="createDialog" :data="selectedBuildings"></create-dialog>
+        <create-dialog
+          ref="createDialog"
+          :city="cityFilter"
+          :data="selectedBuildings"
+          @createSuc="createSuc"
+        ></create-dialog>
       </div>
       <div class="add-dialog">
         <add-dialog
@@ -130,6 +150,7 @@
   import slideContainer from "../../../components/slideContainer";
   import addDialog from "./addDialog";
   import topSelect from "./topSelect";
+  import peopleInsight from "./peopleInsight";
   import leftTab from "../../../components/leftTab";
   import multipleSelectPopUp from "../../../components/map/multipleSelectPopUp";
   import singleSelectPopup from "../../../components/map/singleSelectPopup";
@@ -146,6 +167,7 @@
       addDialog,
       mapPopup,
       drawType,
+      peopleInsight,
       multipleSelectPopUp,
       singleSelectPopup,
       buildingDetail,
@@ -209,7 +231,7 @@
                 {label: '低于200', key: 0},
                 {label: '200-500', key: 1},
                 {label: '5000-800', key: 2},
-                {label: '800以上', key: 2}
+                {label: '800以上', key: 3}
               ]
             },
             {
@@ -224,16 +246,18 @@
           ]
         },
         activeTab: 0,
+        leftShow: [false, false], // 控制筛选弹出框的加载
+        currentPonents: null,
         tabData: [
           {name: '人群洞察', value: 0},
           {name: '楼盘筛选', value: 1},
-          {name: '门店导入', value: 2},
+          // {name: '门店导入', value: 2},
         ],
         points: [], // 当前所有的楼盘点位数据
         cityDatas: [], // 城市数据
         isShow: { // 控制左边弹出框显示
           0: false,
-          1: true
+          1: false
         },
         cityFilter: { // 当前城市信息
           cityCode: null,
@@ -260,11 +284,14 @@
         sliderVal: 3000,
         currentSelectType: null,
         popUpHeight: {
-          'polyline': 329,
-          'polygon': 278,
-          'circle': 424 // 402 + 22圆形时弹窗位置为弹窗高度加图标高度
+          'polyline': 246,
+          'polygon': 121,
+          'circle': 310 // 402 + 22圆形时弹窗位置为弹窗高度加图标高度
         }
       }
+    },
+    created() {
+      this.loading = true
     },
     mounted() {
       this.init()
@@ -292,39 +319,126 @@
       }
     },
     methods: {
+      // 添加资源包成功后触发事件
+      createSuc() {
+        this.$refs.dbmap.clearPathArr()
+        this.$refs.dbmap.drawDevicePoints()
+      },
+      // 查找选点按钮点击
+      searchDrawTypeClick() {
+        this.currentSelectType = null
+        this.hideAll()
+      },
+      // 热力图开关切换
+      switchChange(val) {
+        if (val) {
+          this.$refs.dbmap.showHotMap()
+        } else {
+          this.$refs.dbmap.hideHotMap()
+        }
+      },
       // 筛选中菜单改变
       changeTab(val) {
+        if(!this.leftShow[val.value]) {
+          this.leftShow[val.value] = true
+        }
         this.activeTab = val.value
       },
-      returnResult(val, index) {
+      loadHotMap(id) {
+        this.$api.peopleInsight.getPeopleInsightHotMap({id: id}).then((data) => {
+          if (data.result) {
+            this.$refs.dbmap.drawHotMap(data.result)
+          } else {
+            this.switchChange(false)
+          }
+        })
+      },
+      // 隐藏热力图
+      hideHotMap() {
+        this.$refs.dbmap.hideHotMap()
+      },
+      resetHotMap() {
+        this.switchChange(false)
+        this.$refs.peopleInsight.resetSelect()
+      },
+      resetTags() {
+        if (this.buildingFilter.isSelected) { // 如果标签选择过，则清空标签选择结果
+          this.$refs.tagsSelect.operate(0)
+        }
+      },
+      resetLeftPopup(index) {
         if (index === 0) {
-          this.cityFilter = val
+          this.buildingFilter.isSelected = false
+          this.buildingFilter = {
+            buildType: [],
+            premiseAvgFee: [],
+            occupancyRate: [],
+            buildingAge: [],
+            parkingNum: [],
+            propertyRent: []
+          }
+          this.activeTab = 0
+          this.leftShow = new Array(this.leftShow.length).fill(false)
           this.loadData()
         } else if (index === 1) {
+          this.resetHotMap()
+        } else if (index === 2) {
+          this.resetTags()
+        }
+      },
+      // 各种弹窗返回数据触发方法 type表示楼盘标签是 false清空还是true选择
+      returnResult(val, index, type) {
+        console.log(val, index, type)
+        if (index === 0) { // 城市切换
+          this.cityFilter = val
+        } else if (index === 1) { // 楼盘标签选择
+          if (type === 0) {
+            this.buildingFilter.isSelected = false
+          } else {
+            this.buildingFilter.isSelected = true
+          }
+          this.$refs.dbmap.setCity(this.cityFilter)
           this.buildingFilter = val
           this.loadData()
-          this.hide(index)
+          this.hide(1)
+        } else if (index === 2) { // 热力图选择
+          this.loadHotMap(val)
+          this.hide(1)
         }
-        console.log(val, index)
+        this.resetLeftPopup(index, type)
       },
       hideAll() {
         for (let key in this.isShow) {
           this.isShow[key] = false
         }
       },
+      // 当点击筛选或者选择城市的时候取消drawType中的选择
+      cancleDrawType() {
+        this.$refs.drawType.hide()
+        this.$refs.dbmap.closeDrawingManager()
+        this.currentSelectType = null
+      },
       toggle(val) {
         if (this.isShow[val]) {
           this.hide(val)
         } else {
+          this.cancleDrawType()
           this.hideAll()
           this.isShow[val] = true
+          if (val === 1) {
+            if (!this.leftShow[0]) {
+              this.leftShow[0] = true
+            }
+          }
         }
       },
       hide(val) {
+        console.log(val)
         this.isShow[val] = false
       },
       getCityFilter() {
         this.$refs.dbmap.location().then((data) => {
+          // this.cityFilter = Object.assign({}, this.cityFilter, {name: '北京市'})
           this.cityFilter = Object.assign({}, this.cityFilter, {name: data.name})
         })
       },
@@ -364,8 +478,6 @@
       // 初始化
       init() {
         this.loadCitys()
-
-        // this.cityFilter = this.$refs.citySelect.findItem(this.cityFilter, this.cityDatas)
       },
       // 楼盘详情窗口点击返回按钮
       rightBack() {
@@ -373,6 +485,7 @@
       },
       // 某个building被点击触发事件
       buildingClick(item) {
+        this.$refs.slideCon.showPanel()
         this.$refs.buildingDetail.loadData(item.premisesId)
         this.rightShow = 1
       },
@@ -448,14 +561,17 @@
       drawTypeSelect(location, type) {
         this.location.x = location.x
         this.location.y = location.y - NAV_HEIGHT
-        this.currentSelectType = {type: type}
         if (type === 'circle') {
+          this.hideAll()
+          this.currentSelectType = {type: type}
           this.$refs.dbmap.closeDrawingManager()
         } else if (type === 'select') {
+          console.log(location)
           this.$refs.dbmap.closeDrawingManager()
-          this.$refs.dbmap.drawCircle(location.point)
-          this.currentSelectType = null
+          this.$refs.dbmap.drawCircle(location.point, location)
         } else {
+          this.hideAll()
+          this.currentSelectType = {type: type}
           this.$refs.dbmap.triggerDraw(type)
         }
       },
@@ -531,7 +647,7 @@
       left: 0px;
     }
     .filter-container {
-      left: 40px;
+      left: 113px;
     }
   }
   .left-select {

@@ -44,7 +44,7 @@
           filterable
           clearable>
           <el-option
-            v-for="item in putStatus"
+            v-for="item in projectStatus"
             :key="item.value"
             :label="item.name"
             :value="item.value"
@@ -73,7 +73,7 @@
 
         <el-table-column prop="status" label="投放方案状态">
           <template slot-scope="scope">
-            {{projectStatus[scope.row.status]}}
+            {{$tools.getObjectItemFromArray(projectStatus, 'value', scope.row.status).name}}
           </template>
         </el-table-column>
 
@@ -117,6 +117,7 @@
         <el-table-column prop="action" label="操作" fixed="right" width="350">
           <template slot-scope="scope">
             <span 
+              v-if="scope.row.status != 4"
               class="icon-space hand" 
               @click="detailDialog.projectId=+scope.row.projectId; detailDialog.show=true; detailDialog.activeTab='project'"
             >
@@ -133,7 +134,7 @@
               @click="detailDialog.projectId=+scope.row.projectId; detailDialog.show=true; detailDialog.activeTab='point'"
               v-if="scope.row.status == 1 || scope.row.status == 2" 
               class="icon-space hand">
-              <i class="iconfont icon-ziyuan icon-color"></i>点位明细
+              <i class="iconfont icon-ziyuan icon-color"></i>点位
             </span>
 
             <span v-if="scope.row.status == 1 || scope.row.status == 2" class="icon-space hand">
@@ -142,7 +143,11 @@
               </router-link>
             </span>
 
-            <span @click="cancleProject(scope.row.projectId)" v-if="scope.row.status == 0" class="icon-space hand">
+            <span @click="comfirmPay(scope.row.projectId)" v-if="scope.row.status == 4" class="icon-space hand">
+              <i class="iconfont icon-kuaijiezhifu1 icon-color"></i>支付
+            </span>
+
+            <span @click="cancleProject(scope.row.projectId)" v-if="scope.row.status == 0 || scope.row.status == 4" class="icon-space hand">
               <i class="iconfont icon-error1 icon-color"></i>取消
             </span>
 
@@ -163,7 +168,7 @@
     <!-- 详情 -->
     <el-dialog
       class="my-dialog"
-      title="投放计划详情"
+      title="投放方案详情"
       :visible.sync="detailDialog.show"
       width="1000px">
       <detailDialog :activeTab="detailDialog.activeTab" :projectId="detailDialog.projectId"/>
@@ -179,6 +184,13 @@ import { projectConst, projectStatus } from '../../../../../utils/static'
 import detailDialog from './modules/detailDialog'
 export default {
   name: "planList",
+
+  props: {
+    active: {
+      type: Boolean,
+      default: false,
+    }
+  },
 
   components: {
     detailDialog
@@ -198,13 +210,6 @@ export default {
         loading: true,
         data: []
       },
-
-      putStatus: [
-        { name: '待投放', value: 0 },
-        { name: '投放中', value: 1 },
-        { name: '已完成', value: 2 },
-        { name: '已取消', value: 3 },
-      ],
 
       cityList: [],
 
@@ -294,6 +299,15 @@ export default {
         .catch(res => {
           this.tableData.loading = false;
         })
+    },
+
+    comfirmPay(projectId) {
+      this.$router.push({
+        path: '/putManage/create/payConfirm',
+        query: {
+          projectId: projectId
+        }
+      })
     },
 
     // 搜索

@@ -5,11 +5,11 @@
 
       <el-form-item class="line-space" label="投放计划名称">
         <div slot="label">投放计划名称</div>
-        <el-select 
+        <el-select
           @focus="getPlanNameList"
-          :loading="planNameList.loading" 
-          v-model="searchParam.name" 
-          placeholder="不限" 
+          :loading="planNameList.loading"
+          v-model="searchParam.name"
+          placeholder="不限"
           filterable
           clearable>
           <el-option
@@ -47,8 +47,11 @@
 
         <el-table-column prop="totalBudget" label="投放预算">
           <template slot-scope="scope">
-            <span :class="{'color-blue': scope.row.totalBudget}">
-              {{scope.row.totalBudget / 100 || '不限'}}
+            <span v-if="scope.row.totalBudget" class='color-blue'>
+              ¥ {{scope.row.totalBudget / 100}}
+            </span>
+            <span v-else>
+              不限
             </span>
           </template>
         </el-table-column>
@@ -63,7 +66,7 @@
 
         <el-table-column prop="action" label="操作" fixed="right" width="400">
           <template slot-scope="scope">
-            <span class="icon-space hand" 
+            <span class="icon-space hand"
               @click="detailDialog.dataIndex=scope.$index; detailDialog.show=true"
             >
               <i class="iconfont icon-shuxingliebiaoxiangqing2 icon-color"></i>详情
@@ -130,6 +133,14 @@
 import { PutGoal, projectConst, MonitorData } from '../../../../../utils/static'
 export default {
   name: "planList",
+
+  props: {
+    active: {
+      type: Boolean,
+      default: false,
+    }
+  },
+
   data() {
     return {
       PutGoal, projectConst, MonitorData,
@@ -139,12 +150,12 @@ export default {
       },
 
       searchParam: {
-        name: '', 
+        name: '',
         pageIndex: '',
         pageSize: '',
         record: '',
         startIndex: '',
-        startindex: '', 
+        startindex: '',
         totalPageCount: ''
       },
 

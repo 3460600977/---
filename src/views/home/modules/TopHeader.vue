@@ -110,7 +110,7 @@
           content: [
             {name: '首页', path: '/home'},
             {name: '人群洞察', path: ''},
-            {name: '媒体智选', path: '/cityInsight'},
+            {name: '媒体智选', path: '/toolbox/resourceBundle'},
             {name: '投放管理', path: '/putManage'},
             {name: '报表中心', path: '/reportList'},
             {name: '财务管理', path: ''},

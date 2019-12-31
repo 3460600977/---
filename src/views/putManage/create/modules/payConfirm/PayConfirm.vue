@@ -60,7 +60,7 @@
       <div class="mid-between">
         <div>总计: <span class="color-red">¥ {{this.$tools.toThousands(project.data.totalCost / 100)}}</span></div>
         <div>
-          <el-button style="width: 136px;" @click="backToList">取消投放</el-button>
+          <el-button style="width: 136px;" @click="canclePut">取消投放</el-button>
           <el-button style="width: 136px;" @click="confirmPay" type="primary">确认并支付</el-button>
         </div>
       </div>
@@ -68,7 +68,8 @@
 
     <!-- 确认回调弹窗 -->
     <el-dialog
-      :visible.sync="confirmPay.show"
+      :beforeClose="backToList"    
+      :visible.sync="confirmPayCallBack.show"
       class="my-confirm-dialog"
       width="568px">
 
@@ -82,12 +83,12 @@
 
       <div class="font-14">
         <span>支付金额：</span>
-        <span class="color-red">¥ 40000</span>
+        <span class="color-red">¥ {{this.$tools.toThousands(confirmPayCallBack.data.account / 100)}}</span>
       </div>
 
       <div style="margin-top: 23px;" class="font-14">
         <span>账户余额：</span>
-        <span class="color-red">¥ 40000</span>
+        <span class="color-red">¥ {{this.$tools.toThousands(confirmPayCallBack.data.balance / 100)}}</span>
       </div>
       <span slot="footer" class="dialog-footer mid-center">
         <el-button style="width: 100px" @click="backToList">返回列表</el-button>
@@ -246,11 +247,31 @@ export default {
       this.$router.push({
         path: '/putManage',
         query: {
-          active: 'project',
+          'active': 'project'
         }
       })
+    },
 
-    }
+    // 取消投放
+    canclePut() {
+      this.project.loading = false;
+      this.$api.PutProject.CancelProject({projectId: this.$route.query.projectId})
+        .then(res => {
+          this.$notify({
+            title: '成功',
+            message: res.msg,
+            type: 'success'
+          });
+          this.$router.push({
+            path: '/putManage',
+            query: {
+              'active': 'project'
+            }
+          })
+        })
+        .catch(res => {})
+    },
+    
   },
 
 }
