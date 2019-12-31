@@ -174,7 +174,7 @@
         label-width="112px" class="put-form">
 
         <!-- 行业列表 -->
-        <el-form-item prop="name" label="广告创意行业">
+        <el-form-item prop="industry" label="广告创意行业">
           <el-select 
             :disabled="this.createType === 'step' || haveProject"
             class="width-100-p" 
@@ -299,6 +299,7 @@
     <!-- 保存成功提示 -->
     <el-dialog
       title="创意审核"
+      :beforeClose="nextPage"
       :visible.sync="successDialog"
       width="568px">
       <span>创意已提交审核，请及时核实审核结果，以免因未按时审核通过，而造成方案取消！</span>
@@ -355,11 +356,14 @@ export default {
       
       formDataRules: {
         name: [
-          { required: true, message: '请输入广告创意名称!', trigger: 'blur' },
+          { required: true, message: '请输入广告创意名称!', trigger: 'change' },
           { max: 100, message: '创意名称100字以内!'}
         ],
         durationType: [
           { required: true, message: '请选择投放时长!', trigger: 'change' },
+        ],
+        industry: [
+          { required: true, message: '请选择广告创意行业!', trigger: 'change' },
         ],
         'top.name': [
           { required: true, message: '请上传创意!', trigger: 'change' },
@@ -631,7 +635,7 @@ export default {
     // 保存
     saveCreative() {
       let isPassEnptyCheck = true;
-      let validateForms = ['creativeFormMaterialTop', 'creativeFormMaterialBottom880', 'creativeFormMaterialBottom720', 'creativeFormName'];
+      let validateForms = ['creativeFormMaterialTop', 'creativeFormMaterialBottom880', 'creativeFormMaterialBottom720', 'creativeForm', 'creativeFormName'];
       
       validateForms.forEach((item, index) => {
         if(this.$refs[item]) {
@@ -708,7 +712,6 @@ export default {
         path: '/putManage',
         query: {
           active: 'creative'
-          // 'active': this.createType !== 'step' ? 'creative' : 'project'
         }
       })
     }
