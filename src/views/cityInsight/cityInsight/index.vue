@@ -397,6 +397,7 @@
           } else {
             this.buildingFilter.isSelected = true
           }
+          this.$refs.dbmap.setCity(this.cityFilter)
           this.buildingFilter = val
           this.loadData()
           this.hide(1)
