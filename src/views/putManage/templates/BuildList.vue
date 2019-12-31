@@ -130,7 +130,7 @@
   </div>
 </template>
 <script>
-import DelCirclrButton from "../../../../../../components/DelCircleButton";
+import DelCirclrButton from "@/components/DelCircleButton";
 import { mapGetters, mapState } from "vuex";
 export default {
   props: {
@@ -156,7 +156,7 @@ export default {
 
   data() {
     return {
-      nodataImg: require("../../../../../../assets/images/icon_no_data.png"),
+      nodataImg: require("@/assets/images/icon_no_data.png"),
       exporting: false
     };
   },
@@ -209,7 +209,13 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["buildsNumber", "deviceNumber", "peopleNumber", "unitNum"]),
+    ...mapGetters([
+      "buildsNumber", 
+      "deviceNumber", 
+      "peopleNumber", 
+      "unitNum"
+    ]),
+    
     ...mapState({
       localProject: "putProject"
     }),

@@ -50,17 +50,17 @@
             this.filtersCopy[key] = []
           }
           this.setFiltersOld()
-          this.$emit('returnResult', this.filtersCopy)
+          this.$emit('returnResult', this.filtersCopy, 0)
         } else if (val === 1) {
           this.filtersCopy = this.$tools.deepCopy(this.filtersOld)
           this.$emit('hide')
         } else if (val === 2) {
           this.setFiltersOld()
-          this.$emit('returnResult', this.filtersCopy)
+          this.$emit('returnResult', this.filtersCopy, 2)
         }
       },
-      setFiltersOld() {
-        this.filtersOld = this.$tools.deepCopy(this.filtersCopy)
+      setFiltersOld(val) {
+        this.filtersOld = this.$tools.deepCopy(!val? this.filtersCopy: val)
       },
       typeClick(v1, v2) {
         let index = this.filtersCopy[v1].indexOf(v2)

@@ -8,7 +8,7 @@
         </el-form-item>
         <el-form-item label="投放方案状态">
           <label class="put-status-box">
-            {{projectStatus[projectDetail.data.status]}}
+            {{$tools.getObjectItemFromArray(projectStatus, 'value', projectDetail.data.status).name}}
           </label>
         </el-form-item>
         <el-form-item label="投放方案行业">
@@ -43,7 +43,7 @@
     </el-tab-pane>
 
     <el-tab-pane label="点位信息" name="point">
-        <SelectedList 
+        <BuildList 
           :projectId="projectId"
           :loading="projectDetail.loading"
           :buildingDirectionActiveType="'list'"/>
@@ -53,7 +53,7 @@
 
 <script>
 import { projectConst, projectStatus } from '../../../../../../utils/static'
-import SelectedList from '../../../../create/modules/project/modules/SelectedList'
+import BuildList from '@/views/putManage/templates/BuildList' 
 import { mapGetters, mapMutations } from 'vuex'
 
 export default {
@@ -69,7 +69,7 @@ export default {
   },
 
   components: {
-    SelectedList
+    BuildList
   },
 
   data() {

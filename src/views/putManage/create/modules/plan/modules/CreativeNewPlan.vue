@@ -86,7 +86,7 @@ export default {
     let validateBudget = (rules, value, callback) => {
       if (!value) { return callback(new Error('请输入指定预算!')); }
       if (isNaN(value)) { return callback(new Error('请输入数字!')); }
-      if (value <= 1000) { return callback(new Error('指定预算不少于1000元!')); }
+      if (value < 1000) { return callback(new Error('指定预算不少于1000元!')); }
     }
     return {
       PutGoal,// 投放目的

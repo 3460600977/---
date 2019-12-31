@@ -18,6 +18,9 @@
       }
     },
     methods: {
+      showPanel() {
+        this.isShow = true
+      },
       togglePanel() {
         let width = this.$refs.container.scrollWidth
         if (!this.isShow) {

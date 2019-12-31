@@ -30,4 +30,11 @@ export const peopleInsight = {
     });
   },
 
+  // 加载人群洞察包list数据
+  getPeopleInsightHotMap:(data) => {
+    return request({
+      url: `/dpapi/cityInsight/hot/${data.id}`,
+      method: "GET"
+    });
+  },
 }

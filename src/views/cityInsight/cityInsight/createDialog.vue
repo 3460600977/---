@@ -6,7 +6,7 @@
         :visible.sync="dialogVisible"
         width="1000px"
         :before-close="handleClose">
-        <p class="bold title">城市：全国</p>
+        <p class="bold title">城市：{{city.name}}</p>
         <el-table :data="resultData" class="table">
           <el-table-column property="premisesName" label="楼盘名称"></el-table-column>
           <el-table-column property="signElevatorNum" label="点位数"></el-table-column>
@@ -32,11 +32,14 @@
           <li>覆盖人数：<span class="font-number font-16 color-main">{{coveredPeople}}</span></li>
         </ul>
         <p class="title bold" style="margin-bottom: 10px">资源包名称</p>
-        <create-form></create-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="hide" class="btn">取消</el-button>
-          <el-button type="primary" @click="" class="btn">确认</el-button>
-        </span>
+        <create-form
+          @hide="hide"
+          @submit="submit"
+        ></create-form>
+<!--        <span slot="footer" class="dialog-footer">-->
+<!--          <el-button @click="hide" class="btn">取消</el-button>-->
+<!--          <el-button type="primary" @click="" class="btn" @click="createCityPackage">确认</el-button>-->
+<!--        </span>-->
       </el-dialog>
     </div>
 </template>
@@ -55,7 +58,11 @@
       data: {
         type: Array,
         required: true
-      }
+      },
+      city: {
+        type: Object,
+        required: true
+      },
     },
     data() {
       return {
@@ -68,6 +75,26 @@
     },
     created() {},
     methods: {
+      getBuildingIds(arr) {
+        return arr.map((item) => {
+          return item.premisesId
+        })
+      },
+      submit(val) {
+        let ids = this.getBuildingIds(this.data).join(',')
+        let param = {
+          city: this.city.cityCode,
+          premiseIds: ids,
+          condition: '',
+          ...val
+        }
+        this.$api.cityInsight.createCityInsight(param).then((data) => {
+          if (data.result) {
+            this.$emit('createSuc')
+            this.hide()
+          }
+        })
+      },
       show() {
         this.dialogVisible = true
         this.resetLoad()
@@ -135,9 +162,6 @@
     padding: 0 30px;
     line-height: 50px;
     background: $color-main-lighten;
-  }
-  .btn {
-    width: 136px;
   }
   .table {
     border: 1px solid $color-border;

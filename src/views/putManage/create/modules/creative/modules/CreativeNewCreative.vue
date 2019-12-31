@@ -88,7 +88,7 @@
         <!-- 时长  -->
         <el-form-item prop="durationType" label="投放时长">
           <el-select class="width-100-p"
-            :disabled="this.createType === 'step'"
+            :disabled="this.createType === 'step' || haveProject"
             v-model="formData.durationType" 
             placeholder="请选择">
             <el-option
@@ -176,7 +176,7 @@
         <!-- 行业列表 -->
         <el-form-item prop="name" label="广告创意行业">
           <el-select 
-            :disabled="this.createType === 'step'"
+            :disabled="this.createType === 'step' || haveProject"
             class="width-100-p" 
             @change="generateCreativeName"
             v-model="formData.industry" 
@@ -524,19 +524,7 @@ export default {
             type: 'error'
           })
         }
-        return this.$tools.checkVideoTimeAndSize(_file, 15000, 200, 1080, 1920)
-          .then(res => {
-            this.formData.durationType = res.durationType
-            this.formData.top =  _file;
-          })
-          .catch(err => {
-            this.clearTopFile();
-            this.$notify({
-              title: '错误',
-              message: err.msg,
-              type: 'error'
-            })
-          })
+        this.formData.top =  _file;
       }
 
       if (mediaType === 'topImage' || mediaType === 'bottom880Image' || mediaType === 'bottom720Image') {

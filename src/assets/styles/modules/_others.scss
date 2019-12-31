@@ -16,6 +16,12 @@
   height: 100%;
   width: 100%;
 }
+.text-ellipsis{
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
 .border-bottom {
   border-bottom: 1px solid $color-border;
 }
@@ -29,7 +35,10 @@
   margin-right: 10px;
 }
 .margin-left-20 {
-  margin-left: 20px;
+  margin-left: 20px !important;
+}
+.margin-left-30 {
+  margin-left: 30px;
 }
 .margin-top-10 {
   margin-top: 10px;
@@ -125,7 +134,19 @@
   margin-bottom: 40px;
   border-left: 3px solid $color-main;
 }
+// 分页样式
+.my-list-page {
+  background-color: $color-bg-3;
+  padding: 54px 0;
+  text-align: center;
+  border-radius: 4px;
+  height: 120px;
+  margin-top: 33px;
 
+  li.active {
+    background-color: $color-blue !important;
+  }
+}
 // 自定义滚动条样式
 .customScroll {
 

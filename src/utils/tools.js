@@ -22,7 +22,6 @@ let tools = {
         console.log('avi格式不支持前端校验')
         return resolve({
           msg: '添加视频成功',
-          durationType: '003'
         });
       }
 
@@ -40,8 +39,6 @@ let tools = {
         let videoHeight = e.target.videoHeight;
         let durationToSecondes = (videoTime / 1000).toFixed(0);
         // 001-5s/次，002-10s/次，003-15s/次 依次类推
-        let durationType = durationToSecondes == 15 ? '003'
-          : durationToSecondes == 10 ? '002' : '001';
 
         video.remove()
 
@@ -56,7 +53,6 @@ let tools = {
         }
         return resolve({
           msg: '添加视频成功',
-          durationType: durationType
         });
       })
     })
@@ -175,15 +171,27 @@ let tools = {
       return result
     }
   },
-
+  
   /**
-   * TODO
    * @description: 前端分页
-   * @param: pageSize
+   * @param originData: Array 页数
+   * @param pageSize: Number 每页大小
+   * @param curPage: Number 当前页数
+   * @return: 需要的页数据
    */
-  localPagegation: () => {
-
+  
+  getFrontEndPage(originData, pageSize, curPage) {
+    let res = {};
+    res.results = originData.filter((item, index) => {
+      return index >= ((curPage - 1) * pageSize) && index < curPage * pageSize;
+    })
+    res.pageSize = pageSize;
+    res.pageNum = Math.ceil(originData.length / pageSize);
+    res.curPage = curPage;
+    res.totalCount = originData.length;
+    return res;
   },
+  
   // 数据补零
   padding(s, len) {
     const l = len - (s + '').length
@@ -192,6 +200,7 @@ let tools = {
     }
     return s
   },
+  
   /**
    * @description: 格式化时间
    * @param: pageSize
