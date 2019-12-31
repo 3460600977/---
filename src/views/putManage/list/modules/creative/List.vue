@@ -153,7 +153,7 @@
 
             <div  class="text-col">
               <span class="text-title">广告创意行业</span>
-              <label class="text-info">{{detailDialog.data.industry}}</label>
+              <label class="text-info">{{$tools.getObjectItemFromArray(industryList, 'industryId', detailDialog.data.industry).name}}</label>
             </div>
 
             <div  class="text-col">
@@ -163,8 +163,7 @@
                   fit="cover"
                   v-for="(item, index) in JSON.parse(detailDialog.data.industryIdentify)" :key="index" 
                   :src="item"
-                  style="width: 100px; height: 158px;border-radius: 2px">
-                  <!-- :preview-src-list="aItem.srcList"> -->
+                  style="width: 100px; height: 158px;border-radius: 2px; margin-left: 10px;">
                 </el-image>
               </div>
               <label v-else class="text-info">未上传</label>
@@ -179,7 +178,7 @@
 
                 <div  class="text-col" :key="index">
                   <span class="text-title">第三方监测</span>
-                  <label class="text-info">{{item.thirdPartyMonitor || '无'}}</label>
+                  <label class="text-info">{{$tools.getObjectItemFromArray(MonitorData.thirdPartyMonitor, 'value', item.thirdPartyMonitor).name || '无'}}</label>
                 </div>
 
                 <div  class="text-col" :key="index">
@@ -245,12 +244,15 @@
 </template>
 
 <script>
-import { PutGoal, projectConst } from '../../../../../utils/static'
+import { PutGoal, projectConst, MonitorData } from '../../../../../utils/static'
+import { resolve, reject } from 'q';
 export default {
   name: "planList",
+
   data() {
     return {
       PutGoal,
+      MonitorData,
       screenType: projectConst.screenType,
       planNameList: {
         loading: true,
@@ -296,17 +298,19 @@ export default {
         data: ''
       },
 
+      industryList: []
+
     };
   },
 
   beforeMount() {
     this.search()
   },
+
   methods: {
     // 下拉框数据 计划名字列表
     getPlanNameList() {
       this.planNameList.loading = true;
-      // if (this.planNameList.data.length > 0) return;
       this.$api.PutPlan.PlanNameList()
         .then(res => {
           this.planNameList = {
@@ -321,6 +325,7 @@ export default {
           }
         })
     },
+
     // 下拉框数据 方案名字列表
     getProjectNameList() {
       this.projectNameList.loading = true;
@@ -338,6 +343,7 @@ export default {
           }
         })
     },
+
     // 下拉框数据 创意名字列表
     getCreativeNameList() {
       this.creativeNameList.loading = true;
@@ -381,11 +387,13 @@ export default {
 
     // 创意详情
     getCreativeDetail(creativeId) {
+      this.activeName = 'aptitude';
       this.detailDialog = {
         loading: true,
         show: true,
         data: ''
       }
+      this.getIndustryList()
       this.$api.CreateCreative.CreativeDetail(creativeId)
         .then(res => {
           this.detailDialog.loading = false;
@@ -400,6 +408,7 @@ export default {
         })
     },
 
+    // 删除by id
     delCreativeById(creativeId) {
       this.tableData.loading = true;
       this.$api.CreateCreative.DeleteCreativeById(creativeId)
@@ -415,6 +424,14 @@ export default {
         .catch(res => {
           this.tableData.loading = false;
         })
+    },
+
+    // 行业
+    getIndustryList: async function() {
+        this.$api.IndustryList.AllList()
+          .then(res => {
+            this.industryList = res.result;
+          })
     },
 
 

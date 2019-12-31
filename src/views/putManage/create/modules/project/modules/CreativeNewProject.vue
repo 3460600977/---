@@ -187,7 +187,9 @@
                   :value="item.id">
                 </el-option>
               </el-select>
-              <el-button type="primary" style="margin-left: 10px;">管理已有资源包</el-button>
+              <router-link to="/toolBox/resourceBundle">
+                <el-button type="primary" style="margin-left: 10px;">管理已有资源包</el-button>
+              </router-link>
               <span class="el-form-item__error" v-if="!validataForm()">* 请先完善上面投放设置!</span>
             </el-form-item>
           </el-form>
@@ -257,36 +259,42 @@
     </PutMangeCard>
 
     <!-- 楼盘预估数面板 -->
-    <div class="estimate-box">
+    <div class="estimate-box" v-loading="buildingDirection.builds.loading">
       <div class="font-16 bold">楼盘预估数</div>
 
-      <ul class="msg-box color-text-1">
-        <li class="item">
-          <label class="name">楼盘数</label><label class="bold">{{buildsNumber}}</label>个
-        </li>
-        <li class="item">
-          <label class="name">单元数</label><label class="bold">{{unitNum}}</label>个
-        </li>
-        <li class="item">
-          <label class="name">点位数</label><label class="bold">{{deviceNumber}}</label>个
-        </li>
-        <li class="item">
-          <label class="name">覆盖人次</label><label class="bold">{{peopleNumber}}</label>人
-        </li>
-      </ul>
+      <template v-if="deviceNumber > 0">
+        <ul class="msg-box color-text-1">
+          <li class="item">
+            <label class="name">楼盘数</label><label class="bold">{{buildsNumber}}</label>个
+          </li>
+          <li class="item">
+            <label class="name">单元数</label><label class="bold">{{unitNum}}</label>个
+          </li>
+          <li class="item">
+            <label class="name">点位数</label><label class="bold">{{deviceNumber}}</label>个
+          </li>
+          <li class="item">
+            <label class="name">覆盖人次</label><label class="bold">{{peopleNumber}}</label>人
+          </li>
+        </ul>
 
-      <ul class="money-box">
-        <li class="item">
-          <span>预算:&emsp;</span>
-          <span class="color-red">¥</span>
-          <span class="color-red font-16 bold">接口还没好</span>
-        </li>
-        <li class="item">
-          <span>余额:&emsp;</span>
-          <span>¥</span>
-          <span class="font-16 bold">{{$tools.toThousands(userInfo.accountBalance)}}</span>
-        </li>
-      </ul>
+
+        <ul class="money-box">
+          <li class="item">
+            <span>预算:&emsp;</span>
+            <span class="color-red">¥</span>
+            <span class="color-red font-16 bold">{{$tools.toThousands(buildingDirection.estimatePrice/100)}}</span>
+          </li>
+          <li class="item">
+            <span>余额:&emsp;</span>
+            <span>¥</span>
+            <span class="font-16 bold">{{$tools.toThousands(userInfo.accountBalance/100)}}</span>
+          </li>
+        </ul>
+      </template>
+
+      <noData v-else>无可售数据</noData>
+
 
       <el-divider></el-divider>
 
@@ -317,7 +325,7 @@
 
         <div v-else class="mid-between">
           <el-button style="width: 120px" plain>取消</el-button>
-          <el-button :disabled="deviceNumber === 0" :loading="formData.confirming" @click="confirmProject" style="width: 120px" type="primary">确认投放</el-button>
+          <el-button :disabled="deviceNumber === 0 || !validataForm()" :loading="formData.confirming" @click="confirmProject" style="width: 120px" type="primary">确认投放</el-button>
         </div>
       </div>
 
@@ -374,6 +382,8 @@ export default {
         data: ''
       },
 
+      projectDetail: '',
+
       // 城市列表
       cityList: {
         loading: true,
@@ -394,6 +404,7 @@ export default {
         mapChooseShow: false,
         uploadBuildsFile: '',
         templateFileDownloading: false, // 导入楼盘数据->下载中
+        estimatePrice: 0,
         // 城市洞察包列表
         cityInsight: {
           loading: true,
@@ -510,6 +521,7 @@ export default {
       this.$api.PutProject.GetProjectDetailById(+this.$route.query.editProjectId)
         .then(res => {
           let resData = res.result;
+          this.projectDetail = resData;
           this.planData.loading = false;
           this.setBuildsList(res.result.premiseVOS)
           this.formData = {
@@ -522,12 +534,14 @@ export default {
             dateForDay: [resData.beginTime, resData.endTime],
             dateForWeekBegin: resData.beginTime,
             dateForWeekEnd: resData.endTime,
+            projectCity: resData.projectCity,
             deliveryMode: this.$tools.getObjectItemFromArray(projectConst.putWay, 'value', resData.deliveryMode), // 投放方式
             count: this.$tools.getObjectItemFromArray(projectConst.putFrequency, 'value', resData.count), // 投放频次
             second: this.$tools.getObjectItemFromArray(projectConst.putDuration, 'value', resData.second), // 投放时长
             type: this.$tools.getObjectItemFromArray(projectConst.screenType, 'value', resData.type), // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
             confirming: false
           }
+          this.estimatePrice()
         })
         .catch(res => {
           this.planData.name = '加载失败请刷新页面或重新进入';
@@ -643,7 +657,6 @@ export default {
     // 页面数据修改, 重新获取已有资源包的楼盘
     reFreshBuild() {
       if (!this.buildingDirection.cityInsight.selectedItemId) return;
-      console.log(11)
       this.getCityInsightDetail(this.buildingDirection.cityInsight.selectedItemId)
     },
 
@@ -672,11 +685,33 @@ export default {
           this.setBuildsList(res.result)
           this.buildingDirection.builds.data = res.result;
           this.buildingDirection.builds.loading = false;
+          this.estimatePrice()
         })
         .catch(res => {
           this.setBuildsList([])
+          this.buildingDirection.estimatePrice = 0
           this.buildingDirection.builds.data = [];
           this.buildingDirection.builds.loading = false;
+        })
+    },
+
+    // POST根据订单信息计算预估总价
+    estimatePrice() {
+      let param = {
+        beginTime: this.formData.projectType.value == 0 ? this.formData.dateForWeekBegin : this.formData.dateForDay[0],
+        endTime:   this.formData.projectType.value == 0 ? this.formData.dateForWeekEnd : this.formData.dateForDay[1],
+        cityCode:  this.formData.projectCity,
+        count:     this.formData.count.value,
+        deviceNum: this.deviceNumber,
+        second:    this.formData.second.value,
+        type:      this.formData.type.value
+      }
+      this.$api.CityList.EstimateTotalPrice(param)
+        .then(res => {
+          this.buildingDirection.estimatePrice = res.result;
+        })
+        .catch(res => {
+
         })
     },
 
@@ -798,7 +833,6 @@ export default {
             });
             /**
              * 若该方式的创意状态为“未上传、审核拒绝”，按钮为【下一步】，可跳转到创建广告创意页面；
-             * 若广告创意是审核拒绝，显示之前的记录，支持修改，修改后，状态为“待审核“
              * 创意状态 0未审核，1审核不通过，2审核通过
              */
             if (this.formData.creativeStatus === 0 || this.formData.creativeStatus === 2) {
@@ -809,12 +843,22 @@ export default {
                 }
               })
             } else {
-              this.$router.push({
-                path: '/putManage/create/payConfirm',
-                query: {
-                  projectId: this.$route.query.editProjectId,
-                }
-              })
+              if(this.projectDetail.status === 0) {
+                this.$router.push({
+                  path: '/putManage/create/creative',
+                  query: {
+                    projectId: this.$route.query.editProjectId,
+                    createType: 'step'
+                  }
+                })
+              } else {
+                this.$router.push({
+                  path: '/putManage/create/payConfirm',
+                  query: {
+                    projectId: this.$route.query.editProjectId,
+                  }
+                })
+              }
             }
           })
           .catch(res => {
@@ -896,8 +940,6 @@ export default {
     isEdit() {
       return !!this.$route.query.editProjectId;
     },
-
-    // 是否需要重新请求资源包
 
   },
 

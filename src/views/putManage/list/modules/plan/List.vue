@@ -47,8 +47,11 @@
 
         <el-table-column prop="totalBudget" label="投放预算">
           <template slot-scope="scope">
-            <span :class="{'color-blue': scope.row.totalBudget}">
-              {{scope.row.totalBudget / 100 || '不限'}}
+            <span v-if="scope.row.totalBudget" class='color-blue'>
+              ¥ {{scope.row.totalBudget / 100}}
+            </span>
+            <span v-else>
+              不限
             </span>
           </template>
         </el-table-column>
@@ -127,12 +130,20 @@
 </template>
 
 <script>
-import { PutGoal } from '../../../../../utils/static'
+import { PutGoal, projectConst, MonitorData } from '../../../../../utils/static'
 export default {
   name: "planList",
+
+  props: {
+    active: {
+      type: Boolean,
+      default: false,
+    }
+  },
+
   data() {
     return {
-      PutGoal,
+      PutGoal, projectConst, MonitorData,
       planNameList: {
         loading: true,
         data: []

@@ -23,7 +23,7 @@ service.interceptors.request.use(
       config.headers['token'] = '';
     }
     config.headers['token'] =
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJXQjE4MDUyNzAiLCJleHAiOjE1NzgzMTI4MTl9.WudGv4CIuomhHL8rWgneHWDSJxoO9fYVZXPU0lVqxX4'
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJXQjE4MDUyNzAiLCJleHAiOjE1NzgzMTMwNjZ9.ySayQIjjTvjlPUtm3kaXBv9StnQaizqf7ml7n0w4beY"
     return config
   },
   error => {

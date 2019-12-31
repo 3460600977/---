@@ -12,7 +12,7 @@
         label-width="112px" class="put-form">
         <!-- 屏幕类型 -->
         <el-form-item 
-          v-if="createType === 'single' || !haveProject" 
+          v-if="createType === 'single' || (createType === 'edit' && !haveProject)" 
           style="margin-bottom: 12px;" class="screen-type-preview-box mt-20" 
           prop="screenType" label="屏幕类型">
           <div class="screen-type-preview-content">
@@ -88,7 +88,7 @@
         <!-- 时长  -->
         <el-form-item prop="durationType" label="投放时长">
           <el-select class="width-100-p"
-            :disabled="this.createType === 'step'"
+            :disabled="this.createType === 'step' || haveProject"
             v-model="formData.durationType" 
             placeholder="请选择">
             <el-option
@@ -176,7 +176,7 @@
         <!-- 行业列表 -->
         <el-form-item prop="name" label="广告创意行业">
           <el-select 
-            :disabled="this.createType === 'step'"
+            :disabled="this.createType === 'step' || haveProject"
             class="width-100-p" 
             @change="generateCreativeName"
             v-model="formData.industry" 
@@ -300,12 +300,10 @@
     <el-dialog
       title="创意审核"
       :visible.sync="successDialog"
-      width="568px"
-      height="320px"
-      :before-close="handleClose">
+      width="568px">
       <span>创意已提交审核，请及时核实审核结果，以免因未按时审核通过，而造成方案取消！</span>
       <span slot="footer" class="dialog-footer center">
-        <el-button style="width:100px;" type="primary" @click="successDialog = false">确 定</el-button>
+        <el-button style="width:100px;" type="primary" @click="nextPage">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -374,10 +372,9 @@ export default {
         ],
       },
 
-      // 广告创意行业
-      industryList: [],
+      industryList: [], // 广告创意行业
 
-      successDialog: true,
+      successDialog: false,
     }
   },
   
@@ -527,19 +524,7 @@ export default {
             type: 'error'
           })
         }
-        return this.$tools.checkVideoTimeAndSize(_file, 15000, 200, 1080, 1920)
-          .then(res => {
-            this.formData.durationType = res.durationType
-            this.formData.top =  _file;
-          })
-          .catch(err => {
-            this.clearTopFile();
-            this.$notify({
-              title: '错误',
-              message: err.msg,
-              type: 'error'
-            })
-          })
+        this.formData.top =  _file;
       }
 
       if (mediaType === 'topImage' || mediaType === 'bottom880Image' || mediaType === 'bottom720Image') {
@@ -697,12 +682,7 @@ export default {
         this.$api.CreateCreative.EditCreative({id: this.formData.id, formData: paramForm})
           .then(res => {
             this.pageLoading = false;
-            this.nextPage()
-            return this.$notify({
-              title: '成功',
-              message: '修改创意成功',
-              type: 'success'
-            })
+            this.successDialog = true;
           })
           .catch(res => {
             this.pageLoading = false;
@@ -713,12 +693,7 @@ export default {
         this.$api.CreateCreative.AddCreative(paramForm)
           .then(res => {
             this.pageLoading = false;
-            this.nextPage()
-            return this.$notify({
-              title: '成功',
-              message: '创建创意成功',
-              type: 'success'
-            })
+            this.successDialog = true;
           })
           .catch(res => {
             this.pageLoading = false;
@@ -732,7 +707,8 @@ export default {
       this.$router.push({
         path: '/putManage',
         query: {
-          'active': this.createType !== 'step' ? 'creative' : 'project'
+          active: 'creative'
+          // 'active': this.createType !== 'step' ? 'creative' : 'project'
         }
       })
     }
