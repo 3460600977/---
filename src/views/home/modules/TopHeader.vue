@@ -49,7 +49,7 @@
         @mouseleave="leaveMenu"
         class="item">
         <div class="user-head mid clearfix">
-          <img class="head" width="47px" :src="images.userHead" alt="头像">
+          <img class="head" width="47px" :src="images.defaultAvatar" alt="头像">
           <div class="operation-box mid relative">
             <div class="user-name font-14">admin</div>
             <img class="up-icon" width="10px" :src="images.up" alt="" srcset="">
@@ -99,6 +99,7 @@
           notification: require('../../../assets/images/icons/icon_notification.png'),
           userHead: require('../../../assets/images/icons/icon_tx.png'),
           up: require('../../../assets/images/icons/icon_up.png'),
+          defaultAvatar: require('../../../assets/images/icons/icon_head portrait.png'),
         },
         menu: {
           activeIndex: 0,
@@ -219,8 +220,10 @@
     mounted() {
       //请求验证码接口
       let userInfo = getUserInfo()
-      if (!userInfo.avatar || userInfo.avatar.match(/^[ ]*$/) || userInfo.avatar != null) { // "",null,undefined,NaN
-        this.images.up = userInfo.avatar
+      if (userInfo.avatar === null || userInfo.avatar === undefined) { // "",null,undefined,NaN
+
+      } else {
+        this.images.defaultAvatar = userInfo.avatar
       }
     },
     beforeMount() {
