@@ -199,7 +199,7 @@
         </div>
       </div>
     </div>
-    <div v-else>
+    <div v-else class="text-center mt-20">
       没有楼盘详情数据！
     </div>
   </div>
