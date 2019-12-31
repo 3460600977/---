@@ -76,7 +76,7 @@
     },
     watch: {
       buildings(val) {
-        this.clearMap()
+        // this.clearMap()
         if (val.length) {
           this.initHotMap()
           this.initMap(val)
@@ -158,6 +158,11 @@
       },
       initMap(val) {
         this.points = this.normalizePointsAll(val)
+        if (Object.keys(this.pathArr).length) {
+          for(let key in this.pathArr) {
+            this.pathArr[key].buildings = this.isInArea(this.pathArr[key])
+          }
+        }
         this.drawDevicePoints()
       },
       setCity(city) {
@@ -394,6 +399,7 @@
        */
       overlayBindEvent(path) {
         path.overlay.addEventListener('click', (e) => {
+          console.log(e)
           this.pathArr[path.index].location = e.point
           this.activePath = this.pathArr[path.index]
         })
@@ -661,6 +667,7 @@
        * 根据预算随机得到已选的楼盘数据
        * */
       drawDevicePoints() {
+        console.log(this.pathArr)
         if (!Object.keys(this.pathArr).length) {
           if (this.budget === 1) {
             this.drawBg(this.points, [])
@@ -822,6 +829,7 @@
       setDevicePoints(points, type) {
         let str = type === 0 ? 'selected' : 'unSelected'
         let overlay = `${str}Overlay`
+        console.log(this.pointsOverlayObj[overlay])
         if (!this.pointsOverlayObj[overlay]) {
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
@@ -832,6 +840,7 @@
             this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointEvent);
             this.pointsOverlayObj[overlay].clear()
           } else {
+            console.log('44444')
             this.pointsOverlayObj[overlay].clear()
             this.pointsOverlayObj[overlay].setPoints(points)
           }
