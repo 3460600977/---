@@ -402,7 +402,6 @@
                   data: sdata,
                 }
               };
-              console.log(this.barGraphData.data)
             })
             .catch(res => {
               this.barGraphData.data = {
