@@ -81,6 +81,7 @@
   import { removeUserInfo, getUserInfo } from '@/utils/auth';
   import { MenuList } from '../../../utils/static'
   import editPassIndex from "../../../components/EditPass";
+  import { MessageBox } from 'element-ui'
 
   export default {
     name: 'TopHeader',
@@ -196,17 +197,20 @@
         this.dialogEditPass = true
       },
       handleToLogout() {
-        this.$api.Login.LoginOut()
-            .then(res => {
-              this.loading = false;
-              store.dispatch('FedLogOut').then(() => {
-
-              })
-
+        MessageBox.confirm('登出后，身份信息失效，可以取消继续留在该页面，或者重新登录', '确定退出', {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$api.Login.LoginOut().then(res => {
+            this.loading = false;
+            store.dispatch('FedLogOut').then(() => {
+              location.replace('/login') // 为了重新实例化vue-router对象 避免bug
             })
-            .catch(res => {
-              this.loading = false;
-            })
+          }).catch(res => {
+            this.loading = false;
+          })
+        })
       },
       changeEditPass(val) {
         this.dialogEditPass = val

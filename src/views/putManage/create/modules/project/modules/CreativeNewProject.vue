@@ -10,12 +10,12 @@
         ref="planTop"
         :label-position="'left'"
         :model="formData"
-        :rules="formDataRules" 
+        :rules="formDataRules"
         label-width="112px" class="put-form">
 
         <!-- 投放方案行业 -->
         <el-form-item class="mt-20" prop="industry" label="投放方案行业">
-          <el-select 
+          <el-select
             class="bigger"
             :disabled="isEdit"
             @focus="getIndustryList"
@@ -23,7 +23,7 @@
             :loading="industry.loading"
             filterable
             clearable
-            v-model="formData.industry" 
+            v-model="formData.industry"
             value-key="industryId"
             placeholder="请选择">
             <el-option
@@ -46,11 +46,11 @@
               :key="index">
               <span class="float-left">{{item.name}}</span>
               <div class="float-left screen-preview">
-                <div 
-                  class="top" 
+                <div
+                  class="top"
                   :class="{'bg-gray': item.value == '003' || item.value == '001'}"></div>
-                <div 
-                  :class="{'bg-gray': item.value == '003' || item.value == '002'}" 
+                <div
+                  :class="{'bg-gray': item.value == '003' || item.value == '002'}"
                   class="bottom"></div>
               </div>
             </MyRadio>
@@ -60,21 +60,21 @@
         <!-- 投放类型 -->
         <el-form-item class="mt-20" prop="projectType" label="投放类型">
           <div class="mid-between" style="width: 240px">
-            <el-button 
+            <el-button
               :disabled="isEdit"
               style="width: 102px"
               @click="formData.projectType = type;
                 formData.dateForDay = '';
                 formData.dateForWeekBegin = '';
                 formData.dateForWeekEnd = '';"
-              v-for="(type, index) in projectConst.putType" 
-              :type="type == formData.projectType ? 'primary' : 'info'" 
+              v-for="(type, index) in projectConst.putType"
+              :type="type == formData.projectType ? 'primary' : 'info'"
               :key="index">
               {{type.name}}
             </el-button>
           </div>
         </el-form-item>
-        
+
         <!-- 按天投放 -->
         <el-form-item v-show="formData.projectType.value == 1" class="mt-20" prop="dateForDay">
           <label slot="label"><span class="color-red">* </span>投放时间</label>
@@ -124,12 +124,12 @@
 
         <!-- 投放频次 -->
         <el-form-item class="mt-20" prop="count" label="投放频次">
-          <el-select 
+          <el-select
             @change="reFreshBuild"
-            class="bigger" 
-            :disabled="isEdit" 
-            filterable 
-            v-model="formData.count" 
+            class="bigger"
+            :disabled="isEdit"
+            filterable
+            v-model="formData.count"
             placeholder="请选择">
             <el-option
               v-for="(frequency, index) in projectConst.putFrequency"
@@ -142,12 +142,12 @@
 
         <!-- 投放时长 -->
         <el-form-item class="mt-20" prop="second" label="投放时长">
-          <el-select 
+          <el-select
             @change="reFreshBuild"
-            class="bigger" 
-            :disabled="isEdit" 
-            filterable 
-            v-model="formData.second" 
+            class="bigger"
+            :disabled="isEdit"
+            filterable
+            v-model="formData.second"
             placeholder="请选择">
             <el-option
               v-for="(duration, index) in projectConst.putDuration"
@@ -159,7 +159,7 @@
         </el-form-item>
 
       </el-form>
-        
+
     </PutMangeCard>
 
     <!-- 楼盘定向 -->
@@ -169,14 +169,14 @@
         <el-tab-pane label="已有资源包" name="exist">
           <el-form label-position='left' label-width="125px">
             <el-form-item label="已有资源包">
-              <el-select 
+              <el-select
                 class="bigger"
                 @focus="getCityInsightList"
                 @change="getCityInsightDetail(buildingDirection.cityInsight.selectedItemId)"
                 @clear="setBuildsList([])"
-                :loading="buildingDirection.cityInsight.loading" 
+                :loading="buildingDirection.cityInsight.loading"
                 :disabled="!validataForm()"
-                v-model="buildingDirection.cityInsight.selectedItemId" 
+                v-model="buildingDirection.cityInsight.selectedItemId"
                 filterable
                 clearable
                 placeholder="请选择">
@@ -209,11 +209,11 @@
           <el-form label-position='left' label-width="125px">
 
             <el-form-item label="城市">
-              <el-select 
+              <el-select
                 @change="buildingDirection.uploadBuildsFile = ''"
                 filterable
                 v-model="formData.projectCity"
-                :loading="cityList.loading" 
+                :loading="cityList.loading"
                 placeholder="请选择">
                 <el-option
                   v-for="item in cityList.data"
@@ -227,12 +227,12 @@
             <el-form-item label="导入楼盘数据" style="margin-top: 8px">
               <div class="mid">
                <div class="my-input-upload" style="width: 240px;">
-                <input 
+                <input
                   v-show="validataForm()"
                   ref="uplaodBuild"
                   @change="uplaodBuild($event)"
                   suffix-icon="el-icon-upload2"
-                  type="file" 
+                  type="file"
                   accept=".xls, .xlsx"
                   class="input-real"/>
                 <el-input
@@ -242,7 +242,7 @@
                   v-model="buildingDirection.uploadBuildsFile.name"
                   class="input-fake"></el-input>
                 </div>
-                <el-button @click="downloadTemplate" type="primary" 
+                <el-button @click="downloadTemplate" type="primary"
                   :loading="buildingDirection.templateFileDownloading"
                   style="width: 102px; margin-left: 10px">模板下载</el-button>
               </div>
@@ -301,7 +301,7 @@
         ref="planName"
         :model="formData"
         :rules="formDataRules"
-        :label-position="'left'" 
+        :label-position="'left'"
         label-width="0">
         <el-form-item prop="name">
           <el-input style="width: 100%" v-model.trim="formData.name" clearable placeholder="请输入名称"></el-input>
@@ -326,11 +326,17 @@
         </div>
       </div>
 
-      
+
     </div>
-    
+
     <!-- 地图选点 -->
-    <mapChooseWindow :mapChooseShow.sync="buildingDirection.mapChooseShow"/>
+
+    <el-dialog
+      :visible.sync="buildingDirection.mapChooseShow"
+      width="98%"
+      class="map-choose">
+      <map-choose-window @hideMapPoint="hideMapPoint"></map-choose-window>
+    </el-dialog>
 
     <!-- 确认投放方案信息 -->
     <confirmWindow @closeDetail="confirmWindowMsg.show = false" :confirmWindowMsg.sync ="confirmWindowMsg"/>
@@ -339,11 +345,11 @@
 </template>
 
 <script>
-import PutMangeCard from '../../../../templates/PutMangeCard' 
-import MyRadio from '../../../../../../components/MyRadio' 
-import SelectedList from './SelectedList' 
-import mapChooseWindow from './mapChooseWindow' 
-import confirmWindow from './confirmWindow' 
+import PutMangeCard from '../../../../templates/PutMangeCard'
+import MyRadio from '../../../../../../components/MyRadio'
+import SelectedList from './SelectedList'
+import mapChooseWindow from './mapChooseWindow'
+import confirmWindow from './confirmWindow'
 import { projectConst } from '../../../../../../utils/static'
 import { getUserInfo } from '@/utils/auth';
 import { mapGetters, mapMutations } from 'vuex'
@@ -425,9 +431,9 @@ export default {
           industry: "",
           name: "",
           premiseVOS: [{
-            premiseId: '', 
-            premiseName: "", 
-            address: "", 
+            premiseId: '',
+            premiseName: "",
+            address: "",
             weekForPeople: ""}],
           projectCity: "",
           projectType: 0,
@@ -479,7 +485,7 @@ export default {
           { required: true, message: '请选择屏幕类型!', trigger: 'change' },
         ]
       },
-      
+      mapChooseShow:false
     }
   },
 
@@ -509,7 +515,7 @@ export default {
           this.planData.loading = false;
         })
     },
-    
+
     // 根据id初始化回显方案详情
     initProjectDetailById: async function() {
       this.industry.data = await this.getIndustryList();
@@ -778,7 +784,7 @@ export default {
           break;
         }
         this.$refs[item].validate((valid) => {
-          isPassEnptyCheck = valid; 
+          isPassEnptyCheck = valid;
         });
         if (!isPassEnptyCheck) break;
       }
@@ -789,7 +795,7 @@ export default {
     confirmProject() {
       let param;
       let isformValidatePass = this.validataForm();
-      
+
       if (!isformValidatePass) {
         return this.$notify({
           title: '警告',
@@ -868,6 +874,9 @@ export default {
           })
       }
     },
+    hideMapPoint(val) {
+      this.buildingDirection.mapChooseShow = val;
+    },
   },
 
   computed: {
@@ -878,7 +887,7 @@ export default {
       'unitNum',
       'buildsDetails'
     ]),
-    
+
 
     // 限制时间选择器 按天 投放选择范围
     pickerOptionsForDay() {
@@ -886,8 +895,8 @@ export default {
       return {
         firstDayOfWeek: 6,
         disabledDate(date) {
-          return date.getTime() < Date.now() - 8.64e7 || 
-            date.getTime() > _this.planData.endTime || 
+          return date.getTime() < Date.now() - 8.64e7 ||
+            date.getTime() > _this.planData.endTime ||
             date.getTime() < _this.planData.beginTime;
         }
       };
@@ -899,9 +908,9 @@ export default {
       return {
         firstDayOfWeek: 6,
         disabledDate(date) {
-          return date.getTime() < Date.now() - 8.64e7 || 
-            date.getTime() > _this.planData.endTime || 
-            date.getTime() < _this.planData.beginTime || 
+          return date.getTime() < Date.now() - 8.64e7 ||
+            date.getTime() > _this.planData.endTime ||
+            date.getTime() < _this.planData.beginTime ||
             date.getDay() != 6;
         },
       };
@@ -911,9 +920,9 @@ export default {
       return {
         firstDayOfWeek: 6,
         disabledDate(date) {
-          return date.getTime() < Date.now() - 8.64e7 || 
-            date.getTime() > _this.planData.endTime || 
-            date.getTime() < _this.planData.beginTime || 
+          return date.getTime() < Date.now() - 8.64e7 ||
+            date.getTime() > _this.planData.endTime ||
+            date.getTime() < _this.planData.beginTime ||
             date.getDay() != 5 ||
             date.getTime() < (new Date(_this.formData.dateForWeekBegin)).getTime();
         },
@@ -955,7 +964,7 @@ export default {
       margin-top: 18px;
       .week-picker-box{
         .week-item{
-          width: 262px; 
+          width: 262px;
           float: left;
           &.end{
             .el-form-item__content{
