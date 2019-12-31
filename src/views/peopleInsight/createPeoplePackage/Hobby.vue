@@ -50,7 +50,7 @@
     name: "Hobby",
     data() {
       return {
-        checkList: ['选中且禁用','复选框 A']
+        checkList: ['复选框 A']
       }
     },
   }

@@ -1,51 +1,49 @@
 <template>
-    <div class="wrapper">
-      <div class="font-0 mid-start">
-        <p class="label">城市：</p>
-        <div class="flex1 tags">
-          <el-tag
-            v-for="(tag, index) in tags"
-            :key="index"
-            closable
-          >
-            {{tag.name}}
-          </el-tag>
+  <div>
+    <template v-for="(tagObj,parentIndex) in crowdProject.tagNames">
+      <div class="wrapper">
+        <div class="font-0 mid-start">
+          <p class="label">{{tagObj.name}}</p>
+          <div class="flex1 tags">
+            <el-tag
+              :key="tag"
+              v-for="(tag,index) in tagObj.value"
+              closable
+              :disable-transitions="false"
+              @close="handleClose(parentIndex,index )"
+            >
+              {{tag}}
+            </el-tag>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
+  </div>
+
+
 </template>
 
 <script>
+  import {mapMutations, mapState} from "vuex";
   export default {
     name: "conditions",
-    props: {
-      // data: {
-      //   type: Array,
-      //   required: true
-      // },
-    },
     data() {
       return {
-        tags: [
-          { name: '标签一', type: '' },
-          { name: '标签二自动发送到士大夫似的', type: 'success' },
-          { name: '标签三', type: 'info' },
-          { name: '标签四', type: 'warning' },
-          { name: '标签五', type: 'danger' },
-          { name: '标签三', type: 'info' },
-          { name: '标签四', type: 'warning' },
-          { name: '标签五', type: 'danger' },
-          { name: '标签一', type: '' },
-          { name: '标签二', type: 'success' },
-          { name: '标签三', type: 'info' },
-          { name: '标签四', type: 'warning' },
-          { name: '标签五', type: 'danger' },
-          { name: '标签三', type: 'info' },
-          { name: '标签四', type: 'warning' },
-          { name: '标签五', type: 'danger' }
-        ]
+        tags: [],
+        inputVisible: false,
+        tagNames:[],
       }
+    },
+    methods:{
+      ...mapMutations(["removeTagNamesByIndexes"]),
+      handleClose(parentIndex,index) {
+        this.removeTagNamesByIndexes({parentIndex:parentIndex,index:index});
+      }
+    },
+    computed:{
+      ...mapState(["crowdProject"])
     }
+
   }
 </script>
 
