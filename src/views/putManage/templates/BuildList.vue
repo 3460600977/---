@@ -21,7 +21,7 @@
 
     <!-- 地图选点列表 -->
     <template v-if="buildingDirectionActiveType === 'create'">
-      <div class="title clearfix mid-between">
+      <div v-if="deviceNumber > 0" class="title clearfix mid-between">
         <div>
           <span>
             已选择楼盘
@@ -37,7 +37,6 @@
           class="float-right"
           :loading="exporting"
           @click="buildsListExport"
-          v-show="buildsNumber > 0"
           size="small"
         >下载</el-button>
       </div>
