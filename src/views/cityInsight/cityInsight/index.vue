@@ -118,7 +118,6 @@
           ref="createDialog"
           :city="cityFilter"
           :data="selectedBuildings"
-          @createSuc="createSuc"
         ></create-dialog>
       </div>
       <div class="add-dialog">
