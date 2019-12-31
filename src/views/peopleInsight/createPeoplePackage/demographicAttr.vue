@@ -1,13 +1,12 @@
 <template>
   <div class="container">
-    <template v-if="allOptions">
-      <template v-if="gender">
+    <template v-if="allOptions.length > 0">
+      <template v-if="gender.name">
         <div class="mid-start">
-          <!--{{gender.childTags}}-->
           <p class="label">{{gender.name}}:</p>
           <el-checkbox-group
-            v-model="obj[gender.tid]"
-            @change="changeSelect(gender.tid,obj[gender.tid])"
+            v-model="crowdProject.tagNamesObj[gender.tid]"
+            @change="changeSelect(gender.tid,crowdProject.tagNamesObj[gender.tid])"
             class="flex1"
           >
             <el-checkbox
@@ -24,11 +23,11 @@
         <div class="mid-start">
             <p class="label">{{demographics.name}}:</p>
             <el-select
-              v-model="obj[demographics.tid]"
+              v-model="crowdProject.tagNamesObj[demographics.tid]"
               multiple
               placeholder="请选择"
               class="flex1 select content"
-              @change="changeSelect(demographics.tid,obj[demographics.tid])"
+              @change="changeSelect(demographics.tid,crowdProject.tagNamesObj[demographics.tid])"
             >
               <el-option
                 v-for="item in demographics.childTags"
@@ -63,7 +62,7 @@
     },
 
     methods:{
-      ...mapMutations(["setTagNames","setTagTid"]),
+      ...mapMutations(["setTagNamesWithUpdate","removeTagNamesByName"]),
 
       getChildren(){
         this.$api.peopleInsight.getChildTags(133)
@@ -75,7 +74,8 @@
               }else{
                 this.other.push(item)
               }
-              this.$set(this.obj, item.tid, []);
+              //this.$set(this.obj, item.tid, []);
+              this.$set(this.crowdProject.tagNamesObj, item.tid, []);
               item.childTags.pname = item.name;
               this.$set(this.everyObj, item.tid, item.childTags);
             })
@@ -85,31 +85,29 @@
           })
       },
       changeSelect(tid,items){
-        console.log(tid);
-        console.log(items);
-        console.log(this.everyObj);
         let tagNames = [];
         let tagTid = "";
+        let tagTidAry = [];
         let tagValues = [];
-        tagTid += "(";
-        let tagObj = {'name':this.everyObj[tid].pname};
+        let tagObj = {'name':this.everyObj[tid].pname,'tid':tid};
         if (items.length > 0){
           this.everyObj[tid].forEach((childTag)=>{
             items.forEach((item,index)=>{
-              //拼接tagTid  格式(|)
               if (childTag.tid === item){
-                tagTid += item;
-                if (index < item.length-1){
-                  tagTid += "|";
-                }
-                tagValues.push()
+                tagTidAry.push(item);
+                tagValues.push(childTag.name);
               }
 
             })
-          })
-
+          });
+          tagTid = "(" + tagTidAry.join("|") + ")";
+          tagObj.value = tagValues;
+          tagNames.push(tagObj);
+          //set方式不一样  这里是tag组只能有一个
+          this.setTagNamesWithUpdate(tagNames);
         }else {
           //移除当前tag组
+          this.removeTagNamesByName({'name':this.everyObj[tid].pname});
         }
 
       },
