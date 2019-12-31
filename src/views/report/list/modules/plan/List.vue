@@ -474,17 +474,12 @@
           this.totalCount = res.page.totalCount;
           this.pageIndex = res.page.currentPage;
           this.resultData.forEach(item => {
-            if (item.campaignId === this.planList.campaignId) {
-              this.planList.startTime = item.startTime;
-              this.planList.endTime = item.endTime;
-            }
             let costValue = item.cost;
             costValue = this.$tools.formatCentToYuan(costValue);
             item.cost = '¥ ' + this.$tools.toThousands(costValue);
             item.startTime = item.startTime + '~' + item.endTime
           });
         }).catch(res => {
-          console.log('getPlanList', queryParam, res)
           this.resultData = []
           this.loading = false;
         });
