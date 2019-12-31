@@ -232,7 +232,7 @@
   $headerHeight: 76px;
   .top-header {
     width: 100%;
-    z-index: 10000;
+    z-index: 100;
     flex-shrink: 0;
     min-height: $headerHeight;
     background-color: #2A2F4D;

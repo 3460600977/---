@@ -261,7 +261,7 @@
     mounted() {
       this.init()
       this.bindEvent()
-      this.drawTypeSelect({x: screen.clientX / 2, y: screen.clientY / 2}, 'circle')
+      this.hideAll()
     },
     watch: {
       cityFilter(val) {
@@ -291,7 +291,8 @@
       },
       //选中的楼盘数据保存
       submitBuildPoint() {
-        this.$emit("submitSelectedBuildPoint", this.selectedBuildings);
+        this.$emit("submitSelectedBuildPoint", this.selectedBuildings, this.cityFilter);
+        this.$emit("hideMapPoint", false);
       },
       // 添加资源包成功后触发事件
       createSuc() {
@@ -330,15 +331,28 @@
           this.isShow[key] = false
         }
       },
+      // 当点击筛选或者选择城市的时候取消drawType中的选择
+      cancleDrawType() {
+        this.$refs.drawType.hide()
+        this.$refs.dbmap.closeDrawingManager()
+        this.currentSelectType = null
+      },
       toggle(val) {
         if (this.isShow[val]) {
           this.hide(val)
         } else {
+          this.cancleDrawType()
           this.hideAll()
           this.isShow[val] = true
+          if (val === 1) {
+            if (!this.leftShow[0]) {
+              this.leftShow[0] = true
+            }
+          }
         }
       },
       hide(val) {
+        console.log(val)
         this.isShow[val] = false
       },
       getCityFilter() {
