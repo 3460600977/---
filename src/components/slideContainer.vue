@@ -1,10 +1,10 @@
 <template>
-    <div class="container">
-      <div class="container" ref="container">
+    <div class="width ab" ref="container">
+      <div class="width" ref="slot">
         <slot v-show="isShow"></slot>
-        <div class="slider-item hand" @click="togglePanel">
-          <i class="iconfont color-text-1" :class="isShow?'icon-icon-test2':'icon-icon-test1'"></i>
-        </div>
+      </div>
+      <div class="slider-item hand" @click="togglePanel">
+        <i class="iconfont color-text-1" :class="isShow?'icon-icon-test2':'icon-icon-test1'"></i>
       </div>
     </div>
 </template>
@@ -14,12 +14,21 @@
     name: "slideContainer",
     data() {
       return {
-        isShow: true
+        isShow: true,
+        width: 0,
       }
+    },
+    mounted() {
+      console.log(this.$refs.container)
+      console.log(this.$refs.slot.style.width)
+      this.width = this.$refs.container.style.width
     },
     methods: {
       showPanel() {
-        this.isShow = true
+        if (!this.isShow) {
+          this.isShow = true
+          this.$refs.container.style = `transform: translateX(0px)`
+        }
       },
       togglePanel() {
         let width = this.$refs.container.scrollWidth
@@ -30,13 +39,27 @@
         }
         this.isShow = !this.isShow
       },
+
     }
   }
 </script>
 
 <style scoped lang='scss'>
+  .width{
+    width: auto;
+    height: 100%;
+  }
+  .ab {
+    position: absolute;
+    height: 100%;
+    right: 0;
+    z-index: 100;
+    transition: 0.5s;
+  }
 .container {
-  position: relative;
+  position: absolute;
+  height: 100%;
+  right: 0;
   transition: 0.5s;
   .slider-item {
     position: absolute;

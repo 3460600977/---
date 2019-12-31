@@ -395,6 +395,7 @@
 <style scoped lang='scss'>
   .container {
     width:452px;
+    position: relative;
     overflow-y: auto;
     height: 100%;
     background: #ffffff;

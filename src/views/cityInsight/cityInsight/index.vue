@@ -79,7 +79,7 @@
           :currentSelectType="currentSelectType"
         ></mouseMove-text>
       </div>
-      <div class="right-info">
+<!--      <div class="right-info">-->
         <slide-container
           ref="slideCon"
         >
@@ -96,7 +96,7 @@
             ref="buildingDetail"
           ></building-detail>
         </slide-container>
-      </div>
+<!--      </div>-->
       <div class="map container">
         <db-map
           ref="dbmap"
@@ -377,6 +377,7 @@
             parkingNum: [],
             propertyRent: []
           }
+          this.rightShow = 0
           this.activeTab = 0
           this.leftShow = new Array(this.leftShow.length).fill(false)
           this.loadData()
@@ -624,11 +625,11 @@
     z-index: 10;
   }
   .right-info {
-    position: absolute;
+    /*position: absolute;*/
     z-index: 3;
-    top: 0;
+    /*top: 0;*/
     height: 100%;
-    right: 0;
+    /*right: 0;*/
   }
   .left-info {
     position: absolute;
