@@ -204,7 +204,8 @@
         }).then(() => {
           this.$api.Login.LoginOut().then(res => {
             this.loading = false;
-
+            removeUserInfo()
+            this.$store.commit('setToken', '')
             this.$router.replace('/login');
           }).catch(res => {
             this.loading = false;
