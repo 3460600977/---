@@ -51,7 +51,7 @@
         <div class="user-head mid clearfix">
           <img class="head" width="47px" :src="images.defaultAvatar" alt="头像">
           <div class="operation-box mid relative">
-            <div class="user-name font-14">admin</div>
+            <div class="user-name font-14">{{username}}</div>
             <img class="up-icon" width="10px" :src="images.up" alt="" srcset="">
             <transition name="to-top">
               <div v-show="rightMsg.dropMenuShow" class="drop-box absolute font-14">
@@ -132,7 +132,7 @@
           },
           dropMenuShow: false,
         },
-        username: '',
+        username: 'admin',
       }
     },
 
