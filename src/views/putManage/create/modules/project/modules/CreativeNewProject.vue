@@ -191,7 +191,6 @@
               <router-link to="/toolBox/resourceBundle">
                 <el-button type="primary" style="margin-left: 10px;">管理已有资源包</el-button>
               </router-link>
-              <span class="el-form-item__error" v-if="!validataForm()">* 请先完善上面投放设置!</span>
             </el-form-item>
           </el-form>
         </el-tab-pane>
@@ -200,10 +199,12 @@
         <el-tab-pane label="新建楼盘定向" name="create">
           <el-form label-position='left' label-width="125px">
             <el-form-item label="选点方式">
-              <el-button @click="showMapChoose" type="primary" style="width: 102px">地图选点</el-button>
+              <el-button :disabled="!validataForm()" @click="showMapChoose" type="primary" style="width: 102px">地图选点</el-button>
             </el-form-item>
           </el-form>
         </el-tab-pane>
+        
+        <span style="margin-left: 125px;" class="el-form-item__error" v-if="!validataForm()">* 请先完善上面投放设置!</span>
 
         <!-- 导入楼盘数据 -->
         <!-- <el-tab-pane label="导入楼盘数据" name="import">
@@ -521,9 +522,9 @@
       },
 
       // 获取地图返回点位
-      submitSelectedBuildPoint(selectedList) {
+      submitSelectedBuildPoint(selectedList, city) {
+        this.formData.projectCity = city.cityCode;
         this.setBuildsList(selectedList)
-        this.estimatePrice();
       },
 
       // 根据id获取计划详情
@@ -565,7 +566,6 @@
                 type: this.$tools.getObjectItemFromArray(projectConst.screenType, 'value', resData.type), // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
                 confirming: false
               }
-              this.estimatePrice()
             })
             .catch(res => {
               this.planData.name = '加载失败请刷新页面或重新进入';
@@ -708,7 +708,6 @@
               this.setBuildsList(res.result)
               this.buildingDirection.builds.data = res.result;
               this.buildingDirection.builds.loading = false;
-              this.estimatePrice()
             })
             .catch(res => {
               this.setBuildsList([])
@@ -720,6 +719,7 @@
 
       // POST根据订单信息计算预估总价
       estimatePrice() {
+        this.planData.loading = true;
         let param = {
           beginTime: this.formData.projectType.value == 0 ? this.formData.dateForWeekBegin : this.formData.dateForDay[0],
           endTime: this.formData.projectType.value == 0 ? this.formData.dateForWeekEnd : this.formData.dateForDay[1],
@@ -731,10 +731,11 @@
         }
         this.$api.CityList.EstimateTotalPrice(param)
             .then(res => {
+              this.planData.loading = false;
               this.buildingDirection.estimatePrice = res.result;
             })
             .catch(res => {
-
+              this.planData.loading = false;
             })
       },
 
@@ -966,6 +967,14 @@
       },
 
     },
+
+    watch: {
+      deviceNumber(val) {
+        if(val) {
+          this.estimatePrice()
+        }
+      }
+    }
 
   }
 </script>
