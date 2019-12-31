@@ -267,16 +267,16 @@
       <template v-if="deviceNumber > 0">
         <ul class="msg-box color-text-1">
           <li class="item">
-            <label class="name">楼盘数</label><label class="bold">{{buildsNumber}}</label>个
+            <label class="name">楼盘数</label><label class="bold">{{$tools.toThousands(buildsNumber, false)}}</label>个
           </li>
           <li class="item">
-            <label class="name">单元数</label><label class="bold">{{unitNum}}</label>个
+            <label class="name">单元数</label><label class="bold">{{$tools.toThousands(unitNum, false)}}</label>个
           </li>
           <li class="item">
-            <label class="name">点位数</label><label class="bold">{{deviceNumber}}</label>个
+            <label class="name">点位数</label><label class="bold">{{$tools.toThousands(deviceNumber, false)}}</label>个
           </li>
           <li class="item">
-            <label class="name">覆盖人次</label><label class="bold">{{peopleNumber}}</label>人
+            <label class="name">覆盖人次</label><label class="bold">{{$tools.toThousands(peopleNumber, false)}}</label>人
           </li>
         </ul>
 
@@ -775,12 +775,10 @@
         this.$api.PutProject.BuildsAvailableByImport(formData)
             .then(res => {
               this.setBuildsList(res.result)
-              // this.buildingDirection.builds.data = res.result;
               this.buildingDirection.builds.loading = false;
             })
             .catch(res => {
               this.setBuildsList([])
-              // this.buildingDirection.builds.data = [];
               this.buildingDirection.builds.loading = false;
             })
       },
@@ -1036,7 +1034,7 @@
           font-size: 14px;
           .name {
             display: inline-block;
-            width: 177px;
+            width: 160px;
           }
         }
       }
