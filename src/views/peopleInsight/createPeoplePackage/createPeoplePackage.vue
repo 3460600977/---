@@ -33,7 +33,7 @@
       </div>
     </div>
     <div class="flex-shrink">
-      <back></back>
+      <back @handleBack="handleBack"></back>
     </div>
   </div>
 </template>
@@ -91,6 +91,10 @@
     methods: {
       changeTab(item) {
         this.activeTab = item[seriesValue]
+      },
+      //回到之前的页面
+      handleBack() {
+        this.$router.push("/peopleInsight")
       },
     },
   }
