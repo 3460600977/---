@@ -15,7 +15,11 @@
         </el-table-column>
         <el-table-column prop="city" label="城市"></el-table-column>
         <el-table-column prop="createName" label="创建人"></el-table-column>
-        <el-table-column prop="industry" label="创建时间"></el-table-column>
+        <el-table-column prop="createTime" label="创建时间">
+          <template slot-scope="scope">
+            <span>{{formate(scope.row.createTime, 'yyyy-MM-dd hh:mm:ss')}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="action" label="操作" fixed="right" width="400">
           <template slot-scope="scope">
 <!--            <span class="icon-space">-->
@@ -63,6 +67,7 @@
     },
     data() {
       return {
+        formate: this.$tools.formatDate,
         currentPage: 50,
         currentItem: null,
         dialogShowContent: false,

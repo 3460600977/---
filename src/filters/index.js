@@ -1,4 +1,4 @@
-export function toThousands(num, hasZero = true) {
+export function toThousands(num, hasZero = false) {
   num = (num || 0).toString();
   let prefixInt = num.split('.')[0];
   let suffixDecimal = num.split('.')[1] || '00';

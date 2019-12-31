@@ -12,6 +12,12 @@ import tools from '@/utils/tools'
 import store from '@/store'
 import noData from './components/noData'
 
+import * as filters from './filters/index' // global filters
+
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
+
 Vue.use(ElementUI);
 
 Vue.config.productionTip = false
