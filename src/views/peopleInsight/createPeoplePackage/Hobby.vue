@@ -83,7 +83,6 @@
             })
           });
           tagTid = "(" + tagTidAry.join("|") + ")";
-          console.log(tagTid);
           tagObj.value = tagValues;
           tagNames.push(tagObj);
           //set方式不一样  这里是tag组只能有一个
