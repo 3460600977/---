@@ -4,7 +4,7 @@
     <PutMangeCard class="time-box mid">
       <div class="left-info font-16 mid">
         <i style="font-size: 28px; margin-right: 14px;" class="el-icon-warning color-red"></i>
-        <template v-if="countDown.minute === 0 && countDown.second === 0">
+        <template v-if="hasCanceled">
           订单已取消，若想继续投放，请重新创建投放方案~
         </template>
         <template v-else>
@@ -64,7 +64,12 @@
     <PutMangeCard v-loading="project.loading">
       <div class="mid-between">
         <div>总计: <span class="color-red">¥ {{this.$tools.toThousands(project.data.totalCost / 100)}}</span></div>
-        <div>
+        <div v-if="hasCanceled">
+          <router-link to="/putManage?active=project">
+            <el-button style="width: 136px;" type="primary">返回列表</el-button>
+          </router-link>
+        </div>
+        <div v-else>
           <el-button style="width: 136px;" @click="canclePut">取消投放</el-button>
           <el-button style="width: 136px;" @click="confirmPay" type="primary">确认并支付</el-button>
         </div>
@@ -275,6 +280,16 @@ export default {
         .catch(res => {})
     },
     
+  },
+
+  computed: {
+    hasCanceled() {
+      let res = false;
+      if (this.countDown.minute === 0 && this.countDown.second === 0) {
+        res = true;
+      }
+      return res;
+    }
   },
 
 }
