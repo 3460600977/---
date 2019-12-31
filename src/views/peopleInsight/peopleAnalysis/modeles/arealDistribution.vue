@@ -7,17 +7,43 @@
     </div>
 
     <div class="area-content">
-      <div class="content-left">
 
+      <div class="content-left">
         <div class="choose-type">
           <el-radio v-model="mapType" label="1">TA人数</el-radio>
           <el-radio v-model="mapType" label="2">TA浓度</el-radio>
         </div>
 
         <div class="ta-people-map" ref="taMap"></div>
-
       </div>
-      <div class="content-right"></div>
+
+      <div class="content-right">
+        <el-tabs  class="thin-tab small" v-model="activeTab">
+          <el-tab-pane label="省份" name="province">
+            <ul class="map-list">
+              <li v-for="(item, index) in list" :key="index" class="map-list-item">
+                <label class="t-name">{{index+1}}、{{item.name}}</label>
+                <label class=t-value>
+                  <div :style="`width: ${+item.value / 10}%`" class="value-content"></div>
+                </label>
+                <label class="value-text color-text-1">{{+item.value / 10}} %</label>
+              </li>
+            </ul>
+          </el-tab-pane>
+          <el-tab-pane label="城市" name="city">
+            <ul class="map-list">
+              <li v-for="(item, index) in list" :key="index" class="map-list-item">
+                <label class="t-name">{{index+1}}、{{item.name}}</label>
+                <label class=t-value>
+                  <div :style="`width: ${+item.value / 10}%`" class="value-content"></div>
+                </label>
+                <label class="value-text color-text-1">{{+item.value / 10}} %</label>
+              </li>
+            </ul>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+
     </div>
   </el-card>
 </template>
@@ -30,6 +56,7 @@ export default {
     return {
       chanaJson: '../../../../assets/china.json',
       mapType: '1',
+      activeTab: 'province',
       list: [
         {
           "name": "北京",
@@ -147,9 +174,10 @@ export default {
       color: $color-text;
     }
     .area-content{
+      display: flex;
       .content-left{
         position: relative;
-        width: 1092px;
+        width: 800px;
         .choose-type{
           position: absolute;
           top:0;
@@ -159,9 +187,39 @@ export default {
         .ta-people-map{
           position: relative;
           z-index: 1;
-          width:698px;
-          height:490px;
-          background: #f1f1f1;
+          width:700px;
+          height:590px;
+        }
+      }
+      .content-right{
+        flex-grow: 1;
+        .thin-tab{
+          .map-list{
+            .map-list-item{
+              margin-top: 40px;
+              .t-name{
+                display: inline-block;
+                width: 190px;
+              }
+              .t-value{
+                position: relative;
+                display: inline-block;
+                width: 240px;
+                height: 8px;
+                background-color: $color-bg;
+                .value-content{
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  height: 100%;
+                  background-color: $color-main;
+                }
+              }
+              .value-text{
+                margin-left: 50px;
+              }
+            }
+          }
         }
       }
     }
