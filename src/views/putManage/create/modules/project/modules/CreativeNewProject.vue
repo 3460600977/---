@@ -253,7 +253,7 @@
       </el-tabs>
 
       <!-- 楼盘定向->选中列表 -->
-      <SelectedList
+      <BuildList
         :buildingDirectionActiveType="buildingDirection.activeType"
         :loading="buildingDirection.builds.loading"/>
     </PutMangeCard>
@@ -344,7 +344,7 @@
 <script>
 import PutMangeCard from '../../../../templates/PutMangeCard' 
 import MyRadio from '../../../../../../components/MyRadio' 
-import SelectedList from './SelectedList' 
+import BuildList from '@/views/putManage/templates/BuildList' 
 import mapChooseWindow from './mapChooseWindow' 
 import confirmWindow from './confirmWindow' 
 import { projectConst } from '../../../../../../utils/static'
@@ -354,7 +354,7 @@ export default {
   components: {
     PutMangeCard,
     MyRadio,
-    SelectedList,
+    BuildList,
     mapChooseWindow,
     confirmWindow,
   },

@@ -1,13 +1,18 @@
 <template>
   <div class="create-confirm">
     <!-- 倒计时30分钟 -->
-    <PutMangeCard v-loading="project.loading" class="time-box mid">
+    <PutMangeCard class="time-box mid">
       <div class="left-info font-16 mid">
         <i style="font-size: 28px; margin-right: 14px;" class="el-icon-warning color-red"></i>
-        已为您预留点位，请及时支付，未支付方案30分钟后将自动取消
+        <template v-if="countDown.minute === 0 && countDown.second === 0">
+          订单已取消，若想继续投放，请重新创建投放方案~
+        </template>
+        <template v-else>
+          已为您预留点位，请及时支付，未支付方案30分钟后将自动取消
+        </template>
       </div>
 
-      <div class="right-time mid-center">
+      <div v-loading="project.loading" class="right-time mid-center">
         <div class="time mid-center">{{countDown.minute}}</div>
         <div class="split mid-center">:</div>
         <div class="time mid-center">{{countDown.second}}</div>
@@ -49,7 +54,7 @@
     <PutMangeCard v-loading="project.loading">
       <div class="font-16" style="margin-bottom: 30px;">点位信息</div>
        <!-- 楼盘定向->选中列表 -->
-      <SelectedList
+      <BuildList
         :buildingDirectionActiveType="'exist'"
         :loading="false"/>
     </PutMangeCard>
@@ -102,12 +107,12 @@
 <script>
 import { mapMutations } from 'vuex'
 import PutMangeCard from '../../../templates/PutMangeCard' 
-import SelectedList from '../project/modules/SelectedList' 
+import BuildList from '@/views/putManage/templates/BuildList' 
 import { projectConst } from '../../../../../utils/static'
 export default {
   components: {
     PutMangeCard,
-    SelectedList
+    BuildList
   },
 
   data() {
@@ -122,8 +127,8 @@ export default {
       industryList: [],
       
       countDown: {
-        minute: '00',
-        second: '00'
+        minute: 0,
+        second: 0
       },
 
       confirmPayCallBack: {
@@ -167,7 +172,7 @@ export default {
     // 方案明细
     initConfirmPage: async function(projectId) {
       this.project = {
-        loading: false,
+        loading: true,
         data: []
       }
       this.industryList = await this.getIndustryList();
@@ -201,18 +206,16 @@ export default {
 
     // 倒计时30分钟
     timeDifference() {
-      // setInterval(() => {  
-      //   if (this.project.data) {
-      //     // timeOffset = 60 * 60 * 1000;
-      //     let createTime = new Date(this.project.data.createTime);
-      //     console.log(createTime.getMinutes())
-      //     // console.log(createTime.getSeconds())
-      //     this.countDown = {
-      //       minute: '00',
-      //       second: '00'
-      //     }
-      //   }
-      // }, 1000);
+      setInterval(() => {  
+        if (this.project.data) {
+          let oneMinute = 60 * 1000;// 一分钟毫秒数
+          let timeDiff = this.project.data.createTime + oneMinute * 30 - Date.now()
+          this.countDown = {
+            minute: Math.floor(timeDiff / oneMinute) < 0 ? 0 : Math.floor(timeDiff / oneMinute),
+            second: Math.floor((timeDiff % oneMinute) / 1000) < 0 ? 0 : Math.floor((timeDiff % oneMinute) / 1000)
+          }
+        }
+      }, 1000);
     },
 
     // 方案确认支付
