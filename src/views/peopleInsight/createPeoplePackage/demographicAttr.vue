@@ -41,7 +41,6 @@
         </div>
       </div>
     </template>
-
   </div>
 </template>
 
@@ -52,7 +51,6 @@
     name: "demographicAttr",
     data() {
       return {
-        obj: {},
         options: [],
         allOptions:[],
         gender:[],
@@ -60,12 +58,11 @@
         other:[],
       }
     },
-
     methods:{
-      ...mapMutations(["setTagNamesWithUpdate","removeTagNamesByName"]),
+      ...mapMutations(["setTagNamesWithUpdate","removeTagNamesByName","setTagTid"]),
 
       getChildren(){
-        this.$api.peopleInsight.getChildTags(133)
+        this.$api.peopleInsight.getChildTags(this.$parent.activeTab)
           .then(res => {
             this.allOptions = res.result;
             this.allOptions.forEach((item) => {
@@ -81,7 +78,7 @@
             })
           })
           .catch(res => {
-            this.options = null
+            this.allOptions = null
           })
       },
       changeSelect(tid,items){
@@ -105,6 +102,8 @@
           tagNames.push(tagObj);
           //set方式不一样  这里是tag组只能有一个
           this.setTagNamesWithUpdate(tagNames);
+          //TODO 先用push  后期优化
+          this.setTagTid(tagTid);
         }else {
           //移除当前tag组
           this.removeTagNamesByName({'name':this.everyObj[tid].pname});

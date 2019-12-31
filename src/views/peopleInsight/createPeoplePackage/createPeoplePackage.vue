@@ -13,7 +13,9 @@
             ></left-tab>
           </div>
           <div class="left-content">
-            <component :is="currentTabComponent"></component>
+            <keep-alive>
+              <component :is="currentTabComponent"></component>
+            </keep-alive>
 <!--            <location-attr></location-attr>-->
 <!--            <hobby></hobby>-->
 <!--            <industry-consume></industry-consume>-->
