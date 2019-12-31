@@ -285,15 +285,15 @@
   .el-message--info .el-message__content {
     color: #999999; }
   .el-message--success {
-    background-color: #eaefff;
-    border-color: #d5deff; }
+    background-color: #feeded;
+    border-color: #fddbdb; }
     .el-message--success .el-message__content {
-      color: #2D5AFF; }
+      color: #F44A4A; }
   .el-message--warning {
-    background-color: #fdf6ec;
-    border-color: #faecd8; }
+    background-color: #fffae6;
+    border-color: #fff5cc; }
     .el-message--warning .el-message__content {
-      color: #E6A23C; }
+      color: #FFCC00; }
   .el-message--error {
     background-color: #feeded;
     border-color: #fddbdb; }
@@ -321,13 +321,13 @@
     .el-message__closeBtn:hover {
       color: #909399; }
   .el-message .el-icon-success {
-    color: #2D5AFF; }
+    color: #F44A4A; }
   .el-message .el-icon-error {
     color: #F44A4A; }
   .el-message .el-icon-info {
     color: #999999; }
   .el-message .el-icon-warning {
-    color: #E6A23C; }
+    color: #FFCC00; }
 
 .el-message-fade-enter,
 .el-message-fade-leave-active {

@@ -1,0 +1,107 @@
+.el-table--group::after, .el-table--border::after, .el-table::before {
+  background-color: $color-bg-3;
+}
+
+.list_table {
+  a {
+    color: $color-text;
+    text-decoration: none;
+  }
+  ::after, ::before {
+    background-color: $color-bg-3;
+  }
+
+  .status {
+    display: inline-block;
+    border-radius: 4px;
+    width: 70px;
+    height: 24px;
+    text-align: center;
+
+    &.empty {
+      background: #c8c8c8;
+      box-shadow: 0px 2px 4px 0px $color-shadow-2;
+      color: #fff;
+    }
+
+    &.pass {
+      background: $color-blue;
+      box-shadow: 0px 2px 4px 0px $color-shadow-2;
+      color: $color-bg-3;
+    }
+
+    &.pending {
+      background: $color-bg-2;
+      box-shadow: 0px 2px 4px 0px $color-shadow-1;
+    }
+
+    &.deny {
+      background: $color-red;
+      box-shadow: 0px 2px 4px 0px $color-shadow-3;
+      color: $color-bg-3;
+    }
+  }
+
+  th.is-leaf {
+    border-bottom: none;
+  }
+
+  div.cell {
+    overflow: unset !important;
+  }
+
+  span i.icon-color {
+    color: $color-blue;
+    margin-right: 8px;
+  }
+
+  span.icon-space {
+    margin-right: 35px;
+  }
+
+  background-color: $color-bg;
+
+  table {
+    width: 100%;
+    text-align: center;
+  }
+
+  td, th {
+    font-size: 14px;
+    padding: 14px 0 14px 20px;
+    color: $color-text;
+  }
+
+  td {
+    border-top: 10px solid $color-bg;
+    border-bottom: none;
+    padding-left: 17px;
+  }
+
+
+  tr:first-child td {
+    border-top: 0;
+  }
+
+  tr td:first-child {
+    border-radius: 4px;
+  }
+
+  tr td:last-child {
+    border-radius: 4px;
+  }
+
+  th {
+    background-color: $color-bg;
+    color: $color-table-title;
+    border-bottom: 0;
+  }
+
+  tr:hover > td {
+    background-color: $color-bg-3 !important
+  }
+
+  tr > td {
+    background-color: $color-bg-3 !important
+  }
+}

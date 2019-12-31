@@ -1,0 +1,13 @@
+// 全局动画
+$animateTime: 0.3s;
+
+.to-top-enter-active {
+  transition: all $animateTime ease;
+}
+.to-top-leave-active {
+  transition: all $animateTime cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.to-top-enter, .to-top-leave-to {
+  transform: translateY(10px);
+  opacity: 0;
+}

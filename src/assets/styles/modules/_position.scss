@@ -6,21 +6,21 @@
  * @LastEditors: 何彬
  */
 .mid{
-    display: flex;
+    display: flex !important;
     display:-webkit-box;
-    display:-webkit-flex; 
+    display:-webkit-flex;
     align-items: center;
     -webkit-box-align: center;
 }
 .center{
-    display: flex;
+    display: flex !important;
     display:-webkit-box;
     display:-webkit-flex;
     justify-content: center;
     -webkit-justify-content: center;
 }
 .mid-center{
-    display: flex;
+    display: flex !important;
     display:-webkit-box;
     display:-webkit-flex;
     align-items: center;
@@ -29,8 +29,16 @@
     justify-content: center;
     -webkit-justify-content: center;
 }
+.mid-row {
+  display: flex;
+  flex-direction: row;
+}
+.mid-column {
+  display: flex;
+  flex-direction: column;
+}
 .mid-between{
-    display: flex;
+    display: flex !important;
     display:-webkit-box;
     display:-webkit-flex;
     align-items: center;
@@ -38,9 +46,27 @@
     justify-content: space-between;
     -webkit-justify-content: space-between;
 }
+.mid-around{
+    display: flex !important;
+    display:-webkit-box;
+    display:-webkit-flex;
+    align-items: center;
+    -webkit-box-align: center;
+    justify-content: space-around;
+    -webkit-justify-content: space-around;
+}
+.mid-start {
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline;
+}
+.mid-around {
+  display: flex;
+  justify-content: space-around;
+}
 .flex1{
   flex: 1;
-  -webkit-box-flex:1 
+  -webkit-box-flex:1
 }
 .flex-shrink {
   flex-shrink: 0
