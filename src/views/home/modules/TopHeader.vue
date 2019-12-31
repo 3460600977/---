@@ -203,9 +203,8 @@
           type: 'warning'
         }).then(() => {
           this.$api.Login.LoginOut().then(res => {
-            console.log('logout', res);
             this.loading = false;
-            store.dispatch('FedLogOut');
+
             this.$router.replace('/login');
           }).catch(res => {
             this.loading = false;
