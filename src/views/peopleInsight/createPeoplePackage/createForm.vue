@@ -44,7 +44,10 @@
         this.$refs[form].validate((valid) => {
           if (valid) {
             if (this.crowdProject.city === ""){
-              alert('城市必选!');
+              this.$message({
+                type: 'warning',
+                message: '城市必选'
+              });
               return false;
             }
             //拼接数据
@@ -74,12 +77,15 @@
                   this.$router.push('/peopleInsight');
                 })
                 .catch(res => {
-                  alert('保存失败!!');
+                  this.$message({
+                    type: 'info',
+                    message: '保存失败'
+                  })
                 })
             }).catch(action=>{
               this.$message({
                 type: 'info',
-                message: 'action:'+action
+                message: '已经取消'
               })
             });
           } else {

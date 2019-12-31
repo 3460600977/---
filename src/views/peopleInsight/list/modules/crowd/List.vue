@@ -47,9 +47,10 @@
 
         <el-table-column prop="city" label="城市">
           <template slot-scope="scope">
-            <template v-for="item in cityList">
+            {{scope.row.city}}
+           <!-- <template v-for="item in cityList">
               <template v-if="item.cityCode === scope.row.city">{{item.name}}</template>
-            </template>
+            </template>-->
           </template>
         </el-table-column>
 
@@ -78,11 +79,12 @@
 
         <el-table-column prop="action" label="操作" fixed="right" width="400">
           <template slot-scope="scope">
-            <span class="icon-space hand"
-                  @click="crowdAnalysis(scope.row.status)"
-            >
-              <i :class="scope.row.status ? 'iconfont icon-shuxingliebiaoxiangqing2 icon-color' : 'iconfont icon-shuxingliebiaoxiangqing2 '"></i>人群分析
+              <span class="icon-space hand"
+                    :class="scope.row.status?'':'color-disabled'"
+                    @click="crowdAnalysis(scope.row.status)">
+              <i class="iconfont icon-shuxingliebiaoxiangqing2" :class="scope.row.status ? 'icon-color' : 'color-disabled'"></i>人群分析
             </span>
+
             <span class="icon-space hand"
                   @click="delCrowdById(scope.row.id)">
                 <i class="iconfont icon-error icon-color"></i>删除
@@ -250,4 +252,7 @@
 
 <style lang='scss'>
   @import '../listCommonStyle.scss';
+  .color-disabled {
+    margin-right: 8px;
+  }
 </style>
