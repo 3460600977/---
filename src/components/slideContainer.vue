@@ -51,7 +51,7 @@
     position: absolute;
     height: 100%;
     right: 0;
-    z-index: 100;
+    z-index: 99;
     transition: 0.5s;
   }
 .container {
