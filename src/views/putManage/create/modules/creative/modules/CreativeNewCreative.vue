@@ -2,7 +2,10 @@
 <template>
   <div class="upload-creative">
     <!-- 上传素材 -->
-    <PutMangeCard class="form-box creative" :style="createType === 'single' ? 'min-height: 715px;' : !haveProject ? 'min-height: 715px;' : ''" v-loading="pageLoading" :title="'制作创意'">
+    <PutMangeCard 
+      class="form-box creative" 
+      :style="createType === 'single' ? 'min-height: 715px;' : !haveProject ? 'min-height: 504px;' : ''" 
+      v-loading="pageLoading" :title="'制作创意'">
       <!-- 上屏 -->
       <el-form  
         ref="creativeFormMaterialTop"
@@ -106,7 +109,7 @@
             :innerWidth="108" 
             :top="previewInfo.top" 
             :bottom="previewInfo.bottom880"/>
-          <p class="decription color-text-1 font-12"><span class="color-red">*</span>AVI格式暂不支持预览</p>
+          <p class="description color-text-1 font-12"><span class="color-red">*</span>AVI格式暂不支持预览</p>
         </div>
 
       </el-form>
@@ -174,7 +177,7 @@
         label-width="112px" class="put-form">
 
         <!-- 行业列表 -->
-        <el-form-item prop="name" label="广告创意行业">
+        <el-form-item prop="industry" label="广告创意行业">
           <el-select 
             :disabled="this.createType === 'step' || haveProject"
             class="width-100-p" 
@@ -299,6 +302,7 @@
     <!-- 保存成功提示 -->
     <el-dialog
       title="创意审核"
+      :beforeClose="nextPage"
       :visible.sync="successDialog"
       width="568px">
       <span>创意已提交审核，请及时核实审核结果，以免因未按时审核通过，而造成方案取消！</span>
@@ -355,11 +359,14 @@ export default {
       
       formDataRules: {
         name: [
-          { required: true, message: '请输入广告创意名称!', trigger: 'blur' },
+          { required: true, message: '请输入广告创意名称!', trigger: 'change' },
           { max: 100, message: '创意名称100字以内!'}
         ],
         durationType: [
           { required: true, message: '请选择投放时长!', trigger: 'change' },
+        ],
+        industry: [
+          { required: true, message: '请选择广告创意行业!', trigger: 'change' },
         ],
         'top.name': [
           { required: true, message: '请上传创意!', trigger: 'change' },
@@ -631,7 +638,7 @@ export default {
     // 保存
     saveCreative() {
       let isPassEnptyCheck = true;
-      let validateForms = ['creativeFormMaterialTop', 'creativeFormMaterialBottom880', 'creativeFormMaterialBottom720', 'creativeFormName'];
+      let validateForms = ['creativeFormMaterialTop', 'creativeFormMaterialBottom880', 'creativeFormMaterialBottom720', 'creativeForm', 'creativeFormName'];
       
       validateForms.forEach((item, index) => {
         if(this.$refs[item]) {
@@ -708,7 +715,6 @@ export default {
         path: '/putManage',
         query: {
           active: 'creative'
-          // 'active': this.createType !== 'step' ? 'creative' : 'project'
         }
       })
     }
@@ -860,7 +866,7 @@ export default {
     position: absolute;
     bottom:0;
     margin:0 0 80px 558px;
-    .decription{
+    .description{
       margin-top: 40px;
     }
   }
