@@ -191,7 +191,6 @@
               <router-link to="/toolBox/resourceBundle">
                 <el-button type="primary" style="margin-left: 10px;">管理已有资源包</el-button>
               </router-link>
-              <span class="el-form-item__error" v-if="!validataForm()">* 请先完善上面投放设置!</span>
             </el-form-item>
           </el-form>
         </el-tab-pane>
@@ -200,10 +199,12 @@
         <el-tab-pane label="新建楼盘定向" name="create">
           <el-form label-position='left' label-width="125px">
             <el-form-item label="选点方式">
-              <el-button @click="showMapChoose" type="primary" style="width: 102px">地图选点</el-button>
+              <el-button :disabled="!validataForm()" @click="showMapChoose" type="primary" style="width: 102px">地图选点</el-button>
             </el-form-item>
           </el-form>
         </el-tab-pane>
+        
+        <span style="margin-left: 125px;" class="el-form-item__error" v-if="!validataForm()">* 请先完善上面投放设置!</span>
 
         <!-- 导入楼盘数据 -->
         <!-- <el-tab-pane label="导入楼盘数据" name="import">
@@ -521,7 +522,8 @@
       },
 
       // 获取地图返回点位
-      submitSelectedBuildPoint(selectedList) {
+      submitSelectedBuildPoint(selectedList, city) {
+        this.formData.projectCity = city.cityCode;
         this.setBuildsList(selectedList)
         this.estimatePrice();
       },
