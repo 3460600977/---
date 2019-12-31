@@ -327,6 +327,7 @@
         this.pathArr[this.activePath.index] = this.activePath
         this.drawDevicePoints()
         this.activePath = Object.assign({}, this.activePath)
+        this.$emit('pathArrChange', this.pathArr)
       },
       initMouse() {
         //实例化鼠标绘制工具
