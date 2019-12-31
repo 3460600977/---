@@ -21,19 +21,20 @@
 
     <!-- 地图选点列表 -->
     <template v-if="buildingDirectionActiveType === 'create'">
-      <div class="title mid-between">
+      <div class="title clearfix mid-between">
         <div>
           <span>
             已选择楼盘
-            <span class="color-main font16">{{buildsNumber}}</span> 个
+            <span class="color-main font-16">{{buildsNumber}}</span> 个
           </span>
           <span>
             , 可售设备
-            <span class="color-main font16">{{deviceNumber}}</span> 个
+            <span class="color-main font-16">{{deviceNumber}}</span> 个
           </span>
         </div>
 
         <el-button
+          class="float-right"
           :loading="exporting"
           @click="buildsListExport"
           v-show="buildsNumber > 0"
@@ -42,34 +43,33 @@
       </div>
 
       <ul class="selected-list-data-box" v-loading="loading">
-        <li class="item mid" v-for="(item, index) in putProject.list" :key="index">
-          <div class="left-info">
-            <p class="name">{{item.premiseName}}</p>
-            <p class="addr font-12 color-text-1">{{item.address}}</p>
-          </div>
+        <li class="item mid" v-for="(item, index) in localProject.list" :key="index">
+          <div class="base">
+            <div class="left-info float-left" style="width: 550px;">
+              <p class="name">{{item.premisesName}}</p>
+            </div>
 
-          <div class="account">
-            <span class="font-16 number">{{item.deviceNum || 0}}</span>
-            <span class="font-14">个</span>
-          </div>
+            <div class="account float-left" style="width: 100px;">
+              <span class="font-16 number">{{item.signElevatorNum || 0}}</span>
+              <span class="font-14">个</span>
+            </div>
 
-          <DelCirclrButton
-            @click.native="$emit('update:data', $tools.removeArrayItemByIndex(putProject.list, index))"
-            class="delete-item"
-          />
+            <DelCirclrButton
+              @click.native="$emit('update:data', $tools.removeArrayItemByIndex(localProject.list, index))"
+              class="float-left"
+            />
+          </div>
         </li>
 
-        <!-- 分页 -->
-        <!-- <li class="item clearfix">
-          <el-pagination
-            class="float-right"
-            background
-            layout="total, sizes, prev, pager, next"
-            :total="20">
-          </el-pagination>
-        </li>-->
         <noData v-if="buildsNumber <= 0">无可售数据</noData>
       </ul>
+      <!-- 分页 -->
+      <!-- <el-pagination
+        class="float-right"
+        background
+        layout="total, sizes, prev, pager, next"
+        :total="20">
+      </el-pagination> -->
     </template>
 
     <!-- 方案点位信息列表 -->
@@ -93,7 +93,6 @@
           size="small"
         >下载</el-button>
       </div>
-      <!-- {{localProject.list}} -->
 
       <ul class="selected-list-data-box" v-loading="loading">
         <li class="item" v-for="(item, index) in localProject.list" :key="index">
@@ -172,8 +171,8 @@ export default {
       this.localProject.list.forEach(item => {
         param.push({
           address: item.address,
-          deviceNum: item.deviceNum,
-          premiseName: item.premiseName
+          deviceNum: item.deviceNum || item.signElevatorNum,
+          premiseName: item.premiseName || item.premisesName
         });
       });
       this.exporting = true;
@@ -286,10 +285,6 @@ export default {
           .number {
             font-weight: bold;
           }
-        }
-        .delete-item {
-          position: absolute;
-          right: 72px;
         }
       }
       .device-list-box {

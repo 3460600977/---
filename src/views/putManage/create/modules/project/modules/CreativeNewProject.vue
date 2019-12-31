@@ -508,22 +508,27 @@
         this.initProjectDetailById()
       } else {
         this.setBuildsList([]) // 清空楼盘列表
-        this.getPlanDetailById(this.$route.query.planId) // 计划详情
+        this.getPlanDetailById(+this.$route.query.planId) // 计划详情
         this.generateProjectName() // 生成名字
       }
     },
 
     methods: {
       ...mapMutations(['setBuildsList']),
+
       hideMapPoint(val) {
         this.buildingDirection.mapChooseShow = val
       },
+
+      // 获取地图返回点位
       submitSelectedBuildPoint(selectedList) {
-        console.log('submitSelectedBuildPoint', selectedList)
+        console.log(selectedList)
+        this.setBuildsList(selectedList)
       },
+
       // 根据id获取计划详情
       getPlanDetailById(planid) {
-        this.$api.PutPlan.PlanDetail(+planid)
+        this.$api.PutPlan.PlanDetail(planid)
             .then(res => {
               this.planData.loading = false;
               this.planData.data = res.result;

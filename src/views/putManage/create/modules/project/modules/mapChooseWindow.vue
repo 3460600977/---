@@ -40,7 +40,12 @@
         </div>
       </div>
       <div class="draw-select">
-        <draw-type ref="drawType" @drawTypeSelect="drawTypeSelect" @querySearchAsync="querySearchAsync"></draw-type>
+        <draw-type
+          ref="drawType"
+          @searchDrawTypeClick="searchDrawTypeClick"
+          @drawTypeSelect="drawTypeSelect"
+          @querySearchAsync="querySearchAsync"
+        ></draw-type>
       </div>
       <div class="mapPopup">
         <map-popup v-if="showPathCopy"
@@ -61,7 +66,7 @@
       </div>
       <div class="right-select-build">
         <select-build :selectedBuildings="selectedBuildings" :allBuildings="allBuildings" @deleteItem="deleteItem"
-                      @addItem="addItem"></select-build>
+                      @addItem="addItem" @deleteBathItem="deleteBathItem" @addBatchItem="addBatchItem"></select-build>
       </div>
       <div class="mapPopup">
         <map-popup
@@ -288,6 +293,24 @@
       submitBuildPoint() {
         this.$emit("submitSelectedBuildPoint", this.selectedBuildings);
       },
+      // 添加资源包成功后触发事件
+      createSuc() {
+        this.$refs.dbmap.clearPathArr()
+        this.$refs.dbmap.drawDevicePoints()
+      },
+      // 查找选点按钮点击
+      searchDrawTypeClick() {
+        this.currentSelectType = null
+        this.hideAll()
+      },
+      // 热力图开关切换
+      switchChange(val) {
+        if (val) {
+          this.$refs.dbmap.showHotMap()
+        } else {
+          this.$refs.dbmap.hideHotMap()
+        }
+      },
       // 筛选中菜单改变
       changeTab(val) {
         this.activeTab = val.value
@@ -388,6 +411,14 @@
       //增加某个楼盘
       addItem(item) {
         this.$refs.dbmap.addItem(item)
+      },
+      //批量删除多个楼盘
+      deleteBathItem(allList) {
+        this.$refs.dbmap.deleteBathItem(allList)
+      },
+      //批量增加多个楼盘
+      addBatchItem(allList) {
+        this.$refs.dbmap.addBatchItem(allList)
       },
       // 右边弹出框点击创建资源包
       createPackage() {
