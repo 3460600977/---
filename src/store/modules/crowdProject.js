@@ -1,4 +1,3 @@
-
 export const crowdProject = {
   state: {
     tagNames: [],
@@ -51,6 +50,11 @@ export const crowdProject = {
       if(state.tagNames[data.parentIndex].value.length === 0) {
         state.tagNames.splice(data.parentIndex, 1)
       }
+    },
+    removeAllState(state, data){
+      state.tagNames = [];
+      state.tagTid = [];
+      state.city = "";
     },
 
   },
