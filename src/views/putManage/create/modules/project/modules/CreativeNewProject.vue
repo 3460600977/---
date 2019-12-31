@@ -344,7 +344,6 @@
       class="map-choose">
       <map-choose-window @hideMapPoint="hideMapPoint"
                          @submitSelectedBuildPoint="submitSelectedBuildPoint">
-
       </map-choose-window>
     </el-dialog>
 
