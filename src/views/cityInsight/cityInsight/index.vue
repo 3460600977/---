@@ -541,6 +541,7 @@
         this.pathArr = val
       },
       /*
+      /*
       *
       * */
       returnSelectedBuildings(val) {

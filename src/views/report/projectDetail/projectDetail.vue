@@ -349,7 +349,7 @@
                   } else if (property === "cost") {
                     let costValue = premiseList[property];
                     costValue = this.$tools.formatCentToYuan(costValue);
-                    item.value = this.$tools.toThousands(costValue);
+                    item.value = '¥ ' +this.$tools.toThousands(costValue);
                   } else {
                     item.value = this.$tools.toThousands(
                       premiseList[property],
