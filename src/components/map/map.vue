@@ -80,6 +80,8 @@
         // this.clearMap()
         if (val.length) {
           this.initMap(val)
+        } else {
+          this.clearMap()
         }
       },
       activePath(val) {
