@@ -376,7 +376,7 @@
                   item.title = "数据暂无";
                 });
               } else {
-                let showPremise = premiseList.premiseList.shift(); //默认数据
+                let showPremise = premiseList.premiseList[0]; //默认数据
                 this.premiseList.default.forEach(item => {
                   let property = item.field;
                   if (showPremise.hasOwnProperty(property)) {
