@@ -8,6 +8,7 @@
         ></left-info>
         <draw-type
           ref="drawType"
+          :length="Object.keys(pathArr).length || 0"
           @searchDrawTypeClick="searchDrawTypeClick"
           @drawTypeSelect="drawTypeSelect"
           @querySearchAsync="querySearchAsync"
