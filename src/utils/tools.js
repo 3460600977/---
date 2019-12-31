@@ -171,15 +171,27 @@ let tools = {
       return result
     }
   },
-
+  
   /**
-   * TODO
    * @description: 前端分页
-   * @param: pageSize
+   * @param originData: Array 页数
+   * @param pageSize: Number 每页大小
+   * @param curPage: Number 当前页数
+   * @return: 需要的页数据
    */
-  localPagegation: () => {
-
+  
+  getFrontEndPage(originData, pageSize, curPage) {
+    let res = {};
+    res.results = originData.filter((item, index) => {
+      return index >= ((curPage - 1) * pageSize) && index < curPage * pageSize;
+    })
+    res.pageSize = pageSize;
+    res.pageNum = Math.ceil(originData.length / pageSize);
+    res.curPage = curPage;
+    res.totalCount = originData.length;
+    return res;
   },
+  
   // 数据补零
   padding(s, len) {
     const l = len - (s + '').length
@@ -188,6 +200,7 @@ let tools = {
     }
     return s
   },
+  
   /**
    * @description: 格式化时间
    * @param: pageSize

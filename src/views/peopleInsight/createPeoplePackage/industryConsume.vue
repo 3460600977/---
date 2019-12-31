@@ -1,43 +1,83 @@
 <template>
     <div class="container">
       <div class="mid-start">
-        <p class="label">热门消费：</p>
-        <el-select v-model="value" multiple placeholder="请选择" class="flex1 select content">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
+        <p class="label">行业消费：</p>
+        <el-cascader
+          ref="industry"
+          v-model="hotCons"
+          multiple placeholder="请选择"
+          class="flex1 select content"
+          :options="options"
+          :props="props"
+          clearable>
+        </el-cascader>
+        <el-button
+          type="success"
+          @click="setIndustryConsume(hotCons)"
+        >选择</el-button>
       </div>
     </div>
 </template>
 
 <script>
+  import { mapMutations } from 'vuex'
   export default {
     name: "industryConsume",
     data() {
       return {
-        value: [],
-        options: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }],
-      }
+        props: {
+          multiple: true,
+          checkStrictly : true,
+          value: 'tid',
+          label:'name',
+          children:'childTags',
+        },
+        options: [],
+        hotCons:[]
+      };
     },
+    methods: {
+
+      ...mapMutations(["setTagNames","setTagTid"]),
+
+      getChildren(){
+        this.$api.peopleInsight.getChildTags(30000001)
+          .then(res => {
+            this.options = res.result;
+          })
+          .catch(res => {
+            this.options = null
+          })
+      },
+
+      setIndustryConsume(industryConsume){
+        let tagNames = [];
+        let tagTid = "";
+        let tagValues = [];
+        tagTid += "(";
+        let tagObj = {'name':'行业消费'};
+        industryConsume.forEach((item,index)=>{
+          tagTid += item[item.length-1];
+          if (index < industryConsume.length-1){
+            tagTid += "|";
+          }
+          tagValues.push(this.$refs['industry'].getCheckedNodes()[index].pathLabels.join("/"))
+        });
+        tagTid += ")";
+        tagObj.value = tagValues;
+        tagNames.push(tagObj);
+        if (tagValues.length > 0) {
+          this.setTagTid(tagTid);
+          this.setTagNames(tagNames);
+        }
+        this.hotCons = []
+
+      }
+
+    },
+    created() {
+      this.getChildren();
+    }
   }
 </script>
 

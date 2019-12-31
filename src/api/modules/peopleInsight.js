@@ -5,17 +5,31 @@ export const peopleInsight = {
   getMenuList:(data) => {
     return request({
       url: "/dpapi/crowd/topTags",
-      method: "GET"
+      method: "get",
+      data,
     });
   },
-  // 加载人群洞察包list数据
-  getPeopleInsightList:(data) => {
+  getCrowdList:(data) => {
     return request({
       url: "/dpapi/crowd/query",
-      method: "POST",
-      data
+      method: "post",
+      data,
     });
   },
+  deleteCrowdById:(data)=> {
+    return request({
+      url: "/dpapi/crowd/del",
+      method: "post",
+      data,
+    });
+  },
+  getChildTags:(data)=> {
+    return request({
+      url: "/dpapi/crowd/childTags?tid="+data,
+      method: "get",
+    });
+  },
+
   // 加载人群洞察包list数据
   getPeopleInsightHotMap:(data) => {
     return request({

@@ -33,6 +33,7 @@ export const PutPlan = {
   
   // 计划详情
   PlanDetail: (data) => {
+    if(isNaN(data)) return;
     return request({
       url: "/dpapi/campaign/detail?id=" + data,
       method: "get",
