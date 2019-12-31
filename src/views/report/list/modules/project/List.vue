@@ -438,7 +438,7 @@
                   } else if (property === "cost") {
                     let costValue = cardList[property];
                     costValue = this.$tools.formatCentToYuan(costValue);
-                    item.value = this.$tools.toThousands(costValue);
+                    item.value = '¥ ' +this.$tools.toThousands(costValue);
                   } else {
                     item.value = this.$tools.toThousands(cardList[property], false);
                   }
@@ -589,7 +589,7 @@
                 }
                 let costValue = item.cost;
                 costValue = this.$tools.formatCentToYuan(costValue);
-                item.cost = this.$tools.toThousands(costValue);
+                item.cost = '¥ ' +this.$tools.toThousands(costValue);
                 item.startTime = item.startTime + '~' + item.endTime
               });
             })

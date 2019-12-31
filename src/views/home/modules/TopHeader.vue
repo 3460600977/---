@@ -51,7 +51,7 @@
         <div class="user-head mid clearfix">
           <img class="head" width="47px" :src="images.defaultAvatar" alt="头像">
           <div class="operation-box mid relative">
-            <div class="user-name font-14">admin</div>
+            <div class="user-name font-14">{{username}}</div>
             <img class="up-icon" width="10px" :src="images.up" alt="" srcset="">
             <transition name="to-top">
               <div v-show="rightMsg.dropMenuShow" class="drop-box absolute font-14">
@@ -116,6 +116,8 @@
             {name: '投放管理', path: '/putManage'},
             {name: '报表中心', path: '/reportList'},
             {name: '财务管理', path: ''},
+          ],
+          audit: [
             {name: '审核管理', path: '/auditList'},
           ]
         },
@@ -129,11 +131,15 @@
             }
           },
           dropMenuShow: false,
-        }
+        },
+        username: 'admin',
       }
     },
 
     methods: {
+      changeDialog() {
+        this.dialogEditPass = true
+      },
       /**
        * 顶部菜单覆盖样式 宽度,位移
        * @param: menuArr 菜单数组
@@ -225,6 +231,11 @@
 
       } else {
         this.images.defaultAvatar = userInfo.avatar
+      }
+      this.username = userInfo.userName
+      if (this.username === 'XC12394') {
+        this.menu.content = this.menu.audit
+        this.$router.replace('/auditList')
       }
     },
     beforeMount() {

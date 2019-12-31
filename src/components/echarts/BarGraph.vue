@@ -61,7 +61,7 @@
                 val = allVal.shift()
                 let showVal = 0;
                 if (chartParam.sortField === 'cost') {
-                  showVal = that.$tools.toThousands(val.data, 2);
+                  showVal = '¥ ' +that.$tools.toThousands(val.data, 2);
                 } else {
                   showVal = that.$tools.toThousands(val.data, 0);
                 }
@@ -106,7 +106,7 @@
               margin: 20,
               formatter: function (value, index) {
                 if (chartParam.sortField === 'cost') {
-                  return value.toFixed(2);
+                  return '¥ ' +value.toFixed(2);
                 }
                 return value
               }
