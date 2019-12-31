@@ -100,6 +100,7 @@
       let map = new BMap.Map(this.$refs.container, {enableMapClick: false});
       this.map = map
 
+      this.setCity({name: '成都市'})
       map.enableScrollWheelZoom();
       map.addControl(new BMap.ScaleControl());
       this.mapBindEvent()

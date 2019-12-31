@@ -134,7 +134,19 @@
   margin-bottom: 40px;
   border-left: 3px solid $color-main;
 }
+// 分页样式
+.my-list-page {
+  background-color: $color-bg-3;
+  padding: 54px 0;
+  text-align: center;
+  border-radius: 4px;
+  height: 120px;
+  margin-top: 33px;
 
+  li.active {
+    background-color: $color-blue !important;
+  }
+}
 // 自定义滚动条样式
 .customScroll {
 

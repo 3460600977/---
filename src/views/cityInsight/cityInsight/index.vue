@@ -231,7 +231,7 @@
                 {label: '低于200', key: 0},
                 {label: '200-500', key: 1},
                 {label: '5000-800', key: 2},
-                {label: '800以上', key: 2}
+                {label: '800以上', key: 3}
               ]
             },
             {
@@ -289,6 +289,9 @@
           'circle': 310 // 402 + 22圆形时弹窗位置为弹窗高度加图标高度
         }
       }
+    },
+    created() {
+      this.loading = true
     },
     mounted() {
       this.init()
