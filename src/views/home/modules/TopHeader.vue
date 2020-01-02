@@ -265,7 +265,6 @@
   }
 </script>
 <style lang="scss" scoped>
-  $headerHeight: 76px;
   /deep/ .el-badge__content{
     background-color: #fff !important;
     color: #C13130;
