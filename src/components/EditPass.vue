@@ -22,6 +22,7 @@
 
 <script>
   import { Notification } from 'element-ui'
+  import { removeUserInfo } from '@/utils/auth';
 
   export default {
     name: "editPassIndex",
@@ -81,7 +82,6 @@
       submitConfirm(formName) {
         this.$refs[formName].validate((valid) => {
           if (!valid) {
-            console.log('error submit!!');
             return false;
           } else {
             let param = {
@@ -92,11 +92,14 @@
             //请求登录接口
             this.loading = true;
             this.$api.Login.ChangePass(param).then(res => {
+              this.loading = false;
               Notification({
                 title: '成功修改密码',
-                message: res.msg || '网络异常, 请稍后再试',
                 type: 'success'
               });
+              removeUserInfo()
+              this.$store.commit('setToken', '')
+              this.$router.replace('/login');
             }).catch(res => {
               this.loading = false;
             })
