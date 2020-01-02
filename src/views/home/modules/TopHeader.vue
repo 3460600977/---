@@ -30,14 +30,14 @@
       <div
         @mouseenter="hoverRightMsg(0)"
         @mouseleave="leaveMenu"
-        class="item mid"><img width="20px" :src="images.money" alt="">
+        class="item icon-item mid"><img width="20px" :src="images.money" alt="">
       </div>
 
       <!-- 消息 -->
       <div
         @mouseenter="hoverRightMsg(1)"
         @mouseleave="leaveMenu"
-        class="item mid">
+        class="item icon-item mid">
         <el-badge :value="20">
           <img width="20px" :src="images.notification" alt="">
         </el-badge>
@@ -330,6 +330,17 @@
         padding: 0 25px;
         cursor: pointer;
         transition: .3s;
+        &.icon-item {
+          img{
+            opacity: 0.7;
+            transition: 0.3s;
+          }
+          &:hover{
+            img{
+              opacity: 1;
+            }
+          }
+        }
         .user-head {
           height: 100%;
           .head {
