@@ -227,7 +227,7 @@
     mounted() {
       //请求验证码接口
       let userInfo = getUserInfo()
-      if (userInfo.avatar === null || userInfo.avatar === undefined) { // "",null,undefined,NaN
+      if (userInfo.avatar === null || userInfo.avatar === undefined || userInfo.avatar === "") { // "",null,undefined,NaN
 
       } else {
         this.images.defaultAvatar = userInfo.avatar

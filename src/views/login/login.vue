@@ -127,6 +127,7 @@
               this.$store.commit('setToken', info.token)
               setUserInfo(info)
             }).catch(res => {
+              console.log('login fail')
               this.loading = false;
             })
           }
