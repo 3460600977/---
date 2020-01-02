@@ -275,7 +275,7 @@
         width: 1px;
         height: 20px;
         margin: 0 12px;
-        background: rgba(87, 94, 135, 1);
+        background: #F1B8B7;
       }
       .company-name {
         margin-right: 50px;
