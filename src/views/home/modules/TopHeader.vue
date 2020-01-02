@@ -52,7 +52,7 @@
           <img class="head" width="47px" :src="images.defaultAvatar" alt="头像">
           <div class="operation-box mid relative">
             <div class="user-name font-14">{{username}}</div>
-            <img class="up-icon" width="10px" :src="images.up" alt="" srcset="">
+            <i class="up-icon el-icon-caret-bottom" width="10px"/>
             <transition name="to-top">
               <div v-show="rightMsg.dropMenuShow" class="drop-box absolute font-14">
                 <ul>
@@ -123,7 +123,7 @@
         },
         rightMsg: {
           hoverBlock: {
-            width: ['70px', '70px', '170px'],
+            width: ['70px', '70px', '210px'],
             style: {
               width: '70px',
               transform: 'translateX(0px)',
@@ -163,11 +163,18 @@
       hoverRightMsg(index) {
         if (index === 2) {
           this.rightMsg.dropMenuShow = true;
+          this.rightMsg.hoverBlock.style = {
+            width: this.rightMsg.hoverBlock.width[index],
+            transform: `translateX(${index * 70}px)`,
+            opacity: 1
+          }
         }
-        this.rightMsg.hoverBlock.style = {
-          width: this.rightMsg.hoverBlock.width[index],
-          transform: `translateX(${index * 70}px)`,
-          opacity: 1
+        else {
+          this.rightMsg.hoverBlock.style = {
+            width: this.rightMsg.hoverBlock.width[index],
+            transform: `translateX(${index * 70}px)`,
+            opacity: 1
+          }
         }
       },
 
@@ -243,9 +250,9 @@
     }
   }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
   $headerHeight: 76px;
-  .el-badge__content{
+  /deep/ .el-badge__content{
     background-color: #fff !important;
     color: #C13130;
   }

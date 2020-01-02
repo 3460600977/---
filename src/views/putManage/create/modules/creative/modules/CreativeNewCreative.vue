@@ -181,6 +181,7 @@
           <el-select 
             :disabled="this.createType === 'step' || haveProject"
             class="width-100-p" 
+            filterable
             @change="generateCreativeName"
             v-model="formData.industry" 
             placeholder="请选择">
