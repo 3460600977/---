@@ -628,7 +628,7 @@
     padding: 30px 0 37px 38px;
     .report-divider {
       .el-divider {
-        background-color: $color-blue;
+        background-color: $color-main;
         border-radius: 2px;
         width: 3px;
         margin: 0 5px 0 0;
@@ -651,7 +651,7 @@
         margin: 2px 20px 0 0;
       }
       .el-select .el-input .el-select__caret {
-        color: $color-blue;
+        color: $color-main;
       }
     }
   }
@@ -692,7 +692,7 @@
         font-weight: normal;
       }
       &.select-box {
-        background: rgba(45, 90, 255, 1);
+        background: $color-main;
         box-shadow: 0px 13px 27px 0px rgba(45, 90, 255, 0.25);
         color: $color-bg-3;
       }
@@ -778,7 +778,7 @@
       .project-id {
         font-size: 14px;
         font-weight: 400;
-        color: $color-blue;
+        color: $color-main;
         text-decoration: none;
         cursor: pointer;
       }
@@ -806,7 +806,7 @@
     height: 120px;
     margin-top: 30px;
     li.active {
-      background-color: $color-blue !important;
+      background-color: $color-main !important;
     }
   }
 </style>
