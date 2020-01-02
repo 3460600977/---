@@ -35,7 +35,7 @@
                        @current-change="handleCircleCurrentChange"
                        class="list-page"
                        :page-size="tableCheckedListSum.pageSize"
-                       :pager-count="5"
+                       :pager-count="3"
         ></el-pagination>
         <div v-if="allBuildings.length <= 0" class="nodata text-center">
           暂无数据
@@ -69,7 +69,7 @@
                        @current-change="handleCurrentChange"
                        class="list-page"
                        :page-size="selectCheckedListSum.pageSize"
-                       :pager-count="5"
+                       :pager-count="3"
         ></el-pagination>
         <div v-if="selectedBuildings.length <= 0" class="nodata text-center">
           暂无数据
