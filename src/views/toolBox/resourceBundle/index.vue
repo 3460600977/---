@@ -124,7 +124,7 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .my-dialog /deep/ {
     .el-dialog__body {
         padding-top: 57px;
