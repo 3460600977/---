@@ -15,7 +15,7 @@
             <el-main>
               <div class="login-form-box">
                 <h3 class="login-title">欢迎登录</h3>
-                <label class="login-des">HI,欢迎使用新潮传媒-数字化刊播平台</label>
+                <label class="login-des">HI,欢迎使用新潮传媒-生活圈智投平台</label>
                 <el-form ref="loginForm" :model="loginForm" class="loginForm" :rules="rules">
                   <el-form-item prop="username">
                     <el-input prefix-icon="el-icon-user-solid"
@@ -58,8 +58,8 @@
     data() {
       return {
         imageWidth: 442,
-        logo_img: require('../../assets/images/icon_left@2x.png'),
-        logo_back_img: require('../../assets/images/img_bg@2x.png'),
+        logo_img: require('../../assets/images/icon_red@2x.png'),
+        logo_back_img: require('../../assets/images/icon_bg@2x.png'),
         login_capture_img: '',
         loginForm: {
           username: '',
@@ -122,12 +122,11 @@
             this.loading = true;
             this.$api.Login.LoginIn(param).then(res => {
               let info = res.result
-              this.$router.replace({path: '/home', query: {}})
               this.loading = false;
               this.$store.commit('setToken', info.token)
               setUserInfo(info)
+              this.$router.push({path: '/home', query: {}})
             }).catch(res => {
-              console.log('login fail')
               this.loading = false;
             })
           }
@@ -187,7 +186,7 @@
     .xinchao-logo {
       position: absolute;
       z-index: 3;
-      top: -12.5%;
+      top: -15.5%;
       left: -0.6%;
     }
     .logo-form {
