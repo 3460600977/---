@@ -232,7 +232,7 @@
 
       crowdAnalysis(status) {
         if (!status) return;
-
+        this.$router.push("/peopleAnalysis")
       },
 
 
