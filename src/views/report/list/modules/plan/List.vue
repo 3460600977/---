@@ -99,7 +99,11 @@
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column prop="startTime" label="投放时间"></el-table-column>
+        <el-table-column prop="startTime" label="投放时间" min-width="105">
+          <template slot-scope="scope">
+            <span class="report-time">{{scope.row[scope.column.property]}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="cost" label="花费数（元）" sortable="custom"></el-table-column>
         <el-table-column prop="showTimes" label="曝光数" sortable="custom"></el-table-column>
         <el-table-column prop="deviceNum" label="设备数" sortable="custom"></el-table-column>
@@ -684,7 +688,7 @@
       .project-id {
         font-size: 14px;
         font-weight: 400;
-        color: $color-main;
+        color: $color-origin-blue;
         text-decoration: none;
         cursor: pointer;
       }
@@ -701,6 +705,12 @@
       }
       tr > td {
         background-color: $color-bg-3 !important;
+      }
+      .report-time {
+        font-size: 14px;
+        font-weight: 400;
+        color: $color-text;
+        font-family: Microsoft YaHei;
       }
     }
   }
