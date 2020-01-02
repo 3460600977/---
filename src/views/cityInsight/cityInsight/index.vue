@@ -124,7 +124,7 @@
       <div class="add-dialog">
         <add-dialog
           ref="addDialog"
-          cityCode="cityFilter.cityCode"
+          :cityCode="cityFilter.cityCode"
           @selectLocation="addLocation"
         ></add-dialog>
       </div>
@@ -497,7 +497,7 @@
       },
       // 添加媒体资源弹窗选择添加的楼盘
       addLocation(val) {
-        let isExist = this.$refs.dbmap.addItem(val)
+        let isExist = this.$refs.dbmap.addBatchItem([val])
         this.$refs.addDialog.selectCallBack(isExist)
       },
       // 右边弹出框点击添加按钮
@@ -506,7 +506,7 @@
       },
       // 右边弹出框点击删除某个楼盘
       deleteItem(item) {
-        this.$refs.dbmap.deleteItem(item)
+        this.$refs.dbmap.deleteBathItem([item])
       },
       // 右边弹出框点击创建资源包
       createPackage() {
