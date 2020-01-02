@@ -413,7 +413,7 @@
        整理得到弹窗所需数据
        */
       getPopUpData(path) {
-        path.buildings = this.isInArea(path)
+        this.isInArea(path)
         this.pathArr = {[path.index]: path, ...this.pathArr}
         // this.pathArr[path.index] = path
         this.indexArr[path.index] = path.index // 记录所有画过路径的index数组
@@ -438,7 +438,7 @@
       isInArea(path) {
         let arr = []
         if (path.type === 'polyline') {
-          arr = this.filterProjectByPolyline(this.points, path.overlay, path.radius)
+          this.filterProjectByPolyline(this.points, path.overlay, path.radius, path.index)
         } else if (path.type === 'polygon') {
           arr = this.points.filter((item) => {
             return BMapLib.GeoUtils.isPointInPolygon(item.point, path.overlay)
@@ -490,23 +490,41 @@
         let result = arr1.filter((a) => !res.has(a.premisesId) && res.set(a.premisesId, 1))
         return result
       },
+      judgePointType(item) {
+        if (item.type < 0 && item.type !== -3) {
+          return true
+        } else {
+          return  false
+        }
+      },
       /*
        折现判断点位是否在区域内
        */
-      filterProjectByPolyline(points, overlay, radius) {
+      filterProjectByPolyline(points, overlay, radius, index) {
         let polyline = overlay.getPath();
         let len = polyline.length;
 
         //圆形计算
-        let filterPs = [];
+        // let filterPs = [];
         for (let i in polyline) {
           let circle = new BMap.Circle(polyline[i], radius, this.styleOptions);
-          let filterP = points.filter((p) => {
-            let b = p.point;
-            return BMapLib.GeoUtils.isPointInCircle(b, circle);
-          });
-          filterPs = [...filterP, ...filterPs];
+          for(let key in points) {
+            if (this.judgePointType(points[key])) {
+              let b = points[key].point;
+              if (BMapLib.GeoUtils.isPointInCircle(b, circle)) {
+                points[key].type = index
+              } else {
+                points[key].type = -2
+              }
+            }
+          }
+          // let filterP = points.filter((p) => {
+          //   let b = p.point;
+          //   return BMapLib.GeoUtils.isPointInCircle(b, circle);
+          // });
+          // filterPs = [...filterP, ...filterPs];
         }
+        console.log(points)
         // 未选 多边形计算
         let polygons = [];
         for (let k in polyline) {
@@ -520,13 +538,20 @@
           polygons.push(this.getFourP(lat1, lng1, lat2, lng2, radius));
         }
         for (let j in polygons) {
-          let filterP = points.filter((p) => {
-            return BMapLib.GeoUtils.isPointInPolygon(p.point, polygons[j]);
-          });
-          filterPs = [...filterP, ...filterPs];
+          for(let key in points) {
+            if (this.judgePointType(points[key])) {
+              let b = points[key].point;
+              if (BMapLib.GeoUtils.isPointInPolygon(b, polygons[j])) {
+                points[key].type = index
+              } else {
+                points[key].type = -2
+              }
+            }
+          }
         }
-        let result = this.unique(filterPs)
-        return result
+        console.log(points)
+        // let result = this.unique(filterPs)
+        // return result
       },
 
       closePathWindow(arr) {
@@ -667,38 +692,41 @@
         this.heatmapOverlay.setDataSet({data:arr, max:100});
       },
       normalizePointsAll(arr) {
-        let result = arr.map((item) => {
-          return {point: new BMap.Point(item.lng, item.lat), ...item}
+        let obj = {}
+        arr.forEach((item) => {
+          obj[item.premisesId] = {point: new BMap.Point(item.lng, item.lat), ...item, type: -1}
         })
-        return result
+        console.log(obj)
+        return obj
       },
       /*
        * 根据预算随机得到已选的楼盘数据
        * */
       drawDevicePoints() {
-        if (!Object.keys(this.pathArr).length) {
-          if (this.budget === 1) {
-            this.drawBg(this.points, [])
-          } else {
-            let [selectP, unSelectP] = this.getRandomBuildings(this.points, this.budget)
-            this.drawBg(selectP, unSelectP)
-          }
-        } else {
-          let selectedBuildings = []
-          if (this.budget === 1) {
-            for (let key in this.pathArr) {
-              this.pathArr[key].selectedBuildings = this.pathArr[key].buildings
-              selectedBuildings = selectedBuildings.concat(this.pathArr[key].selectedBuildings)
-            }
-          } else {
-            for (let key in this.pathArr) {
-              this.pathArr[key].selectedBuildings = this.getRandomBuildings(this.pathArr[key].buildings, this.budget)[0]
-              selectedBuildings = selectedBuildings.concat(this.pathArr[key].selectedBuildings)
-            }
-          }
-          let result = this.unique(selectedBuildings)
-          this.separateBgPonits(result)
-        }
+        // this.points.
+        // if (!Object.keys(this.pathArr).length) {
+        //   if (this.budget === 1) {
+        //     this.drawBg(Object.values(this.points), [])
+        //   } else {
+        //     // let [selectP, unSelectP] = this.getRandomBuildings(this.points, this.budget)
+        //     // this.drawBg(selectP, unSelectP)
+        //   }
+        // } else {
+        //   let selectedBuildings = []
+        //   if (this.budget === 1) {
+        //     for (let key in this.pathArr) {
+        //       this.pathArr[key].selectedBuildings = this.pathArr[key].buildings
+        //       selectedBuildings = selectedBuildings.concat(this.pathArr[key].selectedBuildings)
+        //     }
+        //   } else {
+            // for (let key in this.pathArr) {
+            //   this.pathArr[key].selectedBuildings = this.getRandomBuildings(this.pathArr[key].buildings, this.budget)[0]
+            //   selectedBuildings = selectedBuildings.concat(this.pathArr[key].selectedBuildings)
+            // }
+          // }
+          // let result = this.unique(selectedBuildings)
+          // this.separateBgPonits(result)
+        // }
       },
       /*
        * 根据当前选中的点 将背景点分为已选和未选 然后分别绘画
@@ -722,6 +750,7 @@
        * 画背景点
        * */
       drawBg(selectP, unSelectP) {
+        console.log(selectP)
         this.selectedBuildings = selectP
         this.unSelectedBuildings = unSelectP
         this.drawPoints(selectP, unSelectP)
