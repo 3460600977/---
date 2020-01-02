@@ -1,5 +1,7 @@
 <template>
   <div class="list">
+
+
     <el-form :inline="true" class="list-form-inline clearfix">
       <el-form-item class="line-space" label="投放计划名称">
         <el-select 
@@ -62,6 +64,9 @@
         </router-link>
       </el-form-item>
     </el-form>
+    
+
+
 
     <div class="query_result">
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
@@ -138,7 +143,7 @@
             </span>
 
             <span v-if="scope.row.status == 1 || scope.row.status == 2" class="icon-space hand">
-              <router-link :to="`/reportList/project?projectId=${scope.row.projectId}`">
+              <router-link :to="`/reportList/project?projectId=${scope.row.projectId}&projectTime=${$tools.getFormatDate('YY-mm-dd', scope.row.beginTime)}~${$tools.getFormatDate('YY-mm-dd', scope.row.endTime)}`">
                 <i class="iconfont icon-baobiao icon-color"></i>报表
               </router-link>
             </span>
@@ -164,6 +169,10 @@
         class="list-page"
       ></el-pagination>
     </div>
+
+
+
+
 
     <!-- 详情 -->
     <el-dialog
@@ -348,6 +357,6 @@ export default {
 };
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 @import '../listCommonStyle.scss';
 </style>

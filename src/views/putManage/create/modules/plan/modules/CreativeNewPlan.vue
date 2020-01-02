@@ -295,7 +295,9 @@ export default {
         transform: translateY(-3px);
       }
       &.active{
-        box-shadow: 0px 4px 10px 0px rgba(45,90,255,0.18);
+        border:1px solid rgba(244,74,74,1);
+        box-shadow:0px 4px 10px 0px rgba(244,74,74,0.18);
+        border-radius:4px;
         .name{
           color: $color-main;
         }

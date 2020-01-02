@@ -13,7 +13,9 @@
             ></left-tab>
           </div>
           <div class="left-content">
-            <component :is="currentTabComponent"></component>
+            <keep-alive>
+              <component :is="currentTabComponent"></component>
+            </keep-alive>
 <!--            <location-attr></location-attr>-->
 <!--            <hobby></hobby>-->
 <!--            <industry-consume></industry-consume>-->
@@ -31,7 +33,7 @@
       </div>
     </div>
     <div class="flex-shrink">
-      <back></back>
+      <back @handleBack="handleBack"></back>
     </div>
   </div>
 </template>
@@ -76,9 +78,8 @@
     },
     created() {
       this.$api.peopleInsight.getMenuList().then((data) => {
-        this.tabData = data.result
+        this.tabData = data.result;
         this.activeTab = data.result[0][seriesValue]
-
       })
     },
     watch: {
@@ -89,6 +90,10 @@
     methods: {
       changeTab(item) {
         this.activeTab = item[seriesValue]
+      },
+      //回到之前的页面
+      handleBack() {
+        this.$router.push("/peopleInsight")
       },
     },
   }

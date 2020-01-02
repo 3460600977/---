@@ -49,8 +49,8 @@
           :fixed="getLastPosition(colIndex)">
           <template slot-scope="scope">
             <div v-if="col.prop === 'status'">
-              <span v-if="scope.row[scope.column.property] === 0" class="pending status">待审核</span>
-              <span v-if="scope.row[scope.column.property] === 2" class="pass status">审核通过</span>
+              <span v-if="scope.row[scope.column.property] === 0">待审核</span>
+              <span v-if="scope.row[scope.column.property] === 2">审核通过</span>
               <span v-if="scope.row[scope.column.property] === 1" class="deny status">审核拒绝</span>
             </div>
             <div v-else-if="col.prop === 'screenType'">
@@ -319,14 +319,12 @@
               name: query,
             }
             //请求方案报表列表查询接口
-            this.$api.AuditCreative.getAuditCreativeList(queryParam)
-                .then(res => {
-                  this.creativeNameList.loading = false
-                  this.creativeNameList.data = res.result
-                })
-                .catch(res => {
-                  this.creativeNameList.loading = false
-                })
+            this.$api.AuditCreative.getAuditCreativeList(queryParam).then(res => {
+              this.creativeNameList.loading = false
+              this.creativeNameList.data = res.result
+            }).catch(res => {
+              this.creativeNameList.loading = false
+            })
           }, 200);
         } else {
           this.creativeNameList.data = []
@@ -367,32 +365,30 @@
         }
         //请求方案报表列表查询接口
         this.reviewCreativeList.loading = true
-        this.$api.AuditCreative.getAuditCreativeList(queryParam)
-            .then(res => {
-              this.reviewCreativeList.loading = false
-              this.totalCount = res.page.totalCount;
-              res.result.forEach(item => {
-                if (item.reviewTime === null || item.reviewTime === undefined) {
-                  item.reviewTime = '暂无'
-                } else {
-                  item.reviewTime = this.$tools.formatDate(item.reviewTime, 'yyyy-MM-dd hh:mm:ss')
-                }
-                if (item.createTime === null || item.createTime === undefined) {
-                  item.createTime = '暂无'
-                } else {
-                  item.createTime = this.$tools.formatDate(item.createTime, 'yyyy-MM-dd hh:mm:ss')
-                }
-                if (item.screenType === null || item.screenType === undefined) {
-                  item.screenType = -1
-                } else {
-                  item.screenType = parseInt(item.screenType)
-                }
-              })
-              this.reviewCreativeList.data = res.result
-            })
-            .catch(res => {
-              this.reviewCreativeList.loading = false
-            })
+        this.$api.AuditCreative.getAuditCreativeList(queryParam).then(res => {
+          this.reviewCreativeList.loading = false
+          this.totalCount = res.page.totalCount;
+          res.result.forEach(item => {
+            if (item.reviewTime === null || item.reviewTime === undefined) {
+              item.reviewTime = '暂无'
+            } else {
+              item.reviewTime = this.$tools.formatDate(item.reviewTime, 'yyyy-MM-dd hh:mm:ss')
+            }
+            if (item.createTime === null || item.createTime === undefined) {
+              item.createTime = '暂无'
+            } else {
+              item.createTime = this.$tools.formatDate(item.createTime, 'yyyy-MM-dd hh:mm:ss')
+            }
+            if (item.screenType === null || item.screenType === undefined) {
+              item.screenType = -1
+            } else {
+              item.screenType = parseInt(item.screenType)
+            }
+          })
+          this.reviewCreativeList.data = res.result
+        }).catch(res => {
+          this.reviewCreativeList.loading = false
+        })
       },
       // 审核创意素材下载
       downloadAuditCreative() {
@@ -402,31 +398,29 @@
         }
         //请求方案报表列表查询接口
         this.downloadCreative.loading = true
-        this.$api.AuditCreative.downloadAuditCreative(queryParam)
-            .then(res => {
-              let videoList = res.result
-              this.downloadCreative.loading = false
-              if (videoList.top != null && 0 in videoList.top) {
-                this.downloadCreative.data.topList = videoList.top[0]
-              }
-              if (videoList.down != null) {
-                if (0 in videoList.down) {
-                  this.downloadCreative.data.downList.strList1 = [videoList.down[0].previewUrl]
-                  this.downloadCreative.data.downList.url1 = videoList.down[0].previewUrl
-                }
+        this.$api.AuditCreative.downloadAuditCreative(queryParam).then(res => {
+          let videoList = res.result
+          this.downloadCreative.loading = false
+          if (videoList.top != null && 0 in videoList.top) {
+            this.downloadCreative.data.topList = videoList.top[0]
+          }
+          if (videoList.down != null) {
+            if (0 in videoList.down) {
+              this.downloadCreative.data.downList.strList1 = [videoList.down[0].previewUrl]
+              this.downloadCreative.data.downList.url1 = videoList.down[0].previewUrl
+            }
 
-                if (1 in videoList.down) {
-                  this.downloadCreative.data.downList.strList2 = [videoList.down[1].previewUrl]
-                  this.downloadCreative.data.downList.url2 = videoList.down[1].previewUrl
-                }
-              }
-              this.downloadCreative.data.screenType = videoList.screenType
-              console.log('downloadCreative', this.downloadCreative.data.topList, this.downloadCreative.data.downList, this.downloadCreative.data.screenType)
-            })
-            .catch(res => {
-              console.log('downloadCreative', 'false')
-              this.downloadCreative.loading = false
-            })
+            if (1 in videoList.down) {
+              this.downloadCreative.data.downList.strList2 = [videoList.down[1].previewUrl]
+              this.downloadCreative.data.downList.url2 = videoList.down[1].previewUrl
+            }
+          }
+          this.downloadCreative.data.screenType = videoList.screenType
+          console.log('downloadCreative', this.downloadCreative.data.topList, this.downloadCreative.data.downList, this.downloadCreative.data.screenType)
+        }).catch(res => {
+          console.log('downloadCreative', 'false')
+          this.downloadCreative.loading = false
+        })
       },
       // 审核创意资质查看
       getAuditCreativeReviewDetail() {
@@ -436,34 +430,32 @@
         }
         //请求方案报表列表查询接口
         this.reviewCreativeDetail.loading = true
-        this.$api.AuditCreative.getAuditCreativeReviewDetail(queryParam)
-            .then(res => {
-              this.reviewCreativeDetail.loading = false
-              let reviewList = res.result
-              this.reviewCreativeDetail.data.forEach(item => {
-                let property = item.field
-                if (reviewList.hasOwnProperty(property)) {
-                  if (property === "industryIdentify") {
-                    item.srcList = ["http://digital-publish.obs.cn-east-2.myhuaweicloud.com/industry/INDUSTRY_0_9958d63090e4473e936e1844faa9334a_INDUSTRYIMAGE.jpg"]
-                    item.value = "http://digital-publish.obs.cn-east-2.myhuaweicloud.com/industry/INDUSTRY_0_9958d63090e4473e936e1844faa9334a_INDUSTRYIMAGE.jpg"
-                  } else if (property === "screenType") {
-                    let screenType = reviewList[property]
-                    this.screenTypeList.forEach((screen, index) => {
-                      if (screen['id'] === screenType) {
-                        item.value = screen['type']
-                      }
-                    })
-                  } else if (reviewList[property] === "" || reviewList[property] === null) {
-                    item.value = 0;
-                  } else {
-                    item.value = reviewList[property]
+        this.$api.AuditCreative.getAuditCreativeReviewDetail(queryParam).then(res => {
+          this.reviewCreativeDetail.loading = false
+          let reviewList = res.result
+          this.reviewCreativeDetail.data.forEach(item => {
+            let property = item.field
+            if (reviewList.hasOwnProperty(property)) {
+              if (property === "industryIdentify") {
+                item.srcList = ["http://digital-publish.obs.cn-east-2.myhuaweicloud.com/industry/INDUSTRY_0_9958d63090e4473e936e1844faa9334a_INDUSTRYIMAGE.jpg"]
+                item.value = "http://digital-publish.obs.cn-east-2.myhuaweicloud.com/industry/INDUSTRY_0_9958d63090e4473e936e1844faa9334a_INDUSTRYIMAGE.jpg"
+              } else if (property === "screenType") {
+                let screenType = reviewList[property]
+                this.screenTypeList.forEach((screen, index) => {
+                  if (screen['id'] === screenType) {
+                    item.value = screen['type']
                   }
-                }
-              })
-            })
-            .catch(res => {
-              this.reviewCreativeDetail.loading = false
-            })
+                })
+              } else if (reviewList[property] === "" || reviewList[property] === null) {
+                item.value = 0;
+              } else {
+                item.value = reviewList[property]
+              }
+            }
+          })
+        }).catch(res => {
+          this.reviewCreativeDetail.loading = false
+        })
       },
       //点击通过,创意变为通过
       passCreative(id, name) {
@@ -516,32 +508,30 @@
         //请求创意审核提交接口
         this.reviewCreativeList.loading = true
         this.submitCreative.loading = true
-        this.$api.AuditCreative.submitAuditCreative(queryParam)
-            .then(res => {
-              console.log(queryParam, res.result)
-              if (this.submit.status === 2) {
-                Notification({
-                               title: '成功',
-                               message: '创意:' + creativeName + ',通过审查',
-                               type: 'success'
-                             });
-              }
-              if (this.submit.status === 1) {
-                Notification({
-                               title: '审核拒绝成功',
-                               message: '创意:' + creativeName + ',审核拒绝',
-                               type: 'info'
-                             });
-                this.dialogDenyVisible = false
-              }
-              this.submitCreative.loading = false
-              this.reviewCreativeList.loading = false
-              this.getAuditCreativeList()
-            })
-            .catch(res => {
-              this.submitCreative.loading = false
-              this.reviewCreativeList.loading = false
-            })
+        this.$api.AuditCreative.submitAuditCreative(queryParam).then(res => {
+          console.log(queryParam, res.result)
+          if (this.submit.status === 2) {
+            Notification({
+              title: '成功',
+              message: '创意:' + creativeName + ',通过审查',
+              type: 'success'
+            });
+          }
+          if (this.submit.status === 1) {
+            Notification({
+              title: '审核拒绝成功',
+              message: '创意:' + creativeName + ',审核拒绝',
+              type: 'info'
+            });
+            this.dialogDenyVisible = false
+          }
+          this.submitCreative.loading = false
+          this.reviewCreativeList.loading = false
+          this.getAuditCreativeList()
+        }).catch(res => {
+          this.submitCreative.loading = false
+          this.reviewCreativeList.loading = false
+        })
       },
       //查看创意
       showContent(id) {
@@ -713,7 +703,7 @@
           font-weight: 400;
           cursor: pointer;
           a {
-            color: $color-blue;
+            color: $color-origin-blue;
             text-decoration: none;
           }
         }

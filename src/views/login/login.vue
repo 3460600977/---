@@ -15,7 +15,7 @@
             <el-main>
               <div class="login-form-box">
                 <h3 class="login-title">欢迎登录</h3>
-                <label class="login-des">HI,欢迎使用新潮传媒-数字化刊播平台</label>
+                <label class="login-des">HI,欢迎使用新潮传媒-生活圈智投平台</label>
                 <el-form ref="loginForm" :model="loginForm" class="loginForm" :rules="rules">
                   <el-form-item prop="username">
                     <el-input prefix-icon="el-icon-user-solid"
@@ -27,7 +27,8 @@
                   </el-form-item>
                   <el-form-item class="loginCapture" prop="verifyValue">
                     <el-input prefix-icon="el-icon-lock"
-                              v-model="loginForm.verifyValue" placeholder="请输入验证码"></el-input>
+                              v-model="loginForm.verifyValue" placeholder="请输入验证码"
+                              @keyup.enter.native="onSubmit('loginForm')"></el-input>
                     <div class="captureNum">
                       <el-image :src="login_capture_img" @click="changeCaptureNUm">
                         <div slot="error" class="image-slot" @click="changeCaptureNUm">
@@ -57,8 +58,8 @@
     data() {
       return {
         imageWidth: 442,
-        logo_img: require('../../assets/images/icon_left@2x.png'),
-        logo_back_img: require('../../assets/images/img_bg@2x.png'),
+        logo_img: require('../../assets/images/icon_red@2x.png'),
+        logo_back_img: require('../../assets/images/icon_bg@2x.png'),
         login_capture_img: '',
         loginForm: {
           username: '',
@@ -119,17 +120,15 @@
             }
             //请求登录接口
             this.loading = true;
-            this.$api.Login.LoginIn(param)
-                .then(res => {
-                  let info = res.result
-                  this.$router.replace({path: '/home', query: {}})
-                  this.loading = false;
-                  this.$store.commit('setToken', info.token)
-                  setUserInfo(info)
-                })
-                .catch(res => {
-                  this.loading = false;
-                })
+            this.$api.Login.LoginIn(param).then(res => {
+              let info = res.result
+              this.loading = false;
+              this.$store.commit('setToken', info.token)
+              setUserInfo(info)
+              this.$router.push({path: '/home', query: {}})
+            }).catch(res => {
+              this.loading = false;
+            })
           }
         });
       },
@@ -138,34 +137,31 @@
       tokenLogin() {
         let param = {
           advertiserId: this.$route.query.advertiserId,
-	        saleAccessToken: this.$route.query.saleAccessToken
+          saleAccessToken: this.$route.query.saleAccessToken
         }
-        this.$api.Login.LoginInByToken(param)
-          .then(res => {
-              console.log(res.result)
-              let info = res.result
-              this.pageLoading = false;
-              this.$router.replace({
-                path: '/home',
-                query: {}
-              })
-              this.loading = false;
-              this.$store.commit('setToken', info.token)
-              setUserInfo(info)
+        this.$api.Login.LoginInByToken(param).then(res => {
+          console.log(res.result)
+          let info = res.result
+          this.pageLoading = false;
+          this.$router.replace({
+            path: '/home',
+            query: {}
           })
-          .catch(res => {
-            this.pageLoading = false;
-            this.changeCaptureNUm()
-          })
+          this.loading = false;
+          this.$store.commit('setToken', info.token)
+          setUserInfo(info)
+        }).catch(res => {
+          this.pageLoading = false;
+          this.changeCaptureNUm()
+        })
       },
 
       changeCaptureNUm() {
         //请求验证码接口
-        this.$api.Login.GetVerifyCode()
-            .then(res => {
-              this.login_capture_img = res.result.image
-              this.loginForm.verifyToken = res.result.verifyToken
-            }).catch(res => {
+        this.$api.Login.GetVerifyCode().then(res => {
+          this.login_capture_img = res.result.image
+          this.loginForm.verifyToken = res.result.verifyToken
+        }).catch(res => {
         })
       }
     }
@@ -190,7 +186,7 @@
     .xinchao-logo {
       position: absolute;
       z-index: 3;
-      top: -12.5%;
+      top: -15.5%;
       left: -0.6%;
     }
     .logo-form {

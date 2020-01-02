@@ -42,17 +42,20 @@
       <div class="draw-select">
         <draw-type
           ref="drawType"
+          :length="Object.keys(pathArr).length || 0"
           @searchDrawTypeClick="searchDrawTypeClick"
           @drawTypeSelect="drawTypeSelect"
           @querySearchAsync="querySearchAsync"
         ></draw-type>
       </div>
       <div class="mapPopup">
-        <map-popup v-if="showPathCopy"
-                   @sliderChange="sliderChange"
-                   @operate="operate"
-                   :item="showPathCopy"
-                   :style="{top: mapLocation.y+'px', left: mapLocation.x+ 'px'}"></map-popup>
+        <map-popup
+          v-if="showPathCopy"
+          @sliderChange="sliderChange"
+          @operate="operate"
+          :item="showPathCopy"
+          :style="{top: mapLocation.y+'px', left: mapLocation.x+ 'px'}"
+        ></map-popup>
       </div>
       <div class="mouseMove-text" :style="{
           'top': location.y + 10 + 'px',
@@ -61,8 +64,8 @@
         <mouseMove-text
           v-if="currentSelectType"
           ref="mouseMoveText"
-          :currentSelectType="currentSelectType">
-        </mouseMove-text>
+          :currentSelectType="currentSelectType"
+        ></mouseMove-text>
       </div>
       <div class="right-select-build">
         <select-build :selectedBuildings="selectedBuildings" :allBuildings="allBuildings" @deleteItem="deleteItem"
@@ -94,7 +97,7 @@
         ></db-map>
       </div>
     </div>
-    <div slot="footer" class="dialog-footer right">
+    <div slot="footer" class="dialog-footer">
       <el-button class="map-btn" @click="hideMapPoint">取 消</el-button>
       <el-button class="map-btn" type="primary" @click="submitBuildPoint">保存</el-button>
       <!-- <el-button type="primary" @click="innerVisible = true">打开内层 Dialog</el-button> -->
@@ -251,9 +254,9 @@
         sliderVal: 3000,
         currentSelectType: null,
         popUpHeight: {
-          'polyline': 329,
-          'polygon': 278,
-          'circle': 424 // 402 + 22圆形时弹窗位置为弹窗高度加图标高度
+          'polyline': 246,
+          'polygon': 121,
+          'circle': 310 // 402 + 22圆形时弹窗位置为弹窗高度加图标高度
         },
         allBuildings: []
       }
@@ -261,7 +264,7 @@
     mounted() {
       this.init()
       this.bindEvent()
-      this.drawTypeSelect({x: screen.clientX / 2, y: screen.clientY / 2}, 'circle')
+      this.hideAll()
     },
     watch: {
       cityFilter(val) {
@@ -291,7 +294,8 @@
       },
       //选中的楼盘数据保存
       submitBuildPoint() {
-        this.$emit("submitSelectedBuildPoint", this.selectedBuildings);
+        this.$emit("submitSelectedBuildPoint", this.selectedBuildings, this.cityFilter);
+        this.$emit("hideMapPoint", false);
       },
       // 添加资源包成功后触发事件
       createSuc() {
@@ -330,15 +334,28 @@
           this.isShow[key] = false
         }
       },
+      // 当点击筛选或者选择城市的时候取消drawType中的选择
+      cancleDrawType() {
+        this.$refs.drawType.hide()
+        this.$refs.dbmap.closeDrawingManager()
+        this.currentSelectType = null
+      },
       toggle(val) {
         if (this.isShow[val]) {
           this.hide(val)
         } else {
+          this.cancleDrawType()
           this.hideAll()
           this.isShow[val] = true
+          if (val === 1) {
+            if (!this.leftShow[0]) {
+              this.leftShow[0] = true
+            }
+          }
         }
       },
       hide(val) {
+        console.log(val)
         this.isShow[val] = false
       },
       getCityFilter() {
@@ -369,16 +386,17 @@
       },
       loadData() {
         this.loading = true
-        this.$api.cityInsight
-            .getPremisesByCity({cityCode: this.cityFilter.cityCode, tag: this.buildingFilter})
-            .then((data) => {
-              if (data.result) {
-                this.points = data.result
-              } else {
-                this.points = []
-              }
-              this.loading = false
-            })
+        this.$api.cityInsight.getPremisesByCity({
+          cityCode: this.cityFilter.cityCode,
+          tag: this.buildingFilter
+        }).then((data) => {
+          if (data.result) {
+            this.points = data.result
+          } else {
+            this.points = []
+          }
+          this.loading = false
+        })
       },
       // 初始化
       init() {

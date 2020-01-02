@@ -58,6 +58,8 @@ let tools = {
     })
   },
 
+
+
   /**
    * @description: 验证图片宽高
    * @param file: input->file
@@ -88,6 +90,8 @@ let tools = {
     })
   },
 
+
+
   /**
    * @description: 数字转千位计数
    * @param: num: 数字
@@ -108,6 +112,8 @@ let tools = {
     else return result
   },
 
+
+
   type: (obj) => {
     var toString = Object.prototype.toString
     var map = {
@@ -124,6 +130,8 @@ let tools = {
     }
     return map[toString.call(obj)]
   },
+
+
 
   /**
    * @description: 深度克隆
@@ -154,6 +162,8 @@ let tools = {
     }
   },
 
+
+
   /*
   * concat: 将一个数组对象按key结合成一个新的数组
   * sum： 将一个数组对象的key项相加返回加之后的结果
@@ -172,6 +182,8 @@ let tools = {
     }
   },
   
+
+
   /**
    * @description: 前端分页
    * @param originData: Array 页数
@@ -179,7 +191,6 @@ let tools = {
    * @param curPage: Number 当前页数
    * @return: 需要的页数据
    */
-  
   getFrontEndPage(originData, pageSize, curPage) {
     let res = {};
     res.results = originData.filter((item, index) => {
@@ -191,6 +202,8 @@ let tools = {
     res.totalCount = originData.length;
     return res;
   },
+
+
   
   // 数据补零
   padding(s, len) {
@@ -200,6 +213,8 @@ let tools = {
     }
     return s
   },
+
+
   
   /**
    * @description: 格式化时间
@@ -228,6 +243,8 @@ let tools = {
     })
   },
 
+
+
   /**
    * @description: 校验后缀
    * @param: 字符串 str 校验的字符串
@@ -245,6 +262,8 @@ let tools = {
     }
     return result;
   },
+
+
 
   /**
    * @description: 获取后缀
@@ -267,6 +286,8 @@ let tools = {
     arrData.splice(index, 1);
   },
 
+
+
   /**
    * @description: 下载文件流
    * @param: file
@@ -288,6 +309,8 @@ let tools = {
       navigator.msSaveBlob(blob, fileName)
     }
   },
+
+
 
   /**
    * @description: 时间格式化
@@ -332,6 +355,9 @@ let tools = {
     startTime.setDate(1)
     return this.getFormatDate(fmt, startTime)
   },
+
+
+
   /**
    * @description: 获取当前月第一天
    * @param: fmt 格式
@@ -345,6 +371,9 @@ let tools = {
     endTime = new Date(endTime.getFullYear(), endTime.getMonth() + 1, 0)
     return this.getFormatDate(fmt, endTime)
   },
+
+
+
   /**
    * @description: 获取当前星期一,星期天
    * @param: fmt 格式
@@ -363,6 +392,9 @@ let tools = {
     lastDay = this.getFormatDate(fmt, lastDay)
     return {firstWeekDay: firstDay, lastWeekDay: lastDay}
   },
+
+
+
   /**
    * @description: 把分变成元
    * @param: str
@@ -374,6 +406,8 @@ let tools = {
     let leftValue = value.substr(0, value.length - 2)
     return leftValue + '.' + cent
   },
+
+
 
   /**
    * @description: 根据数组中对象属性返回第一个匹配数组项
@@ -392,6 +426,8 @@ let tools = {
     return res
   },
 
+
+
   /**
    * @description: file转预览url
    * @param: file
@@ -404,6 +440,8 @@ let tools = {
     return URL.createObjectURL(file);
   },
 
+
+
   // 返回date前days天的时间 到 date时间的数据
   calcShortCuts(days, date = null) {
     const now = date ? new Date(date) : new Date()
@@ -412,6 +450,9 @@ let tools = {
     const start = new Date(now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate() + ' 00:00:00');
     return [start, end];
   },
+
+
+
   // 去抖函数
   debounce(fn, delay) {
 
@@ -433,6 +474,8 @@ let tools = {
       }, delay)
     }
   },
+
+
 
   // 二分算法
   binarySearch(index, data, key) {

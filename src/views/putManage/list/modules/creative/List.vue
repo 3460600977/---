@@ -2,7 +2,6 @@
   <div class="list">
 
     <el-form :inline="true" class="list-form-inline clearfix">
-
       <el-form-item class="line-space" label="投放计划名称">
         <el-select 
           @focus="getPlanNameList"
@@ -80,6 +79,8 @@
       </el-form-item>
     </el-form>
 
+
+
     <div class="query_result">
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
         <el-table-column prop="name" label="广告创意名称">
@@ -137,6 +138,8 @@
         class="list-page"
       ></el-pagination>
     </div>
+
+
 
     <el-dialog 
       title="广告创意详情" 
@@ -449,7 +452,7 @@ export default {
 };
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 @import '../listCommonStyle.scss';
 .creative-dialog {
   .el-dialog {

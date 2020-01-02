@@ -56,7 +56,7 @@
             </div>
             <div
               class="show-click"
-              @click="dialogVisible = true"
+              @click="showTableBuildDetail"
               v-if="premiseList.deviceNum.value!=0"
             >
               查看
@@ -67,7 +67,6 @@
             class="dialog-build-list"
             :visible.sync="dialogVisible"
             width="70%"
-            @open="getProjectDeviceList"
             @close="changeTablePreVis"
           >
             <div slot="title">{{deviceInfo.name.value}}</div>
@@ -101,7 +100,6 @@
                       <div v-if="col.prop === 'status'">
                         <span
                           v-if="parseInt(scope.row[scope.column.property]) === 1"
-                          class="normal info-status"
                         >正常</span>
                         <span v-else class="stop info-status">正在维护中</span>
                       </div>
@@ -282,11 +280,15 @@
         }
       };
     },
-    created() {
+    mounted() {
       this.projectId = this.$route.query.projectId;
       this.getProjectPremiseList();
     },
     methods: {
+      showTableBuildDetail() {
+        this.dialogVisible = true;
+        this.getProjectDeviceList();
+      },
       //回到之前的页面
       handleBack() {
         this.$router.back()
@@ -346,7 +348,7 @@
                   } else if (property === "cost") {
                     let costValue = premiseList[property];
                     costValue = this.$tools.formatCentToYuan(costValue);
-                    item.value = this.$tools.toThousands(costValue);
+                    item.value = '¥ ' +this.$tools.toThousands(costValue);
                   } else {
                     item.value = this.$tools.toThousands(
                       premiseList[property],
@@ -415,6 +417,14 @@
 
       //查询方案楼盘设备信息
       getProjectDeviceList(param) {
+        if (this.premiseId === undefined || this.premiseId === null || this.premiseId === 0) {
+          if (this.premiseList.data.length > 0) {
+            let showPremise = this.premiseList.data[0]; //默认数据
+            this.premiseId = showPremise.premiseId;
+          } else {
+            this.premiseId = 0
+          }
+        }
         let queryParam = {
           projectId: this.projectId,
           premiseId: this.premiseId

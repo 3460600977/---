@@ -67,8 +67,7 @@
         ></el-option>
       </el-select>
       <div class="report-bar-graph-data">
-        <div v-if="barGraphData.data.length===0">暂无数据</div>
-        <BarGraph :axisData="barGraphData.data" :loading="barGraphData.loading" v-else></BarGraph>
+        <BarGraph :axisData="barGraphData.data" :loading="barGraphData.loading"></BarGraph>
       </div>
     </div>
     <div class="report-result-list">
@@ -94,7 +93,7 @@
         <el-table-column prop="campaignName" label="投放计划">
           <template slot-scope="scope">
             <router-link
-              :to="{path:'/reportList/project?campaignId='+scope.row['campaignId']}"
+              :to="{path:'/reportList/project?campaignId='+scope.row['campaignId']+'&projectTime='+scope.row['startTime']}"
               class="project-id"
             >{{scope.row[scope.column.property]}}
             </router-link>
@@ -230,8 +229,20 @@
       } else {
         this.planList.campaignId = this.$route.query.campaignId;
       }
+
       this.planList.startTime = this.$tools.getMonthFirstDay();
       this.planList.endTime = this.$tools.getMonthLastDay();
+      if (
+        this.$route.query.planTime === "" ||
+        this.$route.query.planTime === null ||
+        this.$route.query.planTime === undefined
+      ) {
+
+      } else {
+        let planTime = this.$route.query.planTime.split('~')
+        this.planList.startTime = planTime[0];
+        this.planList.endTime = planTime[1];
+      }
       this.planList.selectTime = [this.planList.startTime, this.planList.endTime];
       let userInfo = getUserInfo()
       if (!userInfo.company || userInfo.company.match(/^[ ]*$/) || userInfo.company != null || userInfo.company != undefined) { // "",null,undefined,NaN
@@ -239,11 +250,11 @@
       }
       //获取计划名称列表
       this.getPlanNameList();
-      //获取默认状态下的卡片数据
+      // //获取默认状态下的卡片数据
       this.getPlanTotal();
-      //获取默认状态下的柱状图数据
+      // //获取默认状态下的柱状图数据
       this.getPlanBarChart();
-      //获取默认状态下的列表数据
+      // //获取默认状态下的列表数据
       this.getPlanList();
     },
     methods: {
@@ -299,20 +310,18 @@
         //该接口没有必须参数，可选参数
         //请求获取计划名称列表
         this.reportPlanList.loading = true;
-        this.$api.PutPlan.PlanNameList()
-            .then(res => {
-              this.reportPlanList.data = res.result;
-              this.reportPlanList.data.forEach(item => {
-                if (item.id == this.planList.campaignId) {
-                  this.planList.selectPlan = item.name;
-                }
-              });
-              this.reportPlanList.loading = false;
-            })
-            .catch(res => {
-              this.reportPlanList.data = []
-              this.reportPlanList.loading = false;
-            });
+        this.$api.PutPlan.PlanNameList().then(res => {
+          this.reportPlanList.data = res.result;
+          this.reportPlanList.data.forEach(item => {
+            if (item.id == this.planList.campaignId) {
+              this.planList.selectPlan = item.name;
+            }
+          });
+          this.reportPlanList.loading = false;
+        }).catch(res => {
+          this.reportPlanList.data = []
+          this.reportPlanList.loading = false;
+        });
       },
       //方案报表的统计查询
       getPlanTotal(param) {
@@ -328,31 +337,29 @@
         Object.assign(queryParam, param);
         //请求方案报表列表查询接口
         this.reportSelectCard.loading = true;
-        this.$api.Report.getPlanTotal(queryParam)
-            .then(res => {
-              this.reportSelectCard.loading = false;
-              let cardList = res.result;
-              this.reportSelectCard.data.forEach(item => {
-                let property = item.field;
-                if (cardList.hasOwnProperty(property)) {
-                  if (cardList[property] === "" || cardList[property] === null) {
-                    item.value = 0;
-                  } else if (property === "cost") {
-                    let costValue = cardList[property];
-                    costValue = this.$tools.formatCentToYuan(costValue);
-                    item.value = this.$tools.toThousands(costValue);
-                  } else {
-                    item.value = this.$tools.toThousands(cardList[property], false);
-                  }
-                }
-              });
-            })
-            .catch(res => {
-              this.reportSelectCard.data.forEach(item => {
-                item.value = '暂无数据';
-              })
-              this.reportSelectCard.loading = false;
-            });
+        this.$api.Report.getPlanTotal(queryParam).then(res => {
+          this.reportSelectCard.loading = false;
+          let cardList = res.result;
+          this.reportSelectCard.data.forEach(item => {
+            let property = item.field;
+            if (cardList.hasOwnProperty(property)) {
+              if (cardList[property] === "" || cardList[property] === null) {
+                item.value = 0;
+              } else if (property === "cost") {
+                let costValue = cardList[property];
+                costValue = this.$tools.formatCentToYuan(costValue);
+                item.value = '¥ ' + this.$tools.toThousands(costValue);
+              } else {
+                item.value = this.$tools.toThousands(cardList[property], false);
+              }
+            }
+          });
+        }).catch(res => {
+          this.reportSelectCard.data.forEach(item => {
+            item.value = '暂无数据';
+          })
+          this.reportSelectCard.loading = false;
+        });
       },
       //获取方案报表的柱状图数据
       getPlanBarChart(param) {
@@ -370,62 +377,56 @@
         Object.assign(queryParam, param);
         //请求方案报表列表查询接口
         this.barGraphData.loading = true;
-        this.$api.Report.getPlanChartBar(queryParam)
-            .then(res => {
-              // res.result = [...res.result, ...res.result, ...res.result, ...res.result]
-              this.barGraphData.loading = false;
-              let xdata = [];
-              let sdata = [];
-              let sdataShadow = [];
-              let ymax = 0;
-              let _that = this;
-              res.result.forEach((item, index) => {
-                xdata[index] = item.campaignName;
-                sdata[index] = item.data
-                if (ymax < item.data) {
-                  ymax = item.data;
-                }
-              });
-              ymax = this.getNumToSplit(ymax);
-              // for (let i = 0; i < sdata.length; i++) {
-              //   sdataShadow[i] = ymax;
-              // }
+        this.$api.Report.getPlanChartBar(queryParam).then(res => {
+          this.barGraphData.loading = false;
+          let xdata = [];
+          let sdata = [];
+          let sdataShadow = [];
+          let ymax = 0;
+          let _that = this;
+          res.result.forEach((item, index) => {
+            xdata[index] = item.campaignName;
+            sdata[index] = item.data
+            if (ymax < item.data) {
+              ymax = item.data;
+            }
+          });
 
-              this.barGraphData.data = {
-                sortField: this.planList.sortField,
-                topStatus: this.planList.topStatus,
-                title: this.getCardName(),
-                xAxis: {
-                  data: xdata
-                },
-                yAxis: {
-                  max: function (value) {
-                    return value.max;
-                  }
-                },
-                series: {
-                  data: sdata,
-                  //dataShadow: sdataShadow
-                }
-              };
-            })
-            .catch(res => {
-              this.barGraphData.data = {
-                sortField: this.planList.sortField,
-                topStatus: this.planList.topStatus,
-                title: this.getCardName(),
-                xAxis: {
-                  data: []
-                },
-                yAxis: {
-                  max: 0
-                },
-                series: {
-                  data: [],
-                }
-              };
-              this.barGraphData.loading = false;
-            });
+          this.barGraphData.data = {
+            sortField: this.planList.sortField,
+            topStatus: this.planList.topStatus,
+            title: this.getCardName(),
+            xAxis: {
+              data: xdata
+            },
+            yAxis: {
+              splitNumber: 8,
+              max: function (value) {
+                return value.max;
+              }
+            },
+            series: {
+              data: sdata,
+            }
+          };
+        }).catch(res => {
+          this.barGraphData.data = {
+            sortField: this.planList.sortField,
+            topStatus: this.planList.topStatus,
+            title: this.getCardName(),
+            xAxis: {
+              data: []
+            },
+            yAxis: {
+              splitNumber: 8,
+              max: 0
+            },
+            series: {
+              data: [],
+            }
+          };
+          this.barGraphData.loading = false;
+        });
       },
       //获取方案报表的列表下载数据-默认500条
       getPlanDownloadList(param) {
@@ -446,20 +447,18 @@
         Object.assign(queryParam, param);
         //请求方案报表列表查询接口
         this.reportDownload.loading = true;
-        this.$api.Report.getPlanDownloadList(queryParam)
-            .then(res => {
-              this.reportDownload.loading = false;
-              if (this.companyName === undefined) {
-                this.companyName = '未知公司'
-              }
-              this.$tools.downLoadFileFlow(
-                res,
-                `投放计划报表+${this.companyName}+${this.$tools.getFormatDate("YYmmdd_HHMMSSccc")}.xls`
-              );
-            })
-            .catch(res => {
-              this.reportDownload.loading = false;
-            });
+        this.$api.Report.getPlanDownloadList(queryParam).then(res => {
+          this.reportDownload.loading = false;
+          if (this.companyName === undefined) {
+            this.companyName = '未知公司'
+          }
+          this.$tools.downLoadFileFlow(
+            res,
+            `投放计划报表+${this.companyName}+${this.$tools.getFormatDate("YYmmdd_HHMMSSccc")}.xls`
+          );
+        }).catch(res => {
+          this.reportDownload.loading = false;
+        });
       },
       //获取方案报表的列表-默认每页10条
       getPlanList(param) {
@@ -481,28 +480,21 @@
         Object.assign(queryParam, param);
         //请求方案报表列表查询接口
         this.loading = true;
-        this.$api.Report.getPlanList(queryParam)
-            .then(res => {
-              this.loading = false;
-              this.resultData = res.result;
-              this.totalCount = res.page.totalCount;
-              this.pageIndex = res.page.currentPage;
-              this.resultData.forEach(item => {
-                if (item.campaignId === this.planList.campaignId) {
-                  this.planList.startTime = item.startTime;
-                  this.planList.endTime = item.endTime;
-                }
-                let costValue = item.cost;
-                costValue = this.$tools.formatCentToYuan(costValue);
-                item.cost = this.$tools.toThousands(costValue);
-                item.startTime = item.startTime + '~' + item.endTime
-              });
-            })
-            .catch(res => {
-              console.log('getPlanList', queryParam, res)
-              this.resultData = []
-              this.loading = false;
-            });
+        this.$api.Report.getPlanList(queryParam).then(res => {
+          this.loading = false;
+          this.resultData = res.result;
+          this.totalCount = res.page.totalCount;
+          this.pageIndex = res.page.currentPage;
+          this.resultData.forEach(item => {
+            let costValue = item.cost;
+            costValue = this.$tools.formatCentToYuan(costValue);
+            item.cost = '¥ ' + this.$tools.toThousands(costValue);
+            item.startTime = item.startTime + '~' + item.endTime
+          });
+        }).catch(res => {
+          this.resultData = []
+          this.loading = false;
+        });
       },
       tableSort(column) {
         this.pageIndex = 1;
@@ -526,20 +518,6 @@
         });
         return cardName;
       },
-      getNumToSplit(num) {
-        let strLen = num.toString().length;
-        let splitNumPlus = 1;
-        if (strLen >= 3) {
-          splitNumPlus = Math.pow(10, strLen - 2);
-        } else {
-          splitNumPlus = 1;
-        }
-        while (!(num % 8 === 0
-        )) {
-          num = num + splitNumPlus;
-        }
-        return num;
-      }
     }
   };
 </script>
@@ -556,7 +534,7 @@
     padding: 30px 0 37px 38px;
     .report-divider {
       .el-divider {
-        background-color: $color-blue;
+        background-color: $color-main;
         border-radius: 2px;
         width: 3px;
         margin: 0 5px 0 0;
@@ -579,7 +557,7 @@
         margin: 2px 20px 0 0;
       }
       .el-select .el-input .el-select__caret {
-        color: $color-blue;
+        color: $color-main;
       }
     }
   }
@@ -620,7 +598,7 @@
         font-family: DINMittelschrift;
       }
       &.select-box {
-        background: rgba(45, 90, 255, 1);
+        background: $color-main;
         box-shadow: 0px 13px 27px 0px rgba(45, 90, 255, 0.25);
         color: $color-bg-3;
       }
@@ -706,7 +684,7 @@
       .project-id {
         font-size: 14px;
         font-weight: 400;
-        color: $color-blue;
+        color: $color-main;
         text-decoration: none;
         cursor: pointer;
       }
@@ -734,7 +712,7 @@
     height: 120px;
     margin-top: 30px;
     li.active {
-      background-color: $color-blue !important;
+      background-color: $color-main !important;
     }
   }
 </style>

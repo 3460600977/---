@@ -18,15 +18,13 @@
 </template>
 
 <script>
-  import {mapMutations} from "vuex";
+  import {mapMutations, mapState} from "vuex";
 
   export default {
     name: "locationAttr",
     data() {
       return {
         props: {
-          multiple: true,
-          checkStrictly : true,
           value: 'tid',
           label:'name',
           children:'childTags',
@@ -36,10 +34,10 @@
       }
     },
     methods: {
-      ...mapMutations(["setTagNamesWithUpdate","removeTagNamesByName"]),
+      ...mapMutations(["setTagNamesWithUpdate","removeTagNamesByName","setTagTid","setCity","removeCity"]),
 
       getChildren(){
-        this.$api.peopleInsight.getChildTags(105)
+        this.$api.peopleInsight.getChildTags(this.$parent.activeTab)
           .then(res => {
             this.options = res.result;
           })
@@ -52,23 +50,23 @@
         let tagNames = [];
         let tagTid = "";
         let tagValues = [];
-        tagTid += "(";
         let tagObj = {'name':'城市'};
         if (locationConsume.length > 0){
-          locationConsume.forEach((item,index)=>{
-            tagTid += item[item.length-1];
-            if (index < locationConsume.length-1){
-              tagTid += "|";
-            }
-            tagValues.push(this.$refs['location'].getCheckedNodes()[index].pathLabels.join("/"))
-          });
-          tagTid += ")";
+          tagTid += "("+ locationConsume[0] + ")";
+          let labels = this.$refs['location'].getCheckedNodes()[0].pathLabels;
+          let cityName = labels[labels.length-1];
+          tagValues.push(labels.join("/"));
           tagObj.value = tagValues;
           tagNames.push(tagObj);
+          //set city
+          this.setCity(cityName);
           //set方式不一样  这里是tag组只能有一个
           this.setTagNamesWithUpdate(tagNames);
+          //TODO 先用push  后期优化
+          this.setTagTid(tagTid);
         }else {
           //移除当前tag组
+          this.removeCity();
           this.removeTagNamesByName({'name':'城市'});
         }
 

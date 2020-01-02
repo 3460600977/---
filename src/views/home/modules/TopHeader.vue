@@ -1,7 +1,7 @@
 <template>
   <header id="top-header" class="top-header clearfix">
     <!-- logo -->
-    <div class="logo mid" @click="menu.activeIndex=0; handleTo('/')">
+    <div class="logo mid" @click="menu.activeIndex=0; handleTo('/home')">
       <img class="logo-xinchao" :src="images.logo" alt="新潮传媒">
       <div class="logo-split"></div>
       <label class="company-name font-14 color-white">数字化刊播平台</label>
@@ -30,14 +30,14 @@
       <div
         @mouseenter="hoverRightMsg(0)"
         @mouseleave="leaveMenu"
-        class="item mid"><img width="20px" :src="images.money" alt="">
+        class="item icon-item mid"><img width="20px" :src="images.money" alt="">
       </div>
 
       <!-- 消息 -->
       <div
         @mouseenter="hoverRightMsg(1)"
         @mouseleave="leaveMenu"
-        class="item mid">
+        class="item icon-item mid">
         <el-badge :value="20">
           <img width="20px" :src="images.notification" alt="">
         </el-badge>
@@ -49,10 +49,10 @@
         @mouseleave="leaveMenu"
         class="item">
         <div class="user-head mid clearfix">
-          <img class="head" width="47px" :src="images.userHead" alt="头像">
+          <img class="head" width="47px" :src="images.defaultAvatar" alt="头像">
           <div class="operation-box mid relative">
-            <div class="user-name font-14">admin</div>
-            <img class="up-icon" width="10px" :src="images.up" alt="" srcset="">
+            <div class="user-name font-14">{{username}}</div>
+            <i class="up-icon el-icon-caret-bottom" width="10px"/>
             <transition name="to-top">
               <div v-show="rightMsg.dropMenuShow" class="drop-box absolute font-14">
                 <ul>
@@ -70,6 +70,7 @@
     </div>
     <el-dialog
       :visible.sync="dialogEditPass"
+      :modal-append-to-body="false"
       width="780px"
       title="修改密码" class="edit-pass-dialog">
       <edit-pass-index @changeDialogEditPass="changeEditPass"></edit-pass-index>
@@ -99,6 +100,7 @@
           notification: require('../../../assets/images/icons/icon_notification.png'),
           userHead: require('../../../assets/images/icons/icon_tx.png'),
           up: require('../../../assets/images/icons/icon_up.png'),
+          defaultAvatar: require('../../../assets/images/icons/icon_head portrait.png'),
         },
         menu: {
           activeIndex: 0,
@@ -114,12 +116,14 @@
             {name: '投放管理', path: '/putManage'},
             {name: '报表中心', path: '/reportList'},
             {name: '财务管理', path: ''},
+          ],
+          audit: [
             {name: '审核管理', path: '/auditList'},
           ]
         },
         rightMsg: {
           hoverBlock: {
-            width: ['70px', '70px', '170px'],
+            width: ['70px', '70px', '210px'],
             style: {
               width: '70px',
               transform: 'translateX(0px)',
@@ -127,11 +131,15 @@
             }
           },
           dropMenuShow: false,
-        }
+        },
+        username: 'admin',
       }
     },
 
     methods: {
+      changeDialog() {
+        this.dialogEditPass = true
+      },
       /**
        * 顶部菜单覆盖样式 宽度,位移
        * @param: menuArr 菜单数组
@@ -155,11 +163,18 @@
       hoverRightMsg(index) {
         if (index === 2) {
           this.rightMsg.dropMenuShow = true;
+          this.rightMsg.hoverBlock.style = {
+            width: this.rightMsg.hoverBlock.width[index],
+            transform: `translateX(${index * 70}px)`,
+            opacity: 1
+          }
         }
-        this.rightMsg.hoverBlock.style = {
-          width: this.rightMsg.hoverBlock.width[index],
-          transform: `translateX(${index * 70}px)`,
-          opacity: 1
+        else {
+          this.rightMsg.hoverBlock.style = {
+            width: this.rightMsg.hoverBlock.width[index],
+            transform: `translateX(${index * 70}px)`,
+            opacity: 1
+          }
         }
       },
 
@@ -204,9 +219,9 @@
         }).then(() => {
           this.$api.Login.LoginOut().then(res => {
             this.loading = false;
-            store.dispatch('FedLogOut').then(() => {
-              location.replace('/login') // 为了重新实例化vue-router对象 避免bug
-            })
+            removeUserInfo()
+            this.$store.commit('setToken', '')
+            this.$router.replace('/login');
           }).catch(res => {
             this.loading = false;
           })
@@ -219,8 +234,15 @@
     mounted() {
       //请求验证码接口
       let userInfo = getUserInfo()
-      if (!userInfo.avatar || userInfo.avatar.match(/^[ ]*$/) || userInfo.avatar != null) { // "",null,undefined,NaN
-        this.images.up = userInfo.avatar
+      if (userInfo.avatar === null || userInfo.avatar === undefined || userInfo.avatar === "") { // "",null,undefined,NaN
+
+      } else {
+        this.images.defaultAvatar = userInfo.avatar
+      }
+      this.username = userInfo.userName
+      if (this.username === 'XC12394') {
+        this.menu.content = this.menu.audit
+        this.$router.replace('/auditList')
       }
     },
     beforeMount() {
@@ -228,13 +250,18 @@
     }
   }
 </script>
-<style scoped lang="scss">
+<style lang="scss" scoped>
   $headerHeight: 76px;
+  /deep/ .el-badge__content{
+    background-color: #fff !important;
+    color: #C13130;
+  }
   .top-header {
     width: 100%;
+    z-index: 100;
     flex-shrink: 0;
     min-height: $headerHeight;
-    background-color: #2A2F4D;
+    background-color: #C13130;
     .logo {
       float: left;
       height: $headerHeight;
@@ -248,7 +275,7 @@
         width: 1px;
         height: 20px;
         margin: 0 12px;
-        background: rgba(87, 94, 135, 1);
+        background: #F1B8B7;
       }
       .company-name {
         margin-right: 50px;
@@ -268,11 +295,8 @@
         letter-spacing: 0;
         cursor: pointer;
         transition: .3s;
-        // &:hover{
-        //   background: #333A61;
-        // }
         &.active {
-          background: #242945;
+          // background: #242945;
           color: #fff;
         }
         .menu-text {
@@ -280,7 +304,8 @@
           user-select: none;
           padding-bottom: $headerHeight - 4px;
           &.active {
-            border-bottom: 4px solid rgba(45, 90, 255, 1);
+            border-bottom: 4px solid rgb(255, 255, 255);
+            // border-bottom: 4px solid rgba(45, 90, 255, 1);
           }
         }
       }
@@ -290,7 +315,8 @@
         top: 0;
         transition: 0.3s;
         height: $headerHeight;
-        background: #333A61;
+        // background: #333A61;
+        background: rgb(184, 41, 41);
       }
     }
     .user-msg {
@@ -304,9 +330,17 @@
         padding: 0 25px;
         cursor: pointer;
         transition: .3s;
-        // &:hover{
-        //   background: #333A61;
-        // }
+        &.icon-item {
+          img{
+            opacity: 0.7;
+            transition: 0.3s;
+          }
+          &:hover{
+            img{
+              opacity: 1;
+            }
+          }
+        }
         .user-head {
           height: 100%;
           .head {
@@ -317,15 +351,13 @@
             height: $headerHeight;
             .user-name {
               margin: 0 10px;
-              color: #979EBA;
+              color: rgb(255, 255, 255);
             }
             .up-icon, .drop-box {
+              color: rgb(255, 255, 255);
               transition: 0.3s;
             }
             &:hover {
-              // .drop-box{
-              //   display: block;
-              // }
               .up-icon {
                 transform: rotate(180deg);
               }
@@ -354,7 +386,8 @@
         top: 0;
         transition: 0.3s;
         height: $headerHeight;
-        background: #333A61;
+        // background: #333A61;
+        background: rgb(184, 41, 41);
       }
     }
   }

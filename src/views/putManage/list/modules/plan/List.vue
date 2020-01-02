@@ -31,6 +31,9 @@
       </el-form-item>
     </el-form>
 
+
+
+
     <div class="query_result">
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
         <el-table-column prop="name" label="投放计划名称">
@@ -48,7 +51,7 @@
         <el-table-column prop="totalBudget" label="投放预算">
           <template slot-scope="scope">
             <span v-if="scope.row.totalBudget" class='color-blue'>
-              ¥ {{scope.row.totalBudget / 100}}
+              ¥ {{$tools.toThousands(scope.row.totalBudget / 100)}}
             </span>
             <span v-else>
               不限
@@ -72,7 +75,8 @@
               <i class="iconfont icon-shuxingliebiaoxiangqing2 icon-color"></i>详情
             </span>
             <span class="icon-space hand">
-              <router-link :to="`/reportList/plan?campaignId=${scope.row.id}`">
+              <router-link 
+                :to="`/reportList/plan?campaignId=${scope.row.id}&planTime=${$tools.getFormatDate('YY-mm-dd', scope.row.beginTime)}~${$tools.getFormatDate('YY-mm-dd', scope.row.endTime)}`">
                 <i class="iconfont icon-baobiao icon-color"></i>报表
               </router-link>
             </span>
@@ -94,6 +98,8 @@
         class="list-page"
       ></el-pagination>
     </div>
+
+
 
     <el-dialog
       v-if="tableData.data.length > 0"
@@ -236,7 +242,7 @@ export default {
 };
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 @import '../listCommonStyle.scss';
 </style>
  

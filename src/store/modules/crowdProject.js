@@ -1,18 +1,24 @@
-
 export const crowdProject = {
   state: {
     tagNames: [],
     tagTid: [],
     tagNamesObj: {},
+    city: "",
   },
 
   mutations: {
+    setCity(state, data) {
+      state.city = data;
+    },
+    removeCity(state, data){
+      state.city = "";
+    },
     setTagNames(state, data) {
       state.tagNames.push(...data);
     },
 
     setTagTid(state, tid) {
-      state.tagTid.push(...tid);
+      state.tagTid.push(tid);
     },
 
     setTagNamesWithUpdate(state, data){
@@ -44,6 +50,11 @@ export const crowdProject = {
       if(state.tagNames[data.parentIndex].value.length === 0) {
         state.tagNames.splice(data.parentIndex, 1)
       }
+    },
+    removeAllState(state, data){
+      state.tagNames = [];
+      state.tagTid = [];
+      state.city = "";
     },
 
   },

@@ -61,12 +61,12 @@
                 val = allVal.shift()
                 let showVal = 0;
                 if (chartParam.sortField === 'cost') {
-                  showVal = that.$tools.toThousands(val.data, 2);
+                  showVal = '¥ ' +that.$tools.toThousands(val.data, 2);
                 } else {
                   showVal = that.$tools.toThousands(val.data, 0);
                 }
                 return val.name + '<br/>' +
-                  '<div style="width: 12px; height: 12px;background: #2D5AFF;border-radius: 50%;border: 1px solid #2D5AFF;display: inline-block;margin-right: 20px"></div>'
+                  '<div style="width: 12px; height: 12px;background: #F44A4A;border-radius: 50%;border: 1px solid #F44A4A;display: inline-block;margin-right: 20px"></div>'
                   + showVal
               }
             },
@@ -78,7 +78,7 @@
             bottom: '8%',
             containLabel: true
           },
-          color: ['#2D5AFF'],
+          color: ['#F44A4A'],
           xAxis: {
             axisLine: {show: false},
             type: 'category',
@@ -106,7 +106,7 @@
               margin: 20,
               formatter: function (value, index) {
                 if (chartParam.sortField === 'cost') {
-                  return value.toFixed(2);
+                  return '¥ ' +value.toFixed(2);
                 }
                 return value
               }
@@ -134,7 +134,7 @@
               symbolSize: 10,
               type: 'line',
               itemStyle: {
-                normal: {color: 'rgba(45,90,255,1)'}
+                normal: {color: 'rgba(244,74,74,1)'}
                 // normal: {label: {show: true}, color: 'rgba(45,90,255,1)'}
               },
               legendHoverLink: false,
@@ -148,10 +148,6 @@
         };
         this.myChart.setOption(option);
       },
-      getBarData() {
-        console.log('submit!');
-      }
-      ,
     },
     watch: {
       axisData: {

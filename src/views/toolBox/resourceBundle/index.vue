@@ -7,14 +7,6 @@
           <el-button type="primary" class="actions" @click="toCityInSight">新建资源包</el-button>
         </template>
       </query-item>
-<!--      <el-form :inline="true" :model="checkFormInline" class="report-query-form" label-width="82px">-->
-<!--        <el-form-item class="item-space-1" label="资源包管理">-->
-<!--          <el-input v-model="checkFormInline.name" clearable></el-input>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item>-->
-<!--          <el-button type="primary" plain @click="resetLoad">查询</el-button>-->
-<!--        </el-form-item>-->
-<!--      </el-form>-->
     </div>
     <div class="query_result" v-if="resultData !== null">
       <el-table :data="resultData" class="list_table">
@@ -22,12 +14,17 @@
         <el-table-column prop="description" label="资源包描述">
         </el-table-column>
         <el-table-column prop="city" label="城市"></el-table-column>
-        <el-table-column prop="industry" label="行业标签"></el-table-column>
+        <el-table-column prop="createName" label="创建人"></el-table-column>
+        <el-table-column prop="createTime" label="创建时间">
+          <template slot-scope="scope">
+            <span>{{formate(scope.row.createTime, 'yyyy-MM-dd hh:mm:ss')}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="action" label="操作" fixed="right" width="400">
           <template slot-scope="scope">
-            <span class="icon-space">
-              <i class="el-icon-edit icon-color"></i>编辑
-            </span>
+<!--            <span class="icon-space">-->
+<!--              <i class="el-icon-edit icon-color"></i>编辑-->
+<!--            </span>-->
             <span class="icon-space" @click="showDialog(scope.row)">
               <i class="el-icon-error icon-color"></i>删除
             </span>
@@ -45,7 +42,7 @@
         class="my-list-page"
       ></el-pagination>
     </div>
-    <el-dialog title="删除城市洞察包"
+    <el-dialog title="删除资源包"
                :visible.sync="dialogShowContent"
                width="568px"
                class="my-dialog"
@@ -70,6 +67,7 @@
     },
     data() {
       return {
+        formate: this.$tools.formatDate,
         currentPage: 50,
         currentItem: null,
         dialogShowContent: false,
@@ -126,7 +124,7 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .my-dialog /deep/ {
     .el-dialog__body {
         padding-top: 57px;

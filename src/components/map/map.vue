@@ -11,6 +11,7 @@
     name: "index",
     data() {
       return {
+        isInit: true, // 控制只初始化促发事件
         labelsArr: [], // 存储label覆盖物的变量 用于清楚label
         map: null,
         points: [],
@@ -30,7 +31,7 @@
         pointsOptions: {
           0: {
             shape: BMAP_POINT_SHAPE_CIRCLE,
-            color: 'rgba(45,90,255,0.74)'
+            color: '#F44A4A'
           },
           1: {
             shape: BMAP_POINT_SHAPE_CIRCLE,
@@ -71,12 +72,16 @@
         }
       },
     },
+    beforeDestroy() {
+      this.removeEvent()
+    },
     watch: {
       buildings(val) {
-        this.clearMap()
+        // this.clearMap()
         if (val.length) {
-          this.initHotMap()
           this.initMap(val)
+        } else {
+          this.clearMap()
         }
       },
       activePath(val) {
@@ -155,15 +160,23 @@
       },
       initMap(val) {
         this.points = this.normalizePointsAll(val)
+        if (Object.keys(this.pathArr).length) {
+          for(let key in this.pathArr) {
+            this.pathArr[key].buildings = this.isInArea(this.pathArr[key])
+          }
+        }
         this.drawDevicePoints()
       },
       setCity(city) {
         this.map.centerAndZoom(city.name, 12);
       },
       initHotMap() {
-        let heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
-        this.map.addOverlay(heatmapOverlay);
-        this.heatmapOverlay = heatmapOverlay
+        if (this.isInit) {
+          let heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
+          this.map.addOverlay(heatmapOverlay);
+          this.heatmapOverlay = heatmapOverlay
+          this.isInit = false
+        }
       },
       location() {
         return new Promise((resolve) => {
@@ -314,6 +327,7 @@
         this.pathArr[this.activePath.index] = this.activePath
         this.drawDevicePoints()
         this.activePath = Object.assign({}, this.activePath)
+        this.$emit('pathArrChange', this.pathArr)
       },
       initMouse() {
         //实例化鼠标绘制工具
@@ -441,11 +455,9 @@
         let point1 = new BMap.Point(lon1, lan1);
         let point2 = new BMap.Point(lon2, lan2);
         let AB = BMapLib.GeoUtils.getDistance(point1, point2);
-        let AC = Math.sqrt(AB * AB + len * len);
-        let sina = (lan2 - lan1
-        ) / AB;
-        let cosa = (lon2 - lon1
-        ) / AB;
+        let AC =  Math.sqrt(AB * AB + len * len);
+        let sina = (lan2 - lan1) / AB;
+        let cosa = (lon2 - lon1) / AB;
         let sinb = len / AC;
         let cosb = AB / AC;
         let sinA = sina * cosb + sinb * cosa;
@@ -551,7 +563,7 @@
       removeLabels() {
         if (!this.labelsArr.length) return
         this.labelsArr.forEach((item) => {
-          this.map.removeOverlay(item)
+          this.map.removeOverlay(item.label)
         })
         this.labelsArr = []
       },
@@ -564,42 +576,47 @@
           this.removeLabels()
         }
       },
-      // 地址逆解析
+      removeEvent() {
+        this.map.removeEventListener('dragend', this.drawLabelsByVisual)
+        this.map.removeEventListener('click', this.mapLeftClick)
+        this.map.removeEventListener('zoomend', this.mapZoomEnd)
+        this.map.removeEventListener('mousemove', this.mapMouseMove)
+        this.map.removeEventListener('rightclick', this.mapRightClick)
+      },
 
+      mapLeftClick(event) {
+        if (this.currentSelectType && this.currentSelectType.type === 'circle') {
+          // 地址逆解析
+          new BMap.Geocoder().getLocation(event.point, (rs) => {
+            this.drawCircle(event.point, rs.address)
+          })
+          this.$emit('drawCancle')
+        }
+      },
+      mapZoomEnd() {
+        this.drawLabelsByVisual()
+        this.zoomChangeAllPath()
+      },
+      mapMouseMove(event) {
+        if (this.currentSelectType !== null) {
+          this.$emit('currentMouseLocation',  event.pixel)
+        }
+      },
+      mapRightClick(event) {
+        if (this.currentSelectType && this.currentSelectType.type === 'circle') {
+          this.$emit('drawCancle')
+        }
+      },
+      tilesloaded() {
+        this.initHotMap()
+      },
       mapBindEvent() {
-        this.map.addEventListener('dragend', () => {
-          this.drawLabelsByVisual()
-        })
-        this.map.addEventListener('zoomend', (type, target) => {
-          this.drawLabelsByVisual()
-          this.zoomChangeAllPath()
-        })
-        this.map.addEventListener('click', ({point}) => {
-          if (this.currentSelectType && this.currentSelectType.type === 'circle') {
-            new BMap.Geocoder().getLocation(point, (rs) => {
-              this.drawCircle(point, rs.address)
-            })
-            this.$emit('drawCancle')
-          }
-        })
-        this.map.addEventListener('mousemove', ({type, target, point, pixel, overlay}) => {
-          if (this.currentSelectType !== null) {
-            this.$emit('currentMouseLocation', pixel)
-          }
-        })
-        this.map.addEventListener('rightclick', (event) => {
-          if (this.currentSelectType && this.currentSelectType.type === 'circle') {
-            this.$emit('drawCancle')
-          }
-        })
-        // document.getElementsByClassName('labelHide').addEventListener('click',function (e) {
-        //   console.log('5555')
-        //   console.log(e)
-        // })
-        // labelHide
-        // this.map.addEventListener('tilesloaded', (event) => {
-        //   this.initHotMap()
-        // })
+        this.map.addEventListener('dragend', this.drawLabelsByVisual)
+        this.map.addEventListener('zoomend', this.mapZoomEnd)
+        this.map.addEventListener('click', this.mapLeftClick)
+        this.map.addEventListener('mousemove', this.mapMouseMove)
+        this.map.addEventListener('rightclick', this.mapRightClick)
+        this.map.addEventListener('tilesloaded', this.tilesloaded)
       },
       drawCircle(point, info) {
         let marker = this.addMarker(point)
@@ -647,7 +664,7 @@
       },
       // 热力图
       drawHotMap(arr) {
-        this.heatmapOverlay.setDataSet({data: arr, max: 100});
+        this.heatmapOverlay.setDataSet({data:arr, max:100});
       },
       normalizePointsAll(arr) {
         let result = arr.map((item) => {
@@ -735,9 +752,6 @@
         }
         return [result, arrCopy]
       },
-      hideLabel(index) {
-        console.log(index)
-      },
       // 添加lable
       addLabel(point) {
         let labelStyle = {
@@ -795,24 +809,26 @@
 
         label.addEventListener('click', (event) => {
           this.$emit('buildingClick', point)
-          // this.currentPoint = this.visualPoint[index]
         })
-        this.labelsArr.push(label)
+        this.labelsArr.push({label: label, isShow: true})
         this.map.addOverlay(label)
       },
 
       // 为海量点添加点击事件
-      selectedEvent(event) {
-        console.log(event)
-      },
-      unSelectedEvent(event) {
-        console.log(event)
-      },
-      pointAddEvent(overlay, type) {
-        if (type === 0) {
-          overlay.addEventListener('click', this.selectedEvent);
-        } else {
-          overlay.addEventListener('click', this.unSelectedEvent);
+      pointEvent(event) {
+        let zoom = this.map.getZoom()
+        if (zoom >= this.showLabel) {
+          this.labelsArr.forEach((item, index) => {
+            if (item.label.getPosition().equals(event.point.point)) {
+              if (this.labelsArr[index].isShow) {
+                this.labelsArr[index].label.hide()
+                this.labelsArr[index].isShow = false
+              } else {
+                this.labelsArr[index].label.show()
+                this.labelsArr[index].isShow = true
+              }
+            }
+          })
         }
       },
       /*
@@ -824,13 +840,12 @@
         if (!this.pointsOverlayObj[overlay]) {
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
-          // this.pointAddEvent(pointsOverlay, type)
           this.map.addOverlay(pointsOverlay);
-
+          pointsOverlay.addEventListener('click',  this.pointEvent);
         } else {
           if (points.length === 0) {
+            this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointEvent);
             this.pointsOverlayObj[overlay].clear()
-            // this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointsEvent(type));
           } else {
             this.pointsOverlayObj[overlay].clear()
             this.pointsOverlayObj[overlay].setPoints(points)

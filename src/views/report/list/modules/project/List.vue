@@ -273,6 +273,17 @@
 
       this.projectList.startTime = this.$tools.getMonthFirstDay();
       this.projectList.endTime = this.$tools.getMonthLastDay();
+      if (
+        this.$route.query.projectTime === "" ||
+        this.$route.query.projectTime === null ||
+        this.$route.query.projectTime === undefined
+      ) {
+
+      } else {
+        let projectTime = this.$route.query.projectTime.split('~')
+        this.projectList.startTime = projectTime[0];
+        this.projectList.endTime = projectTime[1];
+      }
       this.projectList.selectTime = [
         this.projectList.startTime,
         this.projectList.endTime
@@ -312,10 +323,8 @@
       handleSizeChange(size) {
         this.pageSize = size;
         this.getProjectList();
-        //console.log(`每页 ${size} 条`);
       },
       handleCurrentChange(currentPage) {
-        //console.log(`当前页: ${currentPage}`);
         this.pageIndex = currentPage;
         this.getProjectList();
       },
@@ -357,59 +366,53 @@
         //该接口没有必须参数，可选参数
         //请求获取计划名称列表
         this.reportPlanList.loading = true;
-        this.$api.PutPlan.PlanNameList()
-            .then(res => {
-              this.reportPlanList.data = res.result;
-              this.reportPlanList.data.forEach(item => {
-                if (item.id === parseInt(this.projectList.campaignId)) {
-                  this.projectList.selectPlan = item.name;
-                }
-              });
-              this.reportPlanList.loading = false;
-            })
-            .catch(res => {
-              this.reportPlanList.data = []
-              this.reportPlanList.loading = false;
-            });
+        this.$api.PutPlan.PlanNameList().then(res => {
+          this.reportPlanList.data = res.result;
+          this.reportPlanList.data.forEach(item => {
+            if (parseInt(item.id) === parseInt(this.projectList.campaignId)) {
+              this.projectList.selectPlan = item.name;
+            }
+          });
+          this.reportPlanList.loading = false;
+        }).catch(res => {
+          this.reportPlanList.data = []
+          this.reportPlanList.loading = false;
+        });
       },
       //获取方案名称列表
       getProjectNameList() {
         //该接口没有必须参数，可选参数
         //请求获取方案名称列表
         this.reportProjectList.loading = true;
-        this.$api.PutProject.ProjectNameList()
-            .then(res => {
-              this.reportProjectList.data = res.result;
-              this.reportProjectList.data.forEach(item => {
-                if (item.id === parseInt(this.projectList.id)) {
-                  this.projectList.selectProject = item.name;
-                }
-              });
-              this.reportProjectList.loading = false;
-            })
-            .catch(res => {
-              this.reportProjectList.data = []
-              this.reportProjectList.loading = false;
-            });
+        this.$api.PutProject.ProjectNameList().then(res => {
+          this.reportProjectList.data = res.result;
+          this.reportProjectList.data.forEach(item => {
+            if (item.id === parseInt(this.projectList.id)) {
+              this.projectList.selectProject = item.name;
+            }
+          });
+          this.reportProjectList.loading = false;
+        }).catch(res => {
+          this.reportProjectList.data = []
+          this.reportProjectList.loading = false;
+        });
       },
       //获取计划下的名称列表
       getProjectListInPlan(camId) {
         //请求获取计划下的名称列表
         this.reportProjectList.loading = true;
-        this.$api.PutProject.ProjectNameListByCamId(camId)
-            .then(res => {
-              this.reportProjectList.data = res.result;
-              this.reportProjectList.data.forEach(item => {
-                if (item.id === parseInt(this.projectList.id)) {
-                  this.projectList.selectProject = item.name;
-                }
-              });
-              this.reportProjectList.loading = false;
-            })
-            .catch(res => {
-              this.reportProjectList.data = []
-              this.reportProjectList.loading = false;
-            });
+        this.$api.PutProject.ProjectNameListByCamId(camId).then(res => {
+          this.reportProjectList.data = res.result;
+          this.reportProjectList.data.forEach(item => {
+            if (item.id === parseInt(this.projectList.id)) {
+              this.projectList.selectProject = item.name;
+            }
+          });
+          this.reportProjectList.loading = false;
+        }).catch(res => {
+          this.reportProjectList.data = []
+          this.reportProjectList.loading = false;
+        });
       },
       //方案报表的统计查询
       getProjectTotal(param) {
@@ -426,31 +429,29 @@
         Object.assign(queryParam, param);
         //请求方案报表列表查询接口
         this.reportSelectCard.loading = true;
-        this.$api.Report.getProjectTotal(queryParam)
-            .then(res => {
-              this.reportSelectCard.loading = false;
-              let cardList = res.result;
-              this.reportSelectCard.data.forEach(item => {
-                let property = item.field;
-                if (cardList.hasOwnProperty(property)) {
-                  if (cardList[property] === "") {
-                    item.value = 0;
-                  } else if (property === "cost") {
-                    let costValue = cardList[property];
-                    costValue = this.$tools.formatCentToYuan(costValue);
-                    item.value = this.$tools.toThousands(costValue);
-                  } else {
-                    item.value = this.$tools.toThousands(cardList[property], false);
-                  }
-                }
-              });
-            })
-            .catch(res => {
-              this.reportSelectCard.data.forEach(item => {
-                item.value = '暂无数据';
-              });
-              this.reportSelectCard.loading = false;
-            });
+        this.$api.Report.getProjectTotal(queryParam).then(res => {
+          this.reportSelectCard.loading = false;
+          let cardList = res.result;
+          this.reportSelectCard.data.forEach(item => {
+            let property = item.field;
+            if (cardList.hasOwnProperty(property)) {
+              if (cardList[property] === "") {
+                item.value = 0;
+              } else if (property === "cost") {
+                let costValue = cardList[property];
+                costValue = this.$tools.formatCentToYuan(costValue);
+                item.value = '¥ ' + this.$tools.toThousands(costValue);
+              } else {
+                item.value = this.$tools.toThousands(cardList[property], false);
+              }
+            }
+          });
+        }).catch(res => {
+          this.reportSelectCard.data.forEach(item => {
+            item.value = '暂无数据';
+          });
+          this.reportSelectCard.loading = false;
+        });
       },
       //获取方案报表的柱状图数据
       getProjectBarChart(param) {
@@ -469,61 +470,54 @@
         Object.assign(queryParam, param);
         //请求方案报表列表查询接口
         this.barGraphData.loading = true;
-        this.$api.Report.getProjectChartBar(queryParam)
-            .then(res => {
-              // res.result = [...res.result, ...res.result, ...res.result, ...res.result]
-              this.barGraphData.loading = false;
-              let xdata = [];
-              let sdata = [];
-              let sdataShadow = [];
-              let ymax = 0;
-              res.result.forEach((item, index) => {
-                xdata[index] = item.projectName;
-                sdata[index] = item.data;
-                if (ymax < item.data) {
-                  ymax = item.data;
-                }
-              });
-              ymax = this.getNumToSplit(ymax);
-              for (let i = 0; i < sdata.length; i++) {
-                sdataShadow[i] = ymax;
+        this.$api.Report.getProjectChartBar(queryParam).then(res => {
+          // res.result = [...res.result, ...res.result, ...res.result, ...res.result]
+          this.barGraphData.loading = false;
+          let xdata = [];
+          let sdata = [];
+          let ymax = 0;
+          res.result.forEach((item, index) => {
+            xdata[index] = item.projectName;
+            sdata[index] = item.data;
+            if (ymax < item.data) {
+              ymax = item.data;
+            }
+          });
+          this.barGraphData.data = {
+            sortField: this.projectList.sortField,
+            topStatus: this.projectList.topStatus,
+            title: this.getCardName(),
+            xAxis: {
+              data: xdata
+            },
+            yAxis: {
+              splitNumber: 8,
+              max: function (value) {
+                return value.max;
               }
-              this.barGraphData.data = {
-                sortField: this.projectList.sortField,
-                topStatus: this.projectList.topStatus,
-                title: this.getCardName(),
-                xAxis: {
-                  data: xdata
-                },
-                yAxis: {
-                  splitNumber: 8,
-                  max: function (value) {
-                    return value.max;
-                  }
-                },
-                series: {
-                  data: sdata,
-                }
-              };
-            })
-            .catch(res => {
-              this.barGraphData.data = {
-                sortField: this.projectList.sortField,
-                topStatus: this.projectList.topStatus,
-                title: this.getCardName(),
-                xAxis: {
-                  data: []
-                },
-                yAxis: {
-                  splitNumber: 8,
-                  max: 0
-                },
-                series: {
-                  data: [],
-                }
-              };
-              this.barGraphData.loading = false;
-            });
+            },
+            series: {
+              data: sdata,
+            }
+          };
+        }).catch(res => {
+          this.barGraphData.data = {
+            sortField: this.projectList.sortField,
+            topStatus: this.projectList.topStatus,
+            title: this.getCardName(),
+            xAxis: {
+              data: []
+            },
+            yAxis: {
+              splitNumber: 8,
+              max: 0
+            },
+            series: {
+              data: [],
+            }
+          };
+          this.barGraphData.loading = false;
+        });
       },
       //获取方案报表的列表下载数据-默认500条
       getProjectDownloadList(param) {
@@ -545,20 +539,18 @@
         Object.assign(queryParam, param);
         //请求方案报表列表查询接口
         this.reportDownload.loading = true;
-        this.$api.Report.getProjectDownloadList(queryParam)
-            .then(res => {
-              this.reportDownload.loading = false;
-              if (this.companyName === undefined) {
-                this.companyName = '未知公司'
-              }
-              this.$tools.downLoadFileFlow(
-                res,
-                `投放方案报表+${this.companyName}+${this.$tools.getFormatDate("YYmmdd_HHMMSSccc")}.xls`
-              );
-            })
-            .catch(res => {
-              this.reportDownload.loading = false;
-            });
+        this.$api.Report.getProjectDownloadList(queryParam).then(res => {
+          this.reportDownload.loading = false;
+          if (this.companyName === undefined) {
+            this.companyName = '未知公司'
+          }
+          this.$tools.downLoadFileFlow(
+            res,
+            `投放方案报表+${this.companyName}+${this.$tools.getFormatDate("YYmmdd_HHMMSSccc")}.xls`
+          );
+        }).catch(res => {
+          this.reportDownload.loading = false;
+        });
       },
       //获取方案报表的列表-默认每页10条
       getProjectList(param) {
@@ -581,27 +573,21 @@
         Object.assign(queryParam, param);
         //请求方案报表列表查询接口
         this.loading = true;
-        this.$api.Report.getProjectList(queryParam)
-            .then(res => {
-              this.loading = false;
-              this.resultData = res.result;
-              this.totalCount = res.page.totalCount;
-              this.pageIndex = res.page.currentPage;
-              this.resultData.forEach(item => {
-                if (item.id === this.projectList.id) {
-                  this.projectList.startTime = item.startTime;
-                  this.projectList.endTime = item.endTime;
-                }
-                let costValue = item.cost;
-                costValue = this.$tools.formatCentToYuan(costValue);
-                item.cost = this.$tools.toThousands(costValue);
-                item.startTime = item.startTime + '~' + item.endTime
-              });
-            })
-            .catch(res => {
-              this.resultData = []
-              this.loading = false;
-            });
+        this.$api.Report.getProjectList(queryParam).then(res => {
+          this.loading = false;
+          this.resultData = res.result;
+          this.totalCount = res.page.totalCount;
+          this.pageIndex = res.page.currentPage;
+          this.resultData.forEach(item => {
+            let costValue = item.cost;
+            costValue = this.$tools.formatCentToYuan(costValue);
+            item.cost = '¥ ' + this.$tools.toThousands(costValue);
+            item.startTime = item.startTime + '~' + item.endTime
+          });
+        }).catch(res => {
+          this.resultData = []
+          this.loading = false;
+        });
       },
       tableSort(column) {
         this.pageIndex = 1;
@@ -626,20 +612,6 @@
         });
         return cardName;
       },
-      getNumToSplit(num) {
-        let strLen = num.toString().length;
-        let splitNumPlus = 1;
-        if (strLen >= 3) {
-          splitNumPlus = Math.pow(10, strLen - 2);
-        } else {
-          splitNumPlus = 1;
-        }
-        while (!(num % 8 === 0
-        )) {
-          num = num + splitNumPlus;
-        }
-        return num;
-      }
     }
   };
 </script>
@@ -656,7 +628,7 @@
     padding: 30px 0 37px 38px;
     .report-divider {
       .el-divider {
-        background-color: $color-blue;
+        background-color: $color-main;
         border-radius: 2px;
         width: 3px;
         margin: 0 5px 0 0;
@@ -679,7 +651,7 @@
         margin: 2px 20px 0 0;
       }
       .el-select .el-input .el-select__caret {
-        color: $color-blue;
+        color: $color-main;
       }
     }
   }
@@ -720,7 +692,7 @@
         font-weight: normal;
       }
       &.select-box {
-        background: rgba(45, 90, 255, 1);
+        background: $color-main;
         box-shadow: 0px 13px 27px 0px rgba(45, 90, 255, 0.25);
         color: $color-bg-3;
       }
@@ -806,7 +778,7 @@
       .project-id {
         font-size: 14px;
         font-weight: 400;
-        color: $color-blue;
+        color: $color-main;
         text-decoration: none;
         cursor: pointer;
       }
@@ -834,7 +806,7 @@
     height: 120px;
     margin-top: 30px;
     li.active {
-      background-color: $color-blue !important;
+      background-color: $color-main !important;
     }
   }
 </style>

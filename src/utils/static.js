@@ -74,20 +74,20 @@ export const fileType = [
 
 // 投放目的
 export const PutGoal = [
-  { name: '品牌宣传', value: 0, icon: require('../assets/images/plan_title_1.png') },
-  { name: '产品促销', value: 1, icon: require('../assets/images/plan_title_2.png') },
-  { name: '到店引流', value: 2, icon: require('../assets/images/plan_title_3.png') },
-  { name: '搜索热度提升', value: 3, icon: require('../assets/images/plan_title_4.png') },
-  { name: '新品上市', value: 4, icon: require('../assets/images/plan_title_4.png') }
+  { name: '品牌宣传', value: 0, icon: require('../assets/images/plan_title_red_1.png') },
+  { name: '产品促销', value: 1, icon: require('../assets/images/plan_title_red_2.png') },
+  { name: '到店引流', value: 2, icon: require('../assets/images/plan_title_red_3.png') },
+  { name: '搜索热度提升', value: 3, icon: require('../assets/images/plan_title_red_4.png') },
+  { name: '新品上市', value: 4, icon: require('../assets/images/plan_title_red_4.png') }
 ]
 
 // 投放状态，0待投放，1投放中，2已完成，3已取消, 4未支付
 export const projectStatus = [
-  { name: '待投放', value: 0 },
-  { name: '投放中', value: 1 },
-  { name: '已完成', value: 2 },
-  { name: '已取消', value: 3 },
-  { name: '待支付', value: 4 },
+  { name: '待投放', value: '0' },
+  { name: '投放中', value: '1' },
+  { name: '已完成', value: '2' },
+  { name: '已取消', value: '3' },
+  { name: '待支付', value: '4' },
 ]
 
 // 投放预算分类
