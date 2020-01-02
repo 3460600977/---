@@ -1,7 +1,7 @@
 <template>
   <header id="top-header" class="top-header clearfix">
     <!-- logo -->
-    <div class="logo mid" @click="menu.activeIndex=0; handleTo('/')">
+    <div class="logo mid" @click="menu.activeIndex=0; handleTo('/home')">
       <img class="logo-xinchao" :src="images.logo" alt="新潮传媒">
       <div class="logo-split"></div>
       <label class="company-name font-14 color-white">数字化刊播平台</label>
@@ -52,7 +52,7 @@
           <img class="head" width="47px" :src="images.defaultAvatar" alt="头像">
           <div class="operation-box mid relative">
             <div class="user-name font-14">{{username}}</div>
-            <img class="up-icon" width="10px" :src="images.up" alt="" srcset="">
+            <i class="up-icon el-icon-caret-bottom" width="10px"/>
             <transition name="to-top">
               <div v-show="rightMsg.dropMenuShow" class="drop-box absolute font-14">
                 <ul>
@@ -123,7 +123,7 @@
         },
         rightMsg: {
           hoverBlock: {
-            width: ['70px', '70px', '170px'],
+            width: ['70px', '70px', '210px'],
             style: {
               width: '70px',
               transform: 'translateX(0px)',
@@ -163,11 +163,18 @@
       hoverRightMsg(index) {
         if (index === 2) {
           this.rightMsg.dropMenuShow = true;
+          this.rightMsg.hoverBlock.style = {
+            width: this.rightMsg.hoverBlock.width[index],
+            transform: `translateX(${index * 70}px)`,
+            opacity: 1
+          }
         }
-        this.rightMsg.hoverBlock.style = {
-          width: this.rightMsg.hoverBlock.width[index],
-          transform: `translateX(${index * 70}px)`,
-          opacity: 1
+        else {
+          this.rightMsg.hoverBlock.style = {
+            width: this.rightMsg.hoverBlock.width[index],
+            transform: `translateX(${index * 70}px)`,
+            opacity: 1
+          }
         }
       },
 
@@ -243,14 +250,18 @@
     }
   }
 </script>
-<style scoped lang="scss">
+<style lang="scss" scoped>
   $headerHeight: 76px;
+  /deep/ .el-badge__content{
+    background-color: #fff !important;
+    color: #C13130;
+  }
   .top-header {
     width: 100%;
     z-index: 100;
     flex-shrink: 0;
     min-height: $headerHeight;
-    background-color: #2A2F4D;
+    background-color: #C13130;
     .logo {
       float: left;
       height: $headerHeight;
@@ -264,7 +275,7 @@
         width: 1px;
         height: 20px;
         margin: 0 12px;
-        background: rgba(87, 94, 135, 1);
+        background: #F1B8B7;
       }
       .company-name {
         margin-right: 50px;
@@ -284,11 +295,8 @@
         letter-spacing: 0;
         cursor: pointer;
         transition: .3s;
-        // &:hover{
-        //   background: #333A61;
-        // }
         &.active {
-          background: #242945;
+          // background: #242945;
           color: #fff;
         }
         .menu-text {
@@ -296,7 +304,8 @@
           user-select: none;
           padding-bottom: $headerHeight - 4px;
           &.active {
-            border-bottom: 4px solid rgba(45, 90, 255, 1);
+            border-bottom: 4px solid rgb(255, 255, 255);
+            // border-bottom: 4px solid rgba(45, 90, 255, 1);
           }
         }
       }
@@ -306,7 +315,8 @@
         top: 0;
         transition: 0.3s;
         height: $headerHeight;
-        background: #333A61;
+        // background: #333A61;
+        background: rgb(184, 41, 41);
       }
     }
     .user-msg {
@@ -320,9 +330,6 @@
         padding: 0 25px;
         cursor: pointer;
         transition: .3s;
-        // &:hover{
-        //   background: #333A61;
-        // }
         .user-head {
           height: 100%;
           .head {
@@ -333,15 +340,13 @@
             height: $headerHeight;
             .user-name {
               margin: 0 10px;
-              color: #979EBA;
+              color: rgb(255, 255, 255);
             }
             .up-icon, .drop-box {
+              color: rgb(255, 255, 255);
               transition: 0.3s;
             }
             &:hover {
-              // .drop-box{
-              //   display: block;
-              // }
               .up-icon {
                 transform: rotate(180deg);
               }
@@ -370,7 +375,8 @@
         top: 0;
         transition: 0.3s;
         height: $headerHeight;
-        background: #333A61;
+        // background: #333A61;
+        background: rgb(184, 41, 41);
       }
     }
   }
