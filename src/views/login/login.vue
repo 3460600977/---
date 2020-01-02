@@ -196,19 +196,25 @@
     .xinchao-logo {
       position: absolute;
       z-index: 3;
-      top: -15.5%;
+      top: -6.5%;
       left: -0.6%;
     }
     .logo-form {
       background: $color-bg-3;
       border-radius: 14px;
+      height: 520px;
+      margin-right: 30px;
       .el-input__inner:hover {
         border-color: #e5e7e9;
+      }
+      .el-form-item {
+        margin-bottom: 30px;
       }
       .login-title {
         font-size: 32px;
         font-weight: 300;
         color: $color-table-title;
+        margin-top: 32px;
       }
       .login-des {
         font-size: 14px;
@@ -243,7 +249,7 @@
         height: 40px;
         background: $color-bg-3;
         border-radius: 20px;
-        margin: 50px 0;
+        margin: 86px 0 68px 0;
       }
       .el-loading-spinner {
         width: 320px;
