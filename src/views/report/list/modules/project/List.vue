@@ -274,15 +274,15 @@
       this.projectList.startTime = this.$tools.getMonthFirstDay();
       this.projectList.endTime = this.$tools.getMonthLastDay();
       if (
-        this.$route.query.planTime === "" ||
-        this.$route.query.planTime === null ||
-        this.$route.query.planTime === undefined
+        this.$route.query.projectTime === "" ||
+        this.$route.query.projectTime === null ||
+        this.$route.query.projectTime === undefined
       ) {
 
       } else {
-        let planTime = this.$route.query.planTime.split('~')
-        this.projectList.startTime = planTime[0];
-        this.projectList.endTime = planTime[1];
+        let projectTime = this.$route.query.projectTime.split('~')
+        this.projectList.startTime = projectTime[0];
+        this.projectList.endTime = projectTime[1];
       }
       this.projectList.selectTime = [
         this.projectList.startTime,

@@ -93,7 +93,7 @@
         <el-table-column prop="campaignName" label="投放计划">
           <template slot-scope="scope">
             <router-link
-              :to="{path:'/reportList/project?campaignId='+scope.row['campaignId']+'&planTime='+scope.row['startTime']}"
+              :to="{path:'/reportList/project?campaignId='+scope.row['campaignId']+'&projectTime='+scope.row['startTime']}"
               class="project-id"
             >{{scope.row[scope.column.property]}}
             </router-link>
@@ -229,8 +229,20 @@
       } else {
         this.planList.campaignId = this.$route.query.campaignId;
       }
+
       this.planList.startTime = this.$tools.getMonthFirstDay();
       this.planList.endTime = this.$tools.getMonthLastDay();
+      if (
+        this.$route.query.planTime === "" ||
+        this.$route.query.planTime === null ||
+        this.$route.query.planTime === undefined
+      ) {
+
+      } else {
+        let planTime = this.$route.query.planTime.split('~')
+        this.planList.startTime = planTime[0];
+        this.planList.endTime = planTime[1];
+      }
       this.planList.selectTime = [this.planList.startTime, this.planList.endTime];
       let userInfo = getUserInfo()
       if (!userInfo.company || userInfo.company.match(/^[ ]*$/) || userInfo.company != null || userInfo.company != undefined) { // "",null,undefined,NaN
