@@ -36,7 +36,7 @@
         images: {
           userHead: require('../../../assets/images/icons/icon_tx.png'),
           grayHead: require('../../../assets/images/icons/icon_head portrait.png'),
-          moneyBg: require('../../../assets/images/icon_money_bg.png'),
+          moneyBg: require('../../../assets/images/icon_money_bg_red.png'),
           noData: require('../../../assets/images/icon_no_data.png')
         }
       }
