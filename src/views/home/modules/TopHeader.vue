@@ -1,7 +1,7 @@
 <template>
   <header id="top-header" class="top-header clearfix">
     <!-- logo -->
-    <div class="logo mid" @click="menu.activeIndex=0; handleTo('/')">
+    <div class="logo mid" @click="menu.activeIndex=0; handleTo('/home')">
       <img class="logo-xinchao" :src="images.logo" alt="新潮传媒">
       <div class="logo-split"></div>
       <label class="company-name font-14 color-white">数字化刊播平台</label>
