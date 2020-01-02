@@ -100,7 +100,6 @@
                       <div v-if="col.prop === 'status'">
                         <span
                           v-if="parseInt(scope.row[scope.column.property]) === 1"
-                          class="normal info-status"
                         >正常</span>
                         <span v-else class="stop info-status">正在维护中</span>
                       </div>
