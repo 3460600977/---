@@ -273,6 +273,17 @@
 
       this.projectList.startTime = this.$tools.getMonthFirstDay();
       this.projectList.endTime = this.$tools.getMonthLastDay();
+      if (
+        this.$route.query.projectTime === "" ||
+        this.$route.query.projectTime === null ||
+        this.$route.query.projectTime === undefined
+      ) {
+
+      } else {
+        let projectTime = this.$route.query.projectTime.split('~')
+        this.projectList.startTime = projectTime[0];
+        this.projectList.endTime = projectTime[1];
+      }
       this.projectList.selectTime = [
         this.projectList.startTime,
         this.projectList.endTime
@@ -312,10 +323,8 @@
       handleSizeChange(size) {
         this.pageSize = size;
         this.getProjectList();
-        //console.log(`每页 ${size} 条`);
       },
       handleCurrentChange(currentPage) {
-        //console.log(`当前页: ${currentPage}`);
         this.pageIndex = currentPage;
         this.getProjectList();
       },
@@ -360,7 +369,7 @@
         this.$api.PutPlan.PlanNameList().then(res => {
           this.reportPlanList.data = res.result;
           this.reportPlanList.data.forEach(item => {
-            if (item.id === parseInt(this.projectList.campaignId)) {
+            if (parseInt(item.id) === parseInt(this.projectList.campaignId)) {
               this.projectList.selectPlan = item.name;
             }
           });
