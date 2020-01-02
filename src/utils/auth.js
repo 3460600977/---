@@ -7,11 +7,10 @@ export function setUserInfo(info) {
 
 export function getUserInfo() {
   let userInfoStr = Cookies.get('userinfo')
-  if (userInfoStr === '' || userInfoStr === null || userInfoStr === undefined) {
-    return ''
-  } else {
+  if (userInfoStr) {
     return JSON.parse(Cookies.get('userinfo'))
   }
+  return ''
 }
 
 export function removeUserInfo() {
@@ -21,9 +20,7 @@ export function removeUserInfo() {
 //token操作
 export function getToken() {
   let userInfoStr = Cookies.get('userinfo')
-  if (userInfoStr === '' || userInfoStr === null || userInfoStr === undefined) {
-
-  } else {
+  if (userInfoStr) {
     let userInfo = JSON.parse(userInfoStr)
     if (userInfo.hasOwnProperty('token')) {
       if (userInfo.token) {
