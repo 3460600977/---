@@ -124,7 +124,7 @@
       <div class="add-dialog">
         <add-dialog
           ref="addDialog"
-          cityCode="cityFilter.cityCode"
+          :cityCode="cityFilter.cityCode"
           @selectLocation="addLocation"
         ></add-dialog>
       </div>
