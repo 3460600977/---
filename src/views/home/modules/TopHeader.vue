@@ -243,14 +243,18 @@
     }
   }
 </script>
-<style scoped lang="scss">
+<style lang="scss">
   $headerHeight: 76px;
+  .el-badge__content{
+    background-color: #fff !important;
+    color: #C13130;
+  }
   .top-header {
     width: 100%;
     z-index: 100;
     flex-shrink: 0;
     min-height: $headerHeight;
-    background-color: #2A2F4D;
+    background-color: #C13130;
     .logo {
       float: left;
       height: $headerHeight;
@@ -284,11 +288,8 @@
         letter-spacing: 0;
         cursor: pointer;
         transition: .3s;
-        // &:hover{
-        //   background: #333A61;
-        // }
         &.active {
-          background: #242945;
+          // background: #242945;
           color: #fff;
         }
         .menu-text {
@@ -296,7 +297,8 @@
           user-select: none;
           padding-bottom: $headerHeight - 4px;
           &.active {
-            border-bottom: 4px solid rgba(45, 90, 255, 1);
+            border-bottom: 4px solid rgb(255, 255, 255);
+            // border-bottom: 4px solid rgba(45, 90, 255, 1);
           }
         }
       }
@@ -306,7 +308,8 @@
         top: 0;
         transition: 0.3s;
         height: $headerHeight;
-        background: #333A61;
+        // background: #333A61;
+        background: rgb(184, 41, 41);
       }
     }
     .user-msg {
@@ -320,9 +323,6 @@
         padding: 0 25px;
         cursor: pointer;
         transition: .3s;
-        // &:hover{
-        //   background: #333A61;
-        // }
         .user-head {
           height: 100%;
           .head {
@@ -333,15 +333,13 @@
             height: $headerHeight;
             .user-name {
               margin: 0 10px;
-              color: #979EBA;
+              color: rgb(255, 255, 255);
             }
             .up-icon, .drop-box {
+              color: rgb(255, 255, 255);
               transition: 0.3s;
             }
             &:hover {
-              // .drop-box{
-              //   display: block;
-              // }
               .up-icon {
                 transform: rotate(180deg);
               }
@@ -370,7 +368,8 @@
         top: 0;
         transition: 0.3s;
         height: $headerHeight;
-        background: #333A61;
+        // background: #333A61;
+        background: rgb(184, 41, 41);
       }
     }
   }
