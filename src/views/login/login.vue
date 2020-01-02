@@ -58,7 +58,7 @@
     data() {
       return {
         imageWidth: 442,
-        logo_img: require('../../assets/images/icon_left@2x.png'),
+        logo_img: require('../../assets/images/icon_red@2x.png'),
         logo_back_img: require('../../assets/images/img_bg@2x.png'),
         login_capture_img: '',
         loginForm: {
@@ -186,7 +186,7 @@
     .xinchao-logo {
       position: absolute;
       z-index: 3;
-      top: -12.5%;
+      top: -15.5%;
       left: -0.6%;
     }
     .logo-form {
