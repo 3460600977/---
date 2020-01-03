@@ -925,7 +925,7 @@
       top: 18vh;
       right: 60px;
       padding: 20px 23px 30px;
-      z-index: 1;
+      z-index: 3;
       width: 312px;
       background: rgba(255, 255, 255, 1);
       border: 1px solid rgba(229, 231, 233, 1);

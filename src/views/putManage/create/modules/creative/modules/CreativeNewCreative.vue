@@ -12,6 +12,7 @@
         :rules="formDataRules"
         :label-position="'left'" 
         label-width="112px" class="put-form">
+
         <!-- 屏幕类型 -->
         <el-form-item 
           v-if="createType === 'single' || (createType === 'edit' && !haveProject)" 
@@ -154,7 +155,7 @@
     <!-- 广告资质 -->
     <PutMangeCard :title="'广告创意资质'" class="form-box aptitude">
       <el-form
-        ref="creativeForm"
+        ref="creativeFormIndustry"
         :label-position="'left'"
         :model="formData"
         :rules="formDataRules" 
@@ -346,7 +347,7 @@ export default {
       
       formDataRules: {
         name: [
-          { required: true, message: '请输入广告创意名称!', trigger: 'change' },
+          { required: true, message: '请输入广告创意名称!', trigger: ['change', 'blur'] },
           { max: 100, message: '创意名称100字以内!'}
         ],
         durationType: [
@@ -397,6 +398,7 @@ export default {
     if (this.createType === 'edit') {
       this.editInit(+this.$route.query.creativeId)
     }
+
   },
 
   methods: {
@@ -451,6 +453,7 @@ export default {
     // 切换屏幕类型
     changeScreenType(type) {
       this.formData.screenType = type.value;
+      this.generateCreativeName()
       switch (type.value) {
         case '001': // 上
           this.formData.bottom720Image = '';
@@ -500,7 +503,7 @@ export default {
 
     // 生成创意名字
     generateCreativeName() {
-      let type = this.projectData.type == '003' ? '联动' : this.projectData.type == '001' ? '上屏' : '下屏';
+      let type = this.formData.screenType == '003' ? '联动' : this.formData.screenType == '001' ? '上屏' : '下屏';
       let industryName = this.$tools.getObjectItemFromArray(this.industryList, 'industryId', this.formData.industry);
       this.formData.name = `${industryName.name || '行业'}_${type}_${this.$tools.getFormatDate('mm_dd')}`;
     },
@@ -623,10 +626,10 @@ export default {
       })
     },
 
-    // 保存
-    saveCreative() {
+    // 校验表单
+    validateForm() {
       let isPassEnptyCheck = true;
-      let validateForms = ['creativeFormMaterialTop', 'creativeFormMaterialBottom880', 'creativeFormMaterialBottom720', 'creativeForm', 'creativeFormName'];
+      let validateForms = ['creativeFormMaterialTop', 'creativeFormMaterialBottom880', 'creativeFormMaterialBottom720', 'creativeForm', 'creativeFormName', 'creativeFormIndustry'];
       
       validateForms.forEach((item, index) => {
         if(this.$refs[item]) {
@@ -635,18 +638,27 @@ export default {
           });
         }
       })
-      if (!isPassEnptyCheck) {
+
+      return isPassEnptyCheck;
+    },
+
+    // 保存
+    saveCreative() {
+      
+      if (!this.validateForm()) {
         return this.$notify({
           title: '警告',
           message: '还有必填字段未填写',
           type: 'warning'
         });
       }
+
       this.pageLoading = true;
       let paramForm = new FormData();
       if (this.createType === 'edit') {
         paramForm.append('id', this.formData.id)
       }
+      
       paramForm.append('durationType', this.formData.durationType)
       paramForm.append('industry', this.formData.industry)
       paramForm.append('name', this.formData.name)

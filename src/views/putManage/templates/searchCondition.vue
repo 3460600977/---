@@ -1,7 +1,6 @@
 <template>
   <!-- 投放管理 列表搜索条件 -->
   <el-form :inline="true" class="list-form-inline clearfix">
-
     <!-- 投放计划名称 -->
     <el-form-item class="line-space" label="投放计划名称">
       <el-select 
