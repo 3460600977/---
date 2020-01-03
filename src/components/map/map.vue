@@ -121,9 +121,7 @@
         this.jugDraw()
       },
       jugDraw() {
-        let isShow = this.pointsOverlayObj.isShow
         this.drawDevicePoints()
-        this.pointsOverlayObj.isShow = isShow
         if (!this.pointsOverlayObj.isShow) {
           this.reDrawMarkers()
         }
@@ -182,6 +180,7 @@
             this.isInArea(this.pathArr[key])
           }
         }
+        this.pointsOverlayObj.isShow = true
         this.drawDevicePoints()
       },
       setCity(city) {
@@ -226,7 +225,6 @@
       },
       // 根据传入的以选中和未选中楼盘重新画数据
       drawPoints(selectP, unSelectP) {
-        this.pointsOverlayObj.isShow = true
         this.setDevicePoints(selectP, 0)
         this.setDevicePoints(unSelectP, 1)
       },
