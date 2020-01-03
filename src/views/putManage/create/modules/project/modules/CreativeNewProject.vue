@@ -341,21 +341,6 @@
       mapChooseWindow,
     },
     data() {
-      let checkDate = (rule, value, callback) => {
-        // 投放类型，0按周投放，1按天投放
-        if (this.formData.projectType.value === 1 && !value) {
-          callback(new Error('请设置时间！'));
-        }
-        callback()
-      };
-      let checkWeek = (rule, value, callback) => {
-        // 投放类型，0按周投放，1按天投放
-        if (this.formData.projectType.value === 0 && !value) {
-          callback(new Error('请设置时间！'));
-        }
-        callback()
-      };
-
       return {
         projectConst,
 
@@ -428,7 +413,7 @@
             {required: true, message: '请选择投放方案行业!', trigger: 'change'},
           ],
           date: [
-            {validator: checkDate, trigger: 'blur'},
+            {required: true, message: '请设置投放时间!', trigger: 'blur'},
           ],
           count: [
             {required: true, message: '请选投放频次!', trigger: 'change'},
@@ -507,9 +492,7 @@
                 id: resData.id,
                 industry: this.$tools.getObjectItemFromArray(this.industry.data, 'industryId', resData.industry),
                 projectType: this.$tools.getObjectItemFromArray(projectConst.putType, 'value', resData.projectType), // 投放类型，0按周投放，1按天投放
-                dateForDay: [resData.beginTime, resData.endTime],
-                dateForWeekBegin: resData.beginTime,
-                dateForWeekEnd: resData.endTime,
+                date: [resData.beginTime, resData.endTime],
                 projectCity: resData.projectCity,
                 deliveryMode: this.$tools.getObjectItemFromArray(projectConst.putWay, 'value', resData.deliveryMode), // 投放方式
                 count: this.$tools.getObjectItemFromArray(projectConst.putFrequency, 'value', resData.count), // 投放频次
