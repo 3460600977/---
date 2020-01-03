@@ -263,6 +263,10 @@
         this.$router.replace('/auditList')
       }
     },
+    
+    beforeMount() {
+      this.setActiveTopMenu()
+    },
 
     watch: {
       '$route.path': function() {
