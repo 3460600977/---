@@ -1,7 +1,8 @@
 export const cityInsightRouter = [
   {
     path: '/cityInsight',
-    component: () => import('@/views/cityInsight/cityInsight/')
+    component: () => import('@/views/cityInsight/cityInsight/'),
+    meta: {code: '1200'},
   },
   {
     path: '/buildingDetail/:id',
