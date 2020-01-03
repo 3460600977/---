@@ -27,17 +27,17 @@
     <!-- user msg -->
     <div class="user-msg color-white mid">
       <!-- 钱 -->
-      <div
-        @mouseenter="hoverRightMsg(0)"
-        @mouseleave="leaveMenu"
-        class="item icon-item mid"><img width="20px" :src="images.money" alt="">
+      <div v-if="menu.money"
+           @mouseenter="hoverRightMsg(0)"
+           @mouseleave="leaveMenu"
+           class="item icon-item mid"><img width="20px" :src="images.money" alt="">
       </div>
 
       <!-- 消息 -->
-      <div
-        @mouseenter="hoverRightMsg(1)"
-        @mouseleave="leaveMenu"
-        class="item icon-item mid">
+      <div v-if="menu.notification"
+           @mouseenter="hoverRightMsg(1)"
+           @mouseleave="leaveMenu"
+           class="item icon-item mid">
         <el-badge :value="20">
           <img width="20px" :src="images.notification" alt="">
         </el-badge>
@@ -109,17 +109,18 @@
             transform: 'translateX(0px)',
             opacity: 0
           },
-          content: [
-            {name: '首页', path: '/home'},
-            {name: '人群洞察', path: '/peopleInsight'},
-            {name: '媒体智选', path: '/toolbox/resourceBundle'},
-            {name: '投放管理', path: '/putManage'},
-            {name: '报表中心', path: '/reportList'},
-            {name: '财务管理', path: ''},
+          content: [],
+          audit: [],
+          notExist: [
+            {"code": "9999", "name": "登录", "selected": false, "path": "/login", "children": []},
+            {
+              "code": "1500", "name": "财务管理", "selected": false, "path": "/finance", "children": [
+                {"code": "1510", "name": "财务流水", "selected": false, "path": "/finance/flow", "children": []}
+              ]
+            },
           ],
-          audit: [
-            {name: '审核管理', path: '/auditList'},
-          ]
+          money: false,
+          notification: false,
         },
         rightMsg: {
           hoverBlock: {
@@ -137,9 +138,6 @@
     },
 
     methods: {
-      changeDialog() {
-        this.dialogEditPass = true
-      },
       /**
        * 顶部菜单覆盖样式 宽度,位移
        * @param: menuArr 菜单数组
@@ -168,8 +166,7 @@
             transform: `translateX(${index * 70}px)`,
             opacity: 1
           }
-        }
-        else {
+        } else {
           this.rightMsg.hoverBlock.style = {
             width: this.rightMsg.hoverBlock.width[index],
             transform: `translateX(${index * 70}px)`,
@@ -234,15 +231,32 @@
     mounted() {
       //请求验证码接口
       let userInfo = getUserInfo()
-      if (userInfo.avatar === null || userInfo.avatar === undefined || userInfo.avatar === "") { // "",null,undefined,NaN
-
-      } else {
+      let menuList = []
+      menuList = this.$tools.getAllMenuList(userInfo.menu, menuList)
+      console.log('menuList', menuList)
+      //菜单处理
+      for (let i = 0; i < this.MenuList.length; i++) {
+        for (let j = 0; j < userInfo.menu.length; j++) {
+          if (this.MenuList[i].code === userInfo.menu[j].code && userInfo.menu[j].selected) {
+            userInfo.menu[j].path = this.MenuList[i].path
+            this.menu.content.push(userInfo.menu[j])
+            break;
+          }
+        }
+      }
+      for (let i = 0; i < this.menu.content.length; i++) {
+        for (let j = 0; j < this.menu.notExist.length; j++) {
+          if (this.menu.content[i].code === this.menu.notExist[j].code) {
+            this.menu.content.splice(i, 1)
+            break;
+          }
+        }
+      }
+      if (userInfo.avatar) {
         this.images.defaultAvatar = userInfo.avatar
       }
-      this.username = userInfo.userName
-      if (this.username === 'XC12394') {
-        this.menu.content = this.menu.audit
-        this.$router.replace('/auditList')
+      if (userInfo.userName) {
+        this.username = userInfo.userName
       }
     },
     beforeMount() {
@@ -252,7 +266,7 @@
 </script>
 <style lang="scss" scoped>
   $headerHeight: 76px;
-  /deep/ .el-badge__content{
+  /deep/ .el-badge__content {
     background-color: #fff !important;
     color: #C13130;
   }
@@ -331,12 +345,12 @@
         cursor: pointer;
         transition: .3s;
         &.icon-item {
-          img{
+          img {
             opacity: 0.7;
             transition: 0.3s;
           }
-          &:hover{
-            img{
+          &:hover {
+            img {
               opacity: 1;
             }
           }

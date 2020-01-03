@@ -9,6 +9,7 @@ import { reportCenterRouter } from './modules/reportCenter'//报表中心
 import { auditManageRouter } from './modules/auditManage'//审核管理
 import { toolBoxRouter } from './modules/toolBox'//工具箱
 import { peopleInsightRouter } from './modules/peopleInsight' // 人群洞察
+import { getUserInfo } from '@/utils/auth';
 
 const router = new Router({
   // mode: 'history',
@@ -49,6 +50,17 @@ NProgress.configure({easing: 'ease', speed: 1500, showSpinner: false})
 
 router.beforeEach((to, from, next) => {
   NProgress.start();
+  let userInfo = getUserInfo()
+  let canEnter = false
+  if (userInfo) {
+    for (let i = 0; i < userInfo.menu.length; i++) {
+      console.log(userInfo.menu[i].code === to.meta.code, userInfo.menu[i].code, to.meta.code)
+      if (userInfo.menu[i].code === to.meta.code && userInfo.menu[i].selected) {
+        canEnter = true
+      }
+    }
+  }
+  console.log('canEnter', canEnter,userInfo)
   // 判断该路由是否需要登录权限
   if (store.state.token.userToken) { // 通过vuex state获取当前登录状态
     next()
