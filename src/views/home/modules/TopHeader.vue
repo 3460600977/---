@@ -32,7 +32,6 @@
     <!-- user msg -->
     <div class="user-msg color-white mid">
       <!-- 钱 -->
-<<<<<<< HEAD
       <!-- <div
         @mouseenter="hoverRightMsg(0)"
         @mouseleave="leaveMenu"
@@ -44,19 +43,6 @@
         @mouseenter="hoverRightMsg(1)"
         @mouseleave="leaveMenu"
         class="item icon-item mid">
-=======
-      <div v-if="menu.money"
-           @mouseenter="hoverRightMsg(0)"
-           @mouseleave="leaveMenu"
-           class="item icon-item mid"><img width="20px" :src="images.money" alt="">
-      </div>
-
-      <!-- 消息 -->
-      <div v-if="menu.notification"
-           @mouseenter="hoverRightMsg(1)"
-           @mouseleave="leaveMenu"
-           class="item icon-item mid">
->>>>>>> 6f962f62d519fec8e700808b1925cd8ed716c791
         <el-badge :value="20">
           <img width="20px" :src="images.notification" alt="">
         </el-badge>
