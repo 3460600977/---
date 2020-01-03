@@ -76,12 +76,12 @@
     },
     watch: {
       buildings(val) {
-        // this.clearMap()
-        if (val.length) {
-          this.initMap(val)
-        } else {
-          this.clearMap()
-        }
+        this.initMap(val)
+        // if (val.length) {
+        //   this.initMap(val)
+        // } else {
+        //   // this.clearMap()
+        // }
       },
       activePath(val) {
         this.$emit('activePathChange', val)
