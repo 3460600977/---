@@ -2,7 +2,7 @@
   <div class="my-radio clearfix" 
     :class="getClass">
     <div class="my-r-button">
-      <i :class="{'el-icon-check': active}"></i>
+      <i :class="{'iconfont icon-duihao': active}"></i>
     </div>
     <label class="label mid">
       <slot>选项</slot>
@@ -50,7 +50,7 @@ export default {
     &.active{
       .my-r-button{
         border-color: $color-main;
-        background:rgba(45,90,255,0.1);
+        background: rgba($color-main, .1);
       }
     }
     &.disabled{
@@ -73,7 +73,7 @@ export default {
       border: 1px solid $color-border;
       >i{
         color: $color-main;
-        font-weight: bold;
+        font-size: 12px;
       }
     }
     .label{

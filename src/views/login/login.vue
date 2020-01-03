@@ -66,6 +66,7 @@
           callback();
         }
       }
+
       return {
         imageWidth: 442,
         logo_img: require('../../assets/images/icon_red@2x.png'),
@@ -78,7 +79,7 @@
           verifyValue: ''
         },
         loading: false,
-        pageLoading: true, // 整个页面转圈, token登录用
+        pageLoading: true, // 整个页面转圈, 跳转登录用
         rules: {
           username: [
             {required: true, message: '请输入账号名', trigger: ['blur', 'change']},
@@ -92,29 +93,40 @@
         }
       }
     },
+
     computed: {
       loginFormWidth: function () {
         return this.imageWidth * 2 + 20;
       },
-      isTokenLogin() {
+
+      isSaleLogin() {
         return !!this.$route.query.advertiserId && !!this.$route.query.saleAccessToken
+      },
+
+      isAuditorLogin() {
+        return !!this.$route.query.blmToken
       }
+
+
     },
 
     beforeMount() {
-      if (this.isTokenLogin) {
-        this.tokenLogin()
-      } else {
-        this.pageLoading = false;
+      if (this.isSaleLogin) {
+        return this.saleLogin()
       }
+      if (this.isAuditorLogin) {
+        return this.auditorLogin()
+      }
+      this.pageLoading = false;
     },
 
     mounted() {
-      if (!this.isTokenLogin) {
+      if (!this.isSaleLogin) {
         this.changeCaptureNUm()
       }
 
     },
+
     methods: {
       onSubmit(formName) {
         //登录表框的验证
@@ -143,14 +155,14 @@
         });
       },
 
-      // 根据url中token和id登录
-      tokenLogin() {
+
+      // 销售登录
+      saleLogin() {
         let param = {
           advertiserId: this.$route.query.advertiserId,
           saleAccessToken: this.$route.query.saleAccessToken
         }
-        this.$api.Login.LoginInByToken(param).then(res => {
-          console.log(res.result)
+        this.$api.Login.SaleLogin(param).then(res => {
           let info = res.result
           this.pageLoading = false;
           this.$router.replace({
@@ -166,8 +178,31 @@
         })
       },
 
+
+      // 审核登录
+      auditorLogin() {
+        let param = {
+          blmToken: this.$route.query.blmToken,
+        }
+        this.$api.Login.AuditorLogin(param).then(res => {
+          let info = res.result
+          this.pageLoading = false;
+          this.$router.replace({
+            path: '/home',
+            query: {}
+          })
+          this.loading = false;
+          this.$store.commit('setToken', info.token)
+          setUserInfo(info)
+        }).catch(res => {
+          this.pageLoading = false;
+          this.changeCaptureNUm()
+        })
+      },
+
+
+      //请求验证码接口
       changeCaptureNUm() {
-        //请求验证码接口
         this.$api.Login.GetVerifyCode().then(res => {
           this.login_capture_img = res.result.image
           this.loginForm.verifyToken = res.result.verifyToken
