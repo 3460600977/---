@@ -95,6 +95,7 @@
         toolMenu: [
           {"code": "1010", "selected": true},
           {"code": "1020", "selected": true},
+          {"code": "1340", "selected": true},
         ]
       }
     },
