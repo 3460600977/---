@@ -74,6 +74,7 @@ router.beforeEach((to, from, next) => {
       }
     }
   }
+  console.log(menuList, canEnter)
   // 判断该路由是否需要登录权限
   if (store.state.token.userToken && canEnter) { // 通过vuex state获取当前登录状态
     next()

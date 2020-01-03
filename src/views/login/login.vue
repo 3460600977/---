@@ -91,10 +91,11 @@
             {trigger: ['blur', 'change'], validator: checkVerify}
           ],
         },
-        audit: [{"code": "1010", "name": "账号管理", "selected": true, "path": "/toolBox/account", "children": []}],
+        audit: [{"code": "1010", "selected": true,}],
         toolMenu: [
-          {"code": "1010", "name": "账号管理", "selected": true, "path": "/toolBox/account", "children": []},
-          {"code": "1020", "name": "账号管理", "selected": true, "path": "/toolBox/account", "children": []},]
+          {"code": "1010", "selected": true},
+          {"code": "1020", "selected": true},
+        ]
       }
     },
 
