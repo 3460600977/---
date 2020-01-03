@@ -6,21 +6,19 @@
           <p class="label">{{tagObj.name}}</p>
           <div class="flex1 tags">
             <el-tag
-              :key="tag"
-              v-for="(tag,index) in tagObj.value"
+              v-for="(tag,index) in tagObj.tags"
+              :key="tag.tid"
               closable
               :disable-transitions="false"
               @close="handleClose(parentIndex,index )"
             >
-              {{tag}}
+              {{tag.name}}
             </el-tag>
           </div>
         </div>
       </div>
     </template>
   </div>
-
-
 </template>
 
 <script>
