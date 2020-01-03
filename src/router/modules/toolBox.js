@@ -11,23 +11,21 @@ export const toolBoxRouter = [
   {
     path: '/toolBox/account',
     component: () => import('@/views/toolBox/manage/index'),
+    meta: {code: '1010', white: true},
     children: [
       //默认账号管理路径---
       {
         path: '/',
-        component: () => import('@/views/toolBox/manage/modules/account/Info')
-      },
-      // 账号信息
-      {
-        path: '/toolBox/accountInfo',
-        component: () => import('@/views/toolBox/manage/modules/account/Info')
+        component: () => import('@/views/toolBox/manage/modules/account/Info'),
+        meta: {code: '1010', white: true},
       },
     ]
   },
   // 资源包
   {
     path: '/toolBox/resourceBundle',
-    component: () => import('@/views/toolBox/resourceBundle/')
+    component: () => import('@/views/toolBox/resourceBundle/'),
+    meta: {code: '1020', white: true},
   },
   // 工具箱--修改账号密码
   {
