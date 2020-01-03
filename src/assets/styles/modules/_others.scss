@@ -90,40 +90,10 @@
 .mt-10{
   margin-top: 10px !important;
 }
-
-// 上下联动三种屏幕类型
+// 屏幕类型from item盒子
 .screen-type-preview-box{
   overflow: hidden;
   width: 100vw;
-  .screen-type-preview-content{
-    margin-top: -100px;
-    .screen-preview {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      margin-left: 10px;
-      margin-top: 100px;
-      width:77px;
-      height:180px;
-      background: #f3f3f3;
-      border:1px solid rgba(196, 196, 196, 0.8);
-      box-shadow:0px 2px 6px 1px rgba(19,18,18,0.1);
-      border-radius:6px;
-      >.bg-gray{
-        background:rgba(219,219,219,1) !important;
-      }
-      .top{
-        width:70px;
-        height:123px;
-      }
-      .bottom{
-        width:70px;
-        height:40px;
-        margin-top: 4px;
-      }
-    }
-  }
 }
 // 页面标题样式
 .db-title {
