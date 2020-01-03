@@ -25,7 +25,7 @@ export const toolBoxRouter = [
   {
     path: '/toolBox/resourceBundle',
     component: () => import('@/views/toolBox/resourceBundle/'),
-    meta: {code: '1020'},
+    meta: {code: '1200'},
   },
   // 工具箱--修改账号密码
   {

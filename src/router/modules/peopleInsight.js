@@ -2,7 +2,7 @@ export const peopleInsightRouter = [
   {
     path: '/peopleInsight',
     component: () => import('@/views/peopleInsight/Index'),
-    meta: {code: '1100'},
+    meta: {code: '1200'},
   },
   
   {

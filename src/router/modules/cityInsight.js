@@ -2,7 +2,7 @@ export const cityInsightRouter = [
   {
     path: '/cityInsight',
     component: () => import('@/views/cityInsight/cityInsight/'),
-    meta: {code: '1200'},
+    meta: {code: '1201'},
   },
   {
     path: '/buildingDetail/:id',
