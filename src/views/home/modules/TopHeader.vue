@@ -43,16 +43,6 @@
         @mouseenter="hoverRightMsg(1)"
         @mouseleave="leaveMenu"
         class="item icon-item mid">
-      <div v-if="menu.money"
-           @mouseenter="hoverRightMsg(0)"
-           @mouseleave="leaveMenu"
-           class="item icon-item mid"><img width="20px" :src="images.money" alt="">
-      </div>
-
-      <div v-if="menu.notification"
-           @mouseenter="hoverRightMsg(1)"
-           @mouseleave="leaveMenu"
-           class="item icon-item mid">
         <el-badge :value="20">
           <img width="20px" :src="images.notification" alt="">
         </el-badge>
