@@ -132,7 +132,6 @@
             }
           } else {
             this.points[item.premisesId] = {point: new BMap.Point(item.lng, item.lat), ...item, type: type}
-            this.addSigleLabel(item)
             this.drawDevicePoints()
           }
         })
@@ -351,17 +350,51 @@
         this.overlayBindEvent(ol)
         this.getPopUpData(ol)
       },
+      // 判断数组中数据是够全等
+      isAllEqual(array) {
+        if (array.length > 0) {
+          return array.every(function(value) {
+            return value.equals(array[0]);
+          });
+        } else {
+          return true;
+        }
+      },
+      // 当前选点不规范时提示并取消选点
+      drawErrorTip(e) {
+        let p = e.overlay.getPath()
+        if (p.length === 1 || this.isAllEqual(p)) {
+          this.$notify({
+            title: '警告',
+            message: '当前选点的位置太接近，无法进行地图选点！',
+            type: 'warning'
+          });
+          this.$emit('drawCancle')
+          return false
+        }
+        if (e.drawingMode === "polygon" && p.length === 2) {
+          this.$notify({
+            title: '警告',
+            message: '多边形至少进行三次选点才能形成有效选点区域！',
+            type: 'warning'
+          });
+          this.$emit('drawCancle')
+          this.map.removeOverlay(e.overlay)
+          return false
+        }
+        return  true
+      },
       /*
        *折线和多边形画线完成回调函数
        */
       drawComplete(drawingManager) {
         drawingManager.addEventListener("overlaycomplete", (e) => {
+          if (!this.drawErrorTip(e)) return
           let location = this.map.pixelToPoint(e.currentTarget._mask._draggingMovePixel)
           let path = {
             type: e.drawingMode,
             overlay: e.overlay,
             location: location, // 结束绘制时鼠标的经纬度位置用于显示弹窗位置
-            isShow: true,
             index: this.indexArr.length, // 即将是pathArr的第几个元素
             radius: this.defaultRadius, // 这里只有折线会用这个属性，折线的直径就是defaultRadius的两倍
             points: e.overlay.getPath()
@@ -590,8 +623,8 @@
         this.initHotMap()
       },
       mapBindEvent() {
-        this.map.addEventListener('dragend', this.drawLabelsByVisual)
-        this.map.addEventListener('zoomend', this.mapZoomEnd)
+        // this.map.addEventListener('dragend', this.drawLabelsByVisual)
+        // this.map.addEventListener('zoomend', this.mapZoomEnd)
         this.map.addEventListener('click', this.mapLeftClick)
         this.map.addEventListener('mousemove', this.mapMouseMove)
         this.map.addEventListener('rightclick', this.mapRightClick)
@@ -730,29 +763,37 @@
         });
         label.setStyle(labelStyle);
 
-        label.addEventListener('click', (event) => {
-          this.$emit('buildingClick', point)
-        })
+        // label.addEventListener('click', (event) => {
+        //   this.$emit('buildingClick', point)
+        // })
         this.labelsArr.push({label: label, isShow: true})
         this.map.addOverlay(label)
       },
-
+      pointEventOut(event) {
+        this.removeLabels()
+      },
       // 为海量点添加点击事件
       pointEvent(event) {
-        let zoom = this.map.getZoom()
-        if (zoom >= this.showLabel) {
-          this.labelsArr.forEach((item, index) => {
-            if (item.label.getPosition().equals(event.point.point)) {
-              if (this.labelsArr[index].isShow) {
-                this.labelsArr[index].label.hide()
-                this.labelsArr[index].isShow = false
-              } else {
-                this.labelsArr[index].label.show()
-                this.labelsArr[index].isShow = true
-              }
-            }
-          })
+        if (this.currentSelectType === null && this.activePath === null) {
+          this.addLabel(event.point)
         }
+        // let zoom = this.map.getZoom()
+        // if (zoom >= this.showLabel) {
+        //   this.labelsArr.forEach((item, index) => {
+        //     if (item.label.getPosition().equals(event.point.point)) {
+        //       if (this.labelsArr[index].isShow) {
+        //         this.labelsArr[index].label.hide()
+        //         this.labelsArr[index].isShow = false
+        //       } else {
+        //         this.labelsArr[index].label.show()
+        //         this.labelsArr[index].isShow = true
+        //       }
+        //     }
+        //   })
+        // }
+      },
+      pointEventClick(event) {
+        this.$emit('buildingClick', event.point)
       },
       /*
        * 画背景点方法 0：已选 1：未选
@@ -764,10 +805,14 @@
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
           this.map.addOverlay(pointsOverlay);
-          pointsOverlay.addEventListener('click',  this.pointEvent);
+          pointsOverlay.addEventListener('mouseover',  this.pointEvent);
+          pointsOverlay.addEventListener('mouseout',  this.pointEventOut);
+          pointsOverlay.addEventListener('click',  this.pointEventClick);
         } else {
           if (points.length === 0) {
-            this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointEvent);
+            this.pointsOverlayObj[overlay].removeEventListener('mouseover',  this.pointEvent);
+            this.pointsOverlayObj[overlay].removeEventListener('mouseout',  this.pointEventOut);
+            this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointEventClick);
             this.pointsOverlayObj[overlay].clear()
           } else {
             this.pointsOverlayObj[overlay].clear()
