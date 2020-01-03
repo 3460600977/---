@@ -3,14 +3,14 @@
     <el-form style="width: 490px" ref="editForm" :model="editForm" class="editForm" label-position="left"
              label-width="110px" :rules="rules">
       <el-form-item label="原密码" prop="oldPwd">
-        <el-input v-model="editForm.oldPwd" show-password placeholder="请输入原密码"></el-input>
+        <el-input v-model.trim="editForm.oldPwd" show-password placeholder="请输入原密码"></el-input>
       </el-form-item>
       <el-form-item label="新密码" :class="{'new-pass':true,'hide-mess':hideMess}" class="new-pass" prop="newPwd">
-        <el-input v-model="editForm.newPwd" show-password placeholder="请输入新密码"></el-input>
+        <el-input v-model.trim="editForm.newPwd" show-password placeholder="请输入新密码"></el-input>
         <span class="show-validate-message">* 8-18位，必须包含大写字母、小写字母、数字和符号四种形式</span>
       </el-form-item>
       <el-form-item label="新密码确认" prop="confirmNewPwd">
-        <el-input v-model="editForm.confirmNewPwd" show-password placeholder="请再次输入新密码"></el-input>
+        <el-input v-model.trim="editForm.confirmNewPwd" show-password placeholder="请再次输入新密码"></el-input>
       </el-form-item>
       <el-form-item class="submit-login">
         <el-button @click="resetForm('editForm')">取 消</el-button>
@@ -21,7 +21,8 @@
 </template>
 
 <script>
-  import {Notification} from 'element-ui'
+  import { Notification } from 'element-ui'
+  import { removeUserInfo } from '@/utils/auth';
 
   export default {
     name: "editPassIndex",
@@ -81,7 +82,6 @@
       submitConfirm(formName) {
         this.$refs[formName].validate((valid) => {
           if (!valid) {
-            console.log('error submit!!');
             return false;
           } else {
             let param = {
@@ -91,17 +91,18 @@
             }
             //请求登录接口
             this.loading = true;
-            this.$api.Login.ChangePass(param)
-              .then(res => {
-                Notification({
-                  title: '成功修改密码',
-                  message: res.msg || '网络异常, 请稍后再试',
-                  type: 'success'
-                });
-              })
-              .catch(res => {
-                this.loading = false;
-              })
+            this.$api.Login.ChangePass(param).then(res => {
+              this.loading = false;
+              Notification({
+                title: '成功修改密码',
+                type: 'success'
+              });
+              removeUserInfo()
+              this.$store.commit('setToken', '')
+              this.$router.replace('/login');
+            }).catch(res => {
+              this.loading = false;
+            })
           }
         });
       }
@@ -124,7 +125,7 @@
       width: 100%;
       height: 100%;
       background: $color-bg-3;
-      border-radius: 8px;
+      box-shadow: none;
       .editForm {
         margin: 0px auto 0 auto;
         .el-form-item__label {

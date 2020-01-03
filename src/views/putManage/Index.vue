@@ -42,7 +42,7 @@ export default {
 
   methods: {
     changeTab() {
-      this.$router.push({
+      this.$router.replace({
         path: '/putManage',
         query: {
           active: this.activeName

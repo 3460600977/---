@@ -31,6 +31,9 @@
       </el-form-item>
     </el-form>
 
+
+
+
     <div class="query_result">
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
         <el-table-column prop="name" label="投放计划名称">
@@ -72,7 +75,8 @@
               <i class="iconfont icon-shuxingliebiaoxiangqing2 icon-color"></i>详情
             </span>
             <span class="icon-space hand">
-              <router-link :to="`/reportList/plan?campaignId=${scope.row.id}`">
+              <router-link 
+                :to="`/reportList/plan?campaignId=${scope.row.id}&planTime=${$tools.getFormatDate('YY-mm-dd', scope.row.beginTime)}~${$tools.getFormatDate('YY-mm-dd', scope.row.endTime)}`">
                 <i class="iconfont icon-baobiao icon-color"></i>报表
               </router-link>
             </span>
@@ -94,6 +98,8 @@
         class="list-page"
       ></el-pagination>
     </div>
+
+
 
     <el-dialog
       v-if="tableData.data.length > 0"

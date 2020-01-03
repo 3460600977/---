@@ -117,7 +117,11 @@
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column prop="startTime" label="投放时间"></el-table-column>
+        <el-table-column prop="startTime" label="投放时间" min-width="105">
+          <template slot-scope="scope">
+            <span class="report-time">{{scope.row[scope.column.property]}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="cost" label="花费数（元）" sortable="custom"></el-table-column>
         <el-table-column prop="showTimes" label="曝光数" sortable="custom"></el-table-column>
         <el-table-column prop="deviceNum" label="设备数" sortable="custom"></el-table-column>
@@ -273,6 +277,17 @@
 
       this.projectList.startTime = this.$tools.getMonthFirstDay();
       this.projectList.endTime = this.$tools.getMonthLastDay();
+      if (
+        this.$route.query.projectTime === "" ||
+        this.$route.query.projectTime === null ||
+        this.$route.query.projectTime === undefined
+      ) {
+
+      } else {
+        let projectTime = this.$route.query.projectTime.split('~')
+        this.projectList.startTime = projectTime[0];
+        this.projectList.endTime = projectTime[1];
+      }
       this.projectList.selectTime = [
         this.projectList.startTime,
         this.projectList.endTime
@@ -312,10 +327,8 @@
       handleSizeChange(size) {
         this.pageSize = size;
         this.getProjectList();
-        //console.log(`每页 ${size} 条`);
       },
       handleCurrentChange(currentPage) {
-        //console.log(`当前页: ${currentPage}`);
         this.pageIndex = currentPage;
         this.getProjectList();
       },
@@ -360,7 +373,7 @@
         this.$api.PutPlan.PlanNameList().then(res => {
           this.reportPlanList.data = res.result;
           this.reportPlanList.data.forEach(item => {
-            if (item.id === parseInt(this.projectList.campaignId)) {
+            if (parseInt(item.id) === parseInt(this.projectList.campaignId)) {
               this.projectList.selectPlan = item.name;
             }
           });
@@ -619,7 +632,7 @@
     padding: 30px 0 37px 38px;
     .report-divider {
       .el-divider {
-        background-color: $color-blue;
+        background-color: $color-main;
         border-radius: 2px;
         width: 3px;
         margin: 0 5px 0 0;
@@ -642,7 +655,7 @@
         margin: 2px 20px 0 0;
       }
       .el-select .el-input .el-select__caret {
-        color: $color-blue;
+        color: $color-main;
       }
     }
   }
@@ -683,7 +696,7 @@
         font-weight: normal;
       }
       &.select-box {
-        background: rgba(45, 90, 255, 1);
+        background: $color-main;
         box-shadow: 0px 13px 27px 0px rgba(45, 90, 255, 0.25);
         color: $color-bg-3;
       }
@@ -769,7 +782,7 @@
       .project-id {
         font-size: 14px;
         font-weight: 400;
-        color: $color-blue;
+        color: $color-origin-blue;
         text-decoration: none;
         cursor: pointer;
       }
@@ -787,6 +800,12 @@
       tr > td {
         background-color: $color-bg-3 !important;
       }
+      .report-time {
+        font-size: 14px;
+        font-weight: 400;
+        color: $color-text;
+        font-family: Microsoft YaHei;
+      }
     }
   }
   .report-page {
@@ -797,7 +816,7 @@
     height: 120px;
     margin-top: 30px;
     li.active {
-      background-color: $color-blue !important;
+      background-color: $color-main !important;
     }
   }
 </style>
