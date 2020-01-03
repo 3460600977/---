@@ -27,7 +27,6 @@
         defaultRadius: 3000,
         drawingManager: null,
         selectedBuildings: [], //当前选中楼盘
-        unSelectedBuildings: [], // 当前未选中楼盘
         pointsOptions: {
           0: {
             shape: BMAP_POINT_SHAPE_CIRCLE,
@@ -153,7 +152,6 @@
         this.activePath = null
         this.labelsArr = []
         this.selectedBuildings = [] //当前选中楼盘
-        this.unSelectedBuildings = [] // 当前未选中楼盘
         this.indexArr = []
         this.pathArr = {}
         this.map.clearOverlays()
@@ -675,7 +673,6 @@
        * */
       drawBg(selectP, unSelectP) {
         this.selectedBuildings = selectP
-        this.unSelectedBuildings = unSelectP
         this.drawPoints(selectP, unSelectP)
       },
       // 添加lable
