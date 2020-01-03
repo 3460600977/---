@@ -19,15 +19,16 @@
                 <el-form ref="loginForm" :model="loginForm" class="loginForm" :rules="rules">
                   <el-form-item prop="username">
                     <el-input prefix-icon="el-icon-user-solid"
-                              v-model="loginForm.username" placeholder="请输入账户"></el-input>
+                              v-model.trim="loginForm.username" placeholder="请输入账户"></el-input>
                   </el-form-item>
                   <el-form-item prop="password">
                     <el-input prefix-icon="el-icon-lock"
-                              v-model="loginForm.password" show-password placeholder="请输入密码"></el-input>
+                              v-model.trim="loginForm.password" show-password placeholder="请输入密码"></el-input>
                   </el-form-item>
                   <el-form-item class="loginCapture" prop="verifyValue">
-                    <el-input prefix-icon="el-icon-lock"
-                              v-model="loginForm.verifyValue" placeholder="请输入验证码"
+                    <el-input prefix-icon="el-icon-lock" maxlength="4" minlength="4"
+                              v-model.trim="loginForm.verifyValue"
+                              placeholder="请输入验证码"
                               @keyup.enter.native="onSubmit('loginForm')"></el-input>
                     <div class="captureNum">
                       <el-image :src="login_capture_img" @click="changeCaptureNUm">
@@ -56,6 +57,15 @@
   export default {
     name: 'login',
     data() {
+      var checkVerify = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入验证码'));
+        } else if (value.length !== 4) {
+          callback(new Error('验证码长度不一致'));
+        } else {
+          callback();
+        }
+      }
       return {
         imageWidth: 442,
         logo_img: require('../../assets/images/icon_red@2x.png'),
@@ -77,7 +87,7 @@
             {required: true, message: '请输入密码', trigger: ['blur', 'change']}
           ],
           verifyValue: [
-            {required: true, message: '请输入验证码', trigger: ['blur', 'change']}
+            {trigger: ['blur', 'change'], validator: checkVerify}
           ],
         }
       }
@@ -186,16 +196,25 @@
     .xinchao-logo {
       position: absolute;
       z-index: 3;
-      top: -15.5%;
+      top: -6.5%;
       left: -0.6%;
     }
     .logo-form {
       background: $color-bg-3;
       border-radius: 14px;
+      height: 520px;
+      margin-right: 30px;
+      .el-input__inner:hover {
+        border-color: #e5e7e9;
+      }
+      .el-form-item {
+        margin-bottom: 30px;
+      }
       .login-title {
         font-size: 32px;
         font-weight: 300;
         color: $color-table-title;
+        margin-top: 32px;
       }
       .login-des {
         font-size: 14px;
@@ -230,7 +249,7 @@
         height: 40px;
         background: $color-bg-3;
         border-radius: 20px;
-        margin: 50px 0;
+        margin: 86px 0 68px 0;
       }
       .el-loading-spinner {
         width: 320px;

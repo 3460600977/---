@@ -91,6 +91,14 @@ let tools = {
   },
 
 
+  /*
+   数组去重
+   */
+  unique(arr1, key) {
+    const res = new Map();
+    let result = arr1.filter((a) => !res.has(a[key]) && res.set(a[key], 1))
+    return result
+  },
 
   /**
    * @description: 数字转千位计数
@@ -181,7 +189,7 @@ let tools = {
       return result
     }
   },
-  
+
 
 
   /**
@@ -204,7 +212,7 @@ let tools = {
   },
 
 
-  
+
   // 数据补零
   padding(s, len) {
     const l = len - (s + '').length
@@ -215,7 +223,7 @@ let tools = {
   },
 
 
-  
+
   /**
    * @description: 格式化时间
    * @param: pageSize
