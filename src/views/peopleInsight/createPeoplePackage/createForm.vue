@@ -43,17 +43,39 @@
       submitForm(form) {
         this.$refs[form].validate((valid) => {
           if (valid) {
-            if (this.crowdProject.city === ""){
+            //拼接数据
+            //1 拼接tid  用于后台调用酷云
+            //2 拼接tagnames  用于人群分析的展示
+            //3 拼接city  分别在列表页以及人群分析展示(城市的名称)
+            let city = "";
+            let childTids = "";
+            this.crowdProject.tagNames.forEach((tags,index)=>{
+              if (tags.tid === this.crowdProject.cityTid) {
+                city = tags.tags[0].name;
+              }
+              childTids += "(";
+                tags.tags.forEach((tagInfo,tagIndex)=>{
+                childTids += tagInfo.tid;
+                if (tagIndex < tags.tags.length-1) {
+                  childTids += "|";
+                }
+              });
+              childTids += ")";
+              if (index < this.crowdProject.tagNames.length-1){
+                childTids += ",";
+              }
+            });
+
+            if (city === ""){
               this.$message({
                 type: 'warning',
                 message: '城市必选'
               });
               return false;
             }
-            //拼接数据
-            this.form.tags = this.crowdProject.tagTid.join(",");
+            this.form.tags = childTids;
             this.form.tagsName = JSON.stringify(this.crowdProject.tagNames);
-            this.form.city = this.crowdProject.city;
+            this.form.city = city;
             const h = this.$createElement;
             this.$msgbox({
               title: '是否创建人群包？',

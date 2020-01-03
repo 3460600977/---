@@ -79,11 +79,6 @@
     watch: {
       buildings(val) {
         this.initMap(val)
-        // if (val.length) {
-        //   this.initMap(val)
-        // } else {
-        //   // this.clearMap()
-        // }
       },
       activePath(val) {
         this.$emit('activePathChange', val)
@@ -118,7 +113,13 @@
         allList.forEach((item) => {
           this.points[item.premisesId].type = type
         })
+        this.jugDraw()
+      },
+      jugDraw() {
         this.drawDevicePoints()
+        if (!this.pointsOverlayObj.isShow) {
+          this.drawMarkers()
+        }
       },
       //批量永久增加楼盘数据
       addBatchItem(allList, type = 100) {
@@ -137,11 +138,11 @@
         })
         if (allList.length === 1) {
           if (!isSelected) {
-            this.drawDevicePoints()
+            this.jugDraw()
           }
           return isSelected
         } else {
-          this.drawDevicePoints()
+          this.jugDraw()
         }
       },
       // 清空pathArr数据 并且清楚覆盖物
@@ -174,6 +175,7 @@
             this.isInArea(this.pathArr[key])
           }
         }
+        this.pointsOverlayObj.isShow = true
         this.drawDevicePoints()
       },
       setCity(city) {
@@ -218,7 +220,6 @@
       },
       // 根据传入的以选中和未选中楼盘重新画数据
       drawPoints(selectP, unSelectP) {
-        this.pointsOverlayObj.isShow = true
         this.setDevicePoints(selectP, 0)
         this.setDevicePoints(unSelectP, 1)
       },
@@ -428,7 +429,7 @@
         this.isInArea(path)
         this.pathArr = {[path.index]: path, ...this.pathArr}
         this.indexArr[path.index] = path.index // 记录所有画过路径的index数组
-        this.drawDevicePoints()
+        this.jugDraw()
         this.activePath = this.pathArr[path.index]
       },
       /*
@@ -575,22 +576,42 @@
         })
       },
 
-      // 添加zoom后的marker
+      // 添加zoom后的marker 1表示放大后的加图标
       addMarker(point, type = 0) {  // 创建图标对象
-        var myIcon = new BMap.Icon(require('@/assets/images/icon_location2.png'), new BMap.Size(25, 32), {});
+        let src = ''
+        if (type === 0) {
+          src = require('@/assets/images/icon_location2.png')
+        } else {
+          if (point.type >= -1) {
+            src = require('@/assets/images/icon_location2.png')
+          } else {
+            src = require('@/assets/images/icon_ash_location.png')
+          }
+        }
+        var myIcon = new BMap.Icon(src, new BMap.Size(26, 32), {});
         // 创建标注对象并添加到地图
-        let marker = new BMap.Marker(type === 1? point.point: point, {
+        let marker = new BMap.Marker(point, {
           icon: myIcon,
           offset: new BMap.Size(0, -16),
         });
-        if (type === 1) {
-          this.markerArr.push(marker)
-          marker.addEventListener('click', (event) => {
-            this.$emit('buildingClick', point)
-          })
-        }
         this.map.addOverlay(marker);
 
+        if (type === 1) {
+          marker.addEventListener('click', (e) => {
+            e.preventDefault()
+            console.log(e)
+            // this.$emit('buildingClick', point)
+          })
+          marker.addEventListener('mouseover', () => {
+            if (this.currentSelectType === null && this.activePath === null) {
+              this.addLabel(point)
+            }
+          });
+          marker.addEventListener('mouseout',  () => {
+            this.removeLabels()
+          });
+          this.markerArr.push(marker)
+        }
         return marker
       },
 
@@ -610,8 +631,8 @@
       },
       removeMarkers() {
         if (!this.markerArr.length) return
-        this.markerArr.forEach((item) => {
-          this.map.removeOverlay(item)
+        this.markerArr.forEach((marker) => {
+          this.map.removeOverlay(marker)
         })
         this.markerArr = []
       },
@@ -626,17 +647,21 @@
         }
         this.pointsOverlayObj.isShow = !this.pointsOverlayObj.isShow
       },
+      drawMarkers() {
+        this.removeMarkers()
+        this.getVisualPoint()
+      },
       drawMarkersByVisual() {
         let zoom = this.map.getZoom()
         if (zoom >= this.showLabel) {
           if (this.pointsOverlayObj.isShow === true) {
             this.togglePoints(this.pointsOverlayObj.isShow)
           }
-          this.removeMarkers()
-          this.getVisualPoint()
+          this.drawMarkers()
         } else {
           if (this.pointsOverlayObj.isShow === false) {
             this.togglePoints(this.pointsOverlayObj.isShow)
+            this.drawDevicePoints()
           }
           this.removeMarkers()
         }
@@ -830,20 +855,6 @@
         if (this.currentSelectType === null && this.activePath === null) {
           this.addLabel(event.point)
         }
-        // let zoom = this.map.getZoom()
-        // if (zoom >= this.showLabel) {
-        //   this.labelsArr.forEach((item, index) => {
-        //     if (item.label.getPosition().equals(event.point.point)) {
-        //       if (this.labelsArr[index].isShow) {
-        //         this.labelsArr[index].label.hide()
-        //         this.labelsArr[index].isShow = false
-        //       } else {
-        //         this.labelsArr[index].label.show()
-        //         this.labelsArr[index].isShow = true
-        //       }
-        //     }
-        //   })
-        // }
       },
       pointEventClick(event) {
         this.$emit('buildingClick', event.point)

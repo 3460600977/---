@@ -1,5 +1,5 @@
 <template>
-  <div class="create-confirm">
+  <div v-loading.fullscreen.lock="project.loading" class="create-confirm">
     <!-- 倒计时30分钟 -->
     <PutMangeCard class="time-box mid">
       <div class="left-info font-16 mid">
@@ -12,7 +12,7 @@
         </template>
       </div>
 
-      <div v-loading="project.loading" class="right-time mid-center">
+      <div class="right-time mid-center">
         <div class="time mid-center">{{countDown.minute}}</div>
         <div class="split mid-center">:</div>
         <div class="time mid-center">{{countDown.second}}</div>
@@ -21,7 +21,7 @@
 
 
     <!-- 方案信息 -->
-    <PutMangeCard v-loading="project.loading">
+    <PutMangeCard>
       <div class="font-16" style="margin-bottom: 30px;">方案信息</div>
       <el-form class="info-form" label-position='left' label-width="150px">
         <el-form-item label="方案名称">
@@ -52,7 +52,7 @@
     </PutMangeCard>
 
     <!-- 点位信息 -->
-    <PutMangeCard v-loading="project.loading">
+    <PutMangeCard>
       <div class="font-16" style="margin-bottom: 30px;">点位信息</div>
        <!-- 楼盘定向->选中列表 -->
       <BuildList
@@ -62,7 +62,7 @@
 
 
     <!-- 总计 取消投放 确认并支付 -->
-    <PutMangeCard v-loading="project.loading">
+    <PutMangeCard>
       <div class="mid-between">
         <div>总计: <span class="color-red">¥ {{this.$tools.toThousands(estimatePriceValue / 100)}}</span></div>
         <div v-if="hasCanceled">
