@@ -60,6 +60,7 @@ service.interceptors.response.use(
           this.$router.replace('/login');
         })
       }
+      if(res.code === 100900)
       Notification({
         title: '警告',
         message: res.msg || '网络异常, 请稍后再试',
