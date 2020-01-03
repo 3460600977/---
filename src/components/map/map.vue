@@ -79,11 +79,6 @@
     watch: {
       buildings(val) {
         this.initMap(val)
-        // if (val.length) {
-        //   this.initMap(val)
-        // } else {
-        //   // this.clearMap()
-        // }
       },
       activePath(val) {
         this.$emit('activePathChange', val)
@@ -123,7 +118,7 @@
       jugDraw() {
         this.drawDevicePoints()
         if (!this.pointsOverlayObj.isShow) {
-          this.reDrawMarkers()
+          this.drawMarkers()
         }
       },
       //批量永久增加楼盘数据
@@ -652,7 +647,7 @@
         }
         this.pointsOverlayObj.isShow = !this.pointsOverlayObj.isShow
       },
-      reDrawMarkers() {
+      drawMarkers() {
         this.removeMarkers()
         this.getVisualPoint()
       },
@@ -662,7 +657,7 @@
           if (this.pointsOverlayObj.isShow === true) {
             this.togglePoints(this.pointsOverlayObj.isShow)
           }
-          this.reDrawMarkers()
+          this.drawMarkers()
         } else {
           if (this.pointsOverlayObj.isShow === false) {
             this.togglePoints(this.pointsOverlayObj.isShow)
