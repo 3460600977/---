@@ -429,7 +429,7 @@
         this.isInArea(path)
         this.pathArr = {[path.index]: path, ...this.pathArr}
         this.indexArr[path.index] = path.index // 记录所有画过路径的index数组
-        this.drawDevicePoints()
+        this.jugDraw()
         this.activePath = this.pathArr[path.index]
       },
       /*
