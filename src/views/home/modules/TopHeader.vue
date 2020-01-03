@@ -270,7 +270,7 @@
         this.username = userInfo.userName
       }
     },
-    
+
     beforeMount() {
       this.setActiveTopMenu()
     },
