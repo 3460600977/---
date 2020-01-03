@@ -18,9 +18,12 @@ export const scaleData = [
   { zoom: 3, length: 2000000, Pixels: 75 }
 ]
 
+
+
 export const colorMain = '#2D5AFF'
 
-// 创建方案所需常量
+
+
 export const projectConst = {
   // 投放类型，0按周投放，1按天投放
   putType: [
@@ -57,6 +60,8 @@ export const projectConst = {
   ]
 }
 
+
+
 // 第三方监测
 export const MonitorData = {
   mode: ['SDK'],
@@ -66,11 +71,15 @@ export const MonitorData = {
   ]
 }
 
+
+
 // 上屏文件类型，1：视频,2:图片
 export const fileType = [
   { name: '上传视频', value: 1 },
   { name: '上传图片', value: 2 },
 ]
+
+
 
 // 投放目的
 export const PutGoal = [
@@ -81,7 +90,9 @@ export const PutGoal = [
   { name: '新品上市', value: 4, icon: require('../assets/images/plan_title_red_4.png') }
 ]
 
-// 投放状态，0待投放，1投放中，2已完成，3已取消, 4未支付
+
+
+// 投放状态
 export const projectStatus = [
   { name: '待投放', value: '0' },
   { name: '投放中', value: '1' },
@@ -90,12 +101,26 @@ export const projectStatus = [
   { name: '待支付', value: '4' },
 ]
 
+
+
 // 投放预算分类
 export const Budget = [
   { name: '不限', value: 0 },
   { name: '指定预算', value: 1 }
 ]
+
+
+
+// 创意状态
+export const creativeStatus =  [
+  { name: '待审核', value: 0},
+  { name: '审核通过', value: 2},
+  { name: '审核拒绝', value: 1}
+]
+
+
 export const PAGE_SIZE = [10, 20, 30, 40, 50]
+
 
 // 审核拒绝原因
 export const DenyDialogReason = [
@@ -197,6 +222,7 @@ export const DenyDialogReason = [
     ]
   },
 ]
+
 
 // 菜单栏展示
 export const MenuList = [

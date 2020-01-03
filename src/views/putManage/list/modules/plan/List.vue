@@ -1,39 +1,11 @@
 <template>
   <div class="list">
 
-    <el-form :inline="true" class="list-form-inline clearfix">
-
-      <el-form-item class="line-space" label="投放计划名称">
-        <div slot="label">投放计划名称</div>
-        <el-select
-          @focus="getPlanNameList"
-          :loading="planNameList.loading"
-          v-model="searchParam.name"
-          placeholder="不限"
-          filterable
-          clearable>
-          <el-option
-            v-for="item in planNameList.data"
-            :key="item.id"
-            :label="item.name"
-            :value="item.name"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item class="list-query-button">
-        <el-button type="primary" plain @click="search">查询</el-button>
-      </el-form-item>
-
-      <el-form-item class="list-new-button">
-        <router-link to="/putManage/create/plan">
-          <el-button type="primary">新建投放计划</el-button>
-        </router-link>
-      </el-form-item>
-    </el-form>
+    <!-- 查询 -->
+    <searchCondition @searchByCondition="handleSearch" :searchType="'plan'"/>
 
 
-
-
+    <!-- 表格 分页 -->
     <div class="query_result">
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
         <el-table-column prop="name" label="投放计划名称">
@@ -88,6 +60,7 @@
           </template>
         </el-table-column>
       </el-table>
+
       <el-pagination
         background
         layout="total, sizes, prev, pager, next, jumper"
@@ -136,9 +109,16 @@
 </template>
 
 <script>
-import { PutGoal, projectConst, MonitorData } from '../../../../../utils/static'
+import searchCondition from '../../../templates/searchCondition'
+import { putManageMixin } from '../putManageMixin'
+import { PutGoal, projectConst, MonitorData } from '@/utils/static'
+
 export default {
   name: "planList",
+  mixins: [putManageMixin],
+  components: {
+    searchCondition
+  },
 
   props: {
     active: {
@@ -150,64 +130,28 @@ export default {
   data() {
     return {
       PutGoal, projectConst, MonitorData,
-      planNameList: {
-        loading: true,
-        data: []
-      },
-
-      searchParam: {
-        name: '',
-        pageIndex: '',
-        pageSize: '',
-        record: '',
-        startIndex: '',
-        startindex: '',
-        totalPageCount: ''
-      },
-
-      tableData: {
-        loading: true,
-        data: [],
-        page: {
-          currentPage: 0,
-          totalCount: 0
-        }
-      },
 
       detailDialog: {
         show: false,
         dataIndex: 0,
       },
-
     };
   },
 
-  beforeMount() {
-    this.search()
-  },
+
   methods: {
-    // 下拉框数据
-    getPlanNameList() {
-      if (this.planNameList.data.length > 0) return;
-      this.$api.PutPlan.PlanNameList()
-        .then(res => {
-          this.planNameList = {
-            loading: false,
-            data: res.result,
-          }
-        })
-        .catch(res => {
-          this.planNameList = {
-            loading: false,
-            data: []
-          }
-        })
-    },
 
     // 搜索
     search() {
+      let param = {
+        name: 'plan' in this.searchParam.condition ? this.searchParam.condition.plan.data.name : '',
+        pageIndex: this.searchParam.page.pageIndex,
+        pageSize: this.searchParam.page.pageSize
+      }
+
       this.tableData.loading = true;
-      this.$api.PutPlan.PlanList(this.searchParam)
+      
+      this.$api.PutPlan.PlanList(param)
         .then(res => {
           this.tableData = {
             loading: false,
@@ -225,19 +169,8 @@ export default {
             }
           }
         })
-    },
-
-
-    handleSizeChange(val) {
-      this.searchParam.pageSize = val;
-      this.searchParam.pageIndex = 0;
-      this.search()
-    },
-
-    handleCurrentChange(val) {
-      this.searchParam.pageIndex = val;
-      this.search()
     }
+
   }
 };
 </script>

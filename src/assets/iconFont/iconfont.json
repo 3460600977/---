@@ -83,6 +83,13 @@
       "unicode_decimal": 59106
     },
     {
+      "icon_id": "4933152",
+      "name": "对号01",
+      "font_class": "duihao",
+      "unicode": "e6c6",
+      "unicode_decimal": 59078
+    },
+    {
       "icon_id": "5023197",
       "name": "提示",
       "font_class": "tishi",

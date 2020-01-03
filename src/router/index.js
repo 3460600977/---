@@ -33,7 +33,11 @@ const router = new Router({
     
     {path: '/login', component: () => import('@/views/login/login')},
     
+    // 销售人员跳转登陆
     {path: '/tokenLogin', component: () => import('@/views/login/login')},
+
+    // 审核人员跳转登录
+    {path: '/auditorLogin', component: () => import('@/views/login/login')},
     
     {path: '/404', component: () => import('@/views/errorPage/404')},
     
