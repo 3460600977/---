@@ -174,9 +174,9 @@
        * 右侧信息覆盖位移
        */
       hoverRightMsg(index) {
-        if (index === 2) {
+        // if (index === 2) {
           this.rightMsg.dropMenuShow = true;
-        }
+        // }
         this.rightMsg.hoverBlock.style = {
           width: this.rightMsg.hoverBlock.width[index],
           transform: `translateX(${index * 70}px)`,
