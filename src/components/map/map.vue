@@ -11,6 +11,7 @@
     name: "index",
     data() {
       return {
+        markerArr: [], // 存储marker覆盖物的变量 用于清除marker
         isInit: true, // 控制只初始化促发事件
         labelsArr: [], // 存储label覆盖物的变量 用于清楚label
         map: null,
@@ -19,7 +20,8 @@
         indexArr: [],
         pointsOverlayObj: { // 记录已选和未选海量点的对象 用于重画
           selectedOverlay: null,
-          unSelectedOverlay: null
+          unSelectedOverlay: null,
+          isShow: false
         },
         showLabel: 18,
         heatmapOverlay: null,
@@ -27,7 +29,6 @@
         defaultRadius: 3000,
         drawingManager: null,
         selectedBuildings: [], //当前选中楼盘
-        unSelectedBuildings: [], // 当前未选中楼盘
         pointsOptions: {
           0: {
             shape: BMAP_POINT_SHAPE_CIRCLE,
@@ -77,12 +78,12 @@
     },
     watch: {
       buildings(val) {
-        // this.clearMap()
-        if (val.length) {
-          this.initMap(val)
-        } else {
-          this.clearMap()
-        }
+        this.initMap(val)
+        // if (val.length) {
+        //   this.initMap(val)
+        // } else {
+        //   // this.clearMap()
+        // }
       },
       activePath(val) {
         this.$emit('activePathChange', val)
@@ -112,28 +113,44 @@
       this.mapBindEvent()
     },
     methods: {
-      //批量删除楼盘数据,只是创建方案，楼盘数据使用
-      deleteBathItem(allList) {
-        allList.forEach(item => {
-          this.unSelectedBuildings.push(item)
-        });
-        this.selectedBuildings = [];
-        this.drawPoints(this.selectedBuildings, this.unSelectedBuildings)
+      //批量永久删除楼盘数据
+      deleteBathItem(allList, type = -3) {
+        allList.forEach((item) => {
+          this.points[item.premisesId].type = type
+        })
+        this.jugDraw()
       },
-      //批量增加楼盘数据,只是创建方案，楼盘数据使用
-      addBatchItem(allList) {
-        allList.forEach(item => {
-          this.selectedBuildings.push(item)
-        });
-        for (let i = 0; i < this.unSelectedBuildings.length; i++) {
-          for (let j = 0; j < allList.length; j++) {
-            if (allList[j].premisesId === this.unSelectedBuildings[i].premisesId) {
-              this.unSelectedBuildings.splice(i, 1)
-              break;
-            }
-          }
+      jugDraw() {
+        let isShow = this.pointsOverlayObj.isShow
+        this.drawDevicePoints()
+        this.pointsOverlayObj.isShow = isShow
+        if (!this.pointsOverlayObj.isShow) {
+          this.reDrawMarkers()
         }
-        this.drawPoints(this.selectedBuildings, this.unSelectedBuildings)
+      },
+      //批量永久增加楼盘数据
+      addBatchItem(allList, type = 100) {
+        let isSelected = false
+        allList.forEach((item) => {
+          if (this.points[item.premisesId]) {
+            if (this.points[item.premisesId].type >= -1) {
+              this.points[item.premisesId].type = type
+              isSelected = true
+            } else {
+              this.points[item.premisesId].type = type
+            }
+          } else {
+            this.points[item.premisesId] = {point: new BMap.Point(item.lng, item.lat), ...item, type: type}
+          }
+        })
+        if (allList.length === 1) {
+          if (!isSelected) {
+            this.jugDraw()
+          }
+          return isSelected
+        } else {
+          this.jugDraw()
+        }
       },
       // 清空pathArr数据 并且清楚覆盖物
       clearPathArr() {
@@ -149,20 +166,20 @@
         this.activePath = null
         this.labelsArr = []
         this.selectedBuildings = [] //当前选中楼盘
-        this.unSelectedBuildings = [] // 当前未选中楼盘
         this.indexArr = []
         this.pathArr = {}
         this.map.clearOverlays()
         this.pointsOverlayObj = {
           selectedOverlay: null,
-          unSelectedOverlay: null
+          unSelectedOverlay: null,
+          isShow: false
         }
       },
       initMap(val) {
         this.points = this.normalizePointsAll(val)
         if (Object.keys(this.pathArr).length) {
           for(let key in this.pathArr) {
-            this.pathArr[key].buildings = this.isInArea(this.pathArr[key])
+            this.isInArea(this.pathArr[key])
           }
         }
         this.drawDevicePoints()
@@ -198,28 +215,7 @@
         //   }
         // });
       },
-      // 添加弹窗覆盖物
-      drawLabels(arr) {
-        arr.forEach((item, index) => {
-          this.addLabel(item)
-        })
-      },
-      /*
-       * 像已选楼盘中添加楼盘
-       * */
-      addItem(item) {
-        let isExist = false
-        isExist = this.checkPointIsExist(item, this.selectedBuildings) !== -1 ? true : false
 
-        if (!isExist) { // 如果item没在当前选中的楼盘中
-          this.addPointInSelectedBuildings(item)
-        }
-        setTimeout(() => {
-          this.drawPoints(this.selectedBuildings, this.unSelectedBuildings)
-        }, 0)
-
-        return isExist
-      },
       // 判断一个点是否在可视区域内
       addSigleLabel(item) {
         let bounds = this.map.getBounds()
@@ -228,40 +224,9 @@
           this.addLabel(item)
         }
       },
-      // 像已选楼盘中加一个点，并且如果他存在在未选楼盘中将他删除
-      addPointInSelectedBuildings(item) {
-        let index = this.checkPointIsExist(item, this.points)
-        if (index === -1) { // 如果不在当前楼盘列表中 添加他的label
-          this.addSigleLabel(item)
-        }
-        let i = this.checkPointIsExist(item, this.unSelectedBuildings)
-        if (i !== -1) { // 如果在未选中楼盘列表中 将他删除
-          this.unSelectedBuildings.splice(i, 1)
-        }
-        this.selectedBuildings.push({point: new BMap.Point(item.lng, item.lat), ...item})
-      },
-      // 检测某一个点是否已存在在已选楼盘中
-      checkPointIsExist(item, arr) {
-        let i = arr.findIndex((val) => {
-          return val.premisesId === item.premisesId
-        })
-        return i
-      },
-      /*
-       * 在已选楼盘中删除选中的点
-       * */
-      deleteItem(item) {
-        for (let i = 0; i < this.selectedBuildings.length; i++) {
-          if (item.premisesId === this.selectedBuildings[i].premisesId) {
-            this.selectedBuildings.splice(i, 1)
-            break;
-          }
-        }
-        this.unSelectedBuildings.push(item)
-        this.drawPoints(this.selectedBuildings, this.unSelectedBuildings)
-      },
       // 根据传入的以选中和未选中楼盘重新画数据
       drawPoints(selectP, unSelectP) {
+        this.pointsOverlayObj.isShow = true
         this.setDevicePoints(selectP, 0)
         this.setDevicePoints(unSelectP, 1)
       },
@@ -288,6 +253,22 @@
       setActivePathNull() {
         this.activePath = null
       },
+      // 将背景点中type为x的设置成y 如果x为null则将所有可修改背景点type替换成y
+      changePathPointType(x, y) {
+        if (x === null) {
+          Object.values(this.points).forEach((item) => {
+            if (this.judgePointType(item)) {
+              item.type = y
+            }
+          })
+        } else {
+          Object.values(this.points).forEach((item) => {
+            if (item.type === x) {
+              item.type = y
+            }
+          })
+        }
+      },
       /*
        *  删除当前选中的path
        * */
@@ -299,6 +280,11 @@
         delete this.pathArr[item.index]
         this.pathArr = {...this.pathArr}
         this.setActivePathNull()
+        if (Object.keys(this.pathArr).length) {
+          this.changePathPointType(item.index, -2)
+        } else {
+          this.changePathPointType(null, -1)
+        }
         this.drawDevicePoints()
       },
       /*
@@ -323,7 +309,7 @@
       changeActivePathRadius(val) {
         this.activePath.radius = val
         this.zoomSinglePathChange(this.activePath)
-        this.activePath.buildings = this.isInArea(this.activePath)
+        this.isInArea(this.activePath)
         this.pathArr[this.activePath.index] = this.activePath
         this.drawDevicePoints()
         this.activePath = Object.assign({}, this.activePath)
@@ -376,17 +362,51 @@
         this.overlayBindEvent(ol)
         this.getPopUpData(ol)
       },
+      // 判断数组中数据是够全等
+      isAllEqual(array) {
+        if (array.length > 0) {
+          return array.every(function(value) {
+            return value.equals(array[0]);
+          });
+        } else {
+          return true;
+        }
+      },
+      // 当前选点不规范时提示并取消选点
+      drawErrorTip(e) {
+        let p = e.overlay.getPath()
+        if (p.length === 1 || this.isAllEqual(p)) {
+          this.$notify({
+            title: '警告',
+            message: '当前选点的位置太接近，无法进行地图选点！',
+            type: 'warning'
+          });
+          this.$emit('drawCancle')
+          return false
+        }
+        if (e.drawingMode === "polygon" && p.length === 2) {
+          this.$notify({
+            title: '警告',
+            message: '多边形至少进行三次选点才能形成有效选点区域！',
+            type: 'warning'
+          });
+          this.$emit('drawCancle')
+          this.map.removeOverlay(e.overlay)
+          return false
+        }
+        return  true
+      },
       /*
        *折线和多边形画线完成回调函数
        */
       drawComplete(drawingManager) {
         drawingManager.addEventListener("overlaycomplete", (e) => {
+          if (!this.drawErrorTip(e)) return
           let location = this.map.pixelToPoint(e.currentTarget._mask._draggingMovePixel)
           let path = {
             type: e.drawingMode,
             overlay: e.overlay,
             location: location, // 结束绘制时鼠标的经纬度位置用于显示弹窗位置
-            isShow: true,
             index: this.indexArr.length, // 即将是pathArr的第几个元素
             radius: this.defaultRadius, // 这里只有折线会用这个属性，折线的直径就是defaultRadius的两倍
             points: e.overlay.getPath()
@@ -413,40 +433,41 @@
        整理得到弹窗所需数据
        */
       getPopUpData(path) {
-        path.buildings = this.isInArea(path)
+        this.isInArea(path)
         this.pathArr = {[path.index]: path, ...this.pathArr}
-        // this.pathArr[path.index] = path
         this.indexArr[path.index] = path.index // 记录所有画过路径的index数组
         this.drawDevicePoints()
         this.activePath = this.pathArr[path.index]
       },
       /*
-       根据楼盘数据 计算出楼盘数据所覆盖的设备数，设备数，预估覆盖人次
-       */
-      getBuildingData(path) {
-        let obj = {deviceCount: 0, coveredPeople: 0}
-        path.buildings.forEach((item) => {
-          obj.deviceCount += item.signElevatorNum
-          obj.coveredPeople += item.totalPeople
-        })
-        path.deviceCount = obj.deviceCount
-        path.coveredPeople = obj.coveredPeople
-      },
-      /*
        得出在当前操作路径区域内的点
        */
       isInArea(path) {
-        let arr = []
+        let arr = [], points = this.points
         if (path.type === 'polyline') {
-          arr = this.filterProjectByPolyline(this.points, path.overlay, path.radius)
+          this.filterProjectByPolyline(this.points, path.overlay, path.radius, path.index)
         } else if (path.type === 'polygon') {
-          arr = this.points.filter((item) => {
-            return BMapLib.GeoUtils.isPointInPolygon(item.point, path.overlay)
-          })
+          for(let key in points) {
+            if (points[key].type < 0 && this.judgePointType(points[key])) {
+              let b = points[key].point;
+              if (BMapLib.GeoUtils.isPointInPolygon(b, path.overlay)) {
+                points[key].type = path.index
+              } else {
+                points[key].type = -2
+              }
+            }
+          }
         } else if (path.type === 'circle') {
-          arr = this.points.filter((item) => {
-            return BMapLib.GeoUtils.isPointInCircle(item.point, path.overlay)
-          })
+          for(let key in points) {
+            if (points[key].type < 0 && this.judgePointType(points[key])) {
+              let b = points[key].point;
+              if (BMapLib.GeoUtils.isPointInCircle(b, path.overlay)) {
+                points[key].type = path.index
+              } else {
+                points[key].type = -2
+              }
+            }
+          }
         }
         return arr
       },
@@ -482,30 +503,34 @@
         return polygon;
       },
 
-      /*
-       数组去重
-       */
-      unique(arr1) {
-        const res = new Map();
-        let result = arr1.filter((a) => !res.has(a.premisesId) && res.set(a.premisesId, 1))
-        return result
+      // 根据type判断当前点是否可以被改变
+      judgePointType(item) {
+        if (item.type !== -3 && item.type !== 100) {
+          return true
+        } else {
+          return  false
+        }
       },
       /*
        折现判断点位是否在区域内
        */
-      filterProjectByPolyline(points, overlay, radius) {
+      filterProjectByPolyline(points, overlay, radius, index) {
         let polyline = overlay.getPath();
         let len = polyline.length;
 
         //圆形计算
-        let filterPs = [];
         for (let i in polyline) {
           let circle = new BMap.Circle(polyline[i], radius, this.styleOptions);
-          let filterP = points.filter((p) => {
-            let b = p.point;
-            return BMapLib.GeoUtils.isPointInCircle(b, circle);
-          });
-          filterPs = [...filterP, ...filterPs];
+          for(let key in points) {
+            if (points[key].type < 0 && this.judgePointType(points[key])) {
+              let b = points[key].point;
+              if (BMapLib.GeoUtils.isPointInCircle(b, circle)) {
+                points[key].type = index
+              } else {
+                points[key].type = -2
+              }
+            }
+          }
         }
         // 未选 多边形计算
         let polygons = [];
@@ -520,19 +545,17 @@
           polygons.push(this.getFourP(lat1, lng1, lat2, lng2, radius));
         }
         for (let j in polygons) {
-          let filterP = points.filter((p) => {
-            return BMapLib.GeoUtils.isPointInPolygon(p.point, polygons[j]);
-          });
-          filterPs = [...filterP, ...filterPs];
+          for(let key in points) {
+            if (points[key].type < 0 && this.judgePointType(points[key])) {
+              let b = points[key].point;
+              if (BMapLib.GeoUtils.isPointInPolygon(b, polygons[j])) {
+                points[key].type = index
+              } else {
+                points[key].type = -2
+              }
+            }
+          }
         }
-        let result = this.unique(filterPs)
-        return result
-      },
-
-      closePathWindow(arr) {
-        arr.forEach((item) => {
-          item.isShow = false
-        })
       },
 
       zoomChangeAllPath() {
@@ -553,12 +576,58 @@
         }
       },
 
+      // 添加marker覆盖物
+      drawMarker(arr) {
+        arr.forEach((item, index) => {
+          this.addMarker(item, 1)
+        })
+      },
+
+      // 添加zoom后的marker 1表示放大后的加图标
+      addMarker(point, type = 0) {  // 创建图标对象
+        let src = ''
+        if (type === 0) {
+          src = require('@/assets/images/icon_location2.png')
+        } else {
+          if (point.type >= -1) {
+            src = require('@/assets/images/icon_location2.png')
+          } else {
+            src = require('@/assets/images/icon_ash_location.png')
+          }
+        }
+        var myIcon = new BMap.Icon(src, new BMap.Size(26, 32), {});
+        // 创建标注对象并添加到地图
+        let marker = new BMap.Marker(point, {
+          icon: myIcon,
+          offset: new BMap.Size(0, -16),
+        });
+        this.map.addOverlay(marker);
+
+        if (type === 1) {
+          marker.addEventListener('click', (e) => {
+            e.preventDefault()
+            console.log(e)
+            // this.$emit('buildingClick', point)
+          })
+          marker.addEventListener('mouseover', () => {
+            if (this.currentSelectType === null && this.activePath === null) {
+              this.addLabel(point)
+            }
+          });
+          marker.addEventListener('mouseout',  () => {
+            this.removeLabels()
+          });
+          this.markerArr.push(marker)
+        }
+        return marker
+      },
+
       getVisualPoint() {
         let bounds = this.map.getBounds()
-        let arr = this.points.filter((item) => {
+        let arr = Object.values(this.points).filter((item) => {
           return bounds.containsPoint(item.point)
         })
-        this.drawLabels(arr)
+        this.drawMarker(arr)
       },
       removeLabels() {
         if (!this.labelsArr.length) return
@@ -567,13 +636,41 @@
         })
         this.labelsArr = []
       },
-      drawLabelsByVisual() {
+      removeMarkers() {
+        if (!this.markerArr.length) return
+        this.markerArr.forEach((marker) => {
+          this.map.removeOverlay(marker)
+        })
+        this.markerArr = []
+      },
+
+      togglePoints(type) {
+        if (type) {
+          this.pointsOverlayObj.selectedOverlay && this.pointsOverlayObj.selectedOverlay.hide()
+          this.pointsOverlayObj.unSelectedOverlay && this.pointsOverlayObj.unSelectedOverlay.hide()
+        } else {
+          this.pointsOverlayObj.selectedOverlay && this.pointsOverlayObj.selectedOverlay.show()
+          this.pointsOverlayObj.unSelectedOverlay && this.pointsOverlayObj.unSelectedOverlay.show()
+        }
+        this.pointsOverlayObj.isShow = !this.pointsOverlayObj.isShow
+      },
+      reDrawMarkers() {
+        this.removeMarkers()
+        this.getVisualPoint()
+      },
+      drawMarkersByVisual() {
         let zoom = this.map.getZoom()
         if (zoom >= this.showLabel) {
-          this.removeLabels()
-          this.getVisualPoint()
+          if (this.pointsOverlayObj.isShow === true) {
+            this.togglePoints(this.pointsOverlayObj.isShow)
+          }
+          this.reDrawMarkers()
         } else {
-          this.removeLabels()
+          if (this.pointsOverlayObj.isShow === false) {
+            this.togglePoints(this.pointsOverlayObj.isShow)
+            this.drawDevicePoints()
+          }
+          this.removeMarkers()
         }
       },
       removeEvent() {
@@ -594,7 +691,7 @@
         }
       },
       mapZoomEnd() {
-        this.drawLabelsByVisual()
+        this.drawMarkersByVisual()
         this.zoomChangeAllPath()
       },
       mapMouseMove(event) {
@@ -611,7 +708,7 @@
         this.initHotMap()
       },
       mapBindEvent() {
-        this.map.addEventListener('dragend', this.drawLabelsByVisual)
+        this.map.addEventListener('dragend', this.drawMarkersByVisual)
         this.map.addEventListener('zoomend', this.mapZoomEnd)
         this.map.addEventListener('click', this.mapLeftClick)
         this.map.addEventListener('mousemove', this.mapMouseMove)
@@ -641,16 +738,16 @@
         this.getPopUpData(path)
         this.overlayBindEvent(path)
       },
-      addMarker(point) {  // 创建图标对象
-        var myIcon = new BMap.Icon(require('@/assets/images/icon_location.png'), new BMap.Size(12, 22), {});
-        // 创建标注对象并添加到地图
-        let marker = new BMap.Marker(point, {
-          icon: myIcon,
-          offset: new BMap.Size(6, -11),
-        });
-        this.map.addOverlay(marker);
-        return marker
-      },
+      // addMarker(point) {  // 创建图标对象
+      //   var myIcon = new BMap.Icon(require('@/assets/images/icon_location.png'), new BMap.Size(12, 22), {});
+      //   // 创建标注对象并添加到地图
+      //   let marker = new BMap.Marker(point, {
+      //     icon: myIcon,
+      //     offset: new BMap.Size(0, -11),
+      //   });
+      //   this.map.addOverlay(marker);
+      //   return marker
+      // },
       // 隐藏热力图
       hideHotMap() {
         if (this.heatmapOverlay) {
@@ -662,58 +759,29 @@
           this.heatmapOverlay.show();
         }
       },
-      // 热力图
-      drawHotMap(arr) {
-        this.heatmapOverlay.setDataSet({data:arr, max:100});
-      },
+
       normalizePointsAll(arr) {
-        let result = arr.map((item) => {
-          return {point: new BMap.Point(item.lng, item.lat), ...item}
+        let obj = {}
+        arr.forEach((item) => {
+          obj[item.premisesId] = {point: new BMap.Point(item.lng, item.lat), ...item, type: -1}
         })
-        return result
+        return obj
       },
       /*
        * 根据预算随机得到已选的楼盘数据
        * */
       drawDevicePoints() {
-        if (!Object.keys(this.pathArr).length) {
-          if (this.budget === 1) {
-            this.drawBg(this.points, [])
+        let selectP = [], unSelectP = []
+
+        Object.values(this.points).forEach((item) => {
+          if (item.type < -1) {
+            unSelectP.push(item)
           } else {
-            let [selectP, unSelectP] = this.getRandomBuildings(this.points, this.budget)
-            this.drawBg(selectP, unSelectP)
-          }
-        } else {
-          let selectedBuildings = []
-          if (this.budget === 1) {
-            for (let key in this.pathArr) {
-              this.pathArr[key].selectedBuildings = this.pathArr[key].buildings
-              selectedBuildings = selectedBuildings.concat(this.pathArr[key].selectedBuildings)
-            }
-          } else {
-            for (let key in this.pathArr) {
-              this.pathArr[key].selectedBuildings = this.getRandomBuildings(this.pathArr[key].buildings, this.budget)[0]
-              selectedBuildings = selectedBuildings.concat(this.pathArr[key].selectedBuildings)
-            }
-          }
-          let result = this.unique(selectedBuildings)
-          this.separateBgPonits(result)
-        }
-      },
-      /*
-       * 根据当前选中的点 将背景点分为已选和未选 然后分别绘画
-       * */
-      separateBgPonits(arr) {
-        let selected = {}, unSelected = {}
-        arr.forEach((item) => {
-          selected[item.premisesId] = item
-        })
-        this.points.forEach((item) => {
-          if (!selected[item.premisesId]) {
-            unSelected[item.premisesId] = item
+            selectP.push(item)
           }
         })
-        this.drawBg(Object.values(selected), Object.values(unSelected))
+
+        this.drawBg(selectP, unSelectP)
       },
       /*
        * 传已选及未选的点画背景点
@@ -723,34 +791,7 @@
        * */
       drawBg(selectP, unSelectP) {
         this.selectedBuildings = selectP
-        this.unSelectedBuildings = unSelectP
         this.drawPoints(selectP, unSelectP)
-      },
-      /*
-       * 根据pointsOverlayObj里面存在的背景海量点 清空海量点图层
-       * */
-      clearPoints() {
-        for (let key in this.pointsOverlayObj) {
-          if (this.pointsOverlayObj[key]) {
-            this.pointsOverlayObj[key].clear()
-          }
-        }
-      },
-      /*
-       * 得到已选的楼盘数据
-       * */
-      getRandomBuildings(arr, percent) {
-        let arrCopy = this.$tools.deepCopy(arr),
-          len = arr.length,
-          num = len * percent,
-          result = []
-
-        while (result.length < num) {
-          let val = parseInt(Math.random() * arrCopy.length, 10)
-          result.push(arrCopy[val])
-          arrCopy.splice(val, 1)
-        }
-        return [result, arrCopy]
       },
       // 添加lable
       addLabel(point) {
@@ -802,34 +843,28 @@
         `
         //用于设置样式
         let label = new BMap.Label(content, {
-          offset: new BMap.Size(-5, -15),
+          offset: new BMap.Size(-5, -32),
           position: point.point
         });
         label.setStyle(labelStyle);
 
-        label.addEventListener('click', (event) => {
-          this.$emit('buildingClick', point)
-        })
+        // label.addEventListener('click', (event) => {
+        //   this.$emit('buildingClick', point)
+        // })
         this.labelsArr.push({label: label, isShow: true})
         this.map.addOverlay(label)
       },
-
+      pointEventOut(event) {
+        this.removeLabels()
+      },
       // 为海量点添加点击事件
       pointEvent(event) {
-        let zoom = this.map.getZoom()
-        if (zoom >= this.showLabel) {
-          this.labelsArr.forEach((item, index) => {
-            if (item.label.getPosition().equals(event.point.point)) {
-              if (this.labelsArr[index].isShow) {
-                this.labelsArr[index].label.hide()
-                this.labelsArr[index].isShow = false
-              } else {
-                this.labelsArr[index].label.show()
-                this.labelsArr[index].isShow = true
-              }
-            }
-          })
+        if (this.currentSelectType === null && this.activePath === null) {
+          this.addLabel(event.point)
         }
+      },
+      pointEventClick(event) {
+        this.$emit('buildingClick', event.point)
       },
       /*
        * 画背景点方法 0：已选 1：未选
@@ -841,10 +876,14 @@
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
           this.map.addOverlay(pointsOverlay);
-          pointsOverlay.addEventListener('click',  this.pointEvent);
+          pointsOverlay.addEventListener('mouseover',  this.pointEvent);
+          pointsOverlay.addEventListener('mouseout',  this.pointEventOut);
+          pointsOverlay.addEventListener('click',  this.pointEventClick);
         } else {
           if (points.length === 0) {
-            this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointEvent);
+            this.pointsOverlayObj[overlay].removeEventListener('mouseover',  this.pointEvent);
+            this.pointsOverlayObj[overlay].removeEventListener('mouseout',  this.pointEventOut);
+            this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointEventClick);
             this.pointsOverlayObj[overlay].clear()
           } else {
             this.pointsOverlayObj[overlay].clear()
@@ -867,3 +906,17 @@
     background: #fff;
   }
 </style>
+
+<!-- -1 表示最开始进来没有做任何操作的全部选中-->
+
+<!-- -2 选点区域计算后没选中的点（一般的未选中的点，之后可以被重新选中）-->
+
+<!-- -3  被删除的点（永远不会被选中的点）-->
+
+<!--index 表示当前第几个选点的选中-->
+
+<!--100 表示不做删除操作永远都会被选中的点-->
+
+<!-- >=-1 表示选中 <-1 表示未选中-->
+
+<!-- <0 并且 != -3 并且 != 100 的点可以被地图选点操作选中-->

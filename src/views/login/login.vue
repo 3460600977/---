@@ -15,19 +15,20 @@
             <el-main>
               <div class="login-form-box">
                 <h3 class="login-title">欢迎登录</h3>
-                <label class="login-des">HI,欢迎使用新潮传媒-数字化刊播平台</label>
+                <label class="login-des">HI,欢迎使用新潮传媒-生活圈智投平台</label>
                 <el-form ref="loginForm" :model="loginForm" class="loginForm" :rules="rules">
                   <el-form-item prop="username">
                     <el-input prefix-icon="el-icon-user-solid"
-                              v-model="loginForm.username" placeholder="请输入账户"></el-input>
+                              v-model.trim="loginForm.username" placeholder="请输入账户"></el-input>
                   </el-form-item>
                   <el-form-item prop="password">
                     <el-input prefix-icon="el-icon-lock"
-                              v-model="loginForm.password" show-password placeholder="请输入密码"></el-input>
+                              v-model.trim="loginForm.password" show-password placeholder="请输入密码"></el-input>
                   </el-form-item>
                   <el-form-item class="loginCapture" prop="verifyValue">
-                    <el-input prefix-icon="el-icon-lock"
-                              v-model="loginForm.verifyValue" placeholder="请输入验证码"
+                    <el-input prefix-icon="el-icon-lock" maxlength="4" minlength="4"
+                              v-model.trim="loginForm.verifyValue"
+                              placeholder="请输入验证码"
                               @keyup.enter.native="onSubmit('loginForm')"></el-input>
                     <div class="captureNum">
                       <el-image :src="login_capture_img" @click="changeCaptureNUm">
@@ -51,15 +52,25 @@
 </template>
 
 <script>
-  import { setUserInfo } from '@/utils/auth';
+  import { setUserInfo, setMenuList } from '@/utils/auth';
 
   export default {
     name: 'login',
     data() {
+      var checkVerify = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入验证码'));
+        } else if (value.length !== 4) {
+          callback(new Error('验证码长度不一致'));
+        } else {
+          callback();
+        }
+      }
+
       return {
         imageWidth: 442,
-        logo_img: require('../../assets/images/icon_left@2x.png'),
-        logo_back_img: require('../../assets/images/img_bg@2x.png'),
+        logo_img: require('../../assets/images/icon_red@2x.png'),
+        logo_back_img: require('../../assets/images/icon_bg@2x.png'),
         login_capture_img: '',
         loginForm: {
           username: '',
@@ -68,7 +79,7 @@
           verifyValue: ''
         },
         loading: false,
-        pageLoading: true, // 整个页面转圈, token登录用
+        pageLoading: true, // 整个页面转圈, 跳转登录用
         rules: {
           username: [
             {required: true, message: '请输入账号名', trigger: ['blur', 'change']},
@@ -77,34 +88,45 @@
             {required: true, message: '请输入密码', trigger: ['blur', 'change']}
           ],
           verifyValue: [
-            {required: true, message: '请输入验证码', trigger: ['blur', 'change']}
+            {trigger: ['blur', 'change'], validator: checkVerify}
           ],
         }
       }
     },
+
     computed: {
       loginFormWidth: function () {
         return this.imageWidth * 2 + 20;
       },
-      isTokenLogin() {
+
+      isSaleLogin() {
         return !!this.$route.query.advertiserId && !!this.$route.query.saleAccessToken
+      },
+
+      isAuditorLogin() {
+        return !!this.$route.query.blmToken
       }
+
+
     },
 
     beforeMount() {
-      if (this.isTokenLogin) {
-        this.tokenLogin()
-      } else {
-        this.pageLoading = false;
+      if (this.isSaleLogin) {
+        return this.saleLogin()
       }
+      if (this.isAuditorLogin) {
+        return this.auditorLogin()
+      }
+      this.pageLoading = false;
     },
 
     mounted() {
-      if (!this.isTokenLogin) {
+      if (!this.isSaleLogin) {
         this.changeCaptureNUm()
       }
 
     },
+
     methods: {
       onSubmit(formName) {
         //登录表框的验证
@@ -122,10 +144,23 @@
             this.loading = true;
             this.$api.Login.LoginIn(param).then(res => {
               let info = res.result
-              this.$router.replace({path: '/home', query: {}})
               this.loading = false;
               this.$store.commit('setToken', info.token)
               setUserInfo(info)
+              let menuList = []
+              menuList = this.$tools.getAllMenuList(info.menu, menuList)
+              setMenuList(menuList)
+              let audit = false
+              menuList.forEach(item => {
+                if (item.code === '1600' && item.selected) {
+                  audit = true
+                }
+              })
+              if (audit) {
+                this.$router.push({path: '/auditList', query: {}})
+              } else {
+                this.$router.push({path: '/home', query: {}})
+              }
             }).catch(res => {
               this.loading = false;
             })
@@ -133,14 +168,14 @@
         });
       },
 
-      // 根据url中token和id登录
-      tokenLogin() {
+
+      // 销售登录
+      saleLogin() {
         let param = {
           advertiserId: this.$route.query.advertiserId,
           saleAccessToken: this.$route.query.saleAccessToken
         }
-        this.$api.Login.LoginInByToken(param).then(res => {
-          console.log(res.result)
+        this.$api.Login.SaleLogin(param).then(res => {
           let info = res.result
           this.pageLoading = false;
           this.$router.replace({
@@ -156,8 +191,31 @@
         })
       },
 
+
+      // 审核登录
+      auditorLogin() {
+        let param = {
+          blmToken: this.$route.query.blmToken,
+        }
+        this.$api.Login.AuditorLogin(param).then(res => {
+          let info = res.result
+          this.pageLoading = false;
+          this.$router.replace({
+            path: '/home',
+            query: {}
+          })
+          this.loading = false;
+          this.$store.commit('setToken', info.token)
+          setUserInfo(info)
+        }).catch(res => {
+          this.pageLoading = false;
+          this.changeCaptureNUm()
+        })
+      },
+
+
+      //请求验证码接口
       changeCaptureNUm() {
-        //请求验证码接口
         this.$api.Login.GetVerifyCode().then(res => {
           this.login_capture_img = res.result.image
           this.loginForm.verifyToken = res.result.verifyToken
@@ -186,16 +244,25 @@
     .xinchao-logo {
       position: absolute;
       z-index: 3;
-      top: -12.5%;
+      top: -6.5%;
       left: -0.6%;
     }
     .logo-form {
       background: $color-bg-3;
       border-radius: 14px;
+      height: 520px;
+      margin-right: 30px;
+      .el-input__inner:hover {
+        border-color: #e5e7e9;
+      }
+      .el-form-item {
+        margin-bottom: 30px;
+      }
       .login-title {
         font-size: 32px;
         font-weight: 300;
         color: $color-table-title;
+        margin-top: 32px;
       }
       .login-des {
         font-size: 14px;
@@ -230,7 +297,7 @@
         height: 40px;
         background: $color-bg-3;
         border-radius: 20px;
-        margin: 50px 0;
+        margin: 86px 0 68px 0;
       }
       .el-loading-spinner {
         width: 320px;

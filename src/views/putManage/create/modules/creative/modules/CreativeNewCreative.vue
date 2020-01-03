@@ -18,25 +18,10 @@
           v-if="createType === 'single' || (createType === 'edit' && !haveProject)" 
           style="margin-bottom: 12px;" class="screen-type-preview-box mt-20" 
           prop="screenType" label="屏幕类型">
-          <div class="screen-type-preview-content">
-            <MyRadio
-              v-for="(item, index) in projectConst.screenType"
-              @click.native="formData.screenType = item.value;changeScreenType(item.value)"
-              :active="formData.screenType === item.value"
-              :key="index">
-              <span class="float-left">{{item.name}}</span>
-              <div class="float-left screen-preview">
-                <div 
-                  class="top" 
-                  :class="{'bg-gray': item.value == '003' || item.value == '001'}"></div>
-                <div 
-                  :class="{'bg-gray': item.value == '003' || item.value == '002'}" 
-                  class="bottom"></div>
-              </div>
-            </MyRadio>
-          </div>
+          <ScreenType @changeScreenType="changeScreenType"/>
         </el-form-item>
 
+        <!-- 视频 图片 -->
         <div v-if="formData.screenType !== '002'">
           <el-form-item prop="top.name" class="top-box" label="上屏内容">
             <!-- 类型 -->
@@ -181,6 +166,7 @@
           <el-select 
             :disabled="this.createType === 'step' || haveProject"
             class="width-100-p" 
+            filterable
             @change="generateCreativeName"
             v-model="formData.industry" 
             placeholder="请选择">
@@ -316,6 +302,7 @@
 <script>
 import PutMangeCard from '../../../../templates/PutMangeCard' 
 import MyRadio from '../../../../../../components/MyRadio' 
+import ScreenType from '../../../../templates/ScreenType'
 import PreviewBox from '../../../../../../components/PreviewBox' 
 import { projectConst, MonitorData, fileType } from '../../../../../../utils/static'
 import { mapMutations, mapState } from 'vuex'
@@ -323,6 +310,7 @@ export default {
   components: {
     PutMangeCard,
     MyRadio,
+    ScreenType,
     PreviewBox
   },
 
@@ -462,8 +450,9 @@ export default {
     },
 
     // 切换屏幕类型
-    changeScreenType(typeCode) {
-      switch (typeCode) {
+    changeScreenType(type) {
+      this.formData.screenType = type.value;
+      switch (type.value) {
         case '001': // 上
           this.formData.bottom720Image = '';
           this.formData.bottom880Image = '';
@@ -864,10 +853,10 @@ export default {
   }
   .creative-preview-box{
     position: absolute;
-    bottom:0;
-    margin:0 0 80px 558px;
+    top:40px;
+    margin:0 0 80px 758px;
     .description{
-      margin-top: 40px;
+      margin-top: 30px;
     }
   }
 }

@@ -1,67 +1,10 @@
 <template>
   <div class="list">
-    <el-form :inline="true" class="list-form-inline clearfix">
-      <el-form-item class="line-space" label="投放计划名称">
-        <el-select 
-          @focus="getPlanNameList"
-          :loading="planNameList.loading" 
-          v-model="searchParam.campaignId" 
-          placeholder="不限" 
-          filterable
-          clearable>
-          <el-option
-            v-for="item in planNameList.data"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          ></el-option>
-        </el-select>
-      </el-form-item>
 
-      <el-form-item class="line-space" label="投放方案名称">
-        <el-select 
-          @focus="getProjectNameList"
-          :loading="projectNameList.loading" 
-          v-model="searchParam.projectId" 
-          placeholder="不限" 
-          filterable
-          clearable>
-          <el-option
-            v-for="item in projectNameList.data"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item class="line-space" label="方案状态">
-        <el-select 
-          @focus="getPlanNameList"
-          :loading="planNameList.loading" 
-          v-model="searchParam.status" 
-          placeholder="不限" 
-          filterable
-          clearable>
-          <el-option
-            v-for="item in projectStatus"
-            :key="item.value"
-            :label="item.name"
-            :value="item.value"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item class="list-query-button">
-        <el-button type="primary" plain @click="search">查询</el-button>
-      </el-form-item>
-
-      <el-form-item class="list-new-button">
-        <router-link to="/putManage/create/plan">
-          <el-button type="primary">新建投放方案</el-button>
-        </router-link>
-      </el-form-item>
-    </el-form>
+    
+    <!-- 查询 -->
+    <searchCondition @searchByCondition="handleSearch" :searchType="'project'"/>
+    
 
     <div class="query_result">
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
@@ -79,10 +22,10 @@
 
         <el-table-column prop="status" label="创意状态">
           <template slot-scope="scope">
-            <span v-if="scope.row.creativeStatus === 0" class="pending status">待审核</span>
+            <span v-if="scope.row.creativeStatus === 0" class="status">待审核</span>
             <span v-else-if="scope.row.creativeStatus === 1" class="deny status">审核拒绝</span>
-            <span v-else-if="scope.row.creativeStatus === 2" class="pass status">审核通过</span>
-            <span v-else class="empty status">未上传</span>
+            <span v-else-if="scope.row.creativeStatus === 2" class="status">审核通过</span>
+            <span v-else class="status">未上传</span>
           </template>
         </el-table-column>
 
@@ -138,7 +81,7 @@
             </span>
 
             <span v-if="scope.row.status == 1 || scope.row.status == 2" class="icon-space hand">
-              <router-link :to="`/reportList/project?projectId=${scope.row.projectId}`">
+              <router-link :to="`/reportList/project?projectId=${scope.row.projectId}&projectTime=${$tools.getFormatDate('YY-mm-dd', scope.row.beginTime)}~${$tools.getFormatDate('YY-mm-dd', scope.row.endTime)}`">
                 <i class="iconfont icon-baobiao icon-color"></i>报表
               </router-link>
             </span>
@@ -165,6 +108,7 @@
       ></el-pagination>
     </div>
 
+
     <!-- 详情 -->
     <el-dialog
       class="my-dialog"
@@ -176,15 +120,20 @@
         <el-button style="width: 136px;" type="primary" @click="detailDialog.show = false">确定</el-button>
       </span>
     </el-dialog>
+
+
   </div>
 </template>
 
 <script>
 import { projectConst, projectStatus } from '../../../../../utils/static'
+import { putManageMixin } from '../putManageMixin'
+import searchCondition from '../../../templates/searchCondition'
 import detailDialog from './modules/detailDialog'
+
 export default {
   name: "planList",
-
+  mixins: [putManageMixin],
   props: {
     active: {
       type: Boolean,
@@ -193,7 +142,8 @@ export default {
   },
 
   components: {
-    detailDialog
+    detailDialog,
+    searchCondition
   },
 
   data() {
@@ -201,34 +151,7 @@ export default {
       screenType: projectConst.screenType,
       projectStatus,
 
-      planNameList: {
-        loading: true,
-        data: []
-      },
-
-      projectNameList: {
-        loading: true,
-        data: []
-      },
-
       cityList: [],
-
-      searchParam: {
-        campaignId: '', 
-        projectId: '',
-        status:'',
-        pageIndex: '',
-        pageSize: '',
-      },
-
-      tableData: {
-        loading: true,
-        data: [],
-        page: {
-          currentPage: 0,
-          totalCount: 0
-        }
-      },
 
       detailDialog: {
         show: false,
@@ -240,45 +163,9 @@ export default {
   },
 
   beforeMount() {
-    this.search()
     this.getAllCity()
   },
   methods: {
-
-    // 计划名称列表
-    getPlanNameList() {
-      if (this.planNameList.data.length > 0) return;
-      this.$api.PutPlan.PlanNameList()
-        .then(res => {
-          this.planNameList = {
-            loading: false,
-            data: res.result,
-          }
-        })
-        .catch(res => {
-          this.planNameList = {
-            loading: false,
-            data: []
-          }
-        })
-    },
-
-    // 方案名字列表
-    getProjectNameList() {
-      this.$api.PutProject.ProjectNameList()
-        .then(res => {
-          this.projectNameList = {
-            loading: false,
-            data: res.result,
-          }
-        })
-        .catch(res => {
-          this.projectNameList = {
-            loading: false,
-            data: []
-          }
-        })
-    },
 
     // 城市列表
     getAllCity() {
@@ -301,6 +188,7 @@ export default {
         })
     },
 
+    // 支付
     comfirmPay(projectId) {
       this.$router.push({
         path: '/putManage/create/payConfirm',
@@ -313,7 +201,14 @@ export default {
     // 搜索
     search() {
       this.tableData.loading = true;
-      this.$api.PutProject.ProjectList(this.searchParam)
+      let param = {
+        "campaignId": 'plan' in this.searchParam.condition ? this.searchParam.condition.plan.data.id : '',
+        "pageIndex": this.searchParam.page.pageIndex,
+        "pageSize": this.searchParam.page.pageSize,
+        "projectId": 'project' in this.searchParam.condition ? this.searchParam.condition.project.data.id : '',
+        "status": 'project' in this.searchParam.condition ? this.searchParam.condition.project.status.value : '',
+      }
+      this.$api.PutProject.ProjectList(param)
         .then(res => {
           this.tableData = {
             loading: false,
@@ -332,18 +227,6 @@ export default {
           }
         })
     },
-
-
-    handleSizeChange(val) {
-      this.searchParam.pageSize = val;
-      this.searchParam.pageIndex = 0;
-      this.search()
-    },
-
-    handleCurrentChange(val) {
-      this.searchParam.pageIndex = val;
-      this.search()
-    }
   }
 };
 </script>

@@ -1,11 +1,14 @@
 <template>
   <header id="top-header" class="top-header clearfix">
+
+
     <!-- logo -->
-    <div class="logo mid" @click="menu.activeIndex=0; handleTo('/')">
+    <div class="logo mid" @click="menu.activeIndex=0; handleTo('/home')">
       <img class="logo-xinchao" :src="images.logo" alt="新潮传媒">
       <div class="logo-split"></div>
-      <label class="company-name font-14 color-white">数字化刊播平台</label>
+      <label class="company-name font-14 color-white">生活圈智投平台</label>
     </div>
+
 
     <!-- menu -->
     <ul class="my-menu font-14 relative">
@@ -20,24 +23,26 @@
         </div>
       </li>
 
+
       <!-- 覆盖效果 -->
       <div class="hover-move-block" :style="{...menu.moveBlockStyle}"></div>
     </ul>
 
+
     <!-- user msg -->
     <div class="user-msg color-white mid">
       <!-- 钱 -->
-      <div
-        @mouseenter="hoverRightMsg(0)"
-        @mouseleave="leaveMenu"
-        class="item mid"><img width="20px" :src="images.money" alt="">
+      <div v-if="menu.money"
+           @mouseenter="hoverRightMsg(0)"
+           @mouseleave="leaveMenu"
+           class="item icon-item mid"><img width="20px" :src="images.money" alt="">
       </div>
 
       <!-- 消息 -->
-      <div
-        @mouseenter="hoverRightMsg(1)"
-        @mouseleave="leaveMenu"
-        class="item mid">
+      <div v-if="menu.notification"
+           @mouseenter="hoverRightMsg(1)"
+           @mouseleave="leaveMenu"
+           class="item icon-item mid">
         <el-badge :value="20">
           <img width="20px" :src="images.notification" alt="">
         </el-badge>
@@ -52,7 +57,7 @@
           <img class="head" width="47px" :src="images.defaultAvatar" alt="头像">
           <div class="operation-box mid relative">
             <div class="user-name font-14">{{username}}</div>
-            <img class="up-icon" width="10px" :src="images.up" alt="" srcset="">
+            <i class="up-icon el-icon-caret-bottom" width="10px"/>
             <transition name="to-top">
               <div v-show="rightMsg.dropMenuShow" class="drop-box absolute font-14">
                 <ul>
@@ -68,6 +73,9 @@
       <!-- 覆盖效果 -->
       <div class="hover-move-block" :style="{...rightMsg.hoverBlock.style}"></div>
     </div>
+
+
+    <!-- 修改密码 -->
     <el-dialog
       :visible.sync="dialogEditPass"
       :modal-append-to-body="false"
@@ -75,11 +83,13 @@
       title="修改密码" class="edit-pass-dialog">
       <edit-pass-index @changeDialogEditPass="changeEditPass"></edit-pass-index>
     </el-dialog>
+
+
   </header>
 </template>
 
 <script>
-  import { removeUserInfo, getUserInfo } from '@/utils/auth';
+  import { removeUserInfo, getUserInfo, removeMenuList } from '@/utils/auth';
   import { MenuList } from '../../../utils/static'
   import editPassIndex from "../../../components/EditPass";
   import { MessageBox } from 'element-ui'
@@ -109,21 +119,22 @@
             transform: 'translateX(0px)',
             opacity: 0
           },
-          content: [
-            {name: '首页', path: '/home'},
-            {name: '人群洞察', path: '/peopleInsight'},
-            {name: '媒体智选', path: '/toolbox/resourceBundle'},
-            {name: '投放管理', path: '/putManage'},
-            {name: '报表中心', path: '/reportList'},
-            {name: '财务管理', path: ''},
+          content: [],
+          audit: [],
+          notExist: [
+            {"code": "9999", "name": "登录", "selected": false, "path": "/login", "children": []},
+            {
+              "code": "1500", "name": "财务管理", "selected": false, "path": "/finance", "children": [
+                {"code": "1510", "name": "财务流水", "selected": false, "path": "/finance/flow", "children": []}
+              ]
+            },
           ],
-          audit: [
-            {name: '审核管理', path: '/auditList'},
-          ]
+          money: false,
+          notification: false,
         },
         rightMsg: {
           hoverBlock: {
-            width: ['70px', '70px', '170px'],
+            width: ['70px', '70px', '210px'],
             style: {
               width: '70px',
               transform: 'translateX(0px)',
@@ -137,9 +148,6 @@
     },
 
     methods: {
-      changeDialog() {
-        this.dialogEditPass = true
-      },
       /**
        * 顶部菜单覆盖样式 宽度,位移
        * @param: menuArr 菜单数组
@@ -163,11 +171,17 @@
       hoverRightMsg(index) {
         if (index === 2) {
           this.rightMsg.dropMenuShow = true;
-        }
-        this.rightMsg.hoverBlock.style = {
-          width: this.rightMsg.hoverBlock.width[index],
-          transform: `translateX(${index * 70}px)`,
-          opacity: 1
+          this.rightMsg.hoverBlock.style = {
+            width: this.rightMsg.hoverBlock.width[index],
+            transform: `translateX(${index * 70}px)`,
+            opacity: 1
+          }
+        } else {
+          this.rightMsg.hoverBlock.style = {
+            width: this.rightMsg.hoverBlock.width[index],
+            transform: `translateX(${index * 70}px)`,
+            opacity: 1
+          }
         }
       },
 
@@ -213,6 +227,7 @@
           this.$api.Login.LoginOut().then(res => {
             this.loading = false;
             removeUserInfo()
+            removeMenuList()
             this.$store.commit('setToken', '')
             this.$router.replace('/login');
           }).catch(res => {
@@ -227,15 +242,29 @@
     mounted() {
       //请求验证码接口
       let userInfo = getUserInfo()
-      if (userInfo.avatar === null || userInfo.avatar === undefined) { // "",null,undefined,NaN
-
-      } else {
+      //菜单处理
+      for (let i = 0; i < this.MenuList.length; i++) {
+        for (let j = 0; j < userInfo.menu.length; j++) {
+          if (this.MenuList[i].code === userInfo.menu[j].code && userInfo.menu[j].selected) {
+            userInfo.menu[j].path = this.MenuList[i].path
+            this.menu.content.push(userInfo.menu[j])
+            break;
+          }
+        }
+      }
+      for (let i = 0; i < this.menu.content.length; i++) {
+        for (let j = 0; j < this.menu.notExist.length; j++) {
+          if (this.menu.content[i].code === this.menu.notExist[j].code) {
+            this.menu.content.splice(i, 1)
+            break;
+          }
+        }
+      }
+      if (userInfo.avatar) {
         this.images.defaultAvatar = userInfo.avatar
       }
-      this.username = userInfo.userName
-      if (this.username === 'XC12394') {
-        this.menu.content = this.menu.audit
-        this.$router.replace('/auditList')
+      if (userInfo.userName) {
+        this.username = userInfo.userName
       }
     },
     beforeMount() {
@@ -243,9 +272,8 @@
     }
   }
 </script>
-<style lang="scss">
-  $headerHeight: 76px;
-  .el-badge__content{
+<style lang="scss" scoped>
+  /deep/ .el-badge__content {
     background-color: #fff !important;
     color: #C13130;
   }
@@ -268,7 +296,7 @@
         width: 1px;
         height: 20px;
         margin: 0 12px;
-        background: rgba(87, 94, 135, 1);
+        background: #F1B8B7;
       }
       .company-name {
         margin-right: 50px;
@@ -293,12 +321,24 @@
           color: #fff;
         }
         .menu-text {
+          position: relative;
           height: $headerHeight - 4px;
           user-select: none;
           padding-bottom: $headerHeight - 4px;
           &.active {
-            border-bottom: 4px solid rgb(255, 255, 255);
+            // border-bottom: 4px solid rgb(255, 255, 255);
             // border-bottom: 4px solid rgba(45, 90, 255, 1);
+            &::after {
+              content: "";
+              position: absolute;
+              left: 0;
+              bottom: 10px;
+              display: inline-block;
+              width: 100%;
+              height: 4px;
+              border-radius: 2px;
+              background: #fff;
+            }
           }
         }
       }
@@ -323,6 +363,17 @@
         padding: 0 25px;
         cursor: pointer;
         transition: .3s;
+        &.icon-item {
+          img {
+            opacity: 0.7;
+            transition: 0.3s;
+          }
+          &:hover {
+            img {
+              opacity: 1;
+            }
+          }
+        }
         .user-head {
           height: 100%;
           .head {

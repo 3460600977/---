@@ -1,84 +1,9 @@
 <template>
   <div class="list">
 
-    <el-form :inline="true" class="list-form-inline clearfix">
+    <!-- 查询 -->
+    <searchCondition @searchByCondition="handleSearch" :searchType="'creative'"/>
 
-      <el-form-item class="line-space" label="投放计划名称">
-        <el-select 
-          @focus="getPlanNameList"
-          :loading="planNameList.loading" 
-          v-model="searchParam.campaignId" 
-          placeholder="不限" 
-          filterable
-          clearable>
-          <el-option
-            v-for="item in planNameList.data"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item class="line-space" label="投放方案名称">
-        <el-select 
-          @focus="getProjectNameList"
-          :loading="projectNameList.loading" 
-          v-model="searchParam.projectId" 
-          placeholder="不限" 
-          filterable
-          clearable>
-          <el-option
-            v-for="item in projectNameList.data"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item class="line-space" label="广告创意名称">
-        <el-select 
-          @focus="getCreativeNameList"
-          :loading="creativeNameList.loading" 
-          v-model="searchParam.name" 
-          placeholder="不限" 
-          filterable
-          clearable>
-          <el-option
-            v-for="item in creativeNameList.data"
-            :key="item.name"
-            :label="item.name"
-            :value="item.name"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item class="line-space" label="创意状态">
-        <el-select 
-          v-model="searchParam.status" 
-          placeholder="不限" 
-          filterable
-          clearable>
-          <el-option
-            v-for="item in creativeStatus"
-            :key="item.value"
-            :label="item.name"
-            :value="item.value"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item class="list-query-button">
-        <el-button type="primary" plain @click="search">查询</el-button>
-      </el-form-item>
-
-      <el-form-item class="list-new-button">
-        <router-link to="/putManage/create/creative?createType=single">
-          <el-button type="primary">新建广告创意</el-button>
-        </router-link>
-      </el-form-item>
-    </el-form>
 
     <div class="query_result">
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
@@ -137,6 +62,8 @@
         class="list-page"
       ></el-pagination>
     </div>
+
+
 
     <el-dialog 
       title="广告创意详情" 
@@ -244,53 +171,26 @@
 </template>
 
 <script>
+import { putManageMixin } from '../putManageMixin'
 import { PutGoal, projectConst, MonitorData } from '../../../../../utils/static'
-import { resolve, reject } from 'q';
+import searchCondition from '../../../templates/searchCondition'
+
 export default {
   name: "planList",
+  
+  mixins: [putManageMixin],
+
+  components: {
+    searchCondition
+  },
 
   data() {
     return {
       PutGoal,
       MonitorData,
       screenType: projectConst.screenType,
-      planNameList: {
-        loading: true,
-        data: []
-      },
-      projectNameList: {
-        loading: true,
-        data: []
-      },
-      creativeNameList: {
-        loading: true,
-        data: []
-      },
-      creativeStatus: [
-        { name: '待审核', value: 0},
-        { name: '审核通过', value: 2},
-        { name: '审核拒绝', value: 1}
-      ],
 
       activeName: 'aptitude',
-
-      searchParam: {
-        campaignId: '', 
-        name: '',
-        pageIndex:'',
-        pageSize: '',
-        projectId: '',
-        status: ''
-      },
-
-      tableData: {
-        loading: true,
-        data: [],
-        page: {
-          currentPage: 0,
-          totalCount: 0
-        }
-      },
 
       detailDialog: {
         show: false,
@@ -303,69 +203,22 @@ export default {
     };
   },
 
-  beforeMount() {
-    this.search()
-  },
+
 
   methods: {
-    // 下拉框数据 计划名字列表
-    getPlanNameList() {
-      this.planNameList.loading = true;
-      this.$api.PutPlan.PlanNameList()
-        .then(res => {
-          this.planNameList = {
-            loading: false,
-            data: res.result,
-          }
-        })
-        .catch(res => {
-          this.planNameList = {
-            loading: false,
-            data: []
-          }
-        })
-    },
-
-    // 下拉框数据 方案名字列表
-    getProjectNameList() {
-      this.projectNameList.loading = true;
-      this.$api.PutProject.ProjectNameList()
-        .then(res => {
-          this.projectNameList = {
-            loading: false,
-            data: res.result,
-          }
-        })
-        .catch(res => {
-          this.projectNameList = {
-            loading: false,
-            data: []
-          }
-        })
-    },
-
-    // 下拉框数据 创意名字列表
-    getCreativeNameList() {
-      this.creativeNameList.loading = true;
-      this.$api.CreateCreative.CreativeNameList()
-        .then(res => {
-          this.creativeNameList = {
-            loading: false,
-            data: res.result
-          };
-        })
-        .catch(res => {
-          this.creativeNameList = {
-            loading: false,
-            data: []
-          };
-        })
-    },
-
+   
     // 搜索
     search() {
       this.tableData.loading = true;
-      this.$api.CreateCreative.CreativeList(this.searchParam)
+      let param = {
+        campaignId: 'plan' in this.searchParam.condition ? this.searchParam.condition.plan.data.id : '',
+        name: 'creative' in this.searchParam.condition ? this.searchParam.condition.creative.data.name : '',
+        pageIndex: this.searchParam.page.pageIndex,
+        pageSize: this.searchParam.page.pageSize,
+        projectId: 'project' in this.searchParam.condition ? this.searchParam.condition.project.data.id : '',
+        status: 'creative' in this.searchParam.condition ? this.searchParam.condition.creative.status.value : '',
+      }
+      this.$api.CreateCreative.CreativeList(param)
         .then(res => {
           this.tableData = {
             loading: false,
@@ -434,17 +287,6 @@ export default {
           })
     },
 
-
-    handleSizeChange(val) {
-      this.searchParam.pageSize = val;
-      this.searchParam.pageIndex = 0;
-      this.search()
-    },
-
-    handleCurrentChange(val) {
-      this.searchParam.pageIndex = val;
-      this.search()
-    }
   }
 };
 </script>

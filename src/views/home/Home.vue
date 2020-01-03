@@ -1,8 +1,12 @@
 <template>
   <div class="home">
+
+    <!-- 脑壳 -->
     <TopHeader/>
+
+    <!-- 身子 -->
     <main class="main">
-      <router-view/>
+        <router-view/>
     </main>
   </div>
 </template>

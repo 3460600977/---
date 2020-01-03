@@ -52,10 +52,19 @@ export const Login = {
     });
   },
   
-  // 根据url中token和id登录
-  LoginInByToken: (data) => {
+  // 销售人员登录
+  SaleLogin: (data) => {
     return request({
       url: "/dpapi/signExt",
+      method: "post",
+      data
+    });
+  },
+  
+  // 销审核人员登录
+  AuditorLogin: (data) => {
+    return request({
+      url: "/dpapi/signAuditorExt",
       method: "post",
       data
     });
