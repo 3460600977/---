@@ -133,7 +133,6 @@
         let isSelected = false
         allList.forEach((item) => {
           if (this.points[item.premisesId]) {
-            console.log(this.points[item.premisesId])
             if (this.points[item.premisesId].type >= -1) {
               this.points[item.premisesId].type = type
               isSelected = true
@@ -144,7 +143,6 @@
             this.points[item.premisesId] = {point: new BMap.Point(item.lng, item.lat), ...item, type: type}
           }
         })
-        console.log(isSelected)
         if (allList.length === 1) {
           if (!isSelected) {
             this.jugDraw()
@@ -585,7 +583,7 @@
         })
       },
 
-      // 添加zoom后的marker
+      // 添加zoom后的marker 1表示放大后的加图标
       addMarker(point, type = 0) {  // 创建图标对象
         let src = ''
         if (type === 0) {
@@ -603,11 +601,13 @@
           icon: myIcon,
           offset: new BMap.Size(0, -16),
         });
+        this.map.addOverlay(marker);
+
         if (type === 1) {
-          this.markerArr.push(marker)
           marker.addEventListener('click', (e) => {
-            console.log(point)
-            this.$emit('buildingClick', point)
+            e.preventDefault()
+            console.log(e)
+            // this.$emit('buildingClick', point)
           })
           marker.addEventListener('mouseover', () => {
             if (this.currentSelectType === null && this.activePath === null) {
@@ -617,9 +617,8 @@
           marker.addEventListener('mouseout',  () => {
             this.removeLabels()
           });
+          this.markerArr.push(marker)
         }
-        this.map.addOverlay(marker);
-
         return marker
       },
 
@@ -628,7 +627,6 @@
         let arr = Object.values(this.points).filter((item) => {
           return bounds.containsPoint(item.point)
         })
-        console.log(arr)
         this.drawMarker(arr)
       },
       removeLabels() {
