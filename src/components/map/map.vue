@@ -113,9 +113,9 @@
     },
     methods: {
       //批量永久删除楼盘数据
-      deleteBathItem(allList) {
+      deleteBathItem(allList, type = -3) {
         allList.forEach((item) => {
-          this.points[item.premisesId].type = -3
+          this.points[item.premisesId].type = type
         })
         this.drawDevicePoints()
       },
