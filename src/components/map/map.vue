@@ -11,6 +11,7 @@
     name: "index",
     data() {
       return {
+        markerArr: [], // 存储marker覆盖物的变量 用于清除marker
         isInit: true, // 控制只初始化促发事件
         labelsArr: [], // 存储label覆盖物的变量 用于清楚label
         map: null,
@@ -19,7 +20,8 @@
         indexArr: [],
         pointsOverlayObj: { // 记录已选和未选海量点的对象 用于重画
           selectedOverlay: null,
-          unSelectedOverlay: null
+          unSelectedOverlay: null,
+          isShow: false
         },
         showLabel: 18,
         heatmapOverlay: null,
@@ -120,22 +122,27 @@
       },
       //批量永久增加楼盘数据
       addBatchItem(allList, type = 100) {
-        let isExist = false
+        let isSelected = false
         allList.forEach((item) => {
           if (this.points[item.premisesId]) {
             if (this.points[item.premisesId].type >= -1) {
               this.points[item.premisesId].type = type
-              isExist = true
+              isSelected = true
             } else {
               this.points[item.premisesId].type = type
-              this.drawDevicePoints()
             }
           } else {
             this.points[item.premisesId] = {point: new BMap.Point(item.lng, item.lat), ...item, type: type}
-            this.drawDevicePoints()
           }
         })
-        return isExist
+        if (allList.length === 1) {
+          if (!isSelected) {
+            this.drawDevicePoints()
+          }
+          return isSelected
+        } else {
+          this.drawDevicePoints()
+        }
       },
       // 清空pathArr数据 并且清楚覆盖物
       clearPathArr() {
@@ -156,7 +163,8 @@
         this.map.clearOverlays()
         this.pointsOverlayObj = {
           selectedOverlay: null,
-          unSelectedOverlay: null
+          unSelectedOverlay: null,
+          isShow: false
         }
       },
       initMap(val) {
@@ -199,12 +207,7 @@
         //   }
         // });
       },
-      // 添加弹窗覆盖物
-      drawLabels(arr) {
-        arr.forEach((item, index) => {
-          this.addLabel(item)
-        })
-      },
+
       // 判断一个点是否在可视区域内
       addSigleLabel(item) {
         let bounds = this.map.getBounds()
@@ -215,6 +218,7 @@
       },
       // 根据传入的以选中和未选中楼盘重新画数据
       drawPoints(selectP, unSelectP) {
+        this.pointsOverlayObj.isShow = true
         this.setDevicePoints(selectP, 0)
         this.setDevicePoints(unSelectP, 1)
       },
@@ -564,12 +568,38 @@
         }
       },
 
+      // 添加marker覆盖物
+      drawMarker(arr) {
+        arr.forEach((item, index) => {
+          this.addMarker(item, 1)
+        })
+      },
+
+      // 添加zoom后的marker
+      addMarker(point, type = 0) {  // 创建图标对象
+        var myIcon = new BMap.Icon(require('@/assets/images/icon_location2.png'), new BMap.Size(25, 32), {});
+        // 创建标注对象并添加到地图
+        let marker = new BMap.Marker(type === 1? point.point: point, {
+          icon: myIcon,
+          offset: new BMap.Size(0, -16),
+        });
+        if (type === 1) {
+          this.markerArr.push(marker)
+          marker.addEventListener('click', (event) => {
+            this.$emit('buildingClick', point)
+          })
+        }
+        this.map.addOverlay(marker);
+
+        return marker
+      },
+
       getVisualPoint() {
         let bounds = this.map.getBounds()
         let arr = Object.values(this.points).filter((item) => {
           return bounds.containsPoint(item.point)
         })
-        this.drawLabels(arr)
+        this.drawMarker(arr)
       },
       removeLabels() {
         if (!this.labelsArr.length) return
@@ -578,14 +608,37 @@
         })
         this.labelsArr = []
       },
+      removeMarkers() {
+        if (!this.markerArr.length) return
+        this.markerArr.forEach((item) => {
+          this.map.removeOverlay(item)
+        })
+        this.markerArr = []
+      },
 
-      drawLabelsByVisual() {
+      togglePoints(type) {
+        if (type) {
+          this.pointsOverlayObj.selectedOverlay && this.pointsOverlayObj.selectedOverlay.hide()
+          this.pointsOverlayObj.unSelectedOverlay && this.pointsOverlayObj.unSelectedOverlay.hide()
+        } else {
+          this.pointsOverlayObj.selectedOverlay && this.pointsOverlayObj.selectedOverlay.show()
+          this.pointsOverlayObj.unSelectedOverlay && this.pointsOverlayObj.unSelectedOverlay.show()
+        }
+        this.pointsOverlayObj.isShow = !this.pointsOverlayObj.isShow
+      },
+      drawMarkersByVisual() {
         let zoom = this.map.getZoom()
         if (zoom >= this.showLabel) {
-          this.removeLabels()
+          if (this.pointsOverlayObj.isShow === true) {
+            this.togglePoints(this.pointsOverlayObj.isShow)
+          }
+          this.removeMarkers()
           this.getVisualPoint()
         } else {
-          this.removeLabels()
+          if (this.pointsOverlayObj.isShow === false) {
+            this.togglePoints(this.pointsOverlayObj.isShow)
+          }
+          this.removeMarkers()
         }
       },
       removeEvent() {
@@ -606,7 +659,7 @@
         }
       },
       mapZoomEnd() {
-        this.drawLabelsByVisual()
+        this.drawMarkersByVisual()
         this.zoomChangeAllPath()
       },
       mapMouseMove(event) {
@@ -623,8 +676,8 @@
         this.initHotMap()
       },
       mapBindEvent() {
-        // this.map.addEventListener('dragend', this.drawLabelsByVisual)
-        // this.map.addEventListener('zoomend', this.mapZoomEnd)
+        this.map.addEventListener('dragend', this.drawMarkersByVisual)
+        this.map.addEventListener('zoomend', this.mapZoomEnd)
         this.map.addEventListener('click', this.mapLeftClick)
         this.map.addEventListener('mousemove', this.mapMouseMove)
         this.map.addEventListener('rightclick', this.mapRightClick)
@@ -653,16 +706,16 @@
         this.getPopUpData(path)
         this.overlayBindEvent(path)
       },
-      addMarker(point) {  // 创建图标对象
-        var myIcon = new BMap.Icon(require('@/assets/images/icon_location.png'), new BMap.Size(12, 22), {});
-        // 创建标注对象并添加到地图
-        let marker = new BMap.Marker(point, {
-          icon: myIcon,
-          offset: new BMap.Size(6, -11),
-        });
-        this.map.addOverlay(marker);
-        return marker
-      },
+      // addMarker(point) {  // 创建图标对象
+      //   var myIcon = new BMap.Icon(require('@/assets/images/icon_location.png'), new BMap.Size(12, 22), {});
+      //   // 创建标注对象并添加到地图
+      //   let marker = new BMap.Marker(point, {
+      //     icon: myIcon,
+      //     offset: new BMap.Size(0, -11),
+      //   });
+      //   this.map.addOverlay(marker);
+      //   return marker
+      // },
       // 隐藏热力图
       hideHotMap() {
         if (this.heatmapOverlay) {
@@ -758,7 +811,7 @@
         `
         //用于设置样式
         let label = new BMap.Label(content, {
-          offset: new BMap.Size(-5, -15),
+          offset: new BMap.Size(-5, -32),
           position: point.point
         });
         label.setStyle(labelStyle);
