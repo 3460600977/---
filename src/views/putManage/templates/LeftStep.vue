@@ -59,7 +59,7 @@
   };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .left-steps {
     width: 220px;
     height: calc(100vh - 76px);
@@ -68,7 +68,7 @@
     background: #fff;
     transition: 0.4s;
     position: relative;
-    .hide-el-steps {
+    /deep/ .hide-el-steps {
       position: absolute;
       right: -5px;
     }
@@ -95,7 +95,7 @@
         }
       }
     }
-    .el-steps {
+    /deep/ .el-steps {
       margin-top: 20px;
       margin-left: 26px;
       height: 460px;

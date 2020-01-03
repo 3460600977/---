@@ -100,6 +100,7 @@
       transition: .4s;
       position: relative;
       .left-report-menu {
+        width: 100%;
         border: none;
       }
       a {
@@ -135,6 +136,9 @@
       &.hide {
         width: 84px;
       }
+      .el-submenu__title {
+        padding-left: 30px !important;
+      }
       .el-submenu__title i {
         color: $color-blue;
         &.el-submenu__icon-arrow {
@@ -166,24 +170,6 @@
         position: absolute;
         top: 32px;
         left: 32px;
-      }
-      .hide_text {
-        display: none;
-      }
-      .hide_font {
-        margin: 0;
-        width: 100%;
-        text-align: center;
-        .el-menu--vertical {
-          display: none;
-        }
-        .item_active {
-          background-color: $color-bg-3;
-        }
-        .el-submenu__title {
-          padding: 0 !important;
-          margin: 0 !important;
-        }
       }
     }
     .right-content {

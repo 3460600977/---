@@ -494,6 +494,7 @@
        * */
       returnSelectedBuildings(val) {
         this.selectedBuildings = val
+
       },
       // mapPopup里面点击删除(0)和确定按钮(1)
       operate(val, item) {
