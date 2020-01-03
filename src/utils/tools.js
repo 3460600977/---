@@ -91,6 +91,15 @@ let tools = {
   },
   
   
+  /*
+   数组去重
+   */
+  unique(arr1, key) {
+    const res = new Map();
+    let result = arr1.filter((a) => !res.has(a[key]) && res.set(a[key], 1))
+    return result
+  },
+  
   /**
    * @description: 数字转千位计数
    * @param: num: 数字
@@ -179,7 +188,6 @@ let tools = {
     }
   },
   
-  
   /**
    * @description: 前端分页
    * @param originData: Array 页数
@@ -201,7 +209,6 @@ let tools = {
     return res;
   },
   
-  
   // 数据补零
   padding(s, len) {
     const l = len - (s + ''
@@ -211,8 +218,6 @@ let tools = {
     }
     return s
   },
-  
-  
   /**
    * @description: 格式化时间
    * @param: pageSize
@@ -485,20 +490,18 @@ let tools = {
     }
     return l;
   },
-  
   //获取菜单列表
   getAllMenuList(menu, list = []) {
     for (let i = 0; i < menu.length; i++) {
       if (menu[i].children.length === 0) {
         list.push({code: menu[i].code, selected: menu[i].selected})
       } else {
+        list.push({code: menu[i].code, selected: menu[i].selected})
         this.getAllMenuList(menu[i].children, list)
       }
     }
     return list;
   },
-  
-  
 }
 
 export default tools;

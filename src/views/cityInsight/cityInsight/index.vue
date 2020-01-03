@@ -80,7 +80,6 @@
           :currentSelectType="currentSelectType"
         ></mouseMove-text>
       </div>
-<!--      <div class="right-info">-->
         <slide-container
           ref="slideCon"
         >
@@ -97,7 +96,6 @@
             ref="buildingDetail"
           ></building-detail>
         </slide-container>
-<!--      </div>-->
       <div class="map container">
         <db-map
           ref="dbmap"
@@ -181,6 +179,7 @@
     },
     data() {
       return {
+        isInit: true,
         buildingDatas: { // 楼宇标签
           title: '楼宇标签',
           options: [
@@ -261,7 +260,7 @@
         },
         cityFilter: { // 当前城市信息
           cityCode: null,
-          name: null
+          name: '没有定位到城市！'
         },
         loading: false,
         rightShow: 0, // 空控制右边面板显示点位信息还是楼盘详情
@@ -398,7 +397,21 @@
       // 各种弹窗返回数据触发方法 type表示楼盘标签是 0清空还是2选择
       returnResult(val, index, type) {
         if (index === 0) { // 城市切换
-          this.cityFilter = val
+          if (this.isInit) {
+            this.cityFilter = val
+            this.resetLeftPopup(index, type)
+            this.isInit = false
+            return
+          }
+          this.$confirm('切换城市后，系统将清空当前城市的操作数据，是否切换？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.cityFilter = val
+            this.resetLeftPopup(index, type)
+          }).catch(() => {
+          });
         } else if (index === 1) { // 楼盘标签选择
           if (type === 0) {
             this.buildingFilterSelected = false
@@ -409,11 +422,12 @@
           this.buildingFilter = val
           this.loadData()
           this.hide(1)
+          this.resetLeftPopup(index, type)
         } else if (index === 2) { // 热力图选择
           this.loadHotMap(val)
           this.hide(1)
+          this.resetLeftPopup(index, type)
         }
-        this.resetLeftPopup(index, type)
       },
       hideAll() {
         for (let key in this.isShow) {
@@ -445,7 +459,6 @@
       },
       getCityFilter() {
         this.$refs.dbmap.location().then((data) => {
-          // this.cityFilter = Object.assign({}, this.cityFilter, {name: '北京市'})
           this.cityFilter = Object.assign({}, this.cityFilter, {name: data.name})
         })
       },
@@ -497,7 +510,7 @@
       },
       // 添加媒体资源弹窗选择添加的楼盘
       addLocation(val) {
-        let isExist = this.$refs.dbmap.addItem(val)
+        let isExist = this.$refs.dbmap.addBatchItem([val])
         this.$refs.addDialog.selectCallBack(isExist)
       },
       // 右边弹出框点击添加按钮
@@ -506,7 +519,7 @@
       },
       // 右边弹出框点击删除某个楼盘
       deleteItem(item) {
-        this.$refs.dbmap.deleteItem(item)
+        this.$refs.dbmap.deleteBathItem([item])
       },
       // 右边弹出框点击创建资源包
       createPackage() {

@@ -18,9 +18,10 @@ export const scaleData = [
   {zoom: 3, length: 2000000, Pixels: 75}
 ]
 
+
 export const colorMain = '#2D5AFF'
 
-// 创建方案所需常量
+
 export const projectConst = {
   // 投放类型，0按周投放，1按天投放
   putType: [
@@ -57,6 +58,7 @@ export const projectConst = {
   ]
 }
 
+
 // 第三方监测
 export const MonitorData = {
   mode: ['SDK'],
@@ -66,11 +68,13 @@ export const MonitorData = {
   ]
 }
 
+
 // 上屏文件类型，1：视频,2:图片
 export const fileType = [
   {name: '上传视频', value: 1},
   {name: '上传图片', value: 2},
 ]
+
 
 // 投放目的
 export const PutGoal = [
@@ -81,7 +85,8 @@ export const PutGoal = [
   {name: '新品上市', value: 4, icon: require('../assets/images/plan_title_red_4.png')}
 ]
 
-// 投放状态，0待投放，1投放中，2已完成，3已取消, 4未支付
+
+// 投放状态
 export const projectStatus = [
   {name: '待投放', value: '0'},
   {name: '投放中', value: '1'},
@@ -90,12 +95,24 @@ export const projectStatus = [
   {name: '待支付', value: '4'},
 ]
 
+
 // 投放预算分类
 export const Budget = [
   {name: '不限', value: 0},
   {name: '指定预算', value: 1}
 ]
+
+
+// 创意状态
+export const creativeStatus = [
+  {name: '待审核', value: 0},
+  {name: '审核通过', value: 2},
+  {name: '审核拒绝', value: 1}
+]
+
+
 export const PAGE_SIZE = [10, 20, 30, 40, 50]
+
 
 // 审核拒绝原因
 export const DenyDialogReason = [
@@ -198,18 +215,25 @@ export const DenyDialogReason = [
   },
 ]
 
+
 // 菜单栏展示
 export const MenuList =
   [
     {"code": "9999", "name": "登录", "selected": false, "path": "/login", "children": []},
     {"code": "1000", "name": "首页", "selected": false, "path": "/home", "children": []},
-    {"code": "1100", "name": "人群洞察", "selected": false, "path": "/peopleInsight", "children": []},
+    {
+      "code": "1100", "name": "人群洞察", "selected": false, "path": "/peopleInsight", "children": [
+        {"code": "1101", "name": "创建人群包", "selected": false, "path": "/createPeoplePackage", "children": []},
+        {"code": "1102", "name": "人群分析", "selected": false, "path": "/peopleAnalysis", "children": []},
+      ]
+    },
     {"code": "1200", "name": "媒体智选", "selected": false, "path": "/cityInsight", "children": []},
     {
       "code": "1300", "name": "投放管理", "selected": false, "path": "/putManage", "children": [
         {"code": "1310", "name": "创建计划", "selected": false, "path": "/putManage/create/plan", "children": []},
         {"code": "1320", "name": "创建方案", "selected": false, "path": "/putManage/create/project", "children": []},
-        {"code": "1330", "name": "创建创意", "selected": false, "path": "/putManage/create/creative", "children": []}
+        {"code": "1330", "name": "确认并支付", "selected": false, "path": "/putManage/create/payConfirm", "children": []},
+        {"code": "1340", "name": "创建创意", "selected": false, "path": "/putManage/create/creative", "children": []}
       ]
     },
     {
@@ -233,7 +257,7 @@ export const MenuList =
         [{
           "code": "1610", "name": "创意审核", "selected": false, "path": "/auditList/creative", "children": []
         }]
-    }]
-
+    }
+  ]
 
 

@@ -9,7 +9,8 @@ import { reportCenterRouter } from './modules/reportCenter'//报表中心
 import { auditManageRouter } from './modules/auditManage'//审核管理
 import { toolBoxRouter } from './modules/toolBox'//工具箱
 import { peopleInsightRouter } from './modules/peopleInsight' // 人群洞察
-import { getUserInfo } from '@/utils/auth';
+import { getMenuList } from '@/utils/auth';
+import { Message, MessageBox } from 'element-ui'
 
 const router = new Router({
   // mode: 'history',
@@ -32,15 +33,28 @@ const router = new Router({
       ],
     },
     
-    {path: '/login', component: () => import('@/views/login/login')},
+    {
+      path: '/login', component: () => import('@/views/login/login'),
+      meta: {white: true}
+    },
     
-    {path: '/tokenLogin', component: () => import('@/views/login/login')},
+    // 销售人员跳转登陆
+    {
+      path: '/tokenLogin', component: () => import('@/views/login/login'),
+      meta: {white: true}
+    },
     
-    {path: '/404', component: () => import('@/views/errorPage/404')},
+    // 审核人员跳转登录
+    {
+      path: '/auditorLogin', component: () => import('@/views/login/login'),
+      meta: {white: true}
+    },
     
-    {path: '/', redirect: '/login', hidden: true},
+    {path: '/404', component: () => import('@/views/errorPage/404'), meta: {white: true}},
     
-    {path: '*', redirect: '/404', hidden: true}
+    {path: '/', redirect: '/login', hidden: true, meta: {white: true}},
+    
+    {path: '*', redirect: '/404', hidden: true, meta: {white: true}}
   ]
 })
 Vue.use(Router)
@@ -50,22 +64,20 @@ NProgress.configure({easing: 'ease', speed: 1500, showSpinner: false})
 
 router.beforeEach((to, from, next) => {
   NProgress.start();
-  let userInfo = getUserInfo()
+  let menuList = getMenuList()
   let canEnter = false
-  if (userInfo) {
-    for (let i = 0; i < userInfo.menu.length; i++) {
-      console.log(userInfo.menu[i].code === to.meta.code, userInfo.menu[i].code, to.meta.code)
-      if (userInfo.menu[i].code === to.meta.code && userInfo.menu[i].selected) {
+  if (menuList) {
+    for (let i = 0; i < menuList.length; i++) {
+      if (menuList[i].code === to.meta.code && menuList[i].selected) {
         canEnter = true
       }
     }
   }
-  console.log('canEnter', canEnter,userInfo)
   // 判断该路由是否需要登录权限
   if (store.state.token.userToken) { // 通过vuex state获取当前登录状态
     next()
   } else {
-    if ('/login' === to.path) {
+    if (to.meta.white) {
       next()
     } else {
       NProgress.done()
@@ -74,6 +86,16 @@ router.beforeEach((to, from, next) => {
         // 将跳转的路由path作为参数，登录成功后跳转到该路由
         {path: '/login', query: {}}
       )
+      // return MessageBox.confirm('', '确定重新登录', {
+      //   confirmButtonText: '重新登录',
+      //   cancelButtonText: '取消',
+      //   type: 'warning',
+      // }).then(() => {
+      //   next(
+      //     // 将跳转的路由path作为参数，登录成功后跳转到该路由
+      //     {path: '/login', query: {}}
+      //   )
+      // })
     }
   }
 })

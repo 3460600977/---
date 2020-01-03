@@ -1,11 +1,14 @@
 <template>
   <header id="top-header" class="top-header clearfix">
+
+
     <!-- logo -->
     <div class="logo mid" @click="menu.activeIndex=0; handleTo('/home')">
       <img class="logo-xinchao" :src="images.logo" alt="新潮传媒">
       <div class="logo-split"></div>
-      <label class="company-name font-14 color-white">数字化刊播平台</label>
+      <label class="company-name font-14 color-white">生活圈智投平台</label>
     </div>
+
 
     <!-- menu -->
     <ul class="my-menu font-14 relative">
@@ -20,9 +23,11 @@
         </div>
       </li>
 
+
       <!-- 覆盖效果 -->
       <div class="hover-move-block" :style="{...menu.moveBlockStyle}"></div>
     </ul>
+
 
     <!-- user msg -->
     <div class="user-msg color-white mid">
@@ -68,6 +73,9 @@
       <!-- 覆盖效果 -->
       <div class="hover-move-block" :style="{...rightMsg.hoverBlock.style}"></div>
     </div>
+
+
+    <!-- 修改密码 -->
     <el-dialog
       :visible.sync="dialogEditPass"
       :modal-append-to-body="false"
@@ -75,11 +83,13 @@
       title="修改密码" class="edit-pass-dialog">
       <edit-pass-index @changeDialogEditPass="changeEditPass"></edit-pass-index>
     </el-dialog>
+
+
   </header>
 </template>
 
 <script>
-  import { removeUserInfo, getUserInfo } from '@/utils/auth';
+  import { removeUserInfo, getUserInfo, removeMenuList } from '@/utils/auth';
   import { MenuList } from '../../../utils/static'
   import editPassIndex from "../../../components/EditPass";
   import { MessageBox } from 'element-ui'
@@ -217,6 +227,7 @@
           this.$api.Login.LoginOut().then(res => {
             this.loading = false;
             removeUserInfo()
+            removeMenuList()
             this.$store.commit('setToken', '')
             this.$router.replace('/login');
           }).catch(res => {
@@ -232,8 +243,6 @@
       //请求验证码接口
       let userInfo = getUserInfo()
       let menuList = []
-      menuList = this.$tools.getAllMenuList(userInfo.menu, menuList)
-      console.log('menuList', menuList)
       //菜单处理
       for (let i = 0; i < this.MenuList.length; i++) {
         for (let j = 0; j < userInfo.menu.length; j++) {
@@ -265,7 +274,6 @@
   }
 </script>
 <style lang="scss" scoped>
-  $headerHeight: 76px;
   /deep/ .el-badge__content {
     background-color: #fff !important;
     color: #C13130;
@@ -314,12 +322,24 @@
           color: #fff;
         }
         .menu-text {
+          position: relative;
           height: $headerHeight - 4px;
           user-select: none;
           padding-bottom: $headerHeight - 4px;
           &.active {
-            border-bottom: 4px solid rgb(255, 255, 255);
+            // border-bottom: 4px solid rgb(255, 255, 255);
             // border-bottom: 4px solid rgba(45, 90, 255, 1);
+            &::after {
+              content: "";
+              position: absolute;
+              left: 0;
+              bottom: 10px;
+              display: inline-block;
+              width: 100%;
+              height: 4px;
+              border-radius: 2px;
+              background: #fff;
+            }
           }
         }
       }

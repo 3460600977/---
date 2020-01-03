@@ -43,5 +43,9 @@ export function setMenuList(menuList) {
   return Cookies.set('menuList', JSON.stringify(menuList));
 }
 
+export function removeMenuList() {
+  return Cookies.remove('menuList')
+}
+
 
 

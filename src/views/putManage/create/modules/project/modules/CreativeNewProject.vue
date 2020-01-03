@@ -14,12 +14,12 @@
         label-width="112px" class="put-form">
 
         <!-- 投放方案行业 -->
-        <el-form-item class="mt-20" prop="industry" label="投放方案行业">
+        <el-form-item class="mt-20" prop="industry" label="方案行业">
           <el-select
             class="bigger"
             :disabled="isEdit"
             @focus="getIndustryList"
-            @change="reFreshBuild"
+            @change="changePageData"
             :loading="industry.loading"
             filterable
             clearable
@@ -37,36 +37,17 @@
 
         <!-- 屏幕类型 -->
         <el-form-item class="screen-type-preview-box mt-20" prop="type" label="屏幕类型">
-          <div class="screen-type-preview-content">
-            <MyRadio
-              :disabled="isEdit"
-              v-for="(item, index) in projectConst.screenType"
-              @click.native="reFreshBuild(); isEdit ? null : formData.type = item"
-              :active="formData.type === item"
-              :key="index">
-              <span class="float-left">{{item.name}}</span>
-              <div class="float-left screen-preview">
-                <div
-                  class="top"
-                  :class="{'bg-gray': item.value == '003' || item.value == '001'}"></div>
-                <div
-                  :class="{'bg-gray': item.value == '003' || item.value == '002'}"
-                  class="bottom"></div>
-              </div>
-            </MyRadio>
-          </div>
+          <ScreenType @changeScreenType="changeScreenType" :disabled="isEdit"/>
         </el-form-item>
 
         <!-- 投放类型 -->
-        <el-form-item class="mt-20" prop="projectType" label="投放类型">
+        <el-form-item class="mt-20" prop="projectType">
+          <label slot="label"><span class="color-red">* </span>投放类型</label>
           <div class="mid-between" style="width: 240px">
             <el-button
               :disabled="isEdit"
               style="width: 102px"
-              @click="formData.projectType = type;
-                formData.dateForDay = '';
-                formData.dateForWeekBegin = '';
-                formData.dateForWeekEnd = '';"
+              @click="formData.projectType = type;formData.date = '';"
               v-for="(type, index) in projectConst.putType"
               :type="type == formData.projectType ? 'primary' : 'info'"
               :key="index">
@@ -76,15 +57,16 @@
         </el-form-item>
 
         <!-- 按天投放 -->
-        <el-form-item v-show="formData.projectType.value == 1" class="mt-20" prop="dateForDay">
+        <el-form-item v-if="formData.projectType.value == 1" class="mt-20" prop="date">
           <label slot="label"><span class="color-red">* </span>投放时间</label>
           <el-date-picker
-            @change="reFreshBuild"
+            @change="changePageData"
             :disabled="isEdit"
-            v-model="formData.dateForDay"
+            :clearable="false"
+            v-model="formData.date"
             value-format="yyyy-MM-dd"
             type="daterange"
-            :picker-options="pickerOptionsForDay"
+            :picker-options="pickerOptions"
             range-separator="至"
             start-placeholder="开始时间"
             end-placeholder="结束时间">
@@ -92,40 +74,26 @@
         </el-form-item>
 
         <!-- 按周投放 -->
-        <div v-show="formData.projectType.value == 0" class="week-picker-box clearfix">
-          <el-form-item class="week-item mt-20" prop="dateForWeekBegin">
-            <label slot="label"><span class="color-red">* </span>投放时间</label>
-            <el-date-picker
-              :disabled="isEdit"
-              @change="chooseWeek(); reFreshBuild();"
-              value-format="yyyy-MM-dd"
-              style="width: 150px"
-              v-model="formData.dateForWeekBegin"
-              type="date"
-              placeholder="开始时间"
-              :picker-options="pickerOptionsForWeekBegin">
-            </el-date-picker>
-          </el-form-item>
-
-          <label class="float-left week-center-label center">至</label>
-          <el-form-item class="week-item end mt-20" prop="dateForWeekEnd">
-            <el-date-picker
-              :disabled="!formData.dateForWeekBegin || isEdit"
-              @change="chooseWeek(); reFreshBuild();"
-              value-format="yyyy-MM-dd"
-              style="width: 170px"
-              v-model="formData.dateForWeekEnd"
-              type="date"
-              :placeholder="formData.dateForWeekBegin ? '请选择' : '请选择开始时间'"
-              :picker-options="pickerOptionsForWeekEnd">
-            </el-date-picker>
-          </el-form-item>
-        </div>
+        <el-form-item v-if="formData.projectType.value == 0" class="week-item mt-20" prop="date">
+          <label slot="label"><span class="color-red">* </span>投放时间</label>
+          <el-date-picker
+            @change="changePageData"
+            :disabled="isEdit"
+            :clearable="false"
+            v-model="formData.date"
+            value-format="yyyy-MM-dd"
+            type="daterange"
+            :picker-options="pickerOptions"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间">
+          </el-date-picker>
+        </el-form-item>
 
         <!-- 投放频次 -->
         <el-form-item class="mt-20" prop="count" label="投放频次">
           <el-select
-            @change="reFreshBuild"
+            @change="changePageData"
             class="bigger"
             :disabled="isEdit"
             filterable
@@ -143,7 +111,7 @@
         <!-- 投放时长 -->
         <el-form-item class="mt-20" prop="second" label="投放时长">
           <el-select
-            @change="reFreshBuild"
+            @change="changePageData"
             class="bigger"
             :disabled="isEdit"
             filterable
@@ -159,15 +127,17 @@
         </el-form-item>
 
       </el-form>
-
     </PutMangeCard>
 
     <!-- 楼盘定向 -->
-    <PutMangeCard style="margin-bottom: 20px" v-if="!isEdit" v-loading="planData.loading" :title="'楼盘定向'"
-                  class="form-box">
-      <el-tabs @tab-click="changeBuildDirection" class="thin-tab mt-15" v-model="buildingDirection.activeType">
+    <PutMangeCard 
+      style="margin-bottom: 20px" 
+      v-if="!isEdit" v-loading="planData.loading" :title="'楼盘定向'"
+      class="form-box"
+      >
+      <el-tabs @tab-click="clearBuildDirection" class="thin-tab mt-15" v-model="buildingDirection.activeType">
         <!-- 已有资源包 -->
-        <el-tab-pane label="已有资源包" name="exist">
+        <el-tab-pane label="选择已有资源包" name="exist">
           <el-form label-position='left' label-width="125px">
             <el-form-item label="已有资源包">
               <el-select
@@ -349,48 +319,36 @@
       </map-choose-window>
     </el-dialog>
 
-    <!-- 确认投放方案信息 -->
-    <confirmWindow @closeDetail="confirmWindowMsg.show = false" :confirmWindowMsg.sync="confirmWindowMsg"/>
-
   </div>
 </template>
 
 <script>
   import PutMangeCard from '../../../../templates/PutMangeCard'
-  import MyRadio from '../../../../../../components/MyRadio'
+  import ScreenType from '../../../../templates/ScreenType'
+  import MyRadio from '@/components/MyRadio'
   import BuildList from '@/views/putManage/templates/BuildList'
   import mapChooseWindow from './mapChooseWindow'
-  import confirmWindow from './confirmWindow'
-  import { projectConst } from '../../../../../../utils/static'
+  import { projectConst } from '@/utils/static'
   import { getUserInfo } from '@/utils/auth';
   import { mapGetters, mapMutations } from 'vuex'
 
   export default {
     components: {
       PutMangeCard,
+      ScreenType,
       MyRadio,
       BuildList,
       mapChooseWindow,
-      confirmWindow,
     },
     data() {
-      let checkDate = (rule, value, callback) => {
-        // 投放类型，0按周投放，1按天投放
-        if (this.formData.projectType.value === 1 && !value) {
-          callback(new Error('请设置时间！'));
-        }
-        callback()
-      };
-      let checkWeek = (rule, value, callback) => {
-        // 投放类型，0按周投放，1按天投放
-        if (this.formData.projectType.value === 0 && !value) {
-          callback(new Error('请设置时间！'));
-        }
-        callback()
-      };
-
       return {
         projectConst,
+
+        screenPlaceholder: {
+          top: require('../../../../../../assets/images/bg_shang.png'),
+          bottom: require('../../../../../../assets/images/bg_xia.png')
+        },
+
         // 所属计划的信息
         planData: {
           loading: true,
@@ -428,43 +386,16 @@
           },
           // 楼盘余量
           builds: {
-            loading: false, // null loading notnull
-            data: []
+            loading: false,
+            hasData: false,
           },
-        },
-
-        // 确认信息
-        confirmWindowMsg: {
-          show: false,
-          resData: '',
-          pageData: {
-            beginTime: "",
-            count: "",
-            deliveryMode: "",
-            endTime: "",
-            industry: "",
-            name: "",
-            premiseVOS: [{
-              premiseId: '',
-              premiseName: "",
-              address: "",
-              weekForPeople: ""
-            }],
-            projectCity: "",
-            projectType: 0,
-            second: "",
-            totalCost: 0,
-            type: "",
-          }
         },
 
         formData: {
           name: '',
           industry: '',
           projectType: projectConst.putType[0], // 投放类型，0按周投放，1按天投放
-          dateForDay: '',
-          dateForWeekBegin: '',
-          dateForWeekEnd: '',
+          date: '',
           deliveryMode: projectConst.putWay[0], // 投放方式
           count: projectConst.putFrequency[0], // 投放频次
           second: projectConst.putDuration[2], // 投放时长
@@ -481,14 +412,8 @@
           industry: [
             {required: true, message: '请选择投放方案行业!', trigger: 'change'},
           ],
-          dateForDay: [
-            {validator: checkDate, trigger: 'blur'},
-          ],
-          dateForWeekBegin: [
-            {validator: checkWeek, trigger: 'blur'},
-          ],
-          dateForWeekEnd: [
-            {validator: checkWeek, trigger: 'blur'},
+          date: [
+            {required: true, message: '请设置投放时间!', trigger: 'blur'},
           ],
           count: [
             {required: true, message: '请选投放频次!', trigger: 'change'},
@@ -518,15 +443,24 @@
     methods: {
       ...mapMutations(['setBuildsList']),
 
+      // 切换屏幕类型
+      changeScreenType(val) {
+        this.formData.type = val;
+        this.changePageData()
+      },
+      // 隐藏地图选点
       hideMapPoint(val) {
         this.buildingDirection.mapChooseShow = val
       },
 
+
       // 获取地图返回点位
       submitSelectedBuildPoint(selectedList, city) {
         this.formData.projectCity = city.cityCode;
+        this.buildingDirection.builds.hasData = true;
         this.setBuildsList(selectedList)
       },
+
 
       // 根据id获取计划详情
       getPlanDetailById(planid) {
@@ -540,6 +474,7 @@
               this.planData.loading = false;
             })
       },
+
 
       // 根据id初始化回显方案详情
       initProjectDetailById: async function () {
@@ -557,9 +492,7 @@
                 id: resData.id,
                 industry: this.$tools.getObjectItemFromArray(this.industry.data, 'industryId', resData.industry),
                 projectType: this.$tools.getObjectItemFromArray(projectConst.putType, 'value', resData.projectType), // 投放类型，0按周投放，1按天投放
-                dateForDay: [resData.beginTime, resData.endTime],
-                dateForWeekBegin: resData.beginTime,
-                dateForWeekEnd: resData.endTime,
+                date: [resData.beginTime, resData.endTime],
                 projectCity: resData.projectCity,
                 deliveryMode: this.$tools.getObjectItemFromArray(projectConst.putWay, 'value', resData.deliveryMode), // 投放方式
                 count: this.$tools.getObjectItemFromArray(projectConst.putFrequency, 'value', resData.count), // 投放频次
@@ -574,29 +507,13 @@
             })
       },
 
-      // 获取城市列表
-      getCityList() {
-        if (this.cityList.data) return;
-        this.$api.CityList.AllList()
-            .then(res => {
-              this.cityList = {
-                loading: false,
-                data: res.result
-              }
-            })
-            .catch(res => {
-              this.cityList = {
-                loading: false,
-                data: []
-              }
-            })
-      },
 
       // 生成方案名字
       generateProjectName() {
         let date = new Date();
         this.formData.name = `投放方案_${this.$tools.getFormatDate('mm_dd')}`
       },
+
 
       // 行业列表
       getIndustryList: async function () {
@@ -615,16 +532,13 @@
         })
       },
 
-      // 切换楼盘定向
-      changeBuildDirection() {
-        this.clearBuildDirection()
-      },
 
       // 清除楼盘定向列表
       clearBuildDirection() {
         this.buildingDirection.cityInsight.selectedItemId = '';
         this.setBuildsList([])
       },
+
 
       // 显示地图选点
       showMapChoose() {
@@ -643,6 +557,7 @@
                               });
         }
       },
+
 
       // 获取城市洞察包列表
       getCityInsightList() {
@@ -664,7 +579,7 @@
             })
       },
 
-      // 根据洞察id获取城市洞察包详情
+      // 选择下拉已有资源包 根据洞察id获取城市洞察包详情
       getCityInsightDetail(id) {
         if (!id) return;
         this.buildingDirection.builds.loading = true;
@@ -678,22 +593,28 @@
             })
       },
 
-      // 页面数据修改, 重新获取已有资源包的楼盘
-      reFreshBuild() {
-        if (!this.buildingDirection.cityInsight.selectedItemId) return;
-        this.getCityInsightDetail(this.buildingDirection.cityInsight.selectedItemId)
+
+      // 页面数据修改, 重新获取已有资源包的楼盘, 重新算价格
+      changePageData() {
+
+        // 没选已有资源包不重新获取
+        if (!!this.buildingDirection.cityInsight.selectedItemId) {
+          this.getCityInsightDetail(this.buildingDirection.cityInsight.selectedItemId)
+        }
+
+        if (this.buildingDirection.builds.hasData) {
+          this.estimatePrice()
+        }
       },
 
-      /**
-       * @description 根据 城市洞察详情和筛选条件 查询楼盘余量
-       * @param cityInsight 城市洞察详细信息
-       */
+
+      // 根据 城市洞察详情和筛选条件 查询楼盘余量
       getBuildsAvalable(cityInsight) {
         if (!cityInsight) return
         let param;
         param = {
-          beginTime: this.formData.projectType.value == 0 ? this.formData.dateForWeekBegin : this.formData.dateForDay[0],
-          endTime: this.formData.projectType.value == 0 ? this.formData.dateForWeekEnd : this.formData.dateForDay[1],
+          beginTime: this.formData.date[0],
+          endTime: this.formData.date[1],
           count: this.formData.count.value,
           deliveryMode: this.formData.deliveryMode.value,
           industry: this.formData.industry.industryId,
@@ -707,23 +628,25 @@
         this.$api.PutProject.BuildsAvailableByCityInsignt(param)
             .then(res => {
               this.setBuildsList(res.result)
-              this.buildingDirection.builds.data = res.result;
+              this.buildingDirection.builds.hasData = true;
               this.buildingDirection.builds.loading = false;
             })
             .catch(res => {
               this.setBuildsList([])
               this.buildingDirection.estimatePrice = 0
-              this.buildingDirection.builds.data = [];
+              this.buildingDirection.builds.hasData = false;
               this.buildingDirection.builds.loading = false;
             })
       },
 
+
       // POST根据订单信息计算预估总价
       estimatePrice() {
+        if (!this.validataForm()) return;
         this.planData.loading = true;
         let param = {
-          beginTime: this.formData.projectType.value == 0 ? this.formData.dateForWeekBegin : this.formData.dateForDay[0],
-          endTime: this.formData.projectType.value == 0 ? this.formData.dateForWeekEnd : this.formData.dateForDay[1],
+          beginTime: this.formData.date[0],
+          endTime: this.formData.date[1],
           cityCode: this.formData.projectCity,
           count: this.formData.count.value,
           deviceNum: this.deviceNumber,
@@ -739,6 +662,7 @@
               this.planData.loading = false;
             })
       },
+
 
       // 导入楼盘数据
       uplaodBuild(event) {
@@ -784,6 +708,7 @@
             })
       },
 
+
       // 下载模板
       downloadTemplate() {
         this.buildingDirection.templateFileDownloading = true;
@@ -796,6 +721,7 @@
               this.buildingDirection.templateFileDownloading = false;
             })
       },
+
 
       // 校验表单
       validataForm() {
@@ -814,6 +740,7 @@
         }
         return isPassEnptyCheck
       },
+
 
       // 确认
       confirmProject() {
@@ -834,8 +761,8 @@
           name: this.formData.name,
           type: this.formData.type.value, // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
           industry: this.formData.industry.industryId, // 投放行业
-          beginTime: this.formData.projectType.value == 0 ? this.formData.dateForWeekBegin : this.formData.dateForDay[0],
-          endTime: this.formData.projectType.value == 0 ? this.formData.dateForWeekEnd : this.formData.dateForDay[1],
+          beginTime: this.formData.date[0],
+          endTime: this.formData.date[1],
           campaignId: this.$route.query.planId, // 投放计划ID
           count: this.formData.count.value, // 投放频次，001-300次/天，002-600次/天，003-900次/天 依次类推
           deliveryMode: this.formData.deliveryMode.value, // 投放方式，001一个楼盘所有点位，002一个单元一个电梯，003一个单元一半电梯
@@ -920,45 +847,19 @@
         'buildsDetails'
       ]),
 
+      // TODO 余额不足
 
-      // 限制时间选择器 按天 投放选择范围
-      pickerOptionsForDay() {
+      // 时间限制
+      pickerOptions() {
         let _this = this;
         return {
           firstDayOfWeek: 6,
           disabledDate(date) {
             return date.getTime() < Date.now() - 8.64e7 ||
-              date.getTime() > _this.planData.endTime ||
-              date.getTime() < _this.planData.beginTime;
+            date.getTime() > _this.planData.data.endTime ||
+            date.getTime() < _this.planData.data.beginTime ||
+            (_this.formData.projectType.value == 0 && date.getDay() != 5 && date.getDay() != 6);
           }
-        };
-      },
-
-      // 限制时间选择器 按周 投放选择范围
-      pickerOptionsForWeekBegin() {
-        let _this = this;
-        return {
-          firstDayOfWeek: 6,
-          disabledDate(date) {
-            return date.getTime() < Date.now() - 8.64e7 ||
-              date.getTime() > _this.planData.endTime ||
-              date.getTime() < _this.planData.beginTime ||
-              date.getDay() != 6;
-          },
-        };
-      },
-      pickerOptionsForWeekEnd() {
-        let _this = this;
-        return {
-          firstDayOfWeek: 6,
-          disabledDate(date) {
-            return date.getTime() < Date.now() - 8.64e7 ||
-              date.getTime() > _this.planData.endTime ||
-              date.getTime() < _this.planData.beginTime ||
-              date.getDay() != 5 ||
-              date.getTime() < (new Date(_this.formData.dateForWeekBegin)
-              ).getTime();
-          },
         };
       },
 
@@ -969,6 +870,7 @@
 
     },
 
+
     watch: {
       deviceNumber(val) {
         if(val) {
@@ -976,7 +878,6 @@
         }
       }
     }
-
   }
 </script>
 
