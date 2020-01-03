@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container cityInsight" v-loading="loading">
     <div class="map-box">
       <div class="city-build-select">
         <div class="left-info">
@@ -97,7 +97,7 @@
         ></db-map>
       </div>
     </div>
-    <div slot="footer" class="dialog-footer">
+    <div class="dialog-footer">
       <el-button class="map-btn" @click="hideMapPoint">取 消</el-button>
       <el-button class="map-btn" type="primary" @click="submitBuildPoint">保存</el-button>
       <!-- <el-button type="primary" @click="innerVisible = true">打开内层 Dialog</el-button> -->
@@ -204,8 +204,8 @@
               types: [
                 {label: '低于200', key: 0},
                 {label: '200-500', key: 1},
-                {label: '5000-8000', key: 2},
-                {label: '8000以上', key: 2}
+                {label: '500-800', key: 2},
+                {label: '800以上', key: 3}
               ]
             },
             {
@@ -220,6 +220,8 @@
           ]
         },
         activeTab: 0,
+        leftShow: [false, false], // 控制筛选弹出框的加载
+        currentPonents: null,
         tabData: [
           {name: '楼盘筛选', value: 1},
         ],
@@ -246,6 +248,7 @@
           parkingNum: [],
           propertyRent: []
         },
+        buildingFilterSelected: false,
         location: {
           x: 0,
           y: 0
@@ -258,7 +261,6 @@
           'polygon': 121,
           'circle': 310 // 402 + 22圆形时弹窗位置为弹窗高度加图标高度
         },
-        allBuildings: []
       }
     },
     mounted() {
@@ -557,7 +559,7 @@
     }
   }
   .map-choose {
-    top: -10%;
+    top: -10% !important;
     .el-dialog__header {
       display: none;
     }

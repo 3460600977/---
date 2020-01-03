@@ -11,13 +11,13 @@ export const toolBoxRouter = [
   {
     path: '/toolBox/account',
     component: () => import('@/views/toolBox/manage/index'),
-    meta: {code: '1010', white: true},
+    meta: {code: '1010'},
     children: [
       //默认账号管理路径---
       {
         path: '/',
         component: () => import('@/views/toolBox/manage/modules/account/Info'),
-        meta: {code: '1010', white: true},
+        meta: {code: '1010'},
       },
     ]
   },
@@ -25,7 +25,7 @@ export const toolBoxRouter = [
   {
     path: '/toolBox/resourceBundle',
     component: () => import('@/views/toolBox/resourceBundle/'),
-    meta: {code: '1020', white: true},
+    meta: {code: '1200'},
   },
   // 工具箱--修改账号密码
   {

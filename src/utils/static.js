@@ -227,7 +227,7 @@ export const MenuList =
         {"code": "1102", "name": "人群分析", "selected": false, "path": "/peopleAnalysis", "children": []},
       ]
     },
-    {"code": "1200", "name": "媒体智选", "selected": false, "path": "/cityInsight", "children": []},
+    {"code": "1200", "name": "媒体智选", "selected": false, "path": "/toolbox/resourceBundle", "children": []},
     {
       "code": "1300", "name": "投放管理", "selected": false, "path": "/putManage", "children": [
         {"code": "1310", "name": "创建计划", "selected": false, "path": "/putManage/create/plan", "children": []},
