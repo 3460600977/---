@@ -14,12 +14,22 @@
             style="width: 100%; height: 100%"
             :src="screenPlaceholder.top"
             fit="cover"></el-image>
+          <el-image
+            v-else
+            style="width: 100%; height: 100%"
+            :src="screenPlaceholder.topEmpty"
+            fit="cover"></el-image>
         </div>
         <div class="bottom bg-gray" :class="{'disabled': disabled}">
           <el-image
             v-if="item.value != '001'"
             style="width: 100%; height: 100%"
             :src="screenPlaceholder.bottom"
+            fit="cover"></el-image>
+          <el-image
+            v-else
+            style="width: 100%; height: 100%"
+            :src="screenPlaceholder.bottomEmpty"
             fit="cover"></el-image>
         </div>
       </div>
@@ -51,7 +61,9 @@ export default {
 
       screenPlaceholder: {
         top: require('@/assets/images/bg_shang.png'),
-        bottom: require('@/assets/images/bg_xia.png')
+        topEmpty: require('@/assets/images/bg_shang_empty.png'),
+        bottom: require('@/assets/images/bg_xia.png'),
+        bottomEmpty: require('@/assets/images/bg_xia_empty.png')
       },
     }
   },
@@ -69,9 +81,9 @@ export default {
     justify-content: center;
     margin-left: 10px;
     margin-top: 100px;
-    width:77px;
+    width:80px;
     height:180px;
-    background: #f3f3f3;
+    background: #000000;
     border:1px solid rgba(196, 196, 196, 0.8);
     box-shadow:0px 2px 6px 1px rgba(19,18,18,0.1);
     border-radius:6px;
@@ -88,7 +100,7 @@ export default {
     .bottom{
       width:70px;
       height:40px;
-      margin-top: 4px;
+      margin-top: 5px;
     }
   }
 }
