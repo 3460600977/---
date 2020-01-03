@@ -548,7 +548,8 @@
         if (!this.formData.date) return;
         let _dateBegin = new Date(this.formData.date[0]);
         let _dateEnd = new Date(this.formData.date[1]);
-        if (_dateBegin.getDay() !== 6 || _dateEnd.getDay() !== 5) {
+        if (_dateBegin.getDay() !== 6 || _dateEnd.getDay() !== 5 || _dateBegin === _dateEnd) {
+          this.formData.date = '';
           return this.$notify({
             title: '警告',
             message: '请选择周六开始, 周五结束',
