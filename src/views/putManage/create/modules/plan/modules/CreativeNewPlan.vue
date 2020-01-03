@@ -159,6 +159,7 @@ export default {
       }) 
       
     },
+
     // 下一步/保存并关闭
     savePlan() {
       let isPassEnptyCheck = true,
@@ -173,6 +174,7 @@ export default {
           });
         }
       })
+
       if (!isPassEnptyCheck) {
         this.formData.saving = false;
         return this.$notify({
@@ -210,6 +212,7 @@ export default {
             this.formData.saving = false;
           })
       } 
+      
       // 新建
       else {
         this.$api.PutPlan.AddPlan(param)
