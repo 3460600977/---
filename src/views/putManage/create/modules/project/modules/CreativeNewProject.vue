@@ -855,7 +855,6 @@
         return {
           firstDayOfWeek: 6,
           disabledDate(date) {
-            console.log(now.getDay() == date.getDay() == now.getDay() == 5)
             return date.getTime() < Date.now() - 8.64e7 ||
             date.getTime() > _this.planData.data.endTime ||
             date.getTime() < _this.planData.data.beginTime ||

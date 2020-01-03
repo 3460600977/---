@@ -236,14 +236,11 @@ export default {
     getCreativeNameList() {
       this.creativeNameList.loading = true;
 
-      // TODO 联动方案
-      if (this.searchParam.project.data.id) {
-        let param = {
-          projectId : this.searchParam.project.data.id
-        }
+      let param = {
+        projectId : this.searchParam.project.data.id || ''
       }
 
-      this.$api.CreateCreative.CreativeNameList()
+      this.$api.CreateCreative.CreativeNameList(param)
         .then(res => {
           this.creativeNameList = {
             loading: false,
