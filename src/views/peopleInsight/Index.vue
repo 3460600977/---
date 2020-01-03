@@ -2,7 +2,8 @@
   <div class="container">
     <el-tabs @tab-click="changeTab" v-model="activeName" class="my-tabs" type="border-card">
 
-      <el-tab-pane label="人群包管理" name="crowd">
+      <el-tab-pane name="crowd">
+        <p class="db-title">资源包管理</p>
         <packageList />
       </el-tab-pane>
 
