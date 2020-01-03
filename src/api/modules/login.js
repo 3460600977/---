@@ -69,4 +69,12 @@ export const Login = {
       data
     });
   },
+  
+  // 舒心广告主信息
+  RefreshUser: (data) => {
+    return request({
+      url: "/dpapi/refreshUser",
+      method: "get",
+    });
+  },
 }

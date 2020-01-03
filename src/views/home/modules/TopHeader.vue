@@ -219,12 +219,15 @@
           }
         })
       },
+
       handleToAccount() {
         this.$router.replace('/toolBox/account')
       },
+
       handleToPass() {
         this.dialogEditPass = true
       },
+
       handleToLogout() {
         MessageBox.confirm('登出后，身份信息失效，可以取消继续留在该页面，或者重新登录', '确定退出', {
           confirmButtonText: '确认',
@@ -241,6 +244,7 @@
           })
         })
       },
+
       changeEditPass(val) {
         this.dialogEditPass = val
       }
@@ -259,8 +263,11 @@
         this.$router.replace('/auditList')
       }
     },
-    beforeMount() {
-      this.setActiveTopMenu()
+
+    watch: {
+      '$route.path': function() {
+        this.setActiveTopMenu()
+      }
     }
   }
 </script>

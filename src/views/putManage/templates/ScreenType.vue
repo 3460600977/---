@@ -8,28 +8,18 @@
       :key="index">
       <span class="float-left">{{item.name}}</span>
       <div class="float-left screen-preview">
-        <div class="top bg-gray" :class="{'disabled': disabled}">
+        <div class="top" :class="{'disabled': disabled}">
           <el-image
             v-if="item.value != '002'"
             style="width: 100%; height: 100%"
             :src="screenPlaceholder.top"
             fit="cover"></el-image>
-          <el-image
-            v-else
-            style="width: 100%; height: 100%"
-            :src="screenPlaceholder.topEmpty"
-            fit="cover"></el-image>
         </div>
-        <div class="bottom bg-gray" :class="{'disabled': disabled}">
+        <div class="bottom" :class="{'disabled': disabled}">
           <el-image
             v-if="item.value != '001'"
             style="width: 100%; height: 100%"
             :src="screenPlaceholder.bottom"
-            fit="cover"></el-image>
-          <el-image
-            v-else
-            style="width: 100%; height: 100%"
-            :src="screenPlaceholder.bottomEmpty"
             fit="cover"></el-image>
         </div>
       </div>
@@ -90,17 +80,16 @@ export default {
     .disabled{
       filter:opacity(0.4);
     }
-    >.bg-gray{
-      background:#DBDBDB !important;
-    }
     .top{
       width:70px;
       height:123px;
+      background:rgb(255, 255, 255);
     }
     .bottom{
       width:70px;
       height:40px;
       margin-top: 5px;
+      background:rgb(255, 255, 255);
     }
   }
 }

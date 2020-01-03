@@ -41,7 +41,7 @@
         </el-form-item>
 
         <!-- 投放类型 -->
-        <el-form-item class="mt-20" prop="projectType">
+        <el-form-item class="mt-20" prop="projectType" label="投放时间" >
           <label slot="label"><span class="color-red">* </span>投放类型</label>
           <div class="mid-between" style="width: 240px">
             <el-button
@@ -57,8 +57,7 @@
         </el-form-item>
 
         <!-- 按天投放 -->
-        <el-form-item v-if="formData.projectType.value == 1" class="mt-20" prop="date">
-          <label slot="label"><span class="color-red">* </span>投放时间</label>
+        <el-form-item v-if="formData.projectType.value == 1" label="投放时间" class="mt-20" prop="date">
           <el-date-picker
             @change="changePageData"
             :disabled="isEdit"
@@ -74,10 +73,9 @@
         </el-form-item>
 
         <!-- 按周投放 -->
-        <el-form-item v-if="formData.projectType.value == 0" class="week-item mt-20" prop="date">
-          <label slot="label"><span class="color-red">* </span>投放时间</label>
+        <el-form-item v-if="formData.projectType.value == 0" label="投放时间" class="week-item mt-20" prop="date">
           <el-date-picker
-            @change="changePageData"
+            @change="changePageData(); changeWeek()"
             :disabled="isEdit"
             :clearable="false"
             v-model="formData.date"
@@ -232,7 +230,7 @@
 
     <!-- 楼盘预估数面板 -->
     <div class="estimate-box" v-loading="buildingDirection.builds.loading">
-      <div class="font-16 bold">楼盘预估数</div>
+      <div class="font-16 bold">可售投放数</div>
 
       <template v-if="deviceNumber > 0">
         <ul class="msg-box color-text-1">
@@ -545,16 +543,17 @@
         this.buildingDirection.mapChooseShow = true;
       },
 
-      // 按周投放 选择时间校验结束大于开始
-      chooseWeek() {
-        if (!this.formData.dateForWeekBegin || !this.formData.dateForWeekEnd) return;
-        if (this.formData.dateForWeekBegin >= this.formData.dateForWeekEnd) {
-          this.formData.dateForWeekBegin = this.formData.dateForWeekEnd = '';
+      // 按周投放时间校验
+      changeWeek() {
+        if (!this.formData.date) return;
+        let _dateBegin = new Date(this.formData.date[0]);
+        let _dateEnd = new Date(this.formData.date[1]);
+        if (_dateBegin.getDay() !== 6 || _dateEnd.getDay() !== 5) {
           return this.$notify({
-                                title: '警告',
-                                message: '开始时间应早于结束时间',
-                                type: 'warning'
-                              });
+            title: '警告',
+            message: '请选择周六开始, 周五结束',
+            type: 'warning'
+          });
         }
       },
 

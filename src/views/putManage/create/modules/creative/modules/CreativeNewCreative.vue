@@ -373,7 +373,7 @@ export default {
     }
   },
   
-  beforeMount: async function() {
+  created: async function() {
     this.createType = this.$route.query.createType;
     this.formData.projectId = this.$route.query.projectId || '';
     this.industryList = await this.getIndustryList();
