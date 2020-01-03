@@ -116,8 +116,12 @@ let tools = {
     if (prefixInt) {
       result = prefixInt + result;
     }
-    if (hasZero) return result + '.' + suffixDecimal;
-    else return result
+    if (hasZero) {
+      suffixDecimal = suffixDecimal.length === 1 ? suffixDecimal + '0' : suffixDecimal
+      result = result + '.' + suffixDecimal;
+    }
+
+    return result
   },
 
 
