@@ -90,7 +90,11 @@
           verifyValue: [
             {trigger: ['blur', 'change'], validator: checkVerify}
           ],
-        }
+        },
+        audit: [{"code": "1010", "name": "账号管理", "selected": true, "path": "/toolBox/account", "children": []}],
+        toolMenu: [
+          {"code": "1010", "name": "账号管理", "selected": true, "path": "/toolBox/account", "children": []},
+          {"code": "1020", "name": "账号管理", "selected": true, "path": "/toolBox/account", "children": []},]
       }
     },
 
@@ -149,7 +153,6 @@
               setUserInfo(info)
               let menuList = []
               menuList = this.$tools.getAllMenuList(info.menu, menuList)
-              setMenuList(menuList)
               let audit = false
               menuList.forEach(item => {
                 if (item.code === '1600' && item.selected) {
@@ -157,8 +160,16 @@
                 }
               })
               if (audit) {
+                this.audit.forEach(item => {
+                  menuList.push(item)
+                })
+                setMenuList(menuList)
                 this.$router.push({path: '/auditList', query: {}})
               } else {
+                this.toolMenu.forEach(item => {
+                  menuList.push(item)
+                })
+                setMenuList(menuList)
                 this.$router.push({path: '/home', query: {}})
               }
             }).catch(res => {
