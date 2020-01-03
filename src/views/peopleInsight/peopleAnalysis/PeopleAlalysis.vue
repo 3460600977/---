@@ -11,12 +11,14 @@
       <div class="report-form-title">常规属性</div>
       <div class="chart-box">
         <div class="normal-box">
-          <histogram
+          <pieHollowGroup
             width="100%"
             height="100%"
-            :color="colorType[2]"
-            :data="ageArr"
-          ></histogram>
+            :color="colors"
+            :data="genderArr"
+          >
+
+          </pieHollowGroup>
         </div>
 
         <div class="normal-box">
@@ -103,12 +105,14 @@
 import headerCondition from "./modeles/headerCondition";
 import arealDistribution from "./modeles/arealDistribution";
 import Histogram from "@/components/chart/Histogram.vue";
+import pieHollowGroup from "@/components/chart/pieHollowGroup";
 
 export default {
   components: {
     headerCondition,
     arealDistribution,
-    Histogram
+    Histogram,
+    pieHollowGroup
   },
   data() {
     return {
@@ -365,8 +369,21 @@ export default {
             "barWidth": 18
           }
         ]
-      }
-                    
+      },
+
+      genderArr: [
+            {name: '男', value: 54},
+            {name: '男-全国', value: 38},
+            {name: '女', value: 24},
+            {name: '女-全国', value: 17},
+        ],
+
+      colors : [
+        ['rgba(244, 102, 74, 1)', 'rgba(236, 236, 236, 1)'],
+        ['rgba(91, 126, 255, 1)', 'rgba(236, 236, 236, 1)'],
+        ['rgba(244, 102, 74, 1)', 'rgba(236, 236, 236, 1)'],
+        ['rgba(91, 126, 255, 1)', 'rgba(236, 236, 236, 1)']],
+
     };
   }
 };
