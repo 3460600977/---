@@ -94,7 +94,9 @@
         audit: [{"code": "1010", "selected": true,}],
         toolMenu: [
           {"code": "1010", "selected": true},
-          {"code": "1020", "selected": true},
+          {"code": "1201", "selected": true},
+          {"code": "1101", "selected": true},
+          {"code": "1102", "selected": true},
           {"code": "1340", "selected": true},
         ]
       }

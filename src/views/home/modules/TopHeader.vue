@@ -49,7 +49,7 @@
       </div> -->
 
       <!-- 用户信息，下拉菜单 -->
-        <!-- @mouseenter="hoverRightMsg(2)" -->
+      <!-- @mouseenter="hoverRightMsg(2)" -->
       <div
         @mouseenter="hoverRightMsg(0)"
         @mouseleave="leaveMenu"
@@ -175,7 +175,7 @@
        */
       hoverRightMsg(index) {
         // if (index === 2) {
-          this.rightMsg.dropMenuShow = true;
+        this.rightMsg.dropMenuShow = true;
         // }
         this.rightMsg.hoverBlock.style = {
           width: this.rightMsg.hoverBlock.width[index],
@@ -269,14 +269,11 @@
       if (userInfo.userName) {
         this.username = userInfo.userName
       }
-    },
-
-    beforeMount() {
       this.setActiveTopMenu()
     },
 
     watch: {
-      '$route.path': function() {
+      '$route.path': function () {
         this.setActiveTopMenu()
       }
     }
