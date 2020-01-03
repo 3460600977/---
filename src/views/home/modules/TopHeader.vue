@@ -35,25 +35,26 @@
     <!-- user msg -->
     <div class="user-msg color-white mid">
       <!-- 钱 -->
-      <div
+      <!-- <div
         @mouseenter="hoverRightMsg(0)"
         @mouseleave="leaveMenu"
         class="item icon-item mid"><img width="20px" :src="images.money" alt="">
-      </div>
+      </div> -->
 
       <!-- 消息 -->
-      <div
+      <!-- <div
         @mouseenter="hoverRightMsg(1)"
         @mouseleave="leaveMenu"
         class="item icon-item mid">
         <el-badge :value="20">
           <img width="20px" :src="images.notification" alt="">
         </el-badge>
-      </div>
+      </div> -->
 
       <!-- 用户信息，下拉菜单 -->
+        <!-- @mouseenter="hoverRightMsg(2)" -->
       <div
-        @mouseenter="hoverRightMsg(2)"
+        @mouseenter="hoverRightMsg(0)"
         @mouseleave="leaveMenu"
         class="item">
         <div class="user-head mid clearfix">
@@ -108,6 +109,7 @@
         MenuList,
         dialogEditPass: false,
         loading: false,
+
         images: {
           logo: require('../../../assets/images/icon_logo.png'),
           money: require('../../../assets/images/icons/icon_money.png'),
@@ -116,6 +118,7 @@
           up: require('../../../assets/images/icons/icon_up.png'),
           defaultAvatar: require('../../../assets/images/icons/icon_head portrait.png'),
         },
+
         menu: {
           activeIndex: 0,
           moveBlockStyle: {
@@ -129,15 +132,16 @@
             {name: '媒体智选', path: '/toolbox/resourceBundle'},
             {name: '投放管理', path: '/putManage'},
             {name: '报表中心', path: '/reportList'},
-            {name: '财务管理', path: ''},
+            // {name: '财务管理', path: ''},
           ],
           audit: [
             {name: '审核管理', path: '/auditList'},
           ]
         },
+
         rightMsg: {
           hoverBlock: {
-            width: ['70px', '70px', '210px'],
+            width: ['210px', '70px', '210px'],
             style: {
               width: '70px',
               transform: 'translateX(0px)',
@@ -146,6 +150,7 @@
           },
           dropMenuShow: false,
         },
+
         username: 'admin',
       }
     },
@@ -177,18 +182,11 @@
       hoverRightMsg(index) {
         if (index === 2) {
           this.rightMsg.dropMenuShow = true;
-          this.rightMsg.hoverBlock.style = {
-            width: this.rightMsg.hoverBlock.width[index],
-            transform: `translateX(${index * 70}px)`,
-            opacity: 1
-          }
         }
-        else {
-          this.rightMsg.hoverBlock.style = {
-            width: this.rightMsg.hoverBlock.width[index],
-            transform: `translateX(${index * 70}px)`,
-            opacity: 1
-          }
+        this.rightMsg.hoverBlock.style = {
+          width: this.rightMsg.hoverBlock.width[index],
+          transform: `translateX(${index * 70}px)`,
+          opacity: 1
         }
       },
 

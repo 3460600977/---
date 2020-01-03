@@ -66,8 +66,7 @@
             >
               <i class="iconfont icon-shuxingliebiaoxiangqing2 icon-color"></i>详情
             </span>
-
-            <span v-if="scope.row.status == 0 && !scope.row.creativeStatus " class="icon-space hand">
+            <span v-if="scope.row.status == 0 && scope.row.creativeStatus == null" class="icon-space hand">
               <!-- <router-link :to="`/putManage/create/project?editProjectId=${scope.row.projectId}`"> -->
               <router-link :to="`/putManage/create/creative?projectId=${scope.row.projectId}&createType=step`">
                 <i class="iconfont icon-bianji icon-color"></i>修改

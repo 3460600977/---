@@ -1,11 +1,11 @@
 <template>
-  <div class="put-project">
+  <div v-loading.fullscreen.lock="planData.loading" class="put-project">
     <div class="title">
       <h2>所属投放计划：{{planData.data.name||formData.planName}}</h2>
     </div>
 
     <!-- 投放设置 -->
-    <PutMangeCard v-loading="planData.loading" :title="'投放设置'" class="form-box">
+    <PutMangeCard :title="'投放设置'" class="form-box">
       <el-form
         ref="planTop"
         :label-position="'left'"
@@ -130,7 +130,7 @@
     <!-- 楼盘定向 -->
     <PutMangeCard 
       style="margin-bottom: 20px" 
-      v-if="!isEdit" v-loading="planData.loading" :title="'楼盘定向'"
+      v-if="!isEdit" :title="'楼盘定向'"
       class="form-box"
       >
       <el-tabs @tab-click="clearBuildDirection" class="thin-tab mt-15" v-model="buildingDirection.activeType">
@@ -229,38 +229,40 @@
     </PutMangeCard>
 
     <!-- 楼盘预估数面板 -->
-    <div class="estimate-box" v-loading="buildingDirection.builds.loading">
+    <div class="estimate-box">
       <div class="font-16 bold">可售投放数</div>
 
       <template v-if="deviceNumber > 0">
-        <ul class="msg-box color-text-1">
-          <li class="item">
-            <label class="name">楼盘数</label><label class="bold">{{$tools.toThousands(buildsNumber, false)}}</label>个
-          </li>
-          <li class="item">
-            <label class="name">单元数</label><label class="bold">{{$tools.toThousands(unitNum, false)}}</label>个
-          </li>
-          <li class="item">
-            <label class="name">点位数</label><label class="bold">{{$tools.toThousands(deviceNumber, false)}}</label>个
-          </li>
-          <li class="item">
-            <label class="name">覆盖人次</label><label class="bold">{{$tools.toThousands(peopleNumber, false)}}</label>人
-          </li>
-        </ul>
+        <div v-loading="buildingDirection.builds.loading">
+          <ul class="msg-box color-text-1">
+            <li class="item">
+              <label class="name">楼盘数</label><label class="bold">{{$tools.toThousands(buildsNumber, false)}}</label>个
+            </li>
+            <li class="item">
+              <label class="name">单元数</label><label class="bold">{{$tools.toThousands(unitNum, false)}}</label>个
+            </li>
+            <li class="item">
+              <label class="name">点位数</label><label class="bold">{{$tools.toThousands(deviceNumber, false)}}</label>个
+            </li>
+            <li class="item">
+              <label class="name">覆盖人次</label><label class="bold">{{$tools.toThousands(peopleNumber, false)}}</label>人
+            </li>
+          </ul>
 
 
-        <ul class="money-box">
-          <li class="item">
-            <span>预算:&emsp;</span>
-            <span class="color-red">¥</span>
-            <span class="color-red font-16 bold">{{$tools.toThousands(buildingDirection.estimatePrice/100)}}</span>
-          </li>
-          <li class="item">
-            <span>余额:&emsp;</span>
-            <span>¥</span>
-            <span class="font-16 bold">{{$tools.toThousands(userInfo.accountBalance/100)}}</span>
-          </li>
-        </ul>
+          <ul class="money-box">
+            <li class="item">
+              <span>预算:&emsp;</span>
+              <span class="color-red">¥</span>
+              <span class="color-red font-16 bold">{{$tools.toThousands(buildingDirection.estimatePrice/100)}}</span>
+            </li>
+            <li class="item">
+              <span>余额:&emsp;</span>
+              <span>¥</span>
+              <span class="font-16 bold">{{$tools.toThousands(userInfo.accountBalance/100)}}</span>
+            </li>
+          </ul>
+        </div>
       </template>
 
       <noData v-else>无可售数据</noData>
@@ -643,7 +645,6 @@
       // POST根据订单信息计算预估总价
       estimatePrice() {
         if (!this.validataForm()) return;
-        this.planData.loading = true;
         let param = {
           beginTime: this.formData.date[0],
           endTime: this.formData.date[1],
@@ -655,11 +656,9 @@
         }
         this.$api.CityList.EstimateTotalPrice(param)
             .then(res => {
-              this.planData.loading = false;
               this.buildingDirection.estimatePrice = res.result;
             })
             .catch(res => {
-              this.planData.loading = false;
             })
       },
 

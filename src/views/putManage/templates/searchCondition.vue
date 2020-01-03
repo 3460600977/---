@@ -6,6 +6,7 @@
     <el-form-item class="line-space" label="投放计划名称">
       <el-select 
         @focus="getPlanNameList"
+        @change="changePlan"
         value-key="id"
         :loading="planNameList.loading" 
         v-model="searchParam.plan.data" 
@@ -26,6 +27,7 @@
     <el-form-item v-show="searchType !== 'plan'" class="line-space" label="投放方案名称">
       <el-select 
         @focus="getProjectNameList"
+        @change="changeProject"
         :loading="projectNameList.loading"
         value-key="id" 
         v-model="searchParam.project.data" 
@@ -153,6 +155,8 @@ export default {
       },
 
 
+
+
       planNameList: {
         loading: true,
         data: []
@@ -177,6 +181,7 @@ export default {
 
     // 下拉框数据 计划名字列表
     getPlanNameList() {
+      if (this.planNameList.data.length > 0) return false;
       this.planNameList.loading = true;
       this.$api.PutPlan.PlanNameList()
         .then(res => {
@@ -197,6 +202,21 @@ export default {
     // 下拉框数据 方案名字列表
     getProjectNameList() {
       this.projectNameList.loading = true;
+      if (this.searchParam.plan.data.id) {
+        return this.$api.PutProject.ProjectNameListByCamId(+this.searchParam.plan.data.id)
+          .then(res => {
+            this.projectNameList = {
+              loading: false,
+              data: res.result,
+            }
+          })
+          .catch(res => {
+            this.projectNameList = {
+              loading: false,
+              data: [],
+            }
+          })
+      }
       this.$api.PutProject.ProjectNameList()
         .then(res => {
           this.projectNameList = {
@@ -216,7 +236,14 @@ export default {
     // 下拉框数据 创意名字列表
     getCreativeNameList() {
       this.creativeNameList.loading = true;
-      this.$api.CreateCreative.CreativeNameList()
+
+      if (this.searchParam.project.data.id) {
+        let param = {
+          projectId : this.searchParam.project.data.id
+        }
+      }
+      
+      this.$api.CreateCreative.CreativeNameList(this.searchParam.project.data.id)
         .then(res => {
           this.creativeNameList = {
             loading: false,
@@ -235,6 +262,20 @@ export default {
     // 重置翻页为1
     resetPageIndex() {
       this.searchParam.pageIndex = 1;
+    },
+    
+
+    // change计划
+    changePlan() {
+      this.searchParam.project = { data: '', status: '' };
+      this.projectNameList.data = [];
+    },
+    
+
+    // change方案
+    changeProject() {
+      this.searchParam.creative = { data: '', status: '' };
+      this.creativeNameList.data = [];
     },
 
 

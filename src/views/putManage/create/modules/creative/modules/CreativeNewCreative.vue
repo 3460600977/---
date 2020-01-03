@@ -1,11 +1,10 @@
 <!-- 创建创意公用组件 -->
 <template>
-  <div class="upload-creative">
+  <div class="upload-creative" v-loading.fullscreen.lock="pageLoading">
     <!-- 上传素材 -->
     <PutMangeCard 
       class="form-box creative" 
-      :style="createType === 'single' ? 'min-height: 715px;' : !haveProject ? 'min-height: 504px;' : ''" 
-      v-loading="pageLoading" :title="'制作创意'">
+      :title="'制作创意'">
       <!-- 上屏 -->
       <el-form  
         ref="creativeFormMaterialTop"
@@ -153,7 +152,7 @@
     </PutMangeCard>
 
     <!-- 广告资质 -->
-    <PutMangeCard :title="'广告创意资质'" v-loading="pageLoading" class="form-box aptitude">
+    <PutMangeCard :title="'广告创意资质'" class="form-box aptitude">
       <el-form
         ref="creativeForm"
         :label-position="'left'"
@@ -207,7 +206,7 @@
     </PutMangeCard>
 
     <!-- 第三方监测 -->
-    <PutMangeCard :title="'第三方监测'" v-loading="pageLoading" class="form-box aptitude">
+    <PutMangeCard :title="'第三方监测'" class="form-box aptitude">
       <el-form
         ref="creativeForm"
         :model="formData"
@@ -262,7 +261,7 @@
     </PutMangeCard>
 
     <!-- 广告创意名称 -->
-    <PutMangeCard :title="'广告创意名称'" v-loading="pageLoading" class="form-box aptitude">
+    <PutMangeCard :title="'广告创意名称'" class="form-box aptitude">
       <el-form
         ref="creativeFormName"
         :model="formData"
@@ -276,7 +275,7 @@
     </PutMangeCard>
 
     <!-- 保存 取消 -->
-    <PutMangeCard class="save-box clearfix" v-loading="pageLoading">
+    <PutMangeCard class="save-box clearfix">
       <div class="float-right">
         <el-button  style="width: 136px" @click="nextPage()">取消</el-button>
         <el-button  style="width: 136px" @click="saveCreative" type="primary">
