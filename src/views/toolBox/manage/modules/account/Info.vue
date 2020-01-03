@@ -35,6 +35,12 @@
             field: 'company'
           },
           {
+            name: '品牌名称',
+            label: '',
+            icon: require('../../../../../assets/iconImg/icon_trademark@2x.png'),
+            field: 'brandName'
+          },
+          {
             name: '公司行业',
             label: '',
             icon: require('../../../../../assets/iconImg/icon_industry@2x.png'),

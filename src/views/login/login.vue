@@ -150,7 +150,17 @@
               let menuList = []
               menuList = this.$tools.getAllMenuList(info.menu, menuList)
               setMenuList(menuList)
-              this.$router.push({path: '/home', query: {}})
+              let audit = false
+              menuList.forEach(item => {
+                if (item.code === '1600' && item.selected) {
+                  audit = true
+                }
+              })
+              if (audit) {
+                this.$router.push({path: '/auditList', query: {}})
+              } else {
+                this.$router.push({path: '/home', query: {}})
+              }
             }).catch(res => {
               this.loading = false;
             })

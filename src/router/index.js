@@ -17,11 +17,12 @@ const router = new Router({
   routes: [
     {
       path: '/home',
-      meta: {title: "测试"},
+      meta: {code: '1000'},
       component: () => import('@/views/home/Home'),
       children: [
         {
           path: '/',
+          meta: {code: '1000'},
           component: () => import('@/views/home/modules/HomeBody'),
         },
         ...putManageRouter,
@@ -74,7 +75,7 @@ router.beforeEach((to, from, next) => {
     }
   }
   // 判断该路由是否需要登录权限
-  if (store.state.token.userToken) { // 通过vuex state获取当前登录状态
+  if (store.state.token.userToken && canEnter) { // 通过vuex state获取当前登录状态
     next()
   } else {
     if (to.meta.white) {

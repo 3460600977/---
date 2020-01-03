@@ -242,7 +242,6 @@
     mounted() {
       //请求验证码接口
       let userInfo = getUserInfo()
-      let menuList = []
       //菜单处理
       for (let i = 0; i < this.MenuList.length; i++) {
         for (let j = 0; j < userInfo.menu.length; j++) {

@@ -22,6 +22,7 @@
           first_name: '投放报表',
           first_path: '/reportList',
           menu_index: 0,
+          menu_icon_show: false,
           menu_icon: require('../../../assets/iconImg/icon_Management@2x.png'),
           menu: [
             {

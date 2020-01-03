@@ -19,6 +19,7 @@
           first_name: '账号管理',
           first_path: '/toolBox/account',
           menu_index: 0,
+          menu_icon_show: true,
           menu_icon: require('../../../assets/iconImg/icon_Management@2x.png'),
           menu: [
             {

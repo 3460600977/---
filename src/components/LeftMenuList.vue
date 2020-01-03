@@ -14,7 +14,8 @@
                :class="{'left-report-menu':true,'hide_font': !isShowReportRoute}">
         <el-submenu v-for="(rootMenu, index) in leftMenuList.menu" :index="rootMenu.name" :key="index">
           <template slot="title">
-            <img :src="leftMenuList.menu_icon" class="menuIcon">
+            <img :src="leftMenuList.menu_icon" class="menuIcon" v-if="leftMenuList.menu_icon_show">
+            <i class="iconfont  icon-tongjibaobiao menuBiao" v-else></i>
             <span slot="title">{{rootMenu.name}}</span>
           </template>
           <el-menu-item :menu_path="menu_sub.path.substr(1)"
@@ -23,7 +24,7 @@
                         :key="subIndex"
                         @click="handleTo(menu_sub.path, subIndex)"
                         :class=
-                          "{'item_active':onRoutes===menu_sub.path.substr(1)||
+                          "{'item_active':onRoutes===menu_sub.path||
                         (subIndex===0&&onRoutes===leftMenuList.first_path)}">
             <router-link :to="menu_sub.path" target="_self"> {{menu_sub.name}}</router-link>
           </el-menu-item>
@@ -44,6 +45,7 @@
           first_name: '账号管理',
           first_path: '/toolBox/account',
           menu_index: 0,
+          menu_icon_show: true,
           menu_icon: require('../assets/iconImg/icon_Management@2x.png'),
           menu: [
             {
@@ -67,6 +69,7 @@
     },
     computed: {
       onRoutes() {
+        console.log(this.$route.path)
         // 当前激活菜单的 index
         return this.$route.path
       },
@@ -106,14 +109,13 @@
     }
     .icon-color {
       width: 12px;
-      height: 16px;
       color: $color-icon;
     }
     a {
       text-decoration: none;
       color: inherit;
     }
-    .el-menu-item {
+    /deep/ .el-menu-item {
       color: $color-blue;
       padding-left: 65px !important;
       &.item_active {
@@ -121,15 +123,19 @@
       }
     }
     .is-active, .item_active {
-      background-color: $color-bg-4;
+      background-color: $color-bg;
     }
-    .el-submenu {
+    /deep/ .el-submenu {
       background-color: $color-bg-3;
       i {
         margin-right: 20px;
       }
       li.el-menu-item a {
         margin-left: 30px;
+      }
+      .menuBiao {
+        font-size: 22px;
+        margin-right: 38px;
       }
     }
     &.hide {
@@ -138,7 +144,7 @@
     .el-submenu__title {
       padding-left: 30px !important;
     }
-    .el-submenu__title i {
+    /deep/ .el-submenu__title i {
       color: $color-blue;
       &.el-submenu__icon-arrow {
         display: none;
@@ -172,6 +178,9 @@
     }
   }
   .el-menu--popup-right-start {
+    li {
+      text-align: center;
+    }
     a {
       text-decoration: none;
       color: inherit;
@@ -180,7 +189,7 @@
       color: $color-blue;
     }
     .is-active, .item_active {
-      background-color: $color-bg-4;
+      background-color: $color-bg;
     }
   }
 </style>
