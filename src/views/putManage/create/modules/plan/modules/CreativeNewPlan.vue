@@ -31,8 +31,7 @@
           </el-input>
         </el-form-item>
         
-        
-        <el-form-item class="mt-20" prop="putDate" label="投放时间">
+        <el-form-item prop="putDate" class="mt-20" label="投放时间">
           <el-date-picker
             v-model="formData.putDate"
             value-format="yyyy-MM-dd"
@@ -87,6 +86,7 @@ export default {
       if (!value) { return callback(new Error('请输入指定预算!')); }
       if (isNaN(value)) { return callback(new Error('请输入数字!')); }
       if (value < 1000) { return callback(new Error('指定预算不少于1000元!')); }
+      callback()
     }
     return {
       PutGoal,// 投放目的
@@ -167,13 +167,16 @@ export default {
           param;
 
       this.formData.saving = true;
-      validateForms.forEach((item, index) => {
-        if(this.$refs[item]) {
-          this.$refs[item].validate((valid) => {
-            if (!valid) { return isPassEnptyCheck = false; } 
+      for (let i=0; i<validateForms.length; i++) {
+        let item = this.$refs[validateForms[i]];
+        if (item) {
+          item.validate((valid) => {
+            isPassEnptyCheck = valid;
           });
         }
-      })
+        if (!isPassEnptyCheck) break;
+      }
+
 
       if (!isPassEnptyCheck) {
         this.formData.saving = false;
@@ -192,6 +195,7 @@ export default {
         beginTime: this.formData.putDate[0],
         endTime: this.formData.putDate[1]
       };
+
 
       // 编辑
       if (this.edit.isEdit) {

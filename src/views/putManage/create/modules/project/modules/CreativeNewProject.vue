@@ -20,7 +20,7 @@
 
         <!-- 屏幕类型 -->
         <el-form-item class="screen-type-preview-box mt-20" prop="type" label="屏幕类型">
-          <ScreenType @changeScreenType="changeScreenType" :disabled="isEdit"/>
+          <ScreenType  :value="formData.type" @changeScreenType="changeScreenType" :disabled="isEdit"/>
         </el-form-item>
 
         <!-- 投放类型 -->
@@ -770,7 +770,8 @@
           details: this.buildsDetails, // 楼盘列表
           projectCity: this.formData.projectCity, // 城市
           projectType: this.formData.projectType.value, // 投放类型，0按周投放，1按天投放
-          second: this.formData.second.value // 投放时长，001-5s/次，002-10s/次，003-15s/次 依次类推
+          second: this.formData.second.value, // 投放时长，001-5s/次，002-10s/次，003-15s/次 依次类推
+          totalCost: this.buildingDirection.estimatePrice
         }
 
         if (this.isEdit) {
@@ -860,7 +861,7 @@
             return date.getTime() < Date.now() - 8.64e7 ||
             date.getTime() > _this.planData.data.endTime ||
             date.getTime() < _this.planData.data.beginTime ||
-            (now.getDate() == date.getDate() && now.getMonth() === date.getMonth() && now.getDay() == 5 && now.getHours() > 18) ||
+            (now.getDate() == date.getDate() && now.getMonth() === date.getMonth() && now.getDay() == 6 && now.getHours() > 18) ||
             (_this.formData.projectType.value == 0 && date.getDay() != 5 && date.getDay() != 6);
           }
         };

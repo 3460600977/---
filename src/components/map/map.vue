@@ -176,7 +176,7 @@
           }
         }
         this.pointsOverlayObj.isShow = true
-        this.drawDevicePoints()
+        this.jugDraw()
       },
       setCity(city) {
         this.map.centerAndZoom(city.name, 12);
@@ -278,7 +278,7 @@
         } else {
           this.changePathPointType(null, -1)
         }
-        this.drawDevicePoints()
+        this.jugDraw()
       },
       /*
        * 关闭DrawingManager画线方法 需要在绘画类型切换成圆形时调用
@@ -304,7 +304,7 @@
         this.zoomSinglePathChange(this.activePath)
         this.isInArea(this.activePath)
         this.pathArr[this.activePath.index] = this.activePath
-        this.drawDevicePoints()
+        this.jugDraw()
         this.activePath = Object.assign({}, this.activePath)
         this.$emit('pathArrChange', this.pathArr)
       },
@@ -346,10 +346,11 @@
         let radius = this.RealDistanceTranPixels(path.radius)
         let polyline = new BMap.Polyline(path.overlay.getPath(), {
           strokeColor: "red",    //边线颜色。
-          strokeWeight: 2 * radius,       //边线的宽度，以像素为单位。
+          // strokeWeight: 2 * radius,       //边线的宽度，以像素为单位。
           strokeOpacity: 0.5,    //边线透明度，取值范围0 - 1。
           strokeStyle: 'solid' //边线的样式，solid或dashed。
         });
+        polyline.setStrokeWeight(2 * radius)
         let ol = {...path, overlay: polyline, anotherOverlay: overlay}
         this.map.addOverlay(polyline);
         this.overlayBindEvent(ol)
@@ -441,7 +442,7 @@
           this.filterProjectByPolyline(this.points, path.overlay, path.radius, path.index)
         } else if (path.type === 'polygon') {
           for(let key in points) {
-            if (points[key].type < 0 && this.judgePointType(points[key])) {
+            if (this.judgePointType(points[key])) {
               let b = points[key].point;
               if (BMapLib.GeoUtils.isPointInPolygon(b, path.overlay)) {
                 points[key].type = path.index
@@ -452,7 +453,7 @@
           }
         } else if (path.type === 'circle') {
           for(let key in points) {
-            if (points[key].type < 0 && this.judgePointType(points[key])) {
+            if (this.judgePointType(points[key])) {
               let b = points[key].point;
               if (BMapLib.GeoUtils.isPointInCircle(b, path.overlay)) {
                 points[key].type = path.index
@@ -515,7 +516,7 @@
         for (let i in polyline) {
           let circle = new BMap.Circle(polyline[i], radius, this.styleOptions);
           for(let key in points) {
-            if (points[key].type < 0 && this.judgePointType(points[key])) {
+            if (this.judgePointType(points[key])) {
               let b = points[key].point;
               if (BMapLib.GeoUtils.isPointInCircle(b, circle)) {
                 points[key].type = index
@@ -539,7 +540,7 @@
         }
         for (let j in polygons) {
           for(let key in points) {
-            if (points[key].type < 0 && this.judgePointType(points[key])) {
+            if (this.judgePointType(points[key])) {
               let b = points[key].point;
               if (BMapLib.GeoUtils.isPointInPolygon(b, polygons[j])) {
                 points[key].type = index
