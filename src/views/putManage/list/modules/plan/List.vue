@@ -2,8 +2,27 @@
   <div class="list">
 
     <!-- 查询 -->
-    <searchCondition @searchByCondition="handleSearch" :searchType="'plan'"/>
+    <el-form :inline="true" class="list-form-inline clearfix">
+      <!-- 投放计划名称 -->
+      <el-form-item class="line-space" label="投放计划名称">
+        <el-input clearable v-model="searchParam.planName" placeholder="请输入"></el-input>
+      </el-form-item>
 
+      <!-- 查询 -->
+      <el-form-item class="list-query-button">
+        <el-button type="primary" plain @click="resetPageIndex(); search();">查询</el-button>
+      </el-form-item>
+
+
+      <!-- 新建 -->
+      <el-form-item class="list-new-button">
+        <router-link to="/putManage/create/plan">
+          <el-button type="primary">新建投放计划</el-button>
+        </router-link>
+      </el-form-item>
+
+
+    </el-form>
 
     <!-- 表格 分页 -->
     <div class="query_result">
@@ -112,12 +131,11 @@
 
 <script>
 import searchCondition from '../../../templates/searchCondition'
-import { putManageMixin } from '../putManageMixin'
 import { PutGoal, projectConst, MonitorData } from '@/utils/static'
 
 export default {
   name: "planList",
-  mixins: [putManageMixin],
+
   components: {
     searchCondition
   },
@@ -133,20 +151,41 @@ export default {
     return {
       PutGoal, projectConst, MonitorData,
 
+      searchParam: {
+        planName: '',
+        page: {
+          pageSize: 10,
+          pageIndex: 1,
+        }
+      },
+
       detailDialog: {
         show: false,
         dataIndex: 0,
       },
+
+      tableData: {
+        loading: true,
+        data: [],
+        page: {
+          currentPage: 0,
+          totalCount: 0
+        }
+      },
+
     };
   },
 
+  beforeMount() {
+    this.search()
+  },
 
   methods: {
 
     // 搜索
     search() {
       let param = {
-        name: 'plan' in this.searchParam.condition ? this.searchParam.condition.plan.data.name : '',
+        name: this.searchParam.planName,
         pageIndex: this.searchParam.page.pageIndex,
         pageSize: this.searchParam.page.pageSize
       }
@@ -171,6 +210,23 @@ export default {
             }
           }
         })
+    },
+
+    // 重置翻页为1
+    resetPageIndex() {
+      this.searchParam.page.pageIndex = 1;
+    },
+
+    handleSizeChange(val) {
+      this.searchParam.page.pageSize = val;
+      this.searchParam.page.pageIndex = 0;
+      this.search()
+    },
+
+    handleCurrentChange(val) {
+      debugger
+      this.searchParam.page.pageIndex = val;
+      this.search()
     }
 
   }

@@ -25,6 +25,7 @@
           <label slot="label"><span class="color-red">*</span> 总预算</label>
           <el-input 
             class="budget-value"
+            :maxlength="8"
             placeholder="请输入内容" 
             v-model.number.trim="formData.totalBudget">
             <template slot="append">元</template>
@@ -86,6 +87,7 @@ export default {
       if (!value) { return callback(new Error('请输入指定预算!')); }
       if (isNaN(value)) { return callback(new Error('请输入数字!')); }
       if (value < 1000) { return callback(new Error('指定预算不少于1000元!')); }
+      if (value >= 100000000) { return callback(new Error('金额过大!')); }
       callback()
     }
     return {
@@ -111,7 +113,7 @@ export default {
       formDataRules: {
         name: [
           { required: true, message: '请输入计划名称!', trigger: 'blur' },
-          { max: 100, message: '计划名称100字以内!'}
+          { max: 50, message: '计划名称100字以内!'}
         ],
         putDate: [
           { required: true, message: '请选择投放时间!', trigger: 'blur' }

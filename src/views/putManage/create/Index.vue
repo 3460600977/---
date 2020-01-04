@@ -1,7 +1,7 @@
 <!-- 投放管理首页 -->
 <template>
   <div class="put-manage clearfix">
-    <LeftStep/>
+    <LeftStep v-if="$route.query.createType !== 'single'"/>
 
     <!-- 投放管理 每一步内容 -->
     <div class="right-content">
@@ -15,7 +15,7 @@ import LeftStep from '../templates/LeftStep'
 export default {
   components: {
     LeftStep
-  }
+  },
 };
 </script>
 

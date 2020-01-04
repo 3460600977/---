@@ -40,11 +40,11 @@ export default {
     this.activeName = this.$route.query.active || "plan";
   },
 
-  // watch: {
-  //   '$route.query': function(val) {
-  //     console.log(val)
-  //   }
-  // },
+  watch: {
+    '$route.query.active': function(val) {
+      this.activeName = val;
+    }
+  },
 
   methods: {
     changeTab() {
