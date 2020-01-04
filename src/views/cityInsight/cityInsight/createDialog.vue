@@ -70,6 +70,7 @@
         pageSize: 5,
         pageSizeSelectable: [5, 10, 15, 20],
         deviceCount: 0,
+        unitNum: 0,
         coveredPeople: 0,
       };
     },
@@ -86,6 +87,10 @@
           city: this.city.cityCode,
           premiseIds: ids,
           condition: '',
+          deviceNum: this.deviceCount,
+          premiseNum: this.data.length,
+          unitNum: this.unitNum,
+          weekForPeople: this.coveredPeople,
           ...val
         }
         this.$api.cityInsight.createCityInsight(param).then((data) => {
@@ -104,10 +109,12 @@
       },
       renderDatas(arr) {
         this.deviceCount = 0
+        this.unitNum = 0
         this.coveredPeople = 0
         arr.forEach((item) => {
           this.deviceCount += item.signElevatorNum
           this.coveredPeople += item.totalPeople
+          this.unitNum += item.unitNum? item.unitNum: 0
         })
       },
       loadFunction() {
