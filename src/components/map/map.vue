@@ -169,7 +169,6 @@
         }
       },
       reGetAreaPoint() {
-        console.log(this.pathArr)
         if (Object.keys(this.pathArr).length) {
           for(let key in this.pathArr) {
             this.isInArea(this.pathArr[key])
@@ -274,10 +273,16 @@
         if (item.anotherOverlay) {
           this.map.removeOverlay(item.anotherOverlay)
         }
-        delete this.pathArr[item.index]
+        if (Object.keys(this.pathArr).length > 1) {
+          this.changePathPointType(item.index, -2)
+          delete this.pathArr[item.index]
+          this.reGetAreaPoint()
+        } else {
+          delete this.pathArr[item.index]
+          this.changePathPointType(null, -1)
+        }
         this.pathArr = {...this.pathArr}
         this.setActivePathNull()
-        this.reGetAreaPoint()
         this.jugDraw()
       },
       /*
@@ -461,8 +466,8 @@
         } else if (path.type === 'circle') {
           for(let key in points) {
             let b = points[key].point;
-            if (BMapLib.GeoUtils.isPointInCircle(b, path.overlay)) {
-              if (this.getPointChangeAble(points[key], path.index)) {
+            if (this.getPointChangeAble(points[key], path.index)) {
+              if (BMapLib.GeoUtils.isPointInCircle(b, path.overlay)) {
                   points[key].type = path.index
                 } else {
                 points[key].type = -2
@@ -747,8 +752,6 @@
           offset: new BMap.Size(0, -11),
         });
         marker.addEventListener('click', (event) => {
-          console.log('5555')
-          // e.preventDefault()
           this.$emit('buildingClick', point)
         })
         this.map.addOverlay(marker);
