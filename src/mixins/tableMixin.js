@@ -27,7 +27,6 @@ export const tableMixin = {
       this.loading = true
       this.loadFunction(params).then((data) => {
         if (data.result) {
-          console.log(data.result)
           this.resultData = data.result
           this.filterData.pageIndex = data.page.currentPage
           this.pageIndex = data.page.currentPage
