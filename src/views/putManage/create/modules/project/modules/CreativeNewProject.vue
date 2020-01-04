@@ -640,7 +640,7 @@
 
 
       // POST根据订单信息计算预估总价
-      estimatePrice() {
+      estimatePrice: async function() {
         if (!this.validataForm()) return;
         let param = {
           beginTime: this.formData.date[0],
@@ -651,6 +651,7 @@
           second: this.formData.second.value,
           type: this.formData.type.value
         }
+        this.userInfo = await this.$tools.refreshUserInfo();
         this.$api.CityList.EstimateTotalPrice(param)
             .then(res => {
               this.buildingDirection.estimatePrice = res.result;
