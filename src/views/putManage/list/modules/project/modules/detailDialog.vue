@@ -33,7 +33,7 @@
         <el-form-item label="屏幕类型">
           <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.screenType, 'value', projectDetail.data.type).name}}</span>
         </el-form-item>
-        <el-form-item label="总计">
+        <el-form-item v-if="projectDetail.data.status !== 3" label="总计">
           <span class="color-red">¥ {{this.$tools.toThousands(projectDetail.data.totalCost / 100)}}</span>
         </el-form-item>
       </el-form>

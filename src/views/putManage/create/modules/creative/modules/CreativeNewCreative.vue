@@ -18,7 +18,7 @@
           v-if="createType === 'single' || (createType === 'edit' && !haveProject)" 
           style="margin-bottom: 12px;" class="screen-type-preview-box mt-20" 
           prop="screenType" label="屏幕类型">
-          <ScreenType @changeScreenType="changeScreenType"/>
+          <ScreenType :value="formData.screenType" @changeScreenType="changeScreenType"/>
         </el-form-item>
 
         <!-- 视频 图片 -->
