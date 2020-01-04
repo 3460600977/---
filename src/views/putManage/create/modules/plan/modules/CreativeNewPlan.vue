@@ -25,13 +25,14 @@
           <label slot="label"><span class="color-red">*</span> 总预算</label>
           <el-input 
             class="budget-value"
+            :maxlength="8"
             placeholder="请输入内容" 
             v-model.number.trim="formData.totalBudget">
             <template slot="append">元</template>
           </el-input>
         </el-form-item>
         
-        <el-form-item prop="putDate" class="mt-20" label="投放时间">
+        <!-- <el-form-item prop="putDate" class="mt-20" label="投放时间">
           <el-date-picker
             v-model="formData.putDate"
             value-format="yyyy-MM-dd"
@@ -41,7 +42,7 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期">
           </el-date-picker>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
         
     </PutMangeCard>
@@ -86,6 +87,7 @@ export default {
       if (!value) { return callback(new Error('请输入指定预算!')); }
       if (isNaN(value)) { return callback(new Error('请输入数字!')); }
       if (value < 1000) { return callback(new Error('指定预算不少于1000元!')); }
+      if (value >= 100000000) { return callback(new Error('金额过大!')); }
       callback()
     }
     return {
@@ -104,18 +106,18 @@ export default {
         name: '',
         saving: false,
         totalBudget: '',
-        putDate: '',
+        // putDate: '',
         goal: ''
       },
       
       formDataRules: {
         name: [
           { required: true, message: '请输入计划名称!', trigger: 'blur' },
-          { max: 100, message: '计划名称100字以内!'}
+          { max: 50, message: '计划名称100字以内!'}
         ],
-        putDate: [
-          { required: true, message: '请选择投放时间!', trigger: 'blur' }
-        ],
+        // putDate: [
+        //   { required: true, message: '请选择投放时间!', trigger: 'blur' }
+        // ],
         totalBudget: [
           { validator: validateBudget, trigger: 'blur' }
         ],
@@ -192,8 +194,8 @@ export default {
         campaignType: this.formData.goal,
         totalBudget: this.formData.totalBudget * 100,
         cityList: this.formData.putCity,
-        beginTime: this.formData.putDate[0],
-        endTime: this.formData.putDate[1]
+        // beginTime: this.formData.putDate[0],
+        // endTime: this.formData.putDate[1]
       };
 
 

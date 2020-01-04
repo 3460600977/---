@@ -3,8 +3,70 @@
 
     
     <!-- 查询 -->
-    <searchCondition @searchByCondition="handleSearch" :searchType="'project'"/>
-    
+    <!-- <searchCondition @searchByCondition="handleSearch" :searchType="'project'"/> -->
+      <!-- 投放管理 列表搜索条件 -->
+    <el-form :inline="true" class="list-form-inline clearfix">
+      <!-- 投放计划名称 -->
+      <el-form-item class="line-space" label="投放计划名称">
+        <el-select 
+          @focus="getPlanNameList"
+          @change="changePlan"
+          :loading="planNameList.loading" 
+          v-model="searchParam.plan.id" 
+          placeholder="请选择" 
+          filterable
+          clearable>
+          <el-option
+            v-for="item in planNameList.data"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+
+
+      <!-- 投放方案名称 -->
+      <el-form-item class="line-space" label="投放方案名称">
+        <el-input clearable v-model="searchParam.projectName" placeholder="请输入"></el-input>
+      </el-form-item>
+
+
+      <!-- 方案状态 -->
+      <el-form-item class="line-space" label="方案状态">
+        <el-select 
+          @focus="getPlanNameList"
+          :loading="planNameList.loading" 
+          value-key="value"
+          v-model="searchParam.plan.status" 
+          placeholder="不限" 
+          filterable
+          clearable>
+          <el-option
+            v-for="item in projectStatus"
+            :key="item.value"
+            :label="item.name"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+
+
+      <!-- 查询 -->
+      <el-form-item class="list-query-button">
+        <el-button type="primary" plain @click="resetPageIndex(); search(); ">查询</el-button>
+      </el-form-item>
+
+
+      <!-- 新建 -->
+      <el-form-item class="list-new-button">
+        <router-link to="/putManage/create/plan">
+          <el-button type="primary">新建投放方案</el-button>
+        </router-link>
+      </el-form-item>
+
+
+    </el-form>
 
     <div class="query_result">
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
@@ -67,17 +129,9 @@
               <i class="iconfont icon-shuxingliebiaoxiangqing2 icon-color"></i>详情
             </span>
             <span v-if="scope.row.status == 0 && scope.row.creativeStatus == null" class="icon-space hand">
-              <!-- <router-link :to="`/putManage/create/project?editProjectId=${scope.row.projectId}`"> -->
               <router-link :to="`/putManage/create/creative?projectId=${scope.row.projectId}&createType=step`">
-                <i class="iconfont icon-bianji icon-color"></i>修改
+                <i class="iconfont icon-bianji icon-color"></i>编辑
               </router-link>
-            </span>
-
-            <span 
-              @click="detailDialog.projectId=+scope.row.projectId; detailDialog.show=true; detailDialog.activeTab='point'"
-              v-if="scope.row.status == 1 || scope.row.status == 2" 
-              class="icon-space hand">
-              <i class="iconfont icon-ziyuan icon-color"></i>点位
             </span>
 
             <span v-if="scope.row.status == 1 || scope.row.status == 2" class="icon-space hand">
@@ -127,13 +181,11 @@
 
 <script>
 import { projectConst, projectStatus } from '../../../../../utils/static'
-import { putManageMixin } from '../putManageMixin'
 import searchCondition from '../../../templates/searchCondition'
 import detailDialog from './modules/detailDialog'
 
 export default {
   name: "planList",
-  mixins: [putManageMixin],
   props: {
     active: {
       type: Boolean,
@@ -159,13 +211,79 @@ export default {
         activeTab: 'project'
       },
 
+      planNameList: {
+        loading: true,
+        data: []
+      },
+
+      searchParam: {
+        plan: {
+          id: '',
+          status: ''
+        },
+        projectName: '',
+        page: {
+          pageSize: 10,
+          pageIndex: 1,
+        }
+      },
+
+      tableData: {
+        loading: true,
+        data: [],
+        page: {
+          currentPage: 0,
+          totalCount: 0
+        }
+      },
     };
+  },
+
+  watch: {
+    '$route': function() {
+      if (this.$route.query.active !== 'project') return;
+      if (this.$route.query.planId) {
+        this.searchParam.condition.plan.data.id = this.$route.query.planId;
+        this.search()
+      }
+    }
   },
 
   beforeMount() {
     this.getAllCity()
+    if (this.$route.query.planId) {
+      this.searchParam.condition.plan.data.id = this.$route.query.planId;
+      this.search()
+    } else {
+      this.search()
+    }
   },
+
   methods: {
+
+    // 下拉框数据 计划名字列表
+    getPlanNameList() {
+      if (this.planNameList.data.length > 0) return false;
+      this.planNameList.loading = true;
+      this.$api.PutPlan.PlanNameList()
+        .then(res => {
+          this.planNameList = {
+            loading: false,
+            data: res.result,
+          }
+        })
+        .catch(res => {
+          this.planNameList = {
+            loading: false,
+            data: []
+          }
+        })
+    },
+
+    // change计划
+    changePlan() {
+      this.searchParam.projectName = '';
+    },
 
     // 城市列表
     getAllCity() {
@@ -201,12 +319,13 @@ export default {
     // 搜索
     search() {
       this.tableData.loading = true;
+
       let param = {
-        "campaignId": 'plan' in this.searchParam.condition ? this.searchParam.condition.plan.data.id : '',
+        "campaignId": this.searchParam.plan.id,
         "pageIndex": this.searchParam.page.pageIndex,
         "pageSize": this.searchParam.page.pageSize,
-        "projectId": 'project' in this.searchParam.condition ? this.searchParam.condition.project.data.id : '',
-        "status": 'project' in this.searchParam.condition ? this.searchParam.condition.project.status.value : '',
+        "name": this.searchParam.projectName,
+        "status": this.searchParam.plan.status,
       }
       this.$api.PutProject.ProjectList(param)
         .then(res => {
@@ -227,6 +346,22 @@ export default {
           }
         })
     },
+
+    // 重置翻页为1
+    resetPageIndex() {
+      this.searchParam.page.pageIndex = 1;
+    },
+
+    handleSizeChange(val) {
+      this.searchParam.page.pageSize = val;
+      this.searchParam.page.pageIndex = 0;
+      this.search()
+    },
+
+    handleCurrentChange(val) {
+      this.searchParam.page.pageIndex = val;
+      this.search()
+    }
   }
 };
 </script>

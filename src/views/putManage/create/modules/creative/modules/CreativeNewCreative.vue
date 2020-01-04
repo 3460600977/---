@@ -507,6 +507,7 @@ export default {
 
     // 生成创意名字
     generateCreativeName(industryName) {
+      if (this.createType === 'edit') return;
       let type = this.formData.screenType == '003' ? '联动' : this.formData.screenType == '001' ? '上屏' : '下屏';
       this.formData.name = `${industryName || '行业'}_${type}_${this.$tools.getFormatDate('mm_dd')}`;
     },
