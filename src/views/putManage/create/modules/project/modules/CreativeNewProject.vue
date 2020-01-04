@@ -20,7 +20,7 @@
 
         <!-- 屏幕类型 -->
         <el-form-item class="screen-type-preview-box mt-20" prop="type" label="屏幕类型">
-          <ScreenType @changeScreenType="changeScreenType" :disabled="isEdit"/>
+          <ScreenType  :value="formData.type" @changeScreenType="changeScreenType" :disabled="isEdit"/>
         </el-form-item>
 
         <!-- 投放类型 -->
