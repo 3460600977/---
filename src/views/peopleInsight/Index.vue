@@ -100,7 +100,7 @@
           {
             type: 'input',
             key: 'name',
-            label: '人群包管理'
+            label: '人群包名称'
           },
           {
             type: 'actions',

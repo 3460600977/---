@@ -12,7 +12,7 @@
           clearable>
         </el-cascader>
         <el-button
-          type="success"
+          type="primary"
           class="success-button"
           @click="setIndustryConsume(crowdProject.industryTid,hotCons)"
         >选择</el-button>
@@ -97,6 +97,6 @@
 .success-button {
   margin-left: 30px;
   margin-bottom: auto;
-  width: 15%;
+  width: 11%;
  }
 </style>
