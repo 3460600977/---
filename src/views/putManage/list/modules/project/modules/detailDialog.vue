@@ -12,7 +12,7 @@
           </label>
         </el-form-item>
         <el-form-item label="投放方案行业">
-          <span class="color-text-1">{{$tools.getObjectItemFromArray(indurstryList, 'industryId', projectDetail.data.industry).name || '加载中'}}</span>
+          <span class="color-text-1">{{$tools.getObjectItemFromArray(indurstryList, 'industryId', projectDetail.data.industry).name}}</span>
         </el-form-item>
         <el-form-item label="投放类型">
           <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.putType, 'value', projectDetail.data.projectType).name}}</span>
@@ -106,11 +106,13 @@ export default {
   methods: {
     ...mapMutations(['setBuildsList']),
 
-    ProjectDetailById(projectId) {
+    // 方案详情
+    ProjectDetailById: async function(projectId) {
       this.projectDetail = {
         loading: true,
         data: ''
       }
+      this.indurstryList = await this.getIndustryList();
       this.$api.PutProject.GetProjectDetailById(projectId)
         .then(res => {
           this.projectDetail = {
@@ -127,8 +129,9 @@ export default {
         })
     },
 
+    // 楼盘列表
     showPointDetails() {
-      if (this.activeTab === 'project' && this.pointDetail.data.length > 0) return;
+      // if (this.activeTab === 'project' && this.pointDetail.data.length > 0) return;
       this.pointDetail.param.projectId = this.projectId;
       this.pointDetail.loading = true;
       this.pointDetail.data = [];
@@ -143,17 +146,19 @@ export default {
         })
     },
 
-    getIndustryList() {
-      if (this.indurstryList.length > 0) return;
-      this.$api.IndustryList.AllList()
-        .then(res => {
-          this.indurstryList = res.result;
-        })
+    getIndustryList: async function() {
+      return new Promise((resolve, reject) => {
+        // if (this.indurstryList.length > 0) return;
+        this.$api.IndustryList.AllList()
+          .then(res => {
+            resolve(res.result)
+          })
+      })
     }
   },
 
   watch: {
-    projectId: function(oldVal, newVal){
+    projectId: function(newVal, oldVal){
       this.ProjectDetailById(newVal)
       this.getIndustryList()
     }
