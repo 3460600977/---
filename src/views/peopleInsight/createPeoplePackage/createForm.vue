@@ -9,7 +9,7 @@
       </el-form-item>
       <el-form-item>
         <router-link to="/peopleInsight">
-          <el-button @click="">取消</el-button>
+          <el-button @click="backToList">取消</el-button>
         </router-link>
         <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
       </el-form-item>
@@ -105,15 +105,17 @@
                   })
                 })
             }).catch(action=>{
-              this.$message({
-                type: 'info',
-                message: '已经取消'
-              })
+
             });
           } else {
             return false;
           }
         });
+      },
+      backToList(){
+        this.removeAllState();
+        //跳转至列表页
+        this.$router.push('/peopleInsight');
       },
     },
     computed:{

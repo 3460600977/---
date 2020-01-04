@@ -11,12 +11,12 @@
           :props="props"
           clearable>
         </el-cascader>
+        <el-button
+          type="success"
+          class="success-button"
+          @click="setIndustryConsume(crowdProject.industryTid,hotCons)"
+        >选择</el-button>
       </div>
-      <el-button
-        type="success"
-        class="success-button"
-        @click="setIndustryConsume(crowdProject.industryTid,hotCons)"
-      >选择</el-button>
     </div>
 </template>
 
@@ -53,7 +53,6 @@
       },
 
       setNames (tagArray) {
-        console.log(tagArray);
         return tagArray.join("/");
       },
 
@@ -96,7 +95,8 @@
   }
 }
 .success-button {
-  float: right;
+  margin-left: 30px;
+  margin-bottom: auto;
   width: 15%;
  }
 </style>
