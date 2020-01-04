@@ -746,6 +746,10 @@
           this.heatmapOverlay.hide();
         }
       },
+      // 热力图
+      drawHotMap(arr) {
+        this.heatmapOverlay.setDataSet({data:arr, max:100});
+      },
       showHotMap() {
         if (this.heatmapOverlay) {
           this.heatmapOverlay.show();
