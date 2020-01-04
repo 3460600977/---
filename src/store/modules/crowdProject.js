@@ -8,12 +8,6 @@ export const crowdProject = {
   },
 
   mutations: {
-   /* setCity(state, data) {
-      state.city = data;
-    },
-    removeCity(state, data){
-      state.city = "";
-    },*/
     setTagNames(state, data) {
       state.tagNames.push(...data);
     },
@@ -28,7 +22,8 @@ export const crowdProject = {
          state.tagNames.splice(index,1)
         }
       });
-      state.tagNames.push(...data)
+      state.tagNames.push(...data);
+      //重新排序tags
     },
 
     //涉及到人口属性的左到右的删除

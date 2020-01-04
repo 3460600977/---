@@ -41,7 +41,12 @@
     },
     watch: {
       filters(val) {
-        this.currentItem = this.findItem(this.filters, this.selectDatas)
+        let item = this.findItem(this.filters, this.selectDatas)
+        if (item) {
+          this.currentItem = this.findItem(this.filters, this.selectDatas)
+        } else {
+          this.currentItem = val
+        }
       },
       currentItem(val) {
         this.$emit('returnResult', val)

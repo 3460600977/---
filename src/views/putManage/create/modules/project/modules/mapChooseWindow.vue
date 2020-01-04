@@ -3,11 +3,7 @@
     <div class="map-box">
       <div class="city-build-select">
         <div class="left-info">
-          <left-info
-            :isShow="isShow"
-            :city="cityFilter"
-            @toggle="toggle"
-          ></left-info>
+          <left-info :isShow="isShow" :city="cityFilter" @toggle="toggle"></left-info>
           <div class="city-select select-style" v-show="isShow[0]">
             <singleSelect-popup
               ref="citySelect"
@@ -20,19 +16,20 @@
           </div>
           <div class="filter-container select-style" v-show="isShow[1]">
             <div class="mid-start filter-popup">
-              <div style="height: 100%;">
+              <div style="width: 100%;height: 100%;">
                 <left-tab
                   :lineHeight="42"
                   :tabData="tabData"
-                  :activeTab="10"
+                  :activeTab="activeTab"
+                  @changeTab="changeTab"
                 ></left-tab>
               </div>
               <div class="flex1">
                 <multiple-selectPopUp
+                  ref="tagsSelect"
                   :selectDatas="buildingDatas"
                   :filters="buildingFilter"
-                  @returnResult="(val) => returnResult(val, 1)"
-                  @hide="() => hide(1)"
+                  @returnResult="(val, type) => returnResult(val, 1, type)"
                 ></multiple-selectPopUp>
               </div>
             </div>
@@ -67,19 +64,20 @@
           :currentSelectType="currentSelectType"
         ></mouseMove-text>
       </div>
-      <div class="right-select-build">
-        <select-build :selectedBuildings="selectedBuildings" :allBuildings="allBuildings" @deleteItem="deleteItem"
-                      @addItem="addItem" @deleteBathItem="deleteBathItem" @addBatchItem="addBatchItem"></select-build>
-      </div>
-      <div class="mapPopup">
-        <map-popup
-          v-if="showPathCopy"
-          @sliderChange="sliderChange"
-          @operate="operate"
-          :item="showPathCopy"
-          :style="{top: mapLocation.y+'px', left: mapLocation.x+ 'px'}"
-        ></map-popup>
-      </div>
+      <slide-container ref="slideCon">
+        <map-right-info
+          v-show="rightShow === 0"
+          :selectedBuildings="selectedBuildings"
+          @addBtnClick="addBtnClick"
+          @createPackage="createPackage"
+          @deleteItem="deleteItem"
+        ></map-right-info>
+        <building-detail
+          v-show="rightShow === 1"
+          @back="rightBack"
+          ref="buildingDetail"
+        ></building-detail>
+      </slide-container>
       <div class="map container">
         <db-map
           ref="dbmap"
@@ -110,6 +108,8 @@
     2: '二线城市:',
     3: '三线城市:'
   }
+  //import rightInfo from "../../../../../cityInsight/cityInsight/rightInfo";
+  import mapRightInfo from "./mapRightInfo";
   import leftInfo from "../../../../../cityInsight/cityInsight/leftInfo";
   import drawType from "../../../../../../components/map/drawType";
   import mapPopup from "../../../../../../components/map/mapPopup";
@@ -149,12 +149,14 @@
       createDialog,
       slideContainer,
       leftInfo,
+      mapRightInfo,
       SelectBuild,
       topSelect,
       mouseMoveText
     },
     data() {
       return {
+        isInit: true,
         buildingDatas: { // 楼宇标签
           title: '楼宇标签',
           options: [
@@ -263,6 +265,9 @@
         },
       }
     },
+    created() {
+      this.loading = true
+    },
     mounted() {
       this.init()
       this.bindEvent()
@@ -271,6 +276,7 @@
     watch: {
       cityFilter(val) {
         this.$refs.dbmap.setCity(val)
+        this.$refs.dbmap.clearMap()
       },
     },
     computed: {
@@ -288,6 +294,9 @@
           }
         }
       }
+    },
+    beforeDestroy() {
+      document.documentElement.removeEventListener('keydown', this.cancleCircleDrawType)
     },
     methods: {
       //隐藏地图选点页面
@@ -319,16 +328,90 @@
       },
       // 筛选中菜单改变
       changeTab(val) {
+        if (!this.leftShow[val.value]) {
+          this.leftShow[val.value] = true
+        }
         this.activeTab = val.value
       },
-      returnResult(val, index) {
+      loadHotMap(id) {
+        this.$api.peopleInsight.getPeopleInsightHotMap({id: id}).then((data) => {
+          if (data.result) {
+            this.$refs.dbmap.drawHotMap(data.result)
+          } else {
+            this.switchChange(false)
+          }
+        })
+      },
+      // 隐藏热力图
+      hideHotMap() {
+        this.$refs.dbmap.hideHotMap()
+      },
+      resetHotMap() {
+        this.switchChange(false)
+        this.$refs.peopleInsight.resetSelect()
+      },
+      resetTags() {
+        if (this.buildingFilterSelected) { // 如果标签选择过，则清空标签选择结果
+          this.$refs.dbmap.clearMap()
+          this.$refs.tagsSelect.operate(0)
+        } else {
+          this.createSuc()
+        }
+      },
+      resetLeftPopup(index) {
         if (index === 0) {
-          this.cityFilter = val
+          this.buildingFilter = {
+            buildType: [],
+            premiseAvgFee: [],
+            occupancyRate: [],
+            buildingAge: [],
+            parkingNum: [],
+            propertyRent: []
+          }
+          this.buildingFilterSelected = false
+          this.rightShow = 0
+          this.activeTab = 0
+          this.leftShow = new Array(this.leftShow.length).fill(false)
           this.loadData()
         } else if (index === 1) {
+          this.resetHotMap()
+        } else if (index === 2) {
+          this.resetTags()
+        }
+      },
+      // 各种弹窗返回数据触发方法 type表示楼盘标签是 0清空还是2选择
+      returnResult(val, index, type) {
+        if (index === 0) { // 城市切换
+          if (this.isInit) {
+            this.cityFilter = val
+            this.resetLeftPopup(index, type)
+            this.isInit = false
+          } else {
+            this.$confirm('切换城市后，系统将清空当前城市的操作数据，是否切换？', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.cityFilter = val
+              this.resetLeftPopup(index, type)
+            }).catch(() => {
+            });
+          }
+        } else if (index === 1) { // 楼盘标签选择
+          if (type === 0) {
+            this.buildingFilterSelected = false
+          } else {
+            this.buildingFilterSelected = true
+          }
+          this.$refs.dbmap.setCity(this.cityFilter)
           this.buildingFilter = val
           this.loadData()
-          this.hide(index)
+          this.hide(1)
+          this.resetLeftPopup(index, type)
+        } else if (index === 2) { // 热力图选择
+          this.loadHotMap(val)
+          this.hide(1)
+          this.resetLeftPopup(index, type)
         }
       },
       hideAll() {
@@ -357,7 +440,6 @@
         }
       },
       hide(val) {
-        console.log(val)
         this.isShow[val] = false
       },
       getCityFilter() {
@@ -403,8 +485,6 @@
       // 初始化
       init() {
         this.loadCitys()
-
-        // this.cityFilter = this.$refs.citySelect.findItem(this.cityFilter, this.cityDatas)
       },
       // 楼盘详情窗口点击返回按钮
       rightBack() {
@@ -412,12 +492,13 @@
       },
       // 某个building被点击触发事件
       buildingClick(item) {
+        this.$refs.slideCon.showPanel()
         this.$refs.buildingDetail.loadData(item.premisesId)
         this.rightShow = 1
       },
       // 添加媒体资源弹窗选择添加的楼盘
       addLocation(val) {
-        let isExist = this.$refs.dbmap.addItem(val)
+        let isExist = this.$refs.dbmap.addBatchItem([val])
         this.$refs.addDialog.selectCallBack(isExist)
       },
       // 右边弹出框点击添加按钮
@@ -426,19 +507,7 @@
       },
       // 右边弹出框点击删除某个楼盘
       deleteItem(item) {
-        this.$refs.dbmap.deleteItem(item)
-      },
-      //增加某个楼盘
-      addItem(item) {
-        this.$refs.dbmap.addItem(item)
-      },
-      //批量删除多个楼盘
-      deleteBathItem(allList) {
-        this.$refs.dbmap.deleteBathItem(allList)
-      },
-      //批量增加多个楼盘
-      addBatchItem(allList) {
-        this.$refs.dbmap.addBatchItem(allList)
+        this.$refs.dbmap.deleteBathItem([item])
       },
       // 右边弹出框点击创建资源包
       createPackage() {
@@ -452,15 +521,16 @@
       returnSearchResult(result) {
         this.$refs.drawType.setSearchList(result)
       },
-      bindEvent() {
-        document.documentElement.addEventListener('keydown', (e) => {
-          if (e.keyCode === 27) {
-            if (this.currentSelectType && this.currentSelectType.type === 'circle') {
-              this.currentSelectType = null
-              this.$refs.drawType.cancleSelect()
-            }
+      cancleCircleDrawType(e) {
+        if (e.keyCode === 27) {
+          if (this.currentSelectType && this.currentSelectType.type === 'circle') {
+            this.currentSelectType = null
+            this.$refs.drawType.cancleSelect()
           }
-        })
+        }
+      },
+      bindEvent() {
+        document.documentElement.addEventListener('keydown', this.cancleCircleDrawType)
       },
       returnBuildingTags(val) {
         this.buildingFilter = this.$tools.deepCopy(val)
@@ -470,33 +540,13 @@
       },
       pathArrChange(val) {
         this.pathArr = val
-        let allPointList = []
-        let allPointDiff = []
-        for (let key in this.pathArr) {
-          // skip loop if the property is from prototype
-          if (!this.pathArr.hasOwnProperty(key)) continue;
-          let obj = this.pathArr[key];
-          for (let prop in obj) {
-            // skip loop if the property is from prototype
-            if (!obj.hasOwnProperty(prop)) continue;
-            if (prop === 'buildings') {
-              obj[prop].forEach(item => {
-                if (!allPointDiff[item['premisesId']]) {
-                  allPointList.push(item)
-                  allPointDiff[item['premisesId']] = true;
-                }
-              })
-            }
-          }
-        }
-        this.allBuildings = allPointList
       },
       /*
+       /*
        *
        * */
       returnSelectedBuildings(val) {
         this.selectedBuildings = val
-
       },
       // mapPopup里面点击删除(0)和确定按钮(1)
       operate(val, item) {
@@ -520,14 +570,16 @@
       drawTypeSelect(location, type) {
         this.location.x = location.x
         this.location.y = location.y - NAV_HEIGHT
-        this.currentSelectType = {type: type}
         if (type === 'circle') {
+          this.hideAll()
+          this.currentSelectType = {type: type}
           this.$refs.dbmap.closeDrawingManager()
         } else if (type === 'select') {
           this.$refs.dbmap.closeDrawingManager()
-          this.$refs.dbmap.drawCircle(location.point)
-          this.currentSelectType = null
+          this.$refs.dbmap.drawCircle(location.point, location)
         } else {
+          this.hideAll()
+          this.currentSelectType = {type: type}
           this.$refs.dbmap.triggerDraw(type)
         }
       },
@@ -559,7 +611,7 @@
     }
   }
   .map-choose {
-    top: -10% !important;
+    top: -12% !important;
     .el-dialog__header {
       display: none;
     }
@@ -567,7 +619,7 @@
       padding: 10px;
       .map-box {
         width: 100%;
-        height: calc(100vh - 140px);
+        height: calc(100vh - 100px);
         position: relative;
         overflow: hidden;
       }
@@ -588,6 +640,10 @@
       top: 10px;
       .mid-start {
         display: block;
+      }
+      .city-select {
+        .active {
+        }
       }
     }
     .draw-select {

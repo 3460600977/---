@@ -347,7 +347,6 @@
             return;
           }
           if (!this.buildDetail.chat) {
-            console.log('55555')
             this.resetChat()
             return
           }
@@ -355,7 +354,6 @@
             this.resetChat()
             return
           }
-          console.log('444444')
           this.sexArr = this.renderSexChart(data.result.chat.genderDist)
           this.ageArr = this.renderHistogramChart(data.result.chat.ageDist, data.result.chat.cityAverage.ageAverageDist)
 

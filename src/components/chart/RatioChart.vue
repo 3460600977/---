@@ -28,13 +28,23 @@
         ratioArr: []
       }
     },
+    watch: {
+      dataArr() {
+        this.getData()
+      },
+    },
     created() {
-      this.total = this.$tools.operation(this.dataArr, 'value', 'sum')
-      this.ratioArr = this.dataArr.map((item) => {
-        let w = (item.value / this.total * 100).toFixed(2)
-        return {...item, style: `${item.style}width: ${w}%`, width: `${w}%`}
-      })
-    }
+      this.getData()
+    },
+    methods: {
+      getData() {
+        this.total = this.$tools.operation(this.dataArr, 'value', 'sum')
+        this.ratioArr = this.dataArr.map((item) => {
+          let w = (item.value / this.total * 100).toFixed(2)
+          return {...item, style: `${item.style}width: ${w}%`, width: `${w}%`}
+        })
+      },
+    },
   }
 </script>
 
