@@ -599,15 +599,16 @@
         if (type === 1) {
           marker.addEventListener('click', (e) => {
             e.preventDefault()
-            console.log(e)
             // this.$emit('buildingClick', point)
           })
-          marker.addEventListener('mouseover', () => {
+          marker.addEventListener('mouseover', (e) => {
+            e.preventDefault()
             if (this.currentSelectType === null && this.activePath === null) {
               this.addLabel(point)
             }
           });
-          marker.addEventListener('mouseout',  () => {
+          marker.addEventListener('mouseout',  (e) => {
+            e.preventDefault()
             this.removeLabels()
           });
           this.markerArr.push(marker)
@@ -709,7 +710,7 @@
         this.map.addEventListener('tilesloaded', this.tilesloaded)
       },
       drawCircle(point, info) {
-        let marker = this.addMarker(point)
+        let marker = this.addMarkerIcon(point)
         let circle = new BMap.Circle(point, this.defaultRadius, this.styleOptions);
         this.map.addOverlay(circle);
         let path = {
@@ -731,16 +732,16 @@
         this.getPopUpData(path)
         this.overlayBindEvent(path)
       },
-      // addMarker(point) {  // 创建图标对象
-      //   var myIcon = new BMap.Icon(require('@/assets/images/icon_location.png'), new BMap.Size(12, 22), {});
-      //   // 创建标注对象并添加到地图
-      //   let marker = new BMap.Marker(point, {
-      //     icon: myIcon,
-      //     offset: new BMap.Size(0, -11),
-      //   });
-      //   this.map.addOverlay(marker);
-      //   return marker
-      // },
+      addMarkerIcon(point) {  // 创建图标对象
+        var myIcon = new BMap.Icon(require('@/assets/images/icon_location.png'), new BMap.Size(12, 22), {});
+        // 创建标注对象并添加到地图
+        let marker = new BMap.Marker(point, {
+          icon: myIcon,
+          offset: new BMap.Size(0, -11),
+        });
+        this.map.addOverlay(marker);
+        return marker
+      },
       // 隐藏热力图
       hideHotMap() {
         if (this.heatmapOverlay) {
