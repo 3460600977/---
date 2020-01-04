@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import { setUserInfo, setMenuList,getMenuList } from "@/utils/auth";
+import { setUserInfo, setMenuList } from "@/utils/auth";
 
 export default {
   name: "login",
@@ -157,8 +157,6 @@ export default {
     if (!this.isSaleLogin) {
       this.changeCaptureNUm();
     }
-    let menuListArr = getMenuList();
-    console.log('loginmenuListArr',menuListArr)
   },
 
   methods: {
