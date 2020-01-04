@@ -80,7 +80,7 @@
 
             <div  class="text-col">
               <span class="text-title">广告创意行业</span>
-              <label class="text-info">{{$tools.getObjectItemFromArray(industryList, 'industryId', detailDialog.data.industry).name}}</label>
+              <label class="text-info"><Industry :disabled="true" :industrytype="'display'" :value="detailDialog.data.industry" /></label>
             </div>
 
             <div  class="text-col">
@@ -150,13 +150,11 @@
                   <div v-if="item.height === 880 && item.screenType === 2" :key="index" class="left-pre">
                     <el-image :src="item.srcUrl"/>
                   </div>
-                  <!-- <div class="left-pre mid-center" v-else :key="index">未上传</div> -->
                 </template>
                 <template v-for="(item, index) in detailDialog.data.materials">
                   <div v-if="item.height === 720 && item.screenType === 2" class="right-pre" :key="index">
                     <el-image :src="item.srcUrl"/>
                   </div>
-                  <!-- <div class="right-pre mid-center" v-else :key="index">未上传</div> -->
                 </template>
               </div>
             </div>
@@ -174,6 +172,7 @@
 import { putManageMixin } from '../putManageMixin'
 import { PutGoal, projectConst, MonitorData } from '../../../../../utils/static'
 import searchCondition from '../../../templates/searchCondition'
+import Industry from '../../../templates/Industry'
 
 export default {
   name: "planList",
@@ -181,7 +180,8 @@ export default {
   mixins: [putManageMixin],
 
   components: {
-    searchCondition
+    searchCondition,
+    Industry
   },
 
   data() {
