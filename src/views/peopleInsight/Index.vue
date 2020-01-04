@@ -31,7 +31,7 @@
               <span style="color: red">生成中...</span>
             </div>
             <div v-else>
-              <span>{{scope.row.weekForPeople}}</span>
+              <span>{{$tools.toThousands(scope.row.weekForPeople,false)}}</span>
             </div>
           </template>
         </el-table-column>
@@ -43,11 +43,20 @@
         </el-table-column>
         <el-table-column prop="action" label="操作" fixed="right" width="400">
           <template slot-scope="scope">
-              <span class="icon-space hand"
-                    :class="scope.row.status?'':'color-disabled'"
-                    @click="crowdAnalysis(scope.row.status)">
-              <i class="iconfont icon-shuxingliebiaoxiangqing2" :class="scope.row.status ? 'icon-color' : 'color-disabled'"></i>人群分析
-            </span>
+              <el-tooltip
+                class="item"
+                effect="light"
+                placement="top"
+                :disabled="scope.row.status === 1"
+                :content="scope.row.remark"
+              >
+                 <span class="icon-space hand"
+                       :class="scope.row.status === 1?'':'color-disabled'"
+                       @click="crowdAnalysis(scope.row.status)">
+                    <i class="iconfont icon-shuxingliebiaoxiangqing2" :class="scope.row.status === 1 ? 'icon-color' : 'color-disabled'"></i>人群分析
+                  </span>
+              </el-tooltip>
+
 
             <span class="icon-space hand"
                   @click="showDialog(scope.row)">
@@ -84,6 +93,7 @@
 <script>
   import {tableMixin} from '@/mixins/tableMixin'
   import QueryItem from '@/components/QueryItem'
+  import {mapMutations} from "vuex";
   export default {
     name: "auditList",
     mixins: [tableMixin],
@@ -120,6 +130,7 @@
       this.getAllCity()
     },
     methods: {
+      ...mapMutations(["removeAllState"]),
       // 城市列表
       getAllCity() {
         this.$api.CityList.AllList()
@@ -129,6 +140,8 @@
           .catch(res => {})
       },
       toCreateCrowd() {
+        //进入创建页面先清空下已选数据
+        this.removeAllState();
         this.$router.push('/peopleInsight/createCrowd')
       },
       handleReturnData(val) {
@@ -159,7 +172,7 @@
         })
       },
       crowdAnalysis(status) {
-        if (!status) return;
+        if (status !== 1) return;
         this.$router.push("/peopleInsight/analysis")
       },
     }
@@ -216,6 +229,10 @@
           color: $color-blue;
         }
       }
+    }
+
+    .list_table span i.color-disabled {
+      margin-right: 8px;
     }
 
   }
