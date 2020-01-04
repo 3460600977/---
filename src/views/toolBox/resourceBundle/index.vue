@@ -92,7 +92,7 @@
     },
     methods: {
       toCityInSight() {
-        this.$router.push('/cityInSight')
+        this.$router.push('/cityInsight/selectPoint')
       },
       handleReturnData(val) {
         this.checkFormInline = val

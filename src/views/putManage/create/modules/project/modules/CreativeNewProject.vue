@@ -119,8 +119,8 @@
     </PutMangeCard>
 
     <!-- 楼盘定向 -->
-    <PutMangeCard 
-      style="margin-bottom: 20px" 
+    <PutMangeCard
+      style="margin-bottom: 20px"
       v-if="!isEdit" :title="'楼盘定向'"
       class="form-box"
       >
@@ -147,7 +147,7 @@
                   :value="item.id">
                 </el-option>
               </el-select>
-              <router-link to="/toolBox/resourceBundle">
+              <router-link to="/cityInsight/list">
                 <el-button type="primary" style="margin-left: 10px;">管理已有资源包</el-button>
               </router-link>
             </el-form-item>
@@ -162,7 +162,7 @@
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        
+
         <span style="margin-left: 125px;" class="el-form-item__error" v-if="!validataForm()">* 请先完善上面投放设置!</span>
 
         <!-- 导入楼盘数据 -->
@@ -813,7 +813,7 @@
                 this.planData.loading = false;
               })
         }
-        
+
         if (!this.isEdit) {
           this.$api.PutProject.AddProject(param)
               .then(res => {
