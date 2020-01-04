@@ -1,10 +1,10 @@
 <template>
-  <div class="people-alalysis">
+  <div class="people-alalysis" v-loading="loading">
     <!-- 人群分析 -->
-    <headerCondition />
+    <headerCondition :peopleName="peopleType" :headerTags="headerTags"/>
 
     <!-- 地域分析 -->
-    <arealDistribution/>
+    <arealDistribution :areasList="areasList"/>
 
     <!-- 常规属性 -->
     <el-card class="box-card area-distibution">
@@ -26,7 +26,9 @@
             width="100%"
             height="100%"
             :color="colorType[2]"
-            :data="ageArr"
+            :data="ageData"
+            :isShowTitle="isShowTitle"
+            titleText="年龄分布"
           ></histogram>
         </div>
 
@@ -35,7 +37,9 @@
             width="100%"
             height="100%"
             :color="colorType[2]"
-            :data="ageArr"
+            :data="educationData"
+            :isShowTitle="isShowTitle"
+            titleText="学历"
           ></histogram>
         </div>
 
@@ -44,7 +48,9 @@
             width="100%"
             height="100%"
             :color="colorType[2]"
-            :data="ageArr"
+            :data="consumeData"
+            :isShowTitle="isShowTitle"
+            titleText="消费水平"
           ></histogram>
         </div>
 
@@ -53,32 +59,24 @@
             width="100%"
             height="100%"
             :color="colorType[1]"
-            :data="ageArr"
+            :data="privateCarData"
           ></histogram>
         </div>
 
-        <div class="normal-box">
-          <histogram
-            width="100%"
-            height="100%"
-            :color="colorType[1]"
-            :data="ageArr"
-          ></histogram>
-        </div>
       </div>
 
     </el-card>
 
 
-    <!-- 社区商品交易指数 -->
+    <!-- 线下消费指数 -->
     <el-card class="box-card">
-      <div class="report-form-title">社区商品交易指数</div>
+      <div class="report-form-title">线下消费指数</div>
       <div class="big-box">
         <histogram
           width="100%"
           height="100%"
           :color="colorType[2]"
-          :data="ageArrBig"
+          :data="offlineConsumptionData"
         ></histogram>
       </div>
     </el-card>
@@ -92,7 +90,7 @@
           width="100%"
           height="100%"
           :color="colorType[2]"
-          :data="ageArrBig"
+          :data="interestData"
         ></histogram>
       </div>
     </el-card>
@@ -116,6 +114,15 @@ export default {
   },
   data() {
     return {
+      loading: false,
+      result: {},
+      peopleType: '',
+      headerTags: [],
+      areasList: { //地域分析
+        provinceTa: [],
+        cityTa: []
+      },
+      isShowTitle: true,
       colorType: {
         0: [
           {
@@ -286,86 +293,110 @@ export default {
           }
         ]
       },
-
-      ageArr: {
-        "xAxis": [
-          "18以下",
-          "18-24",
-          "25-34",
-          "35-44",
-          "45-54",
-          "55-64",
-          "65以上"
-        ],
-        "yAxis": [
+      legendTitle: ['运动型人群包', '全网人群'],
+      ageData: {
+        xAxis: [],
+        yAxis: [
           {
-            "name": "长信综合楼",
+            "name": '运动型人群包',
             "type": "bar",
-            "data": [
-              0.0434,
-              0.2486,
-              0.3137,
-              0.2269,
-              0.152,
-              0.0126,
-              0.0028
-            ],
+            "data": [],
             "barWidth": 18
           },
           {
-            "name": "成都市",
+            "name": "全网人群",
             "type": "bar",
             "data": [
-              0.0573,
-              0.1685,
-              0.305,
-              0.2182,
-              0.2198,
-              0.0258,
-              0.0054
+            ],
+            "barWidth": 18
+          }
+        ]
+      },
+      educationData: { //学历
+        xAxis: [],
+        yAxis: [
+          {
+            "name": '运动型人群包',
+            "type": "bar",
+            "data": [],
+            "barWidth": 18
+          },
+          {
+            "name": "全网人群",
+            "type": "bar",
+            "data": [
+            ],
+            "barWidth": 18
+          }
+        ]
+      },
+      consumeData: { //消费水平
+        xAxis: [],
+        yAxis: [
+          {
+            "name": '运动型人群包',
+            "type": "bar",
+            "data": [],
+            "barWidth": 18
+          },
+          {
+            "name": "全网人群",
+            "type": "bar",
+            "data": [
+            ],
+            "barWidth": 18
+          }
+        ]
+      },
+      privateCarData: {  //车产状况
+        xAxis: [],
+        yAxis: [
+          {
+            "name": '运动型人群包',
+            "type": "bar",
+            "data": [],
+            "barWidth": 18
+          },
+          {
+            "name": "全网人群",
+            "type": "bar",
+            "data": [
             ],
             "barWidth": 18
           }
         ]
       },
 
-      ageArrBig: {
-        "xAxis": [
-          "18以下",
-          "18-24",
-          "25-34",
-          "35-44",
-          "45-54",
-          "55-64",
-          "65以上"
-        ],
-        "yAxis": [
+      offlineConsumptionData: {  //线下消费
+        xAxis: [],
+        yAxis: [
           {
-            "name": "长信综合楼",
+            "name": "运动型人群包",
             "type": "bar",
-            "data": [
-              0.0434,
-              0.2486,
-              0.3137,
-              0.2269,
-              0.152,
-              0.0126,
-              0.0028
-            ],
+            "data": [],
             "barWidth": 18
           },
           {
-            "name": "成都市",
+            "name": "全网人群",
             "type": "bar",
-            "data": [
-              0.0573,
-              0.1685,
-              0.305,
-              0.2182,
-              0.2198,
-              0.0258,
-              0.0054
-            ],
+            "data": [],
+            "barWidth": 18
+          }
+        ]
+      },
+      interestData: {  //社区兴趣
+        xAxis: [],
+        yAxis: [
+          {
+            "name": "运动型人群包",
+            "type": "bar",
+            "data": [],
+            "barWidth": 18
+          },
+          {
+            "name": "全网人群",
+            "type": "bar",
+            "data": [],
             "barWidth": 18
           }
         ]
@@ -384,7 +415,77 @@ export default {
         ['rgba(244, 102, 74, 1)', 'rgba(236, 236, 236, 1)'],
         ['rgba(91, 126, 255, 1)', 'rgba(236, 236, 236, 1)']],
 
+
     };
+  },
+  created() {
+    this.search();
+  },
+  methods: {
+    search() {
+      // let barY = [
+      //   {
+      //     "name": '运动型人群包',
+      //     "type": "bar",
+      //     "data": [],
+      //     "barWidth": 18
+      //   },
+      //   {
+      //     "name": "全网人群",
+      //     "type": "bar",
+      //     "data": [],
+      //     "barWidth": 18
+      //   }
+      // ]
+      let id= this.$route.query.id;
+      this.loading = true;
+      this.$api.peopleInsight.getPeopleAlalysis({id:id}).then( res => {
+        this.loading = false;
+        this.result = res.result;
+        this.peopleType = res.result.crowdInsightName;
+        this.headerTags = JSON.parse(res.result.tagName);
+        this.areasList.provinceTa = res.result.provinceTa;
+        this.areasList.cityTa = res.result.cityTa;
+
+        let barAarr = [
+          {
+            name: 'ageData',
+            key: 'ageDist'
+          },
+          {
+            name: 'educationData',
+            key: 'educationDist'
+          },
+          {
+            name: 'consumeData',
+            key: 'consumptionDist'
+          },
+          {
+            name: 'privateCarData',
+            key: 'privateCarDist'
+          },
+          {
+            name: 'offlineConsumptionData',
+            key: 'offlineConsumption'
+          },
+          {
+            name: 'interestData',
+            key: 'interestDist'
+          }
+        ];
+        barAarr.forEach(item => {
+          console.log(this[item.name])
+          this[item.name].xAxis = res.result.crowdInsightPoiVO[item.key].map(item => item.tag);
+          let yData = res.result.crowdInsightPoiVO[item.key].map(item => item.value);
+          let country = res.result.crowdInsightPoiVO.wholeNetworkPoiVO[item.key].map(item => item.value);
+          this[item.name].yAxis[0].data = yData;
+          this[item.name].yAxis[1].data = country;
+        })
+
+      }).catch(res => {
+        this.loading = false;
+      })
+    }
   }
 };
 </script>
