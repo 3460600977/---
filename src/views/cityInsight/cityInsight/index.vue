@@ -350,6 +350,7 @@
       },
       loadHotMap(id) {
         this.$api.peopleInsight.getPeopleInsightHotMap({id: id}).then((data) => {
+          // this.$refs.dbmap.setCity(this.cityFilter)
           if (data.result) {
             this.$refs.dbmap.drawHotMap(data.result)
           } else {
