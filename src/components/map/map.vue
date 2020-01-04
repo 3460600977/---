@@ -597,9 +597,8 @@
         this.map.addOverlay(marker);
 
         if (type === 1) {
-          marker.addEventListener('click', (e) => {
-            e.preventDefault()
-            // this.$emit('buildingClick', point)
+          marker.addEventListener('mousedown', (e) => {
+            this.$emit('buildingClick', point)
           })
           marker.addEventListener('mouseover', (e) => {
             if (this.currentSelectType === null && this.activePath === null) {
@@ -737,6 +736,11 @@
           icon: myIcon,
           offset: new BMap.Size(0, -11),
         });
+        marker.addEventListener('click', (event) => {
+          console.log('5555')
+          // e.preventDefault()
+          this.$emit('buildingClick', point)
+        })
         this.map.addOverlay(marker);
         return marker
       },
@@ -844,9 +848,6 @@
         });
         label.setStyle(labelStyle);
 
-        // label.addEventListener('click', (event) => {
-        //   this.$emit('buildingClick', point)
-        // })
         this.labelsArr.push({label: label, isShow: true})
         this.map.addOverlay(label)
       },
