@@ -36,7 +36,14 @@ export const peopleInsight = {
       data
     });
   },
-
+  // 媒体资源 加载人群洞察包
+  getPeopleInsightList:(data) => {
+    return request({
+      url: "/dpapi/cityInsight/query",
+      method: "post",
+      data,
+    });
+  },
   // 加载人群洞察包list数据
   getPeopleInsightHotMap:(data) => {
     return request({

@@ -17,22 +17,22 @@
 
         <el-table-column prop="premiseNum" label="楼盘数">
           <template slot-scope="scope">
-            <span>{{scope.row.premiseNum}}个</span>
+            <span>{{scope.row.premiseNum | toThousands}}个</span>
           </template>
         </el-table-column>
         <el-table-column prop="unitNum" label="单元数">
           <template slot-scope="scope">
-            <span>{{scope.row.unitNum}}个</span>
+            <span>{{scope.row.unitNum | toThousands}}个</span>
           </template>
         </el-table-column>
         <el-table-column prop="deviceNum" label="点位数">
           <template slot-scope="scope">
-            <span>{{scope.row.deviceNum}}个</span>
+            <span>{{scope.row.deviceNum | toThousands}}个</span>
           </template>
         </el-table-column>
         <el-table-column prop="weekForPeople" label="覆盖人数">
           <template slot-scope="scope">
-            <span>{{scope.row.weekForPeople}}人</span>
+            <span>{{scope.row.weekForPeople | toThousands}}人</span>
           </template>
         </el-table-column>
 
