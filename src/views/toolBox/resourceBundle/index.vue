@@ -14,13 +14,35 @@
         <el-table-column prop="description" label="资源包描述">
         </el-table-column>
         <el-table-column prop="city" label="城市"></el-table-column>
+
+        <el-table-column prop="premiseNum" label="楼盘数">
+          <template slot-scope="scope">
+            <span>{{scope.row.premiseNum}}个</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="unitNum" label="单元数">
+          <template slot-scope="scope">
+            <span>{{scope.row.unitNum}}个</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="deviceNum" label="点位数">
+          <template slot-scope="scope">
+            <span>{{scope.row.deviceNum}}个</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="weekForPeople" label="覆盖人数">
+          <template slot-scope="scope">
+            <span>{{scope.row.weekForPeople}}人</span>
+          </template>
+        </el-table-column>
+
         <el-table-column prop="createName" label="创建人"></el-table-column>
         <el-table-column prop="createTime" label="创建时间">
           <template slot-scope="scope">
             <span>{{formate(scope.row.createTime, 'yyyy-MM-dd hh:mm:ss')}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="action" label="操作" fixed="right" width="400">
+        <el-table-column prop="action" label="操作" fixed="right" width="200">
           <template slot-scope="scope">
 <!--            <span class="icon-space">-->
 <!--              <i class="el-icon-edit icon-color"></i>编辑-->
@@ -75,7 +97,7 @@
           {
             type: 'input',
             key: 'name',
-            label: '资源包管理'
+            label: '资源包名称'
           },
           {
             type: 'actions',

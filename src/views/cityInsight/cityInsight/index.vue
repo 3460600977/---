@@ -38,6 +38,7 @@
                 @hide="hide(1)"
                 v-if="leftShow[0]"
                 ref="peopleInsight"
+                :city="cityFilter"
                 v-show="activeTab === 0"
                 @switchChange="switchChange"
                 @returnResult="(val) => returnResult(val, 2)"
