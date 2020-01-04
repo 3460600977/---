@@ -5,7 +5,7 @@
           <div class="top mid-start">
             <el-input class="input" v-model="name" clearable placeholder="输入人群包名称"></el-input>
             <el-button type="primary" class="margin-left-20" plain @click="resetLoad">查询</el-button>
-            <el-button type="primary" class="margin-left-20">去创建</el-button>
+            <el-button type="primary" class="margin-left-20" @click="toCreate">去创建</el-button>
           </div>
           <div class="list flex1 margin-top-20 clearfix">
             <div style="height: 205px">
@@ -89,6 +89,9 @@
       },
     },
     methods: {
+      toCreate() {
+        this.$router.push('/peopleInsight/createCrowd')
+      },
       resetSelect() {
         this.activeItem = null
         this.switchValue = null
