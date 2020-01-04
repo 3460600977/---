@@ -52,13 +52,13 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="beginTime" label="投放时间">
+        <!-- <el-table-column prop="beginTime" label="投放时间">
           <template slot-scope="scope">
             {{$tools.getFormatDate('YY/mm/dd', scope.row.beginTime)}}
             -
             {{$tools.getFormatDate('YY/mm/dd', scope.row.endTime)}}
           </template>
-        </el-table-column>
+        </el-table-column> -->
 
         <el-table-column prop="action" label="操作" fixed="right" width="400">
           <template slot-scope="scope">
@@ -69,7 +69,7 @@
             </span>
             <span class="icon-space hand">
               <router-link 
-                :to="`/reportList/plan?campaignId=${scope.row.id}&planTime=${$tools.getFormatDate('YY-mm-dd', scope.row.beginTime)}~${$tools.getFormatDate('YY-mm-dd', scope.row.endTime)}`">
+                :to="`/reportList/plan?campaignId=${scope.row.id}`">
                 <i class="iconfont icon-baobiao icon-color"></i>报表
               </router-link>
             </span>
@@ -114,13 +114,13 @@
             <span class="color-red" v-if="tableData.data[detailDialog.dataIndex].totalBudget">¥ {{$tools.toThousands(tableData.data[detailDialog.dataIndex].totalBudget / 100)}}</span>
             <span class="color-red" v-else>不限</span>
           </el-form-item>
-          <el-form-item label="投放时间">
+          <!-- <el-form-item label="投放时间">
             <span class="color-text-1">
               {{$tools.getFormatDate('YY-mm-dd', tableData.data[detailDialog.dataIndex].beginTime)}}
               -
               {{$tools.getFormatDate('YY-mm-dd', tableData.data[detailDialog.dataIndex].endTime)}}
             </span>
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
       <span slot="footer" class="dialog-footer center">
         <el-button style="width: 136px;" type="primary" @click="detailDialog.show = false">确 定</el-button>

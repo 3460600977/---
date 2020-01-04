@@ -32,7 +32,7 @@
           </el-input>
         </el-form-item>
         
-        <el-form-item prop="putDate" class="mt-20" label="投放时间">
+        <!-- <el-form-item prop="putDate" class="mt-20" label="投放时间">
           <el-date-picker
             v-model="formData.putDate"
             value-format="yyyy-MM-dd"
@@ -42,7 +42,7 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期">
           </el-date-picker>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
         
     </PutMangeCard>
@@ -106,7 +106,7 @@ export default {
         name: '',
         saving: false,
         totalBudget: '',
-        putDate: '',
+        // putDate: '',
         goal: ''
       },
       
@@ -115,9 +115,9 @@ export default {
           { required: true, message: '请输入计划名称!', trigger: 'blur' },
           { max: 50, message: '计划名称100字以内!'}
         ],
-        putDate: [
-          { required: true, message: '请选择投放时间!', trigger: 'blur' }
-        ],
+        // putDate: [
+        //   { required: true, message: '请选择投放时间!', trigger: 'blur' }
+        // ],
         totalBudget: [
           { validator: validateBudget, trigger: 'blur' }
         ],
@@ -194,8 +194,8 @@ export default {
         campaignType: this.formData.goal,
         totalBudget: this.formData.totalBudget * 100,
         cityList: this.formData.putCity,
-        beginTime: this.formData.putDate[0],
-        endTime: this.formData.putDate[1]
+        // beginTime: this.formData.putDate[0],
+        // endTime: this.formData.putDate[1]
       };
 
 
