@@ -136,7 +136,8 @@
         this.resetLoad()
       },
       loadFunction(param) {
-        const data = { ...this.checkFormInline, ...param }
+        const data = { ...this.checkFormInline, ...param };
+        delete data.sortList;
         return new Promise((resolve, reject) => {
           this.$api.peopleInsight.getCrowdList(data).then(res => {
             resolve(res);
