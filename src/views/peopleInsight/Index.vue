@@ -52,7 +52,7 @@
               >
                  <span class="icon-space hand"
                        :class="scope.row.status === 1?'':'color-disabled'"
-                       @click="crowdAnalysis(scope.row.status)">
+                       @click="crowdAnalysis(scope.row.status,scope.row.id)">
                     <i class="iconfont icon-shuxingliebiaoxiangqing2" :class="scope.row.status === 1 ? 'icon-color' : 'color-disabled'"></i>人群分析
                   </span>
               </el-tooltip>
@@ -171,9 +171,9 @@
           }
         })
       },
-      crowdAnalysis(status) {
+      crowdAnalysis(status,id) {
         if (status !== 1) return;
-        this.$router.push("/peopleInsight/analysis")
+        this.$router.push({path:"/peopleInsight/analysis", query: {id: id}})
       },
     }
   }
