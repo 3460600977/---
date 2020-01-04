@@ -129,7 +129,7 @@
           .catch(res => {})
       },
       toCreateCrowd() {
-        this.$router.push('/createPeoplePackage')
+        this.$router.push('/peopleInsight/createCrowd')
       },
       handleReturnData(val) {
         this.checkFormInline = val
@@ -159,7 +159,7 @@
       },
       crowdAnalysis(status) {
         if (!status) return;
-        this.$router.push("/peopleAnalysis")
+        this.$router.push("/peopleInsight/analysis")
       },
     }
   }
