@@ -168,14 +168,18 @@
           isShow: false
         }
       },
-      initMap(val) {
-        this.points = this.normalizePointsAll(val)
+      reGetAreaPoint() {
+        console.log(this.pathArr)
         if (Object.keys(this.pathArr).length) {
           for(let key in this.pathArr) {
             this.isInArea(this.pathArr[key])
           }
         }
+      },
+      initMap(val) {
+        this.points = this.normalizePointsAll(val)
         this.pointsOverlayObj.isShow = true
+        this.reGetAreaPoint()
         this.jugDraw()
       },
       setCity(city) {
@@ -273,11 +277,7 @@
         delete this.pathArr[item.index]
         this.pathArr = {...this.pathArr}
         this.setActivePathNull()
-        if (Object.keys(this.pathArr).length) {
-          this.changePathPointType(item.index, -2)
-        } else {
-          this.changePathPointType(null, -1)
-        }
+        this.reGetAreaPoint()
         this.jugDraw()
       },
       /*
@@ -460,11 +460,11 @@
           }
         } else if (path.type === 'circle') {
           for(let key in points) {
-            if (this.getPointChangeAble(points[key], path.index)) {
-              let b = points[key].point;
-              if (BMapLib.GeoUtils.isPointInCircle(b, path.overlay)) {
-                points[key].type = path.index
-              } else {
+            let b = points[key].point;
+            if (BMapLib.GeoUtils.isPointInCircle(b, path.overlay)) {
+              if (this.getPointChangeAble(points[key], path.index)) {
+                  points[key].type = path.index
+                } else {
                 points[key].type = -2
               }
             }
