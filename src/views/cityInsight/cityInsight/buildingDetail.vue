@@ -381,7 +381,7 @@
         return result
       },
       renderHistogramChart(arr1, arr2) {
-        if (!arr1 || !arr2) return null
+        if (!arr1) return null
         let result = {
           xAxis: [],
           yAxis: []
