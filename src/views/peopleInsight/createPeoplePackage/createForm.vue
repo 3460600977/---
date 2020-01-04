@@ -17,14 +17,17 @@
                width="568px"
                class="my-dialog"
     >
-      <p>生成人群需要一定的时间，请您耐心等待</p>
-      <p>生成100万以下的人群在<span class="red-text">2个小时</span>之内完成；生成100万以上的人群至少需要<span class="red-text">8个小时</span>完成；</p>
-      <p>1千以下的人群，无法生成人群画像。生成完成后，可以在"媒体直选"页面，利用人群包进行选点</p>
+      <p>生成人群需要一定的时间，请您耐心等待；</p>
+      <p>生成100万以下的人群在<span class="red-text">2个小时</span>之内完成；</p>
+      <p>生成100万以上的人群至少需要<span class="red-text">8个小时</span>完成；</p>
+      <p>1千以下的人群，无法生成人群画像；</p>
+      <p> 生成完成后，可以在"媒体智选"页面，利用人群包进行选点。</p>
       <span slot="footer">
         <el-button @click="dialogShowContent = false" class="btn1">取 消</el-button>
         <el-button type="primary" class="btn1" @click="complete">确 定</el-button>
       </span>
     </el-dialog>
+    <p v-loading.fullscreen.lock="fullscreenLoading"></p>
   </div>
 </template>
 
@@ -37,7 +40,11 @@
       return {
         rules: {
           name: [
-            {required: true, message: '请输入人群包名称', trigger: 'blur'}
+            {required: true, message: '请输入人群包名称', trigger: 'blur'},
+            { max: 50, message: '长度在50个字符以内', trigger: 'blur' }
+          ],
+          description: [
+            { max: 200, message: '长度在200个字符以内', trigger: 'blur' }
           ],
         },
         form: {
@@ -48,6 +55,7 @@
           city: ''
         },
         dialogShowContent: false,
+        fullscreenLoading: false,
       }
     },
     methods: {
@@ -68,6 +76,8 @@
         //3 拼接city  分别在列表页以及人群分析展示(城市的名称)
         //关闭弹窗
         this.dialogShowContent = false;
+        //开启转圈加载
+        this.fullscreenLoading = true;
         let city = "";
         let childTids = "";
         this.crowdProject.tagNames.forEach((tags,index)=>{
@@ -97,19 +107,20 @@
         this.form.tags = childTids;
         this.form.tagsName = JSON.stringify(this.crowdProject.tagNames);
         this.form.city = city;
-        console.log(this.form)
-        /*this.$api.peopleInsight.createPeopleCrowd(this.form)
+        this.$api.peopleInsight.createPeopleCrowd(this.form)
           .then(res => {
             this.removeAllState();
+            this.fullscreenLoading = false;
             //跳转至列表页
             this.$router.push('/peopleInsight/list');
           })
           .catch(res => {
+            this.fullscreenLoading = false;
             this.$message({
               type: 'info',
               message: '保存失败'
             })
-          })*/
+          })
       },
       backToList(){
         this.removeAllState();
@@ -142,5 +153,8 @@
   }
   .red-text {
     color: red;
+  }
+  .my-dialog .el-dialog__body p{
+      margin-bottom: 2px;
   }
 </style>

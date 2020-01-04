@@ -45,7 +45,7 @@
           <template slot-scope="scope">
               <el-tooltip
                 class="item"
-                effect="light"
+                effect="dark"
                 placement="top"
                 :disabled="scope.row.status === 1"
                 :content="scope.row.remark"
