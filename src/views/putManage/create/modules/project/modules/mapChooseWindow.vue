@@ -626,11 +626,11 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .dialog-footer {
   padding-top: 10px;
   text-align: right;
-  .el-button {
+  /deep/.el-button {
     width: 136px;
     height: 34px;
     border-radius: 2px;
@@ -638,10 +638,10 @@ export default {
 }
 .map-choose {
   top: -12% !important;
-  .el-dialog__header {
+  /deep/.el-dialog__header {
     display: none;
   }
-  .el-dialog__body {
+  /deep/.el-dialog__body {
     padding: 10px;
     .map-box {
       width: 100%;
@@ -650,7 +650,7 @@ export default {
       overflow: hidden;
     }
   }
-  .el-dialog__footer {
+  /deep/.el-dialog__footer {
     padding: 12px 40px 20px 0;
     .map-btn {
       & + .map-btn {

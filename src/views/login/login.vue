@@ -5,7 +5,7 @@
     v-bind:style="{ backgroundImage: 'url('+this.logo_back_img+')'}"
   >
     <div class="login-box">
-      <div class="box-center" v-bind:style="{ width: loginFormWidth +'px' }">
+      <div class="box-center">
         <div class="xinchao-logo" v-bind:style="{ width: imageWidth +'px' }">
           <el-image
             :src="logo_img"
@@ -281,7 +281,12 @@ export default {
     .box-center {
       position: relative;
       margin: 0 auto;
-      top: 18%;
+      top: 16%;
+      width: 800px;
+      height: 520px;
+      background: $color-bg-3;
+      box-shadow: 0px 20px 50px 0px $color-shadow-6;
+      border-radius: 14px;
     }
   }
   .xinchao-logo {
@@ -291,9 +296,11 @@ export default {
     left: -0.6%;
   }
   .logo-form {
+    width: 800px;
+    height: 520px;
     background: $color-bg-3;
     border-radius: 14px;
-    height: 520px;
+
     margin-right: 30px;
     .el-input__inner:hover {
       border-color: #e5e7e9;
