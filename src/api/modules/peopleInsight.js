@@ -41,7 +41,8 @@ export const peopleInsight = {
   getPeopleInsightHotMap:(data) => {
     return request({
       url: `/dpapi/cityInsight/hot`,
-      method: "POST"
+      method: "POST",
+      data
     });
   },
 }
