@@ -164,8 +164,8 @@
         <!-- 行业列表 -->
         <el-form-item prop="industry" label="广告创意行业">
           <Industry 
-            :industrytype="createType === 'edit' ? 'displaySelect' : 'select'" 
-            :value="formData.industry" :disabled="createType === 'step' || haveProject" 
+            :value="formData.industry" 
+            :disabled="createType === 'step' || haveProject" 
             @changeIndustry="changeIndustry"/>
         </el-form-item>
         
@@ -774,7 +774,7 @@ export default {
       }
 
       return { top, bottom880 };
-    }
+    },
   },
 
 }

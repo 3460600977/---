@@ -2,7 +2,7 @@
   <!-- 行业选择和回显 -->
   <div>
   <el-cascader
-    :class="{'just-display': industrytype === 'display'}"
+    :class="{'just-display': !originStyle}"
     ref="industryList"
     :disabled="disabled"
     v-model="industryList.checkedData.value"
@@ -25,10 +25,10 @@ export default {
       default: false
     },
 
-    // 回显还是选择
-    industrytype: {
-      type: String,
-      default: 'select' // select: 选择 display: 回显不能选择(去除选择样式) displaySelect 回显并可以选择
+    // 样式
+    originStyle: {
+      type: true,
+      default: true,
     },
 
     // 回显的值
@@ -99,16 +99,9 @@ export default {
   },
 
   watch: {
-    industrytype: {
-      handler: async function(val) {
-        if (val !== 'select') {
-          this.industryList.data = await this.getIndustryList();
-        }
-      },
-      immediate: true
-    },
     value: {
       handler: async function(val) {
+        this.industryList.data = await this.getIndustryList();
         this.industryList.checkedData.value = val;
       },
       immediate: true
