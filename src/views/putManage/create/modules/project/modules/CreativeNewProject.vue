@@ -15,24 +15,15 @@
 
         <!-- 投放方案行业 -->
         <el-form-item class="mt-20" prop="industry" label="方案行业">
-          <el-select
-            class="bigger"
-            :disabled="isEdit"
+          <el-cascader
+            v-model="formData.industry"
+            filterable
             @focus="getIndustryList"
             @change="changePageData"
-            :loading="industry.loading"
-            filterable
-            clearable
-            v-model="formData.industry"
-            value-key="industryId"
-            placeholder="请选择">
-            <el-option
-              v-for="(item, index) in industry.data"
-              :key="index"
-              :label="item.name"
-              :value="item">
-            </el-option>
-          </el-select>
+            placeholder="请选择"
+            :options="industry.data"
+            :props="industry.props">
+          </el-cascader>
         </el-form-item>
 
         <!-- 屏幕类型 -->
@@ -128,8 +119,8 @@
     </PutMangeCard>
 
     <!-- 楼盘定向 -->
-    <PutMangeCard 
-      style="margin-bottom: 20px" 
+    <PutMangeCard
+      style="margin-bottom: 20px"
       v-if="!isEdit" :title="'楼盘定向'"
       class="form-box"
       >
@@ -156,7 +147,7 @@
                   :value="item.id">
                 </el-option>
               </el-select>
-              <router-link to="/toolBox/resourceBundle">
+              <router-link to="/cityInsight/list">
                 <el-button type="primary" style="margin-left: 10px;">管理已有资源包</el-button>
               </router-link>
             </el-form-item>
@@ -171,7 +162,7 @@
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        
+
         <span style="margin-left: 125px;" class="el-form-item__error" v-if="!validataForm()">* 请先完善上面投放设置!</span>
 
         <!-- 导入楼盘数据 -->
@@ -366,7 +357,13 @@
         // 投放行业
         industry: {
           loading: false,
-          data: ''
+          data: '',
+          props: {
+            value: 'industryId',
+            label: 'name',
+            expandTrigger: 'hover',
+            emitPath: false
+          }
         },
 
         userInfo: '',
@@ -619,7 +616,7 @@
           endTime: this.formData.date[1],
           count: this.formData.count.value,
           deliveryMode: this.formData.deliveryMode.value,
-          industry: this.formData.industry.industryId,
+          industry: this.formData.industry,
           premiseIds: cityInsight.premiseIds,
           projectCity: cityInsight.city,
           projectType: this.formData.projectType.value,
@@ -685,7 +682,7 @@
           endTime: this.formData.projectType.value === 0 ? this.formData.dateForWeekEnd : this.formData.dateForDay[1],
           count: this.formData.count.value,
           deliveryMode: this.formData.deliveryMode.value,
-          industry: this.formData.industry.industryId,
+          industry: this.formData.industry,
           projectCity: this.formData.projectCity,
           projectType: this.formData.projectType.value,
           second: this.formData.second.value,
@@ -759,7 +756,7 @@
         param = {
           name: this.formData.name,
           type: this.formData.type.value, // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
-          industry: this.formData.industry.industryId, // 投放行业
+          industry: this.formData.industry, // 投放行业
           beginTime: this.formData.date[0],
           endTime: this.formData.date[1],
           campaignId: this.$route.query.planId, // 投放计划ID
@@ -816,7 +813,7 @@
                 this.planData.loading = false;
               })
         }
-        
+
         if (!this.isEdit) {
           this.$api.PutProject.AddProject(param)
               .then(res => {
@@ -851,12 +848,14 @@
       // 时间限制
       pickerOptions() {
         let _this = this;
+        let now = new Date();
         return {
           firstDayOfWeek: 6,
           disabledDate(date) {
             return date.getTime() < Date.now() - 8.64e7 ||
             date.getTime() > _this.planData.data.endTime ||
             date.getTime() < _this.planData.data.beginTime ||
+            (now.getDate() == date.getDate() && now.getMonth() === date.getMonth() && now.getDay() == 5 && now.getHours() > 18) ||
             (_this.formData.projectType.value == 0 && date.getDay() != 5 && date.getDay() != 6);
           }
         };

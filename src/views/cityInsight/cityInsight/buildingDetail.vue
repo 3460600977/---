@@ -327,16 +327,32 @@
       renderImg(src) {
         return require(`@/assets/images/icon_${src}.png`)
       },
+      resetChat() {
+        this.sexArr = null
+        this.ageArr = null
+        this.consumptionDist = null
+        this.marriageDist = null
+        this.privateCarDist = null
+        this.hotSearch = null
+        this.incomeDist = null
+        this.educationDist = null
+      },
       loadData(id) {
         this.loading = true
         this.$api.cityInsight.getBuildingDetail({pid: id}).then((data) => {
           this.buildDetail = data.result
           this.loading = false
-          if (!this.buildDetail || (this.buildDetail && !this.buildDetail.chat)) {
+          if (!this.buildDetail) {
+            this.buildDetail = null
+            return;
+          }
+          if (!this.buildDetail.chat) {
+            this.resetChat()
             return
           }
           if (!this.buildDetail.chat.cityAverage) {
-            return;
+            this.resetChat()
+            return
           }
           this.sexArr = this.renderSexChart(data.result.chat.genderDist)
           this.ageArr = this.renderHistogramChart(data.result.chat.ageDist, data.result.chat.cityAverage.ageAverageDist)
@@ -353,6 +369,7 @@
         })
       },
       renderSexChart(arr) {
+        if (!arr.length) return null
         let result = []
         result = arr.map((item, i) => {
           if (item.tag === '女') {
@@ -364,6 +381,7 @@
         return result
       },
       renderHistogramChart(arr1, arr2) {
+        if (!arr1 || !arr2) return null
         let result = {
           xAxis: [],
           yAxis: []

@@ -21,7 +21,7 @@
             return {
                 toolList: [
                     {title: '账号管理', subTool: [{icon: 'el-icon-postcard', des: '账号信息', path: '/toolBox/account'}]},
-                    {title: '辅助功能', subTool: [{icon: 'el-icon-wallet', des: '资源包', path: '/toolBox/resourceBundle'}]}
+                    {title: '辅助功能', subTool: [{icon: 'el-icon-wallet', des: '资源包', path: '/cityInsight/list'}]}
                 ]
             }
         }

@@ -163,20 +163,17 @@
 
         <!-- 行业列表 -->
         <el-form-item prop="industry" label="广告创意行业">
-          <el-select 
-            :disabled="this.createType === 'step' || haveProject"
-            class="width-100-p" 
+          <el-cascader
+            ref="industry"
             filterable
+            :disabled="this.createType === 'step' || haveProject"
+            v-model="formData.industry"
+            @focus="getIndustryList"
             @change="generateCreativeName"
-            v-model="formData.industry" 
-            placeholder="请选择">
-            <el-option
-              v-for="(item, index) in industryList"
-              :key="index"
-              :label="item.name"
-              :value="item.industryId">
-            </el-option>
-          </el-select>
+            placeholder="请选择"
+            :options="industryList"
+            :props="industryListProps">
+          </el-cascader>
         </el-form-item>
         
         <!-- 资质图片 -->
@@ -368,6 +365,12 @@ export default {
       },
 
       industryList: [], // 广告创意行业
+      industryListProps: {
+        value: 'industryId',
+        label: 'name',
+        expandTrigger: 'hover',
+        emitPath: false
+      },
 
       successDialog: false,
     }
@@ -504,8 +507,8 @@ export default {
     // 生成创意名字
     generateCreativeName() {
       let type = this.formData.screenType == '003' ? '联动' : this.formData.screenType == '001' ? '上屏' : '下屏';
-      let industryName = this.$tools.getObjectItemFromArray(this.industryList, 'industryId', this.formData.industry);
-      this.formData.name = `${industryName.name || '行业'}_${type}_${this.$tools.getFormatDate('mm_dd')}`;
+      let industryName = this.$refs.industry.getCheckedNodes()[0] ? this.$refs.industry.getCheckedNodes()[0].label : '行业';
+      this.formData.name = `${industryName}_${type}_${this.$tools.getFormatDate('mm_dd')}`;
     },
 
     /**

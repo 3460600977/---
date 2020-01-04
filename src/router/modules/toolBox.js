@@ -22,11 +22,11 @@ export const toolBoxRouter = [
     ]
   },
   // 资源包
-  {
-    path: '/toolBox/resourceBundle',
-    component: () => import('@/views/toolBox/resourceBundle/'),
-    meta: {code: '1200'},
-  },
+  // {
+  //   path: '/toolBox/resourceBundle',
+  //   component: () => import('@/views/toolBox/resourceBundle/'),
+  //   meta: {code: '1200'},
+  // },
   // 工具箱--修改账号密码
   {
     path: '/toolBox/editPass',
