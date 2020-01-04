@@ -493,6 +493,10 @@
       },
       loadData() {
         if (this.cityFilter.cityCode === null) {
+          this.$notify({
+            title: '提示',
+            message: '当前城市尚未开通，我们已在快马加鞭，敬请期待！',
+          });
           this.loading = false
           return
         }

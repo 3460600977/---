@@ -41,7 +41,6 @@
     },
     watch: {
       filters(val) {
-        console.log(val)
         let item = this.findItem(this.filters, this.selectDatas)
         if (item) {
           this.currentItem = this.findItem(this.filters, this.selectDatas)
