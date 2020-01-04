@@ -31,7 +31,7 @@
           <span class="color-text-1">{{project.data.campaignName}}</span>
         </el-form-item>
         <el-form-item label="方案行业">
-          <span class="color-text-1">{{$tools.getObjectItemFromArray(industryList, 'industryId', project.data.industry).name}}</span>
+          <span class="color-text-1"><Industry :originStyle="false" :value="project.data.industry" /></span>
         </el-form-item>
         <el-form-item label="屏幕类型">
           <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.screenType, 'value', project.data.type).name}}</span>
@@ -114,11 +114,14 @@
 import { mapMutations, mapGetters } from 'vuex'
 import PutMangeCard from '../../../templates/PutMangeCard' 
 import BuildList from '@/views/putManage/templates/BuildList' 
+import Industry from '../../../templates/Industry'
 import { projectConst } from '../../../../../utils/static'
+
 export default {
   components: {
     PutMangeCard,
-    BuildList
+    BuildList,
+    Industry
   },
 
   data() {

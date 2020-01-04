@@ -163,17 +163,10 @@
 
         <!-- 行业列表 -->
         <el-form-item prop="industry" label="广告创意行业">
-          <el-cascader
-            ref="industry"
-            filterable
-            :disabled="this.createType === 'step' || haveProject"
-            v-model="formData.industry"
-            @focus="getIndustryList"
-            @change="generateCreativeName"
-            placeholder="请选择"
-            :options="industryList"
-            :props="industryListProps">
-          </el-cascader>
+          <Industry 
+            :value="formData.industry" 
+            :disabled="createType === 'step' || haveProject" 
+            @changeIndustry="changeIndustry"/>
         </el-form-item>
         
         <!-- 资质图片 -->
@@ -298,6 +291,7 @@
 
 <script>
 import PutMangeCard from '../../../../templates/PutMangeCard' 
+import Industry from '../../../../templates/Industry'
 import MyRadio from '../../../../../../components/MyRadio' 
 import ScreenType from '../../../../templates/ScreenType'
 import PreviewBox from '../../../../../../components/PreviewBox' 
@@ -306,6 +300,7 @@ import { mapMutations, mapState } from 'vuex'
 export default {
   components: {
     PutMangeCard,
+    Industry,
     MyRadio,
     ScreenType,
     PreviewBox
@@ -469,6 +464,12 @@ export default {
           break;
       }
     },
+
+    // 切换行业
+    changeIndustry(industry) {
+      this.formData.industry = industry.value;
+      this.generateCreativeName(industry.name)
+    },
     
     // 获取行业列表
     getIndustryList: async function() {
@@ -505,10 +506,9 @@ export default {
     },
 
     // 生成创意名字
-    generateCreativeName() {
+    generateCreativeName(industryName) {
       let type = this.formData.screenType == '003' ? '联动' : this.formData.screenType == '001' ? '上屏' : '下屏';
-      let industryName = this.$refs.industry.getCheckedNodes()[0] ? this.$refs.industry.getCheckedNodes()[0].label : '行业';
-      this.formData.name = `${industryName}_${type}_${this.$tools.getFormatDate('mm_dd')}`;
+      this.formData.name = `${industryName || '行业'}_${type}_${this.$tools.getFormatDate('mm_dd')}`;
     },
 
     /**
@@ -774,7 +774,7 @@ export default {
       }
 
       return { top, bottom880 };
-    }
+    },
   },
 
 }

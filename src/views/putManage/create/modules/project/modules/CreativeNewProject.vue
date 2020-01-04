@@ -15,15 +15,7 @@
 
         <!-- 投放方案行业 -->
         <el-form-item class="mt-20" prop="industry" label="方案行业">
-          <el-cascader
-            v-model="formData.industry"
-            filterable
-            @focus="getIndustryList"
-            @change="changePageData"
-            placeholder="请选择"
-            :options="industry.data"
-            :props="industry.props">
-          </el-cascader>
+          <Industry :disabled="isEdit" @changeIndustry="changeIndustry"/>
         </el-form-item>
 
         <!-- 屏幕类型 -->
@@ -317,6 +309,7 @@
 <script>
   import PutMangeCard from '../../../../templates/PutMangeCard'
   import ScreenType from '../../../../templates/ScreenType'
+  import Industry from '../../../../templates/Industry'
   import MyRadio from '@/components/MyRadio'
   import BuildList from '@/views/putManage/templates/BuildList'
   import mapChooseWindow from './mapChooseWindow'
@@ -328,6 +321,7 @@
     components: {
       PutMangeCard,
       ScreenType,
+      Industry,
       MyRadio,
       BuildList,
       mapChooseWindow,
@@ -441,6 +435,12 @@
 
     methods: {
       ...mapMutations(['setBuildsList']),
+
+      // 切换行业
+      changeIndustry(industry) {
+        this.formData.industry = industry.value;
+        this.changePageData()
+      },
 
       // 切换屏幕类型
       changeScreenType(val) {
@@ -644,7 +644,7 @@
 
 
       // POST根据订单信息计算预估总价
-      estimatePrice() {
+      estimatePrice: async function() {
         if (!this.validataForm()) return;
         let param = {
           beginTime: this.formData.date[0],
@@ -655,6 +655,7 @@
           second: this.formData.second.value,
           type: this.formData.type.value
         }
+        this.userInfo = await this.$tools.refreshUserInfo();
         this.$api.CityList.EstimateTotalPrice(param)
             .then(res => {
               this.buildingDirection.estimatePrice = res.result;
