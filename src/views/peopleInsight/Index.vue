@@ -13,7 +13,18 @@
         <el-table-column prop="name" label="人群包名称"></el-table-column>
         <el-table-column prop="description" label="人群包描述">
         </el-table-column>
-        <el-table-column prop="city" label="城市"></el-table-column>
+        <el-table-column prop="city" label="城市">
+          <template slot-scope="scope">
+            <div v-if="isNaN(scope.row.city)">
+              {{scope.row.city}}
+            </div>
+            <div v-else>
+              <template v-for="item in cityList">
+                <template v-if="item.cityCode === scope.row.city">{{item.name}}</template>
+              </template>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column prop="weekForPeople" label="覆盖人数">
           <template slot-scope="scope">
             <div v-if="scope.row.status === 0">
@@ -31,11 +42,6 @@
           </template>
         </el-table-column>
         <el-table-column prop="action" label="操作" fixed="right" width="400">
-          <!--<template slot-scope="scope">
-            <span class="icon-space" @click="showDialog(scope.row)">
-              <i class="el-icon-error icon-color"></i>删除
-            </span>
-          </template>-->
           <template slot-scope="scope">
               <span class="icon-space hand"
                     :class="scope.row.status?'':'color-disabled'"
@@ -106,10 +112,22 @@
         ],
         checkFormInline: {
           name: '',
-        }
+        },
+        cityList: [],
       }
     },
+    beforeMount() {
+      this.getAllCity()
+    },
     methods: {
+      // 城市列表
+      getAllCity() {
+        this.$api.CityList.AllList()
+          .then(res => {
+            this.cityList = res.result;
+          })
+          .catch(res => {})
+      },
       toCreateCrowd() {
         this.$router.push('/createPeoplePackage')
       },
@@ -132,7 +150,7 @@
         this.dialogShowContent = true
       },
       deleteItem() {
-        this.$api.toolBox.deleteResourceBundle({id: this.currentItem.id}).then((data) => {
+        this.$api.peopleInsight.deleteCrowdById({id: this.currentItem.id}).then((data) => {
           if (data.result) {
             this._loadData(this.filterData)
             this.dialogShowContent = false
