@@ -16,7 +16,7 @@
           <p class="font-16 color-text-1 font-number">{{buildDetail.unitNum}}个</p>
         </div>
         <div class="mid-start margin-top-20">
-          <p class="name">可售点位数</p>
+          <p class="name">点位数</p>
           <p class="font-16 color-text-1 font-number">{{buildDetail.signDeviceNum}}个</p>
         </div>
       </div>
@@ -34,7 +34,7 @@
           <p class="color-text-1">{{buildDetail.inHouseRate}}%</p>
         </div>
         <div class="mid-start margin-top-20">
-          <p class="name">约覆盖人数</p>
+          <p class="name">覆盖人数</p>
           <p class="color-text-1">{{buildDetail.totalPeople}}人</p>
         </div>
         <div class="mid-start margin-top-20">
@@ -182,7 +182,7 @@
           </div>
         </div>
         <div v-if="hotSearch" class="box3 box border-bottom">
-          <p class="title">行业热搜指数</p>
+          <p class="title">社区行业热搜指数</p>
           <div class="fullContainer">
             <histogram
               width="100%"
@@ -381,7 +381,7 @@
         return result
       },
       renderHistogramChart(arr1, arr2) {
-        if (!arr1 || !arr2) return null
+        if (!arr1) return null
         let result = {
           xAxis: [],
           yAxis: []

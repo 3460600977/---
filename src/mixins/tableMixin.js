@@ -40,12 +40,14 @@ export const tableMixin = {
             this.resultData = []
             this.totalCount = 0
             this.pageIndex = 1
+            this.filterData.pageIndex = 1
           }
         }
         this.loading = false
       })
     },
     resetLoad() {
+      console.log('4444')
       this.filterData.pageIndex = 1
       this.pageIndex = 1
       this._loadData(this.filterData)

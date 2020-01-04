@@ -168,15 +168,19 @@
           isShow: false
         }
       },
-      initMap(val) {
-        this.points = this.normalizePointsAll(val)
+      reGetAreaPoint() {
+        console.log(this.pathArr)
         if (Object.keys(this.pathArr).length) {
           for(let key in this.pathArr) {
             this.isInArea(this.pathArr[key])
           }
         }
+      },
+      initMap(val) {
+        this.points = this.normalizePointsAll(val)
         this.pointsOverlayObj.isShow = true
-        this.drawDevicePoints()
+        this.reGetAreaPoint()
+        this.jugDraw()
       },
       setCity(city) {
         this.map.centerAndZoom(city.name, 12);
@@ -273,12 +277,8 @@
         delete this.pathArr[item.index]
         this.pathArr = {...this.pathArr}
         this.setActivePathNull()
-        if (Object.keys(this.pathArr).length) {
-          this.changePathPointType(item.index, -2)
-        } else {
-          this.changePathPointType(null, -1)
-        }
-        this.drawDevicePoints()
+        this.reGetAreaPoint()
+        this.jugDraw()
       },
       /*
        * 关闭DrawingManager画线方法 需要在绘画类型切换成圆形时调用
@@ -304,7 +304,7 @@
         this.zoomSinglePathChange(this.activePath)
         this.isInArea(this.activePath)
         this.pathArr[this.activePath.index] = this.activePath
-        this.drawDevicePoints()
+        this.jugDraw()
         this.activePath = Object.assign({}, this.activePath)
         this.$emit('pathArrChange', this.pathArr)
       },
@@ -346,10 +346,11 @@
         let radius = this.RealDistanceTranPixels(path.radius)
         let polyline = new BMap.Polyline(path.overlay.getPath(), {
           strokeColor: "red",    //边线颜色。
-          strokeWeight: 2 * radius,       //边线的宽度，以像素为单位。
+          // strokeWeight: 2 * radius,       //边线的宽度，以像素为单位。
           strokeOpacity: 0.5,    //边线透明度，取值范围0 - 1。
           strokeStyle: 'solid' //边线的样式，solid或dashed。
         });
+        polyline.setStrokeWeight(2 * radius)
         let ol = {...path, overlay: polyline, anotherOverlay: overlay}
         this.map.addOverlay(polyline);
         this.overlayBindEvent(ol)
@@ -432,6 +433,13 @@
         this.jugDraw()
         this.activePath = this.pathArr[path.index]
       },
+      getPointChangeAble(point, index) {
+        if ((this.judgePointType(point) && point.type < 0) || point.type === index) {
+          return true
+        } else {
+          return false
+        }
+      },
       /*
        得出在当前操作路径区域内的点
        */
@@ -441,7 +449,7 @@
           this.filterProjectByPolyline(this.points, path.overlay, path.radius, path.index)
         } else if (path.type === 'polygon') {
           for(let key in points) {
-            if (points[key].type < 0 && this.judgePointType(points[key])) {
+            if (this.getPointChangeAble(points[key], path.index)) {
               let b = points[key].point;
               if (BMapLib.GeoUtils.isPointInPolygon(b, path.overlay)) {
                 points[key].type = path.index
@@ -452,11 +460,11 @@
           }
         } else if (path.type === 'circle') {
           for(let key in points) {
-            if (points[key].type < 0 && this.judgePointType(points[key])) {
-              let b = points[key].point;
-              if (BMapLib.GeoUtils.isPointInCircle(b, path.overlay)) {
-                points[key].type = path.index
-              } else {
+            let b = points[key].point;
+            if (BMapLib.GeoUtils.isPointInCircle(b, path.overlay)) {
+              if (this.getPointChangeAble(points[key], path.index)) {
+                  points[key].type = path.index
+                } else {
                 points[key].type = -2
               }
             }
@@ -511,11 +519,13 @@
         let polyline = overlay.getPath();
         let len = polyline.length;
 
+        // 重置折线的点type为-2为了之后改变type值不会出错
+        this.changePathPointType(index, -2)
         //圆形计算
         for (let i in polyline) {
           let circle = new BMap.Circle(polyline[i], radius, this.styleOptions);
           for(let key in points) {
-            if (points[key].type < 0 && this.judgePointType(points[key])) {
+            if (this.judgePointType(points[key]) && points[key].type < 0) {
               let b = points[key].point;
               if (BMapLib.GeoUtils.isPointInCircle(b, circle)) {
                 points[key].type = index
@@ -539,7 +549,7 @@
         }
         for (let j in polygons) {
           for(let key in points) {
-            if (points[key].type < 0 && this.judgePointType(points[key])) {
+            if (this.judgePointType(points[key]) && points[key].type < 0) {
               let b = points[key].point;
               if (BMapLib.GeoUtils.isPointInPolygon(b, polygons[j])) {
                 points[key].type = index
@@ -597,9 +607,8 @@
         this.map.addOverlay(marker);
 
         if (type === 1) {
-          marker.addEventListener('click', (e) => {
-            e.preventDefault()
-            // this.$emit('buildingClick', point)
+          marker.addEventListener('mousedown', (e) => {
+            this.$emit('buildingClick', point)
           })
           marker.addEventListener('mouseover', (e) => {
             if (this.currentSelectType === null && this.activePath === null) {
@@ -737,6 +746,11 @@
           icon: myIcon,
           offset: new BMap.Size(0, -11),
         });
+        marker.addEventListener('click', (event) => {
+          console.log('5555')
+          // e.preventDefault()
+          this.$emit('buildingClick', point)
+        })
         this.map.addOverlay(marker);
         return marker
       },
@@ -844,9 +858,6 @@
         });
         label.setStyle(labelStyle);
 
-        // label.addEventListener('click', (event) => {
-        //   this.$emit('buildingClick', point)
-        // })
         this.labelsArr.push({label: label, isShow: true})
         this.map.addOverlay(label)
       },

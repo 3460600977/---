@@ -64,6 +64,7 @@
   .icon1 {
     color: $color-split-line2;
     transition: 0.5s;
+    font-size: 12px;
   }
   .icon2 {
     color: #ACACAC;

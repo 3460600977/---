@@ -80,7 +80,7 @@
 
             <div  class="text-col">
               <span class="text-title">广告创意行业</span>
-              <label class="text-info"><Industry :originStyle="false" :value="detailDialog.data.industry" /></label>
+              <label class="text-info"><Industry :disabled="true" :originStyle="false" :value="detailDialog.data.industry" /></label>
             </div>
 
             <div  class="text-col">

@@ -12,7 +12,7 @@
           </label>
         </el-form-item>
         <el-form-item label="投放方案行业">
-          <span class="color-text-1"><Industry :originStyle="false" :value="projectDetail.data.industry" /></span>
+          <span class="color-text-1"><Industry :disabled="true" :originStyle="false" :value="projectDetail.data.industry" /></span>
         </el-form-item>
         <el-form-item label="投放类型">
           <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.putType, 'value', projectDetail.data.projectType).name}}</span>
@@ -33,7 +33,7 @@
         <el-form-item label="屏幕类型">
           <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.screenType, 'value', projectDetail.data.type).name}}</span>
         </el-form-item>
-        <el-form-item label="总计">
+        <el-form-item v-if="projectDetail.data.status !== 3" label="总计">
           <span class="color-red">¥ {{this.$tools.toThousands(projectDetail.data.totalCost / 100)}}</span>
         </el-form-item>
       </el-form>
