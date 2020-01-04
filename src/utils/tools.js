@@ -494,6 +494,9 @@ let tools = {
     }
     return l;
   },
+
+
+
   //获取菜单列表
   getAllMenuList(menu, list = []) {
     for (let i = 0; i < menu.length; i++) {
@@ -506,6 +509,8 @@ let tools = {
     }
     return list;
   },
+
+
 }
 
 export default tools;
