@@ -770,7 +770,8 @@
           details: this.buildsDetails, // 楼盘列表
           projectCity: this.formData.projectCity, // 城市
           projectType: this.formData.projectType.value, // 投放类型，0按周投放，1按天投放
-          second: this.formData.second.value // 投放时长，001-5s/次，002-10s/次，003-15s/次 依次类推
+          second: this.formData.second.value, // 投放时长，001-5s/次，002-10s/次，003-15s/次 依次类推
+          totalCost: this.buildingDirection.estimatePrice
         }
 
         if (this.isEdit) {
