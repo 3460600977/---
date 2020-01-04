@@ -12,7 +12,7 @@
           </label>
         </el-form-item>
         <el-form-item label="投放方案行业">
-          <span class="color-text-1">{{$tools.getObjectItemFromArray(indurstryList, 'industryId', projectDetail.data.industry).name}}</span>
+          <span class="color-text-1"><Industry :originStyle="false" :value="projectDetail.data.industry" /></span>
         </el-form-item>
         <el-form-item label="投放类型">
           <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.putType, 'value', projectDetail.data.projectType).name}}</span>
@@ -24,9 +24,6 @@
             {{$tools.getFormatDate('YY-mm-dd', projectDetail.data.endTime)}}
           </span>
         </el-form-item>
-        <!-- <el-form-item label="投放方式">
-          <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.putWay, 'value', projectDetail.data.deliveryMode).name}}</span>
-        </el-form-item> -->
         <el-form-item label="投放频次">
           <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.putFrequency, 'value', projectDetail.data.count).name}}</span>
         </el-form-item>
@@ -53,6 +50,7 @@
 
 <script>
 import { projectConst, projectStatus } from '../../../../../../utils/static'
+import Industry from '../../../../templates/Industry'
 import BuildList from '@/views/putManage/templates/BuildList' 
 import { mapGetters, mapMutations } from 'vuex'
 
@@ -69,7 +67,8 @@ export default {
   },
 
   components: {
-    BuildList
+    BuildList,
+    Industry
   },
 
   data() {

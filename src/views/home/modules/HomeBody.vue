@@ -11,9 +11,7 @@
         class="account-money-box color-white"
       >
         <div class="accouint-title">现金账户</div>
-        <div
-          class="account-val font-number"
-        >¥ {{$tools.toThousands(accountBalance / 100)}}</div>
+        <div class="account-val font-number">¥ {{$tools.toThousands(accountBalance / 100)}}</div>
       </div>
       <el-button class="create-put" type="primary" icon="el-icon-plus" @click="ToPathPlan">创建投放计划</el-button>
     </el-card>
@@ -46,20 +44,25 @@ export default {
       }
     };
   },
-  mounted: async function() {
-    //请求验证码接口
-    this.loading = true;
-    let userInfo = await this.$store.getters.refreshUserInfo;
-    this.accountBalance = userInfo.accountBalance;
-    this.company = userInfo.company;
-    if (userInfo.avatar) {
-      this.images.grayHead = userInfo.avatar;
-    }
-    this.loading = false;
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.getRefresh()
+    });
   },
   methods: {
     ToPathPlan() {
       this.$router.push("putManage/create/plan");
+    },
+    getRefresh: async function() {
+      //请求验证码接口
+      this.loading = true;
+      let userInfo = await this.$tools.refreshUserInfo();
+      this.accountBalance = userInfo.accountBalance;
+      this.company = userInfo.company;
+      if (userInfo.avatar) {
+        this.images.grayHead = userInfo.avatar;
+      }
+      this.loading = false;
     }
   }
 };

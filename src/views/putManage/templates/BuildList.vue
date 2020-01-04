@@ -8,7 +8,7 @@
         <noData v-if="buildsNumber <= 0 || deviceNumber <= 0">无可售数据</noData>
 
         <li v-else class="item mid" v-for="(item, index) in existList" :key="index">
-          <div class="left-info exist">
+          <div class="left-info exist" style="width: 200px;">
             <p class="name">{{item.name}}</p>
           </div>
 

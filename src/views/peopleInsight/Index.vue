@@ -100,7 +100,7 @@
           {
             type: 'input',
             key: 'name',
-            label: '人群包管理'
+            label: '人群包名称'
           },
           {
             type: 'actions',
@@ -129,14 +129,15 @@
           .catch(res => {})
       },
       toCreateCrowd() {
-        this.$router.push('/createPeoplePackage')
+        this.$router.push('/peopleInsight/createCrowd')
       },
       handleReturnData(val) {
         this.checkFormInline = val
         this.resetLoad()
       },
       loadFunction(param) {
-        const data = { ...this.checkFormInline, ...param }
+        const data = { ...this.checkFormInline, ...param };
+        delete data.sortList;
         return new Promise((resolve, reject) => {
           this.$api.peopleInsight.getCrowdList(data).then(res => {
             resolve(res);
@@ -159,7 +160,7 @@
       },
       crowdAnalysis(status) {
         if (!status) return;
-        this.$router.push("/peopleAnalysis")
+        this.$router.push("/peopleInsight/analysis")
       },
     }
   }
