@@ -8,7 +8,7 @@
         <el-form-item class="item-space-1">
           <el-select
             v-model="planList.selectPlan"
-            placeholder="输入投放计划名称"
+            placeholder="请选择投放计划"
             :loading="reportPlanList.loading"
             @change="changePlanValue"
             @clear="clearPlanValue"

@@ -45,7 +45,6 @@
         this.$refs[form].validate((valid) => {
           if (valid) {
             this.$emit('submit', this.form)
-            this.resetForm()
           } else {
             return false;
           }

@@ -1,7 +1,7 @@
 <template>
   <div v-loading.fullscreen.lock="planData.loading" class="put-project">
     <div class="title">
-      <h2>所属投放计划：{{planData.data.name||formData.planName}}</h2>
+      <h2 style="line-height: 1.5">所属投放计划：{{planData.data.name||formData.planName}}</h2>
     </div>
 
     <!-- 投放设置 -->
@@ -296,7 +296,8 @@
     <el-dialog
       :visible.sync="buildingDirection.mapChooseShow"
       width="98%"
-      class="map-choose">
+      class="map-choose"
+      :close-on-press-escape="closeEscTrue">
       <map-choose-window @hideMapPoint="hideMapPoint"
                          @submitSelectedBuildPoint="submitSelectedBuildPoint">
       </map-choose-window>
@@ -327,6 +328,7 @@
     },
     data() {
       return {
+        closeEscTrue:false,
         projectConst,
 
         screenPlaceholder: {
@@ -453,6 +455,8 @@
 
       // 获取地图返回点位
       submitSelectedBuildPoint(selectedList, city) {
+        console.log('submitSelectedBuildPoint')
+        console.log(selectedList, city)
         this.formData.projectCity = city.cityCode;
         this.buildingDirection.builds.hasData = true;
         this.setBuildsList(selectedList)
