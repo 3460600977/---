@@ -32,25 +32,26 @@
     <!-- user msg -->
     <div class="user-msg color-white mid">
       <!-- 钱 -->
-      <div v-if="menu.money"
-           @mouseenter="hoverRightMsg(0)"
-           @mouseleave="leaveMenu"
-           class="item icon-item mid"><img width="20px" :src="images.money" alt="">
-      </div>
+      <!-- <div
+        @mouseenter="hoverRightMsg(0)"
+        @mouseleave="leaveMenu"
+        class="item icon-item mid"><img width="20px" :src="images.money" alt="">
+      </div> -->
 
       <!-- 消息 -->
-      <div v-if="menu.notification"
-           @mouseenter="hoverRightMsg(1)"
-           @mouseleave="leaveMenu"
-           class="item icon-item mid">
+      <!-- <div
+        @mouseenter="hoverRightMsg(1)"
+        @mouseleave="leaveMenu"
+        class="item icon-item mid">
         <el-badge :value="20">
           <img width="20px" :src="images.notification" alt="">
         </el-badge>
-      </div>
+      </div> -->
 
       <!-- 用户信息，下拉菜单 -->
+      <!-- @mouseenter="hoverRightMsg(2)" -->
       <div
-        @mouseenter="hoverRightMsg(2)"
+        @mouseenter="hoverRightMsg(0)"
         @mouseleave="leaveMenu"
         class="item">
         <div class="user-head mid clearfix">
@@ -104,6 +105,7 @@
         MenuList,
         dialogEditPass: false,
         loading: false,
+
         images: {
           logo: require('../../../assets/images/icon_logo.png'),
           money: require('../../../assets/images/icons/icon_money.png'),
@@ -112,6 +114,7 @@
           up: require('../../../assets/images/icons/icon_up.png'),
           defaultAvatar: require('../../../assets/images/icons/icon_head portrait.png'),
         },
+
         menu: {
           activeIndex: 0,
           moveBlockStyle: {
@@ -132,9 +135,10 @@
           money: false,
           notification: false,
         },
+
         rightMsg: {
           hoverBlock: {
-            width: ['70px', '70px', '210px'],
+            width: ['210px', '70px', '210px'],
             style: {
               width: '70px',
               transform: 'translateX(0px)',
@@ -143,6 +147,7 @@
           },
           dropMenuShow: false,
         },
+
         username: 'admin',
       }
     },
@@ -169,19 +174,13 @@
        * 右侧信息覆盖位移
        */
       hoverRightMsg(index) {
-        if (index === 2) {
-          this.rightMsg.dropMenuShow = true;
-          this.rightMsg.hoverBlock.style = {
-            width: this.rightMsg.hoverBlock.width[index],
-            transform: `translateX(${index * 70}px)`,
-            opacity: 1
-          }
-        } else {
-          this.rightMsg.hoverBlock.style = {
-            width: this.rightMsg.hoverBlock.width[index],
-            transform: `translateX(${index * 70}px)`,
-            opacity: 1
-          }
+        // if (index === 2) {
+        this.rightMsg.dropMenuShow = true;
+        // }
+        this.rightMsg.hoverBlock.style = {
+          width: this.rightMsg.hoverBlock.width[index],
+          transform: `translateX(${index * 70}px)`,
+          opacity: 1
         }
       },
 
@@ -212,12 +211,15 @@
           }
         })
       },
+
       handleToAccount() {
         this.$router.replace('/toolBox/account')
       },
+
       handleToPass() {
         this.dialogEditPass = true
       },
+
       handleToLogout() {
         MessageBox.confirm('登出后，身份信息失效，可以取消继续留在该页面，或者重新登录', '确定退出', {
           confirmButtonText: '确认',
@@ -235,6 +237,7 @@
           })
         })
       },
+
       changeEditPass(val) {
         this.dialogEditPass = val
       }
@@ -266,9 +269,13 @@
       if (userInfo.userName) {
         this.username = userInfo.userName
       }
-    },
-    beforeMount() {
       this.setActiveTopMenu()
+    },
+
+    watch: {
+      '$route.path': function () {
+        this.setActiveTopMenu()
+      }
     }
   }
 </script>

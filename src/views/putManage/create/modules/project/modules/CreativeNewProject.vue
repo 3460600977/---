@@ -1,11 +1,11 @@
 <template>
-  <div class="put-project">
+  <div v-loading.fullscreen.lock="planData.loading" class="put-project">
     <div class="title">
       <h2>所属投放计划：{{planData.data.name||formData.planName}}</h2>
     </div>
 
     <!-- 投放设置 -->
-    <PutMangeCard v-loading="planData.loading" :title="'投放设置'" class="form-box">
+    <PutMangeCard :title="'投放设置'" class="form-box">
       <el-form
         ref="planTop"
         :label-position="'left'"
@@ -41,7 +41,7 @@
         </el-form-item>
 
         <!-- 投放类型 -->
-        <el-form-item class="mt-20" prop="projectType">
+        <el-form-item class="mt-20" prop="projectType" label="投放时间" >
           <label slot="label"><span class="color-red">* </span>投放类型</label>
           <div class="mid-between" style="width: 240px">
             <el-button
@@ -57,8 +57,7 @@
         </el-form-item>
 
         <!-- 按天投放 -->
-        <el-form-item v-if="formData.projectType.value == 1" class="mt-20" prop="date">
-          <label slot="label"><span class="color-red">* </span>投放时间</label>
+        <el-form-item v-if="formData.projectType.value == 1" label="投放时间" class="mt-20" prop="date">
           <el-date-picker
             @change="changePageData"
             :disabled="isEdit"
@@ -74,10 +73,9 @@
         </el-form-item>
 
         <!-- 按周投放 -->
-        <el-form-item v-if="formData.projectType.value == 0" class="week-item mt-20" prop="date">
-          <label slot="label"><span class="color-red">* </span>投放时间</label>
+        <el-form-item v-if="formData.projectType.value == 0" label="投放时间" class="week-item mt-20" prop="date">
           <el-date-picker
-            @change="changePageData"
+            @change="changePageData(); changeWeek()"
             :disabled="isEdit"
             :clearable="false"
             v-model="formData.date"
@@ -132,7 +130,7 @@
     <!-- 楼盘定向 -->
     <PutMangeCard 
       style="margin-bottom: 20px" 
-      v-if="!isEdit" v-loading="planData.loading" :title="'楼盘定向'"
+      v-if="!isEdit" :title="'楼盘定向'"
       class="form-box"
       >
       <el-tabs @tab-click="clearBuildDirection" class="thin-tab mt-15" v-model="buildingDirection.activeType">
@@ -231,38 +229,40 @@
     </PutMangeCard>
 
     <!-- 楼盘预估数面板 -->
-    <div class="estimate-box" v-loading="buildingDirection.builds.loading">
-      <div class="font-16 bold">楼盘预估数</div>
+    <div class="estimate-box">
+      <div class="font-16 bold">可售投放数</div>
 
       <template v-if="deviceNumber > 0">
-        <ul class="msg-box color-text-1">
-          <li class="item">
-            <label class="name">楼盘数</label><label class="bold">{{$tools.toThousands(buildsNumber, false)}}</label>个
-          </li>
-          <li class="item">
-            <label class="name">单元数</label><label class="bold">{{$tools.toThousands(unitNum, false)}}</label>个
-          </li>
-          <li class="item">
-            <label class="name">点位数</label><label class="bold">{{$tools.toThousands(deviceNumber, false)}}</label>个
-          </li>
-          <li class="item">
-            <label class="name">覆盖人次</label><label class="bold">{{$tools.toThousands(peopleNumber, false)}}</label>人
-          </li>
-        </ul>
+        <div v-loading="buildingDirection.builds.loading">
+          <ul class="msg-box color-text-1">
+            <li class="item">
+              <label class="name">楼盘数</label><label class="bold">{{$tools.toThousands(buildsNumber, false)}}</label>个
+            </li>
+            <li class="item">
+              <label class="name">单元数</label><label class="bold">{{$tools.toThousands(unitNum, false)}}</label>个
+            </li>
+            <li class="item">
+              <label class="name">点位数</label><label class="bold">{{$tools.toThousands(deviceNumber, false)}}</label>个
+            </li>
+            <li class="item">
+              <label class="name">覆盖人次</label><label class="bold">{{$tools.toThousands(peopleNumber, false)}}</label>人
+            </li>
+          </ul>
 
 
-        <ul class="money-box">
-          <li class="item">
-            <span>预算:&emsp;</span>
-            <span class="color-red">¥</span>
-            <span class="color-red font-16 bold">{{$tools.toThousands(buildingDirection.estimatePrice/100)}}</span>
-          </li>
-          <li class="item">
-            <span>余额:&emsp;</span>
-            <span>¥</span>
-            <span class="font-16 bold">{{$tools.toThousands(userInfo.accountBalance/100)}}</span>
-          </li>
-        </ul>
+          <ul class="money-box">
+            <li class="item">
+              <span>预算:&emsp;</span>
+              <span class="color-red">¥</span>
+              <span class="color-red font-16 bold">{{$tools.toThousands(buildingDirection.estimatePrice/100)}}</span>
+            </li>
+            <li class="item">
+              <span>余额:&emsp;</span>
+              <span>¥</span>
+              <span class="font-16 bold">{{$tools.toThousands(userInfo.accountBalance/100)}}</span>
+            </li>
+          </ul>
+        </div>
       </template>
 
       <noData v-else>无可售数据</noData>
@@ -545,16 +545,18 @@
         this.buildingDirection.mapChooseShow = true;
       },
 
-      // 按周投放 选择时间校验结束大于开始
-      chooseWeek() {
-        if (!this.formData.dateForWeekBegin || !this.formData.dateForWeekEnd) return;
-        if (this.formData.dateForWeekBegin >= this.formData.dateForWeekEnd) {
-          this.formData.dateForWeekBegin = this.formData.dateForWeekEnd = '';
+      // 按周投放时间校验
+      changeWeek() {
+        if (!this.formData.date) return;
+        let _dateBegin = new Date(this.formData.date[0]);
+        let _dateEnd = new Date(this.formData.date[1]);
+        if (_dateBegin.getDay() !== 6 || _dateEnd.getDay() !== 5 || _dateBegin === _dateEnd) {
+          this.formData.date = '';
           return this.$notify({
-                                title: '警告',
-                                message: '开始时间应早于结束时间',
-                                type: 'warning'
-                              });
+            title: '警告',
+            message: '请选择周六开始, 周五结束',
+            type: 'warning'
+          });
         }
       },
 
@@ -643,7 +645,6 @@
       // POST根据订单信息计算预估总价
       estimatePrice() {
         if (!this.validataForm()) return;
-        this.planData.loading = true;
         let param = {
           beginTime: this.formData.date[0],
           endTime: this.formData.date[1],
@@ -655,11 +656,9 @@
         }
         this.$api.CityList.EstimateTotalPrice(param)
             .then(res => {
-              this.planData.loading = false;
               this.buildingDirection.estimatePrice = res.result;
             })
             .catch(res => {
-              this.planData.loading = false;
             })
       },
 
@@ -852,12 +851,14 @@
       // 时间限制
       pickerOptions() {
         let _this = this;
+        let now = new Date();
         return {
           firstDayOfWeek: 6,
           disabledDate(date) {
             return date.getTime() < Date.now() - 8.64e7 ||
             date.getTime() > _this.planData.data.endTime ||
             date.getTime() < _this.planData.data.beginTime ||
+            (now.getDate() == date.getDate() && now.getMonth() === date.getMonth() && now.getDay() == 5 && now.getHours() > 18) ||
             (_this.formData.projectType.value == 0 && date.getDay() != 5 && date.getDay() != 6);
           }
         };
@@ -926,7 +927,7 @@
       top: 18vh;
       right: 60px;
       padding: 20px 23px 30px;
-      z-index: 1;
+      z-index: 3;
       width: 312px;
       background: rgba(255, 255, 255, 1);
       border: 1px solid rgba(229, 231, 233, 1);

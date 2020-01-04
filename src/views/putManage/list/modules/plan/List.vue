@@ -90,7 +90,7 @@
             </span>
           </el-form-item>
           <el-form-item label="总预算">
-            <span class="color-red" v-if="tableData.data[detailDialog.dataIndex].totalBudget">¥{{tableData.data[detailDialog.dataIndex].totalBudget / 100}}</span>
+            <span class="color-red" v-if="tableData.data[detailDialog.dataIndex].totalBudget">¥ {{$tools.toThousands(tableData.data[detailDialog.dataIndex].totalBudget / 100)}}</span>
             <span class="color-red" v-else>不限</span>
           </el-form-item>
           <el-form-item label="投放时间">

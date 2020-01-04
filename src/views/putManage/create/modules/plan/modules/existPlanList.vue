@@ -77,6 +77,7 @@ export default {
   methods: {
     getExistPlanList() {
       this.list.loading = true;
+      this.param.pageIndex = 1;
       this.$api.PutPlan.PlanList(this.param)
         .then(res => {
           this.list.loading = false;

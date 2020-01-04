@@ -15,7 +15,7 @@
             <el-main>
               <div class="login-form-box">
                 <h3 class="login-title">欢迎登录</h3>
-                <label class="login-des">HI,欢迎使用新潮传媒-生活圈智投平台</label>
+                <label class="login-des">HI,欢迎使用生活圈智投平台</label>
                 <el-form ref="loginForm" :model="loginForm" class="loginForm" :rules="rules">
                   <el-form-item prop="username">
                     <el-input prefix-icon="el-icon-user-solid"
@@ -69,8 +69,8 @@
 
       return {
         imageWidth: 442,
-        logo_img: require('../../assets/images/icon_red@2x.png'),
-        logo_back_img: require('../../assets/images/icon_bg@2x.png'),
+        logo_img: require('../../assets/iconImg/icon_red@2x.png'),
+        logo_back_img: require('../../assets/iconImg/icon_bg@2x.png'),
         login_capture_img: '',
         loginForm: {
           username: '',
@@ -90,7 +90,15 @@
           verifyValue: [
             {trigger: ['blur', 'change'], validator: checkVerify}
           ],
-        }
+        },
+        audit: [{"code": "1010", "selected": true,}],
+        toolMenu: [
+          {"code": "1010", "selected": true},
+          {"code": "1201", "selected": true},
+          {"code": "1101", "selected": true},
+          {"code": "1102", "selected": true},
+          {"code": "1340", "selected": true},
+        ]
       }
     },
 
@@ -149,7 +157,6 @@
               setUserInfo(info)
               let menuList = []
               menuList = this.$tools.getAllMenuList(info.menu, menuList)
-              setMenuList(menuList)
               let audit = false
               menuList.forEach(item => {
                 if (item.code === '1600' && item.selected) {
@@ -157,8 +164,16 @@
                 }
               })
               if (audit) {
+                this.audit.forEach(item => {
+                  menuList.push(item)
+                })
+                setMenuList(menuList)
                 this.$router.push({path: '/auditList', query: {}})
               } else {
+                this.toolMenu.forEach(item => {
+                  menuList.push(item)
+                })
+                setMenuList(menuList)
                 this.$router.push({path: '/home', query: {}})
               }
             }).catch(res => {
