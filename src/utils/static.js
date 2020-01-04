@@ -28,28 +28,28 @@ export const projectConst = {
     {name: '按周投放', value: 0},
     {name: '按天投放', value: 1}
   ],
-  
+
   // 投放方式
   putWay: [
     {name: '一个楼盘所有点位', value: '001'},
     {name: '一个单元一个电梯', value: '002'},
     {name: '一个单元一半电梯', value: '003'}
   ],
-  
+
   // 投放频次，001-300次/天，002-600次/天，003-900次/天 依次类推
   putFrequency: [
     {name: '300 次/天', value: '001'},
     {name: '600 次/天', value: '002'},
     {name: '900 次/天', value: '003'}
   ],
-  
+
   // 投放时长，001-5s/次，002-10s/次，003-15s/次 依次类推
   putDuration: [
     {name: '5 秒/次', value: '001', creativeVal: 0},
     {name: '10 秒/次', value: '002', creativeVal: 1},
     {name: '15 秒/次', value: '003', creativeVal: 2}
   ],
-  
+
   // 屏幕类型 000、未知，001、上屏，002、下屏，003、上下屏
   screenType: [
     {name: '联动', value: '003', creativeVal: 2},
@@ -123,11 +123,11 @@ export const DenyDialogReason = [
         value: '不得含有对未来效果、收益或者与其相关的情况作出保证性承诺，明示或者暗示保本、无风险或者保收益等内容'
       },
       {
-        
+
         value: '不得涉及前后效果对比'
       },
       {
-        
+
         value: '不得对升学，提高成绩，拿证或培训效果作出保证性承诺'
       },
       {
@@ -161,7 +161,7 @@ export const DenyDialogReason = [
       },
     ]
   },
-  
+
   {
     title: '风险提示类',
     reasons: [
@@ -169,7 +169,7 @@ export const DenyDialogReason = [
         value: '请在画面添加备注预售号'
       },
       {
-        
+
         value: '涉及招商加盟，请备注风险提示语：“投资有风险，加盟需谨慎”'
       },
       {
@@ -222,9 +222,9 @@ export const MenuList =
     {"code": "9999", "name": "登录", "selected": false, "path": "/login", "children": []},
     {"code": "1000", "name": "首页", "selected": false, "path": "/home", "children": []},
     {
-      "code": "1100", "name": "人群洞察", "selected": false, "path": "/peopleInsight", "children": [
-        {"code": "1101", "name": "创建人群包", "selected": false, "path": "/createPeoplePackage", "children": []},
-        {"code": "1102", "name": "人群分析", "selected": false, "path": "/peopleAnalysis", "children": []},
+      "code": "1100", "name": "人群洞察", "selected": false, "path": "/peopleInsight/list", "children": [
+        {"code": "1101", "name": "创建人群包", "selected": false, "path": "/peopleInsight/createCrowd", "children": []},
+        {"code": "1102", "name": "人群分析", "selected": false, "path": "/peopleInsight/analysis", "children": []},
       ]
     },
     {"code": "1200", "name": "媒体智选", "selected": false, "path": "/cityInsight/list", "children": [

@@ -8,9 +8,7 @@
         <el-input type="textarea" v-model="form.description"></el-input>
       </el-form-item>
       <el-form-item>
-        <router-link to="/peopleInsight">
-          <el-button @click="backToList">取消</el-button>
-        </router-link>
+        <el-button @click="backToList">取消</el-button>
         <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
       </el-form-item>
     </el-form>
@@ -96,7 +94,7 @@
                 .then(res => {
                   this.removeAllState();
                   //跳转至列表页
-                  this.$router.push('/peopleInsight');
+                  this.$router.push('/peopleInsight/list');
                 })
                 .catch(res => {
                   this.$message({
@@ -115,7 +113,7 @@
       backToList(){
         this.removeAllState();
         //跳转至列表页
-        this.$router.push('/peopleInsight');
+        this.$router.push('/peopleInsight/list');
       },
     },
     computed:{
