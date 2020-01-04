@@ -861,7 +861,7 @@
             return date.getTime() < Date.now() - 8.64e7 ||
             date.getTime() > _this.planData.data.endTime ||
             date.getTime() < _this.planData.data.beginTime ||
-            (now.getDate() == date.getDate() && now.getMonth() === date.getMonth() && now.getDay() == 5 && now.getHours() > 18) ||
+            (now.getDate() == date.getDate() && now.getMonth() === date.getMonth() && now.getDay() == 6 && now.getHours() > 18) ||
             (_this.formData.projectType.value == 0 && date.getDay() != 5 && date.getDay() != 6);
           }
         };
