@@ -30,16 +30,12 @@
           </div>
         </div>
         <div class="tags margin-left-30 customScroll" >
-          <div v-if="tags">
-            <div class="mid-start" v-for="(item, index) in tags" :key="index">
-              <p class="title">{{item.name}}：</p>
-              <div class="mid-start pi-tags">
-                <p v-for="(v, k) in item.tags" :key="k">{{v.name}}</p>
-              </div>
+          <p class="bold" style="border-bottom: 1px dashed #E5E7E9;line-height: 40px;padding-left: 20px">人群包条件</p>
+          <div class="mid-start" style="padding-left: 20px" v-for="(item, index) in tags" :key="index">
+            <p class="title">{{item.name}}：</p>
+            <div class="mid-start pi-tags">
+              <p v-for="(v, k) in item.tags" :key="k">{{v.name}}</p>
             </div>
-          </div>
-          <div v-else class="mid-center container">
-            <p class="color-text-1">请选择人群包查看明细</p>
           </div>
         </div>
       </div>
@@ -115,12 +111,23 @@
         const data = { ...param, name: this.name, city: this.city.cityCode }
         return new Promise((resolve, reject) => {
           this.$api.peopleInsight.getPeopleInsightList(data).then(res => {
-            this.tags = null
+            if (!res.result) this.tags = null
+            let index = this.jug(this.activeItem, res.result)
+            if (index === -1) {
+              this.tags = null
+              this.activeItem = null
+            }
             resolve(res);
           }).catch((res) => {
             reject(res)
           })
         });
+      },
+      jug(id, arr) {
+        let index = arr.findIndex((item) => {
+          return item.id === id
+        })
+        return index
       },
       returnResult() {
         this.activeItemCopy = this.activeItem
@@ -175,9 +182,8 @@
     width: 309px;
     height: 327px;
     overflow-y: auto;
-    padding-left: 20px;
     padding-bottom: 20px;
-    border: 1px dashed $color-main;
+    border: 1px dashed $color-border;
   }
   .list {
     width:440px;

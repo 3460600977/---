@@ -40,6 +40,7 @@ export const tableMixin = {
             this.resultData = []
             this.totalCount = 0
             this.pageIndex = 1
+            this.filterData.pageIndex = 1
           }
         }
         this.loading = false
