@@ -122,10 +122,9 @@
   .flex1 {
     & /deep/ .el-checkbox  {
       color: $color-text;
-      margin-bottom: 20px;
     }
   }
   .mid-start {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
   }
 </style>
