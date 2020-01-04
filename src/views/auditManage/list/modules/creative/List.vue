@@ -69,10 +69,10 @@
             <div v-else-if="col.prop === 'action'">
               <div v-if="scope.row.status === 0">
                 <span class="icon-space" @click="passCreative(scope.row.id,scope.row.name)">
-                  <i class="el-icon-success icon-color"></i>通过
+                  <i class="iconfont  icon--zhengque-shiti icon-color"></i>通过
                 </span>
                 <span class="icon-space" @click="denyCreative(scope.row.id,scope.row.name)">
-                  <i class="el-icon-error icon-color"></i>拒绝
+                  <i class="iconfont  icon-error icon-color"></i>拒绝
                 </span>
               </div>
             </div>
