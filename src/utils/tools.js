@@ -1,3 +1,5 @@
+import api from '@/api/index'
+import { setUserInfo, getUserInfo } from '@/utils/auth';
 const SIGN_REGEXP = /([yMdhsm])(\1*)/g
 const DEFAULT_PATTERN = 'yyyy-MM-dd'
 
@@ -510,7 +512,19 @@ let tools = {
     return list;
   },
 
-
+  refreshUserInfo: async function() {
+    return new Promise((resolve, reject) => {
+      api.Login.RefreshUser().then(res => {
+        let refreshUserInfo = res.result
+        let userInfo = getUserInfo()
+        Object.assign(userInfo, refreshUserInfo)
+        setUserInfo(userInfo)
+        resolve(userInfo)
+      }).catch(res => {
+        reject(res)
+      });
+    })
+  }
 }
 
 export default tools;
