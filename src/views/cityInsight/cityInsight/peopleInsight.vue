@@ -3,7 +3,7 @@
       <div class="p-i-c">
         <div class="mid-column">
           <div class="top mid-start">
-            <el-input class="input" v-model="name" placeholder="输入人群洞察名称"></el-input>
+            <el-input class="input" v-model="name" clearable placeholder="输入人群包名称"></el-input>
             <el-button type="primary" class="margin-left-20" plain @click="resetLoad">查询</el-button>
             <el-button type="primary" class="margin-left-20">去创建</el-button>
           </div>
@@ -29,12 +29,17 @@
             ></el-pagination>
           </div>
         </div>
-        <div class="tags margin-left-30 customScroll" v-if="tags">
-          <div class="mid-start" v-for="(item, index) in tags" :key="index">
-            <p class="title">{{item.name}}：</p>
-            <div class="mid-start pi-tags">
-              <p v-for="(v, k) in item.tags" :key="k">{{v.name}}</p>
+        <div class="tags margin-left-30 customScroll" >
+          <div v-if="tags">
+            <div class="mid-start" v-for="(item, index) in tags" :key="index">
+              <p class="title">{{item.name}}：</p>
+              <div class="mid-start pi-tags">
+                <p v-for="(v, k) in item.tags" :key="k">{{v.name}}</p>
+              </div>
             </div>
+          </div>
+          <div v-else class="mid-center container">
+            <p class="color-text-1">请选择人群包查看明细</p>
           </div>
         </div>
       </div>
@@ -73,6 +78,7 @@
         tags: null,
         switchValue: null,
         activeItem: null,
+        activeItemCopy: null,
         pageSizeSelectable: [5, 10, 15, 20],
         pageSize: 5,
       }
@@ -101,6 +107,7 @@
         this.$emit('switchChange', val)
       },
       hide() {
+        this.activeItem = this.activeItemCopy
         // this.resetSelect()
         this.$emit('hide')
       },
@@ -108,7 +115,7 @@
         const data = { ...param, name: this.name, city: this.city.cityCode }
         return new Promise((resolve, reject) => {
           this.$api.peopleInsight.getPeopleInsightList(data).then(res => {
-            this.activeItem = res.result[0].id
+            this.tags = null
             resolve(res);
           }).catch((res) => {
             reject(res)
@@ -116,6 +123,7 @@
         });
       },
       returnResult() {
+        this.activeItemCopy = this.activeItem
         this.switchValue = true
         this.$emit('returnResult', this.activeItem)
       },
