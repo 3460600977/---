@@ -304,7 +304,8 @@
     <el-dialog
       :visible.sync="buildingDirection.mapChooseShow"
       width="98%"
-      class="map-choose">
+      class="map-choose"
+      :close-on-press-escape="closeEscTrue">
       <map-choose-window @hideMapPoint="hideMapPoint"
                          @submitSelectedBuildPoint="submitSelectedBuildPoint">
       </map-choose-window>
@@ -333,6 +334,7 @@
     },
     data() {
       return {
+        closeEscTrue:false,
         projectConst,
 
         screenPlaceholder: {
@@ -453,6 +455,8 @@
 
       // 获取地图返回点位
       submitSelectedBuildPoint(selectedList, city) {
+        console.log('submitSelectedBuildPoint')
+        console.log(selectedList, city)
         this.formData.projectCity = city.cityCode;
         this.buildingDirection.builds.hasData = true;
         this.setBuildsList(selectedList)
