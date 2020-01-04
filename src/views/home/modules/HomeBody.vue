@@ -17,7 +17,7 @@
     </el-card>
     <el-card class="box-card no-data mid-center shadow">
       <div>
-        <img :src="images.noData" alt="无数据" />
+        <img :src="images.noData " alt="无数据" />
         <div class="description text-center">
           <p>更多功能即将上线</p>
           <p>敬请期待</p>
@@ -34,7 +34,7 @@ export default {
   data() {
     return {
       company: "",
-      accountBalance: "",
+      accountBalance: getUserInfo().accountBalance,
       loading: false,
       images: {
         userHead: require("../../../assets/images/icons/icon_tx.png"),
@@ -46,7 +46,7 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      vm.getRefresh()
+      vm.getRefresh();
     });
   },
   methods: {
@@ -57,6 +57,10 @@ export default {
       //请求验证码接口
       this.loading = true;
       let userInfo = await this.$tools.refreshUserInfo();
+      if ("-999" === userInfo) {
+        this.loading = false;
+        userInfo = getUserInfo();
+      }
       this.accountBalance = userInfo.accountBalance;
       this.company = userInfo.company;
       if (userInfo.avatar) {
