@@ -346,10 +346,11 @@
         let radius = this.RealDistanceTranPixels(path.radius)
         let polyline = new BMap.Polyline(path.overlay.getPath(), {
           strokeColor: "red",    //边线颜色。
-          strokeWeight: 2 * radius,       //边线的宽度，以像素为单位。
+          // strokeWeight: 2 * radius,       //边线的宽度，以像素为单位。
           strokeOpacity: 0.5,    //边线透明度，取值范围0 - 1。
           strokeStyle: 'solid' //边线的样式，solid或dashed。
         });
+        polyline.setStrokeWeight(2 * radius)
         let ol = {...path, overlay: polyline, anotherOverlay: overlay}
         this.map.addOverlay(polyline);
         this.overlayBindEvent(ol)
