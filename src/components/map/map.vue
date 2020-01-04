@@ -602,13 +602,11 @@
             // this.$emit('buildingClick', point)
           })
           marker.addEventListener('mouseover', (e) => {
-            e.preventDefault()
             if (this.currentSelectType === null && this.activePath === null) {
               this.addLabel(point)
             }
           });
           marker.addEventListener('mouseout',  (e) => {
-            e.preventDefault()
             this.removeLabels()
           });
           this.markerArr.push(marker)
