@@ -1,7 +1,7 @@
 <template>
   <div v-loading.fullscreen.lock="planData.loading" class="put-project">
     <div class="title">
-      <h2>所属投放计划：{{planData.data.name||formData.planName}}</h2>
+      <h2 style="line-height: 1.5">所属投放计划：{{planData.data.name||formData.planName}}</h2>
     </div>
 
     <!-- 投放设置 -->
