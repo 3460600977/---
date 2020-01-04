@@ -334,6 +334,7 @@
       },
       //触发改变投放计划事件
       changePlanValue(selVal) {
+        console.log('changePlanValue',this.projectList)
         if (selVal) {
           this.projectList.campaignId = selVal;
           this.getProjectListInPlan(selVal);
@@ -390,6 +391,7 @@
         this.reportProjectList.loading = true;
         this.$api.PutProject.ProjectNameList().then(res => {
           this.reportProjectList.data = res.result;
+          console.log('getProjectNameList',this.projectList)
           this.reportProjectList.data.forEach(item => {
             if (item.id === parseInt(this.projectList.id)) {
               this.projectList.selectProject = item.name;
@@ -407,6 +409,7 @@
         this.reportProjectList.loading = true;
         this.$api.PutProject.ProjectNameListByCamId(camId).then(res => {
           this.reportProjectList.data = res.result;
+          console.log('getProjectListInPlan',this.projectList)
           this.reportProjectList.data.forEach(item => {
             if (item.id === parseInt(this.projectList.id)) {
               this.projectList.selectProject = item.name;

@@ -45,7 +45,7 @@
   }
 </script>
 
-<style lang="scss">
+<style  scoped lang="scss">
   .report-center {
     height: 100%;
     display: flex;

@@ -362,7 +362,7 @@ export default {
     cursor: pointer;
     user-select: none;
     .logo-xinchao {
-      width: 124px;
+      width: 50px;
     }
     .logo-split {
       width: 1px;

@@ -885,7 +885,7 @@
   }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
   .put-project {
     .el-tabs__content {
       overflow: visible;
