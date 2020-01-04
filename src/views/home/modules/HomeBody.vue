@@ -1,5 +1,5 @@
 <template>
-  <div class="home-body">
+  <div class="home-body" v-loading="loading">
     <el-card class="box-card mid shadow">
       <div class="company-msg mid">
         <img width="48px" :src="images.grayHead" alt="头像" />
@@ -13,7 +13,6 @@
         <div class="accouint-title">现金账户</div>
         <div
           class="account-val font-number"
-          v-loading
         >¥ {{$tools.toThousands(accountBalance / 100)}}</div>
       </div>
       <el-button class="create-put" type="primary" icon="el-icon-plus" @click="ToPathPlan">创建投放计划</el-button>
@@ -38,6 +37,7 @@ export default {
     return {
       company: "",
       accountBalance: "",
+      loading: false,
       images: {
         userHead: require("../../../assets/images/icons/icon_tx.png"),
         grayHead: require("../../../assets/images/icons/icon_head portrait.png"),
@@ -48,12 +48,14 @@ export default {
   },
   mounted: async function() {
     //请求验证码接口
+    this.loading = true;
     let userInfo = await this.$store.getters.refreshUserInfo;
     this.accountBalance = userInfo.accountBalance;
     this.company = userInfo.company;
     if (userInfo.avatar) {
       this.images.grayHead = userInfo.avatar;
     }
+    this.loading = false;
   },
   methods: {
     ToPathPlan() {
