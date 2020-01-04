@@ -433,6 +433,13 @@
         this.jugDraw()
         this.activePath = this.pathArr[path.index]
       },
+      getPointChangeAble(point, index) {
+        if ((this.judgePointType(point) && point.type < 0) || point.type === index) {
+          return true
+        } else {
+          return false
+        }
+      },
       /*
        得出在当前操作路径区域内的点
        */
@@ -442,7 +449,7 @@
           this.filterProjectByPolyline(this.points, path.overlay, path.radius, path.index)
         } else if (path.type === 'polygon') {
           for(let key in points) {
-            if (this.judgePointType(points[key])) {
+            if (this.getPointChangeAble(points[key], path.index)) {
               let b = points[key].point;
               if (BMapLib.GeoUtils.isPointInPolygon(b, path.overlay)) {
                 points[key].type = path.index
@@ -453,7 +460,7 @@
           }
         } else if (path.type === 'circle') {
           for(let key in points) {
-            if (this.judgePointType(points[key])) {
+            if (this.getPointChangeAble(points[key], path.index)) {
               let b = points[key].point;
               if (BMapLib.GeoUtils.isPointInCircle(b, path.overlay)) {
                 points[key].type = path.index
@@ -512,11 +519,13 @@
         let polyline = overlay.getPath();
         let len = polyline.length;
 
+        // 重置折线的点type为-2为了之后改变type值不会出错
+        this.changePathPointType(index, -2)
         //圆形计算
         for (let i in polyline) {
           let circle = new BMap.Circle(polyline[i], radius, this.styleOptions);
           for(let key in points) {
-            if (this.judgePointType(points[key])) {
+            if (this.judgePointType(points[key]) && points[key].type < 0) {
               let b = points[key].point;
               if (BMapLib.GeoUtils.isPointInCircle(b, circle)) {
                 points[key].type = index
@@ -540,7 +549,7 @@
         }
         for (let j in polygons) {
           for(let key in points) {
-            if (this.judgePointType(points[key])) {
+            if (this.judgePointType(points[key]) && points[key].type < 0) {
               let b = points[key].point;
               if (BMapLib.GeoUtils.isPointInPolygon(b, polygons[j])) {
                 points[key].type = index
