@@ -224,7 +224,7 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    width: 270px;
+    width: 570px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
     background: #fff;
     height: auto;
