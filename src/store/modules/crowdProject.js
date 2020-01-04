@@ -8,6 +8,7 @@ export const crowdProject = {
   },
 
   mutations: {
+
     setTagNames(state, data) {
       state.tagNames.push(...data);
     },
@@ -24,6 +25,16 @@ export const crowdProject = {
       });
       state.tagNames.push(...data);
       //重新排序tags
+      state.tagNames.sort(function (a,b) {
+        let order = [
+          "城市","性别","教育水平","年龄","消费水平","车产状况","影视音乐",
+          "游戏","休闲爱好","书籍阅读","资讯","体育健身","花鸟萌宠","行业消费"
+        ];
+        return order.indexOf(a.name) - order.indexOf(b.name)
+      });
+      state.tagNames = state.tagNames.map(function (a) {
+        return a
+      });
     },
 
     //涉及到人口属性的左到右的删除
@@ -45,8 +56,6 @@ export const crowdProject = {
           let delIndex = state.tagNamesObj[parentTid].indexOf(tid);
           state.tagNamesObj[parentTid].splice(delIndex,1);
         }
-      } else {
-        //但是行业消费的时候需要处理tid
       }
 
       if(state.tagNames[data.parentIndex].tags.length === 0) {
@@ -60,6 +69,7 @@ export const crowdProject = {
       state.tagTid = [];
       state.city = "";
     },
+
 
   },
 }
