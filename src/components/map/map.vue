@@ -168,15 +168,18 @@
           isShow: false
         }
       },
-      initMap(val) {
-        this.points = this.normalizePointsAll(val)
+      reGetAreaPoint() {
         if (Object.keys(this.pathArr).length) {
           for(let key in this.pathArr) {
             this.isInArea(this.pathArr[key])
           }
         }
+      },
+      initMap(val) {
+        this.points = this.normalizePointsAll(val)
         this.pointsOverlayObj.isShow = true
-        this.drawDevicePoints()
+        this.reGetAreaPoint()
+        this.jugDraw()
       },
       setCity(city) {
         this.map.centerAndZoom(city.name, 12);
@@ -270,15 +273,17 @@
         if (item.anotherOverlay) {
           this.map.removeOverlay(item.anotherOverlay)
         }
-        delete this.pathArr[item.index]
-        this.pathArr = {...this.pathArr}
-        this.setActivePathNull()
-        if (Object.keys(this.pathArr).length) {
+        if (Object.keys(this.pathArr).length > 1) {
           this.changePathPointType(item.index, -2)
+          delete this.pathArr[item.index]
+          this.reGetAreaPoint()
         } else {
+          delete this.pathArr[item.index]
           this.changePathPointType(null, -1)
         }
-        this.drawDevicePoints()
+        this.pathArr = {...this.pathArr}
+        this.setActivePathNull()
+        this.jugDraw()
       },
       /*
        * 关闭DrawingManager画线方法 需要在绘画类型切换成圆形时调用
@@ -304,7 +309,7 @@
         this.zoomSinglePathChange(this.activePath)
         this.isInArea(this.activePath)
         this.pathArr[this.activePath.index] = this.activePath
-        this.drawDevicePoints()
+        this.jugDraw()
         this.activePath = Object.assign({}, this.activePath)
         this.$emit('pathArrChange', this.pathArr)
       },
@@ -433,6 +438,13 @@
         this.jugDraw()
         this.activePath = this.pathArr[path.index]
       },
+      getPointChangeAble(point, index) {
+        if ((this.judgePointType(point) && point.type < 0) || point.type === index) {
+          return true
+        } else {
+          return false
+        }
+      },
       /*
        得出在当前操作路径区域内的点
        */
@@ -442,7 +454,7 @@
           this.filterProjectByPolyline(this.points, path.overlay, path.radius, path.index)
         } else if (path.type === 'polygon') {
           for(let key in points) {
-            if (points[key].type < 0 && this.judgePointType(points[key])) {
+            if (this.getPointChangeAble(points[key], path.index)) {
               let b = points[key].point;
               if (BMapLib.GeoUtils.isPointInPolygon(b, path.overlay)) {
                 points[key].type = path.index
@@ -453,11 +465,11 @@
           }
         } else if (path.type === 'circle') {
           for(let key in points) {
-            if (points[key].type < 0 && this.judgePointType(points[key])) {
-              let b = points[key].point;
+            let b = points[key].point;
+            if (this.getPointChangeAble(points[key], path.index)) {
               if (BMapLib.GeoUtils.isPointInCircle(b, path.overlay)) {
-                points[key].type = path.index
-              } else {
+                  points[key].type = path.index
+                } else {
                 points[key].type = -2
               }
             }
@@ -512,11 +524,13 @@
         let polyline = overlay.getPath();
         let len = polyline.length;
 
+        // 重置折线的点type为-2为了之后改变type值不会出错
+        this.changePathPointType(index, -2)
         //圆形计算
         for (let i in polyline) {
           let circle = new BMap.Circle(polyline[i], radius, this.styleOptions);
           for(let key in points) {
-            if (points[key].type < 0 && this.judgePointType(points[key])) {
+            if (this.judgePointType(points[key]) && points[key].type < 0) {
               let b = points[key].point;
               if (BMapLib.GeoUtils.isPointInCircle(b, circle)) {
                 points[key].type = index
@@ -540,7 +554,7 @@
         }
         for (let j in polygons) {
           for(let key in points) {
-            if (points[key].type < 0 && this.judgePointType(points[key])) {
+            if (this.judgePointType(points[key]) && points[key].type < 0) {
               let b = points[key].point;
               if (BMapLib.GeoUtils.isPointInPolygon(b, polygons[j])) {
                 points[key].type = index
@@ -738,8 +752,6 @@
           offset: new BMap.Size(0, -11),
         });
         marker.addEventListener('click', (event) => {
-          console.log('5555')
-          // e.preventDefault()
           this.$emit('buildingClick', point)
         })
         this.map.addOverlay(marker);

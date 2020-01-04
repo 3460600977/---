@@ -53,11 +53,11 @@ export const peopleInsight = {
     });
   },
 
-  // 加载人群洞察包明细数据
-  getPeopleInsightDetail:(data) => {
+  //获取人群分析数据
+  getPeopleAlalysis:(data) => {
     return request({
-      url: `/dpapi/crowd/detail/${data}`,
-      method: "GET"
+      url: `/dpapi/crowd/poi/${data.id}`,
+      method: "get",
     });
-  },
+  }
 }

@@ -182,7 +182,7 @@
           </div>
         </div>
         <div v-if="hotSearch" class="box3 box border-bottom">
-          <p class="title">行业热搜指数</p>
+          <p class="title">社区行业热搜指数</p>
           <div class="fullContainer">
             <histogram
               width="100%"
