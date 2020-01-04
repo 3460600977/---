@@ -149,17 +149,17 @@
               </template>
             </div>
 
-            <div class="bottom-screen" v-for="(item, index) in detailDialog.data.materials" :key="index">
-              <template v-if="item.height === 880 && item.screenType === 2">
-                <p>下屏</p>
-                <div class="bottom-screen-box">
-                  <div class="left-pre">
+            <div class="bottom-screen">
+              <template v-for="(item, index) in detailDialog.data.materials">
+                <p :key="index" v-if="item.screenType === 2 && item.height === 880" style="margin-bottom: 20px;">下屏</p>
+                <template v-if="item.screenType === 2">
+                  <div :key="index" v-if="item.height === 880" class="left-pre">
                     <el-image :src="item.srcUrl"/>
                   </div>
-                  <div class="right-pre">
+                  <div :key="index" v-if="item.height === 720" class="right-pre">
                     <el-image :src="item.srcUrl"/>
                   </div>
-                </div>
+                </template>
               </template>
             </div>
           </div>
