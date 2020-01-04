@@ -154,7 +154,7 @@
   .red-text {
     color: red;
   }
-  .my-dialog .el-dialog__body p{
+  .my-dialog .el-dialog__body>p{
       margin-bottom: 2px;
   }
 </style>

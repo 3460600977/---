@@ -474,7 +474,7 @@ export default {
           }
         ];
         barAarr.forEach(item => {
-          console.log(this[item.name])
+          //console.log(this[item.name])
           this[item.name].xAxis = res.result.crowdInsightPoiVO[item.key].map(item => item.tag);
           let yData = res.result.crowdInsightPoiVO[item.key].map(item => item.value);
           let country = res.result.crowdInsightPoiVO.wholeNetworkPoiVO[item.key].map(item => item.value);

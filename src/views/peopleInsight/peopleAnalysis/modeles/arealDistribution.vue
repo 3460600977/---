@@ -123,7 +123,7 @@ export default {
       }
       list.forEach(item => {
         let percent = 0;
-        console.log(this.mapType)
+        //console.log(this.mapType)
         if(this.mapType === '1') {  //人数
           percent = item.countPercent * 100;
         } else {
