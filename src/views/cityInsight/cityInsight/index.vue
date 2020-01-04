@@ -402,17 +402,17 @@
             this.cityFilter = val
             this.resetLeftPopup(index, type)
             this.isInit = false
-            return
+          } else {
+            this.$confirm('切换城市后，系统将清空当前城市的操作数据，是否切换？', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.cityFilter = val
+              this.resetLeftPopup(index, type)
+            }).catch(() => {
+            });
           }
-          this.$confirm('切换城市后，系统将清空当前城市的操作数据，是否切换？', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.cityFilter = val
-            this.resetLeftPopup(index, type)
-          }).catch(() => {
-          });
         } else if (index === 1) { // 楼盘标签选择
           if (type === 0) {
             this.buildingFilterSelected = false
@@ -460,6 +460,13 @@
       },
       getCityFilter() {
         this.$refs.dbmap.location().then((data) => {
+          if (data.name === '全国') {
+            this.$notify({
+              title: '提示',
+              message: '定位失败，将自动设置成北京！',
+            });
+            data.name = '北京市'
+          }
           this.cityFilter = Object.assign({}, this.cityFilter, {name: data.name})
         })
       },
@@ -485,6 +492,10 @@
         }
       },
       loadData() {
+        if (this.cityFilter.cityCode === null) {
+          this.loading = false
+          return
+        }
         this.loading = true
         this.$api.cityInsight.getPremisesByCity({cityCode: this.cityFilter.cityCode, tag: this.buildingFilter}).then((data) => {
           if (data.result) {
