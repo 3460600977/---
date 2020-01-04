@@ -349,7 +349,7 @@
         this.activeTab = val.value
       },
       loadHotMap(id) {
-        this.$api.peopleInsight.getPeopleInsightHotMap({id: id}).then((data) => {
+        this.$api.peopleInsight.getPeopleInsightHotMap({crowdInsightId: id, max: 100, min: 0}).then((data) => {
           // this.$refs.dbmap.setCity(this.cityFilter)
           if (data.result) {
             this.$refs.dbmap.drawHotMap(data.result)
