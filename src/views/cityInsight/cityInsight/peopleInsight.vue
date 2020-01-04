@@ -61,6 +61,12 @@
   export default {
     name: "peopleInsight",
     mixins: [tableMixin],
+    props: {
+      city: {
+        type: Object,
+        required: true
+      },
+    },
     data() {
       return {
         name: '',
@@ -99,7 +105,7 @@
         this.$emit('hide')
       },
       loadFunction(param) {
-        const data = { ...param, name: this.name }
+        const data = { ...param, name: this.name, city: this.city.cityCode }
         return new Promise((resolve, reject) => {
           this.$api.peopleInsight.getPeopleInsightList(data).then(res => {
             this.activeItem = res.result[0].id
