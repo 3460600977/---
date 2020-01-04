@@ -16,7 +16,7 @@
           </div>
           <div class="filter-container select-style" v-show="isShow[1]">
             <div class="mid-start filter-popup">
-              <div style="width: 106px;height: 100%;">
+              <div style="width: 100%;height: 100%;">
                 <left-tab
                   :lineHeight="42"
                   :tabData="tabData"
@@ -26,13 +26,10 @@
               </div>
               <div class="flex1">
                 <multiple-selectPopUp
-                  v-if="leftShow[1]"
                   ref="tagsSelect"
-                  v-show="activeTab === 1"
                   :selectDatas="buildingDatas"
                   :filters="buildingFilter"
                   @returnResult="(val, type) => returnResult(val, 1, type)"
-                  @hide="() => hide(1)"
                 ></multiple-selectPopUp>
               </div>
             </div>
@@ -68,13 +65,13 @@
         ></mouseMove-text>
       </div>
       <slide-container ref="slideCon">
-        <right-info
+        <map-right-info
           v-show="rightShow === 0"
           :selectedBuildings="selectedBuildings"
           @addBtnClick="addBtnClick"
           @createPackage="createPackage"
           @deleteItem="deleteItem"
-        ></right-info>
+        ></map-right-info>
         <building-detail
           v-show="rightShow === 1"
           @back="rightBack"
@@ -111,7 +108,8 @@
     2: '二线城市:',
     3: '三线城市:'
   }
-  import rightInfo from "../../../../../cityInsight/cityInsight/rightInfo";
+  //import rightInfo from "../../../../../cityInsight/cityInsight/rightInfo";
+  import mapRightInfo from "./mapRightInfo";
   import leftInfo from "../../../../../cityInsight/cityInsight/leftInfo";
   import drawType from "../../../../../../components/map/drawType";
   import mapPopup from "../../../../../../components/map/mapPopup";
@@ -151,13 +149,14 @@
       createDialog,
       slideContainer,
       leftInfo,
-      rightInfo,
+      mapRightInfo,
       SelectBuild,
       topSelect,
       mouseMoveText
     },
     data() {
       return {
+        isInit: true,
         buildingDatas: { // 楼宇标签
           title: '楼宇标签',
           options: [
@@ -272,6 +271,7 @@
     mounted() {
       this.init()
       this.bindEvent()
+      this.hideAll()
     },
     watch: {
       cityFilter(val) {
@@ -386,17 +386,17 @@
             this.cityFilter = val
             this.resetLeftPopup(index, type)
             this.isInit = false
-            return
+          } else {
+            this.$confirm('切换城市后，系统将清空当前城市的操作数据，是否切换？', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.cityFilter = val
+              this.resetLeftPopup(index, type)
+            }).catch(() => {
+            });
           }
-          this.$confirm('切换城市后，系统将清空当前城市的操作数据，是否切换？', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.cityFilter = val
-            this.resetLeftPopup(index, type)
-          }).catch(() => {
-          });
         } else if (index === 1) { // 楼盘标签选择
           if (type === 0) {
             this.buildingFilterSelected = false
@@ -611,7 +611,7 @@
     }
   }
   .map-choose {
-    top: -10% !important;
+    top: -12% !important;
     .el-dialog__header {
       display: none;
     }
@@ -619,7 +619,7 @@
       padding: 10px;
       .map-box {
         width: 100%;
-        height: calc(100vh - 140px);
+        height: calc(100vh - 100px);
         position: relative;
         overflow: hidden;
       }
