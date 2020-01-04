@@ -54,8 +54,11 @@
       }
     },
     watch: {
-      data(val) {
-        this.reDraw()
+      data: {
+        handler() {
+          this.reDraw()
+        },
+        deep: true
       },
     },
     mounted() {
