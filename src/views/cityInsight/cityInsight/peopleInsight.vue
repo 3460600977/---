@@ -106,7 +106,7 @@
         this.$emit('switchChange', val)
       },
       hide() {
-        this.activeItem = this.activeItemCopy
+        // this.activeItem = this.activeItemCopy
         // this.resetSelect()
         this.$emit('hide')
       },
