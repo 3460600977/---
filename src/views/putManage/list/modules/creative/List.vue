@@ -90,7 +90,7 @@
                   fit="cover"
                   v-for="(item, index) in JSON.parse(detailDialog.data.industryIdentify)" :key="index" 
                   :src="item"
-                  style="width: 100px; height: 158px;border-radius: 2px; margin-left: 10px;">
+                  style="width: 100px; height: 158px;border-radius: 2px; margin-right: 10px;">
                 </el-image>
               </div>
               <label v-else class="text-info">未上传</label>
@@ -135,28 +135,32 @@
         
         <el-tab-pane label="创意素材" name="material" class="material">
           <div v-loading="detailDialog.loading">
+
             <div class="top-screen">
-              <p>上屏</p>
               <template v-for="(item, index) in detailDialog.data.materials">
-                <a target="_black" :href="item.srcUrl" :key="index">
-                  <el-button v-if="item.screenType === 1" :key="index" plain type="primary">下载视频</el-button>
-                </a>
+                <template v-if="item.screenType === 1">
+                  <p :key="index">上屏</p>
+                  <el-image class="img" v-if="$tools.getSuffix(item.srcUrl) === 'jpg'" :key="index" :src="item.srcUrl"/>
+
+                  <a v-else target="_black" :href="item.srcUrl" :key="index">
+                    <el-button v-if="item.screenType === 1" :key="index" plain type="primary">下载视频</el-button>
+                  </a>
+                </template>
               </template>
             </div>
-            <div class="bottom-screen">
-              <p>下屏</p>
-              <div class="bottom-screen-box">
-                <template v-for="(item, index) in detailDialog.data.materials">
-                  <div v-if="item.height === 880 && item.screenType === 2" :key="index" class="left-pre">
+
+            <div class="bottom-screen" v-for="(item, index) in detailDialog.data.materials" :key="index">
+              <template v-if="item.height === 880 && item.screenType === 2">
+                <p>下屏</p>
+                <div class="bottom-screen-box">
+                  <div class="left-pre">
                     <el-image :src="item.srcUrl"/>
                   </div>
-                </template>
-                <template v-for="(item, index) in detailDialog.data.materials">
-                  <div v-if="item.height === 720 && item.screenType === 2" class="right-pre" :key="index">
+                  <div class="right-pre">
                     <el-image :src="item.srcUrl"/>
                   </div>
-                </template>
-              </div>
+                </div>
+              </template>
             </div>
           </div>
         </el-tab-pane>
@@ -320,16 +324,14 @@ export default {
       margin-top: 31px;
       display: flex;
     }
-
     .text-title {
+      width: 90px;
       color: $color-table-title;
     }
-
     .text-info {
       color: $color-text-1;
       margin-left: 90px;
     }
-
     .demo-image__preview {
       margin-left: 90px;
     }
@@ -337,24 +339,20 @@ export default {
 
   .material {
     .top-screen {
-      p {
-
-      }
-
+      margin-bottom: 40px;
       .el-button {
         margin-top: 24px;
       }
-
+      .img{
+        width: 260px; 
+        margin-top: 20px;
+      }
     }
-
     .bottom-screen {
-      margin-top: 50px;
-
       .bottom-screen-box {
         display: flex;
         margin-top: 24px;
       }
-
       .left-pre {
         display: inline-block;
         width: 260px;
@@ -363,7 +361,6 @@ export default {
         border: 1px solid rgba(229, 231, 233, 1);
         border-radius: 2px;
       }
-
       .right-pre {
         display: inline-block;
         width: 260px;
