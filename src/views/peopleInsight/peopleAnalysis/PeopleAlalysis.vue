@@ -20,7 +20,6 @@
             :data="genderArr"
             :title="titles.gender"
             :legend="legendTitle"
-            :center="positionType[2]"
           />
         </div>
 
