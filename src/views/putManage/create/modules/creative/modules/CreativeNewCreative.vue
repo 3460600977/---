@@ -325,12 +325,15 @@ export default {
         if (!_this.$tools.checkSuffix(value, ['jpg'])) {
           callback(new Error('请上传JPG格式的图片!'))
         }
-       
-        let sizeInfo = await _this.$tools.checkImageSize(_this.formData.top, 1080, 1920, true)
 
-        if (sizeInfo === 'sizeError') {
-          callback(new Error('图片尺寸不符合!'))
+        if (_this.formData.top.size) {
+          let sizeInfo = await _this.$tools.checkImageSize(_this.formData.top, 1080, 1920, true)
+  
+          if (sizeInfo === 'sizeError') {
+            callback(new Error('图片尺寸不符合!'))
+          }
         }
+       
 
       }
       
@@ -346,15 +349,18 @@ export default {
         callback(new Error('请上传JPG格式的图片!'))
       }
 
-      let sizeInfo = await _this.$tools.checkImageSize(_this.formData.bottom720Image, 1280, 720)
-      
-      if (sizeInfo === 'widthError') {
-        callback(new Error('图片宽度不符合!'))
+      if (_this.formData.bottom720Image.size) {
+        let sizeInfo = await _this.$tools.checkImageSize(_this.formData.bottom720Image, 1280, 720)
+        
+        if (sizeInfo === 'widthError') {
+          callback(new Error('图片宽度不符合!'))
+        }
+  
+        if (sizeInfo === 'heightError') {
+          callback(new Error('图片高度不符合!'))
+        }
       }
 
-      if (sizeInfo === 'heightError') {
-        callback(new Error('图片高度不符合!'))
-      }
 
       callback()
     };
@@ -368,15 +374,18 @@ export default {
         callback(new Error('请上传JPG格式的图片!'))
       }
 
-      let sizeInfo = await _this.$tools.checkImageSize(_this.formData.bottom880Image, 1080, 880)
-
-      if (sizeInfo === 'widthError') {
-        callback(new Error('图片宽度不符合!'))
+      if (_this.formData.bottom880Image.size) {
+        let sizeInfo = await _this.$tools.checkImageSize(_this.formData.bottom880Image, 1080, 880)
+  
+        if (sizeInfo === 'widthError') {
+          callback(new Error('图片宽度不符合!'))
+        }
+  
+        if (sizeInfo === 'heightError') {
+          callback(new Error('图片高度不符合!'))
+        }
       }
 
-      if (sizeInfo === 'heightError') {
-        callback(new Error('图片高度不符合!'))
-      }
 
       callback()
     };

@@ -121,7 +121,7 @@
 
             <span v-if="scope.row.statusName !== '审核通过'" class="icon-space hand">
               <router-link :to="`/putManage/create/creative?createType=edit&creativeId=${scope.row.id}`">
-                <i class="iconfont icon-baobiao icon-color"></i>编辑
+                <i class="iconfont icon-bianji icon-color"></i>编辑
               </router-link>
             </span>
 
@@ -158,6 +158,10 @@
       <el-tabs v-model="activeName">
         <el-tab-pane label="创意资质" name="aptitude" class="aptitude">
           <div v-loading="detailDialog.loading">
+            <div class="no-pass">
+              <img class="no-pass-img" :src="noPassImg" alt="" srcset="">
+              <div>资质不符合要求，请上传相关资质</div>
+            </div>
             <div class="text-col">
               <span class="text-title">广告创意名称</span>
               <label class="text-info">{{detailDialog.data.name}}</label>
@@ -290,6 +294,8 @@ export default {
       creativeStatus,
       projectStatus,
       screenType: projectConst.screenType,
+
+      noPassImg: require('@/assets/images/icon_not_passed.png'),
 
       activeName: 'aptitude',
 
@@ -534,6 +540,17 @@ export default {
 <style lang='scss' scoped>
 @import '../listCommonStyle.scss';
 .creative-dialog {
+  .no-pass{
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    background:rgba(83,160,255,0.08);
+    .no-pass-img{
+      width: 65px;
+      height: 46px;
+      margin-right: 23px;
+    }
+  }
   .el-dialog {
     margin-top: 10vh !important;
   }
