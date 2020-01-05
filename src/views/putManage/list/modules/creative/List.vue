@@ -118,11 +118,13 @@
             >
               <i class="iconfont icon-shuxingliebiaoxiangqing2 icon-color"></i>详情
             </span>
-            <span class="icon-space hand">
+
+            <span v-if="scope.row.statusName !== '审核通过'" class="icon-space hand">
               <router-link :to="`/putManage/create/creative?createType=edit&creativeId=${scope.row.id}`">
                 <i class="iconfont icon-baobiao icon-color"></i>编辑
               </router-link>
             </span>
+
             <span 
               @click="deleteDialog.data.name = scope.row.name; 
               deleteDialog.data.id = scope.row.id;
@@ -131,6 +133,7 @@
               class="icon-space hand">
               <i class="iconfont icon-error icon-color"></i>删除
             </span>
+
           </template>
         </el-table-column>
       </el-table>

@@ -244,6 +244,7 @@
               <span>余额:&emsp;</span>
               <span>¥</span>
               <span class="font-16 bold">{{$tools.toThousands(userInfo.accountBalance/100)}}</span>
+              <span class="color-red" v-if="buildingDirection.estimatePrice > userInfo.accountBalance">(余额不足)</span>
             </li>
           </ul>
         </div>
@@ -284,8 +285,9 @@
           <router-link to="/putManage?active=project">
             <el-button style="width: 120px" plain>取消</el-button>
           </router-link>
-          <el-button :disabled="deviceNumber === 0 || !validataForm()" :loading="formData.confirming"
-                     @click="confirmProject" style="width: 120px" type="primary">确认投放
+          <el-button
+            :disabled="deviceNumber === 0 || !validataForm() || buildingDirection.estimatePrice > userInfo.accountBalance" :loading="formData.confirming"
+            @click="confirmProject" style="width: 120px" type="primary">确认投放
           </el-button>
         </div>
       </div>

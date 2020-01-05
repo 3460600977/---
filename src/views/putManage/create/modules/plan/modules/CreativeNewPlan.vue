@@ -25,7 +25,7 @@
           <label slot="label"><span class="color-red">*</span> 总预算</label>
           <el-input 
             class="budget-value"
-            :maxlength="8"
+            :maxlength="9"
             placeholder="请输入内容" 
             v-model.number.trim="formData.totalBudget">
             <template slot="append">元</template>
@@ -72,10 +72,10 @@ export default {
   data() {
     // 自定义校验 预算    
     let validateBudget = (rules, value, callback) => {
-      if (!value) { return callback(new Error('请输入指定预算!')); }
+      if (!value) { return callback(new Error('请输入总预算!')); }
       if (isNaN(value)) { return callback(new Error('请输入数字!')); }
-      if (value < 1000) { return callback(new Error('指定预算不少于1000元!')); }
-      if (value >= 100000000) { return callback(new Error('金额过大!')); }
+      if (value < 1000) { return callback(new Error('总预算不少于1000元!')); }
+      if (value > 100000000) { return callback(new Error('金额过大!')); }
       callback()
     }
     return {
