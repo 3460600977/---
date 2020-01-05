@@ -63,6 +63,20 @@
                 },
               }
             },
+            label: {
+              normal: {
+                formatter: function(){
+                  let result = item.value*100;
+                  result = result.toFixed(2);
+                  return result+"%";
+                },
+                position: 'center',
+                show: true,
+                textStyle: {
+                  fontSize: '12',
+                }
+              }
+            },
             data: [
               item[0],item[1]
             ]
