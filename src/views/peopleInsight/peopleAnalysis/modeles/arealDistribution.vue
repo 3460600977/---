@@ -61,7 +61,7 @@ export default {
   data() {
     return {
       mapType: 0,
-      activeTab: 'city',
+      activeTab: 'province',
       mapData: [],
       data: {}
     }

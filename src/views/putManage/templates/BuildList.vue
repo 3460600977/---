@@ -49,11 +49,11 @@
         <li class="item mid" v-for="(item, index) in localProject.list" :key="index">
           <div class="base">
             <div class="left-info float-left" style="width: 550px;">
-              <p class="name">{{item.premisesName}}</p>
+              <p class="name">{{item.premiseName}}</p>
             </div>
 
             <div class="account float-left" style="width: 100px;">
-              <span class="font-16 number">{{$tools.toThousands(item.signElevatorNum, false)}}</span>
+              <span class="font-16 number">{{$tools.toThousands(item.deviceNum, false)}}</span>
               <span class="font-14">个</span>
             </div>
 
@@ -66,13 +66,6 @@
 
         <noData v-if="buildsNumber <= 0">无可售数据</noData>
       </ul>
-      <!-- 分页 -->
-      <!-- <el-pagination
-        class="float-right"
-        background
-        layout="total, sizes, prev, pager, next"
-        :total="20">
-      </el-pagination> -->
     </template>
 
 

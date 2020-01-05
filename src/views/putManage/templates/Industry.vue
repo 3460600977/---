@@ -1,7 +1,7 @@
 <template>
   <!-- 行业选择和回显 -->
-  <div>
   <el-cascader
+    class="width-240"
     :class="{'just-display': !originStyle}"
     ref="industryList"
     :disabled="disabled"
@@ -13,7 +13,6 @@
     :options="industryList.data"
     :props="industryList.props">
   </el-cascader>
-  </div>
 </template>
 
 <script>
@@ -58,8 +57,8 @@ export default {
     }
   },
 
-  beforeMount: async () => {
-    
+  beforeMount() {
+    this.focusIndustry()
   },
 
 
@@ -101,7 +100,10 @@ export default {
   watch: {
     value: {
       handler: async function(val) {
-        this.industryList.data = await this.getIndustryList();
+        if (this.industryList.data.length == 0) {
+          this.industryList.data = await this.getIndustryList();
+        };
+
         this.industryList.checkedData.value = val;
       },
       immediate: true

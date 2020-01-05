@@ -15,7 +15,7 @@
 
         <!-- 投放方案行业 -->
         <el-form-item class="mt-20" prop="industry" label="方案行业">
-          <Industry :disabled="isEdit" @changeIndustry="changeIndustry"/>
+          <Industry class="width-240" :disabled="isEdit" @changeIndustry="changeIndustry"/>
         </el-form-item>
 
         <!-- 屏幕类型 -->
@@ -24,9 +24,9 @@
         </el-form-item>
 
         <!-- 投放类型 -->
-        <el-form-item class="mt-20" prop="projectType" label="投放时间" >
+        <el-form-item class="mt-20" prop="projectType">
           <label slot="label"><span class="color-red">* </span>投放类型</label>
-          <div class="mid-between" style="width: 240px">
+          <div class="mid-between width-240">
             <el-button
               :disabled="isEdit"
               style="width: 102px"
@@ -40,7 +40,8 @@
         </el-form-item>
 
         <!-- 按天投放 -->
-        <el-form-item v-if="formData.projectType.value == 1" label="投放时间" class="mt-20" prop="date">
+        <el-form-item v-if="formData.projectType.value == 1" class="mt-20" prop="date">
+          <label slot="label"><i class="color-red">*&nbsp;</i>投放日期</label>
           <el-date-picker
             @change="changePageData"
             :disabled="isEdit"
@@ -50,15 +51,16 @@
             type="daterange"
             :picker-options="pickerOptions"
             range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间">
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
           </el-date-picker>
         </el-form-item>
 
         <!-- 按周投放 -->
-        <el-form-item v-if="formData.projectType.value == 0" label="投放时间" class="week-item mt-20" prop="date">
+        <el-form-item v-if="formData.projectType.value == 0" class="week-item mt-20" prop="date">
+          <label slot="label"><i class="color-red">*&nbsp;</i>投放日期</label>
           <el-date-picker
-            @change="changePageData(); changeWeek()"
+            @change="changePageData()"
             :disabled="isEdit"
             :clearable="false"
             v-model="formData.date"
@@ -66,8 +68,8 @@
             type="daterange"
             :picker-options="pickerOptions"
             range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间">
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
           </el-date-picker>
         </el-form-item>
 
@@ -243,6 +245,7 @@
               <span>余额:&emsp;</span>
               <span>¥</span>
               <span class="font-16 bold">{{$tools.toThousands(userInfo.accountBalance/100)}}</span>
+              <span class="color-red" v-if="buildingDirection.estimatePrice > userInfo.accountBalance">(余额不足)</span>
             </li>
           </ul>
         </div>
@@ -283,8 +286,9 @@
           <router-link to="/putManage?active=project">
             <el-button style="width: 120px" plain>取消</el-button>
           </router-link>
-          <el-button :disabled="deviceNumber === 0 || !validataForm()" :loading="formData.confirming"
-                     @click="confirmProject" style="width: 120px" type="primary">确认投放
+          <el-button
+            :disabled="deviceNumber === 0 || !validataForm() || buildingDirection.estimatePrice > userInfo.accountBalance" :loading="formData.confirming"
+            @click="confirmProject" style="width: 120px" type="primary">确认投放
           </el-button>
         </div>
       </div>
@@ -327,6 +331,19 @@
       mapChooseWindow,
     },
     data() {
+      let validateTime = (rule, value, callback) => {
+        if (!value) {
+          callback(new Error('请设置投放日期!'));
+        }
+        if (this.formData.projectType.value === 0 && this.formData.date) {
+          let _dateBegin = new Date(this.formData.date[0]);
+          let _dateEnd = new Date(this.formData.date[1]);
+          if (_dateBegin.getDay() !== 6 || _dateEnd.getDay() !== 5 || _dateBegin === _dateEnd) {
+            callback(new Error('按周投放的开始日期必须是周六, 结束日期必须为周五, 请正确输入!'));
+          }
+        }
+        callback()
+      }
       return {
         closeEscTrue:false,
         projectConst,
@@ -407,7 +424,7 @@
             {required: true, message: '请选择投放方案行业!', trigger: 'change'},
           ],
           date: [
-            {required: true, message: '请设置投放时间!', trigger: 'blur'},
+            { validator: validateTime, trigger: 'blur' }
           ],
           count: [
             {required: true, message: '请选投放频次!', trigger: 'change'},
@@ -448,6 +465,7 @@
         this.formData.type = val;
         this.changePageData()
       },
+
       // 隐藏地图选点
       hideMapPoint(val) {
         this.buildingDirection.mapChooseShow = val
@@ -456,11 +474,16 @@
 
       // 获取地图返回点位
       submitSelectedBuildPoint(selectedList, city) {
-        console.log('submitSelectedBuildPoint')
-        console.log(selectedList, city)
+        let param;
         this.formData.projectCity = city.cityCode;
         this.buildingDirection.builds.hasData = true;
         this.setBuildsList(selectedList)
+
+        param = {
+          premiseIds: this.premiseIds,
+          city: city.cityCode
+        }
+        this.getBuildsAvalable(param)
       },
 
 
@@ -547,30 +570,17 @@
         this.buildingDirection.mapChooseShow = true;
       },
 
-      // 按周投放时间校验
-      changeWeek() {
-        if (!this.formData.date) return;
-        let _dateBegin = new Date(this.formData.date[0]);
-        let _dateEnd = new Date(this.formData.date[1]);
-        if (_dateBegin.getDay() !== 6 || _dateEnd.getDay() !== 5 || _dateBegin === _dateEnd) {
-          this.formData.date = '';
-          return this.$notify({
-            title: '警告',
-            message: '请选择周六开始, 周五结束',
-            type: 'warning'
-          });
-        }
-      },
-
 
       // 获取城市洞察包列表
       getCityInsightList() {
         if (this.buildingDirection.cityInsight.data) return;
+
         let param = {
           "name": "",
           "pageIndex": 0,
           "pageSize": 0
         }
+
         this.$api.cityInsight.CityInsightList(param)
             .then(res => {
               this.buildingDirection.cityInsight = {
@@ -586,20 +596,17 @@
       // 选择下拉已有资源包 根据洞察id获取城市洞察包详情
       getCityInsightDetail(id) {
         if (!id) return;
-        this.buildingDirection.builds.loading = true;
         this.$api.cityInsight.GetCityInsightDetailById(id)
             .then(res => {
               this.formData.projectCity = res.result.city;
               this.getBuildsAvalable(res.result)
-            })
-            .catch(res => {
-              this.buildingDirection.builds.loading = false;
             })
       },
 
 
       // 页面数据修改, 重新获取已有资源包的楼盘, 重新算价格
       changePageData() {
+        if (!this.validataForm()) return;
 
         // 没选已有资源包不重新获取
         if (!!this.buildingDirection.cityInsight.selectedItemId) {
@@ -615,8 +622,10 @@
       // 根据 城市洞察详情和筛选条件 查询楼盘余量
       getBuildsAvalable(cityInsight) {
         if (!cityInsight) return
-        let param;
-        param = {
+
+        this.buildingDirection.builds.loading = true;
+
+        let param = {
           beginTime: this.formData.date[0],
           endTime: this.formData.date[1],
           count: this.formData.count.value,
@@ -647,6 +656,9 @@
       // POST根据订单信息计算预估总价
       estimatePrice: async function() {
         if (!this.validataForm()) return;
+
+        this.buildingDirection.builds.loading = true;
+
         let param = {
           beginTime: this.formData.date[0],
           endTime: this.formData.date[1],
@@ -660,8 +672,10 @@
         this.$api.CityList.EstimateTotalPrice(param)
             .then(res => {
               this.buildingDirection.estimatePrice = res.result;
+              this.buildingDirection.builds.loading = false;
             })
             .catch(res => {
+              this.buildingDirection.builds.loading = false;
             })
       },
 
@@ -673,10 +687,9 @@
         let param;
         if (!this.$tools.checkSuffix(file.name, ['xls', 'xlsx'])) {
           this.$refs.uplaodBuild.value = '';
-          return this.$notify({
-                                title: '警告',
+          return this.$message({
                                 message: '请上传正确格式的文件',
-                                type: 'warning'
+                                type: 'error'
                               });
         }
 
@@ -774,8 +787,7 @@
               .then(res => {
                 this.formData.confirming = false;
                 this.planData.loading = false;
-                this.$notify({
-                  title: '成功',
+                this.$message({
                   message: '修改方案成功',
                   type: 'success'
                 });
@@ -785,27 +797,27 @@
                  */
                 if (this.formData.creativeStatus === 0 || this.formData.creativeStatus === 2) {
                   this.$router.push({
-                                      path: '/putManage',
-                                      query: {
-                                        active: 'project'
-                                      }
-                                    })
+                    path: '/putManage',
+                    query: {
+                      active: 'project'
+                    }
+                  })
                 } else {
                   if (this.projectDetail.status === 0) {
                     this.$router.push({
-                                        path: '/putManage/create/creative',
-                                        query: {
-                                          projectId: this.$route.query.editProjectId,
-                                          createType: 'step'
-                                        }
-                                      })
+                      path: '/putManage/create/creative',
+                      query: {
+                        projectId: this.$route.query.editProjectId,
+                        createType: 'step'
+                      }
+                    })
                   } else {
                     this.$router.push({
-                                        path: '/putManage/create/payConfirm',
-                                        query: {
-                                          projectId: this.$route.query.editProjectId,
-                                        }
-                                      })
+                      path: '/putManage/create/payConfirm',
+                      query: {
+                        projectId: this.$route.query.editProjectId,
+                      }
+                    })
                   }
                 }
               })
@@ -820,12 +832,16 @@
               .then(res => {
                 this.formData.confirming = false;
                 this.planData.loading = false;
+                this.$message({
+                  message: '创建方案成功',
+                  type: 'success'
+                });
                 this.$router.push({
-                                    path: '/putManage/create/payConfirm',
-                                    query: {
-                                      projectId: res.result.projectId,
-                                    }
-                                  })
+                  path: '/putManage/create/payConfirm',
+                  query: {
+                    projectId: res.result.projectId,
+                  }
+                })
               })
               .catch(res => {
                 this.formData.confirming = false;
@@ -841,12 +857,12 @@
         'deviceNumber',
         'peopleNumber',
         'unitNum',
-        'buildsDetails'
+        'buildsDetails',
+        'premiseIds'
       ]),
 
-      // TODO 余额不足
 
-      // 时间限制
+      // 日期限制
       pickerOptions() {
         let _this = this;
         let now = new Date();
@@ -854,8 +870,6 @@
           firstDayOfWeek: 6,
           disabledDate(date) {
             return date.getTime() < Date.now() - 8.64e7 ||
-            // date.getTime() > _this.planData.data.endTime ||
-            // date.getTime() < _this.planData.data.beginTime ||
             (now.getDate() == date.getDate() && now.getMonth() === date.getMonth() && now.getDay() == 6 && now.getHours() > 18) ||
             (_this.formData.projectType.value == 0 && date.getDay() != 5 && date.getDay() != 6);
           }

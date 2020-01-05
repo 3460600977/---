@@ -33,7 +33,7 @@ $--color-primary-light-7: mix($--color-white, $--color-primary, 70%) !default; /
 $--color-primary-light-8: mix($--color-white, $--color-primary, 80%) !default; /* d9ecff */
 $--color-primary-light-9: mix($--color-white, $--color-primary, 90%) !default; /* ecf5ff */
 /// color|1|Functional Color|1
-$--color-success: #F44A4A !default;
+$--color-success: rgb(30, 207, 119) !default;
 /// color|1|Functional Color|1
 $--color-warning: #FFCC00 !default;
 /// color|1|Functional Color|1
