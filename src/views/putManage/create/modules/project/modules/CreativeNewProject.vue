@@ -24,7 +24,7 @@
         </el-form-item>
 
         <!-- 投放类型 -->
-        <el-form-item class="mt-20" prop="projectType" label="投放日期" >
+        <el-form-item class="mt-20" prop="projectType">
           <label slot="label"><span class="color-red">* </span>投放类型</label>
           <div class="mid-between width-240">
             <el-button
@@ -40,7 +40,8 @@
         </el-form-item>
 
         <!-- 按天投放 -->
-        <el-form-item v-if="formData.projectType.value == 1" label="投放日期" class="mt-20" prop="date">
+        <el-form-item v-if="formData.projectType.value == 1" class="mt-20" prop="date">
+          <label slot="label"><i class="color-red">*&nbsp;</i>投放日期</label>
           <el-date-picker
             @change="changePageData"
             :disabled="isEdit"
@@ -464,6 +465,7 @@
         this.formData.type = val;
         this.changePageData()
       },
+
       // 隐藏地图选点
       hideMapPoint(val) {
         this.buildingDirection.mapChooseShow = val
@@ -472,11 +474,16 @@
 
       // 获取地图返回点位
       submitSelectedBuildPoint(selectedList, city) {
-        console.log('submitSelectedBuildPoint')
-        console.log(selectedList, city)
+        let param;
         this.formData.projectCity = city.cityCode;
         this.buildingDirection.builds.hasData = true;
         this.setBuildsList(selectedList)
+
+        param = {
+          premiseIds: this.premiseIds,
+          city: city.cityCode
+        }
+        this.getBuildsAvalable(param)
       },
 
 
@@ -567,11 +574,13 @@
       // 获取城市洞察包列表
       getCityInsightList() {
         if (this.buildingDirection.cityInsight.data) return;
+
         let param = {
           "name": "",
           "pageIndex": 0,
           "pageSize": 0
         }
+
         this.$api.cityInsight.CityInsightList(param)
             .then(res => {
               this.buildingDirection.cityInsight = {
@@ -601,6 +610,7 @@
 
       // 页面数据修改, 重新获取已有资源包的楼盘, 重新算价格
       changePageData() {
+        if (!this.validataForm()) return;
 
         // 没选已有资源包不重新获取
         if (!!this.buildingDirection.cityInsight.selectedItemId) {
@@ -616,8 +626,8 @@
       // 根据 城市洞察详情和筛选条件 查询楼盘余量
       getBuildsAvalable(cityInsight) {
         if (!cityInsight) return
-        let param;
-        param = {
+        
+        let param = {
           beginTime: this.formData.date[0],
           endTime: this.formData.date[1],
           count: this.formData.count.value,
@@ -844,7 +854,8 @@
         'deviceNumber',
         'peopleNumber',
         'unitNum',
-        'buildsDetails'
+        'buildsDetails',
+        'premiseIds'
       ]),
 
 
