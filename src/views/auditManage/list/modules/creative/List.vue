@@ -6,11 +6,7 @@
       </div>
       <el-form :inline="true" :model="auditList" class="report-query-form">
         <el-form-item class="item-space-1">
-          <el-input
-            v-model.trim="auditList.name"
-            clearable
-            placeholder="请输入创意名称"
-          ></el-input>
+          <el-input v-model.trim="auditList.name" clearable placeholder="请输入创意名称"></el-input>
         </el-form-item>
         <el-form-item class="item-space-end">
           <el-select
@@ -69,10 +65,10 @@
             <div v-else-if="col.prop === 'action'">
               <div v-if="scope.row.status === 0">
                 <span class="icon-space" @click="passCreative(scope.row.id,scope.row.name)">
-                  <i class="iconfont  icon--zhengque-shiti icon-color"></i>通过
+                  <i class="iconfont icon--zhengque-shiti icon-color"></i>通过
                 </span>
                 <span class="icon-space" @click="denyCreative(scope.row.id,scope.row.name)">
-                  <i class="iconfont  icon-error icon-color"></i>拒绝
+                  <i class="iconfont icon-error icon-color"></i>拒绝
                 </span>
               </div>
             </div>
@@ -344,6 +340,7 @@ export default {
   methods: {
     //查询创意
     submitCreativeList() {
+      this.pageIndex = 1;
       this.getAuditCreativeList();
     },
     //远程模糊搜索创意名称，获取对应创意列表
