@@ -30,8 +30,8 @@
               <label class='t-value flex1'>
                 <div :style="{'width': item.countPercent}" class="value-content"></div>
               </label>
-              <label v-if="activeTab === 'province'" class="value-text color-text-1">{{mapType === 0?item.value: item.countPercent}}</label>
-              <label v-else class="value-text color-text-1">{{mapType === 0?item.label: item.countPercent}}</label>
+              <label v-if="activeTab === 'province'" class="value-text color-text-1">{{mapType === 0?$tools.toThousands(item.value,false): item.countPercent}}</label>
+              <label v-else class="value-text color-text-1">{{mapType === 0?$tools.toThousands(item.label,false): item.countPercent}}</label>
             </li>
           </ul>
         </el-tabs>

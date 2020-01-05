@@ -57,7 +57,7 @@
   }
   .condition-box{
     margin-top: 30px;
-    //display: flex;
+    display: flex;
     .left-title{
       width: 100px;
     }
