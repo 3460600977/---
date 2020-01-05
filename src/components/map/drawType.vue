@@ -74,11 +74,7 @@
       },
       drawTypeSelect(e, type, index) {
         if (this.length >= MAX_COUNT) {
-          this.$notify({
-            title: '警告',
-            message: '最多只能进行五次选点操作！',
-            type: 'warning'
-          });
+          this.$message.error('最多只能进行五次选点操作！');
           return
         }
         this.activeIndex = index
@@ -94,11 +90,7 @@
       },
       showSearchPop(index) {
         if (this.length >= MAX_COUNT) {
-          this.$notify({
-            title: '警告',
-            message: '最多只能进行五次选点操作！',
-            type: 'warning'
-          });
+          this.$message.error('最多只能进行五次选点操作！');
           return
         }
         this.activeIndex = index

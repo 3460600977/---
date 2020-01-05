@@ -4,11 +4,14 @@
       <div>
         <el-input v-model="val" placeholder="输入地点"></el-input>
       </div>
-      <ul class="ul customScroll">
+      <ul class="ul customScroll" v-show="lists.length">
         <li @click="handleSelect(item)" class="hand"  v-for="(item, index) in lists" :key="index">
           <p>{{item[firstLabel]}}</p>
           <p class="color-text-1 margin">{{item[secondLabel]}}</p>
         </li>
+      </ul>
+      <ul class="ul-noData ul mid-center" v-if="noData !== '' && !lists.length && val !== ''">
+        {{noData}}
       </ul>
     </div>
   </div>
@@ -30,6 +33,10 @@
       secondLabel: {
         type: String,
         default: 'address'
+      },
+      noData: {
+        type: String,
+        default: ''
       },
     },
     data() {
@@ -82,6 +89,9 @@
     }
     .margin {
       margin-top: 10px;
+    }
+    .ul-noData {
+      height: 264px;
     }
     .ul {
       border: 1px solid $color-border;
