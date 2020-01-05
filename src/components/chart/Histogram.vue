@@ -41,6 +41,10 @@
         type: String,
         default:""
       },
+      legend:{
+        type: Array,
+        default: []
+      },
       grid: {
         type: Object,
         default: function () {
@@ -78,6 +82,7 @@
         legend: {
           icon: 'circle',
           show: this.isShowLegend,
+          name: this.legend,
           top: 20,
           right: 40,
           padding: 0,
@@ -161,6 +166,7 @@
           legend: {
             icon: 'circle',
             show: this.isShowLegend,
+            name: this.legend,
             top: 20,
             right: 40,
             padding: 0,

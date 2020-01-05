@@ -19,10 +19,11 @@
             :color="colors"
             :data="genderArr"
             :title="titles.gender"
+            :legend="legendTitle"
           />
         </div>
 
-        <div class="normal-box">
+        <div v-if="ageData.xAxis.length > 0" class="normal-box">
           <histogram
             width="100%"
             height="100%"
@@ -30,10 +31,11 @@
             :data="ageData"
             :isShowTitle="isShowTitle"
             :title="titles.age"
+            :legend="legendTitle"
           />
         </div>
 
-        <div class="normal-box">
+        <div v-if="educationData.xAxis.length > 0" class="normal-box">
           <histogram
             width="100%"
             height="100%"
@@ -41,16 +43,18 @@
             :data="educationData"
             :isShowTitle="isShowTitle"
             :title="titles.education"
+            :legend="legendTitle"
           />
         </div>
 
-        <div class="normal-box">
+        <div v-if="consumeData.xAxis.length > 0" class="normal-box">
           <histogram
             width="100%"
             height="100%"
             :color="colorType[2]"
             :data="consumeData"
             :title="titles.consume"
+            :legend="legendTitle"
           />
         </div>
 
@@ -61,6 +65,7 @@
             :color="colorType[2]"
             :data="privateCarData"
             :title="titles.privateCar"
+            :legend="legendTitle"
           />
         </div>
 
@@ -69,9 +74,9 @@
     </el-card>
 
 
-    <!-- 线下消费指数 -->
+    <!-- 社区商品交易指数 -->
     <el-card v-if="offlineConsumptionData.xAxis.length > 0" class="box-card">
-      <div class="report-form-title">线下消费指数</div>
+      <div class="report-form-title">社区商品交易指数</div>
       <div class="big-box">
         <histogram
           width="100%"
@@ -120,6 +125,7 @@ export default {
       loading: false,
       result: {},
       peopleType: '',
+      legendName: '',
       headerTags: [],
       areasList: null,
       isShowTitle: true,
@@ -293,12 +299,12 @@ export default {
           }
         ]
       },
-      legendTitle: ['运动型人群包', '全网人群'],
+      legendTitle: [],
       ageData: {
         xAxis: [],
         yAxis: [
           {
-            "name": '运动型人群包',
+            "name": "",
             "type": "bar",
             "data": [],
             "barWidth": 18
@@ -316,7 +322,7 @@ export default {
         xAxis: [],
         yAxis: [
           {
-            "name": '运动型人群包',
+            "name": "",
             "type": "bar",
             "data": [],
             "barWidth": 18
@@ -334,7 +340,7 @@ export default {
         xAxis: [],
         yAxis: [
           {
-            "name": '运动型人群包',
+            "name": "",
             "type": "bar",
             "data": [],
             "barWidth": 18
@@ -356,7 +362,7 @@ export default {
         xAxis: [],
         yAxis: [
           {
-            "name": "运动型人群包",
+            "name": "",
             "type": "bar",
             "data": [],
             "barWidth": 30
@@ -373,7 +379,7 @@ export default {
         xAxis: [],
         yAxis: [
           {
-            "name": "运动型人群包",
+            "name": "",
             "type": "bar",
             "data": [],
             "barWidth": 30
@@ -396,7 +402,7 @@ export default {
         ['rgba(91, 126, 255, 1)', 'rgba(236, 236, 236, 1)']
       ],
       titles: {
-        "gender":"男女",
+        "gender":"性别",
         "age":"年龄分布",
         "education":"学历",
         "consume":"收入水平",
@@ -417,8 +423,12 @@ export default {
       this.$api.peopleInsight.getPeopleAlalysis({id:id}).then( res => {
         this.loading = false;
         this.result = res.result;
-        this.peopleType = res.result.crowdInsightName;
+        this.legendName = this.peopleType = res.result.crowdInsightName;
         this.headerTags = JSON.parse(res.result.tagName);
+        if(this.legendName.length > 6){
+          this.legendName = this.legendName.substring(0,6) + '...';
+        }
+        this.legendTitle = [this.legendName,"全网人群"];
         let obj = {};
         obj.provinceTa = res.result.provinceTa;
         obj.cityTa = res.result.cityTa;
@@ -458,6 +468,7 @@ export default {
           let yData = piVO[item.key].map(item => item.value);
           let country = wholePiVO[item.key].map(item => item.value);
           this[item.name].yAxis[0].data = yData;
+          this[item.name].yAxis[0].name = this.legendName;
           this[item.name].yAxis[1].data = country;
         });
         //车产
@@ -475,7 +486,7 @@ export default {
         let man = [];
         let woman = [];
         piVO['genderDist'].forEach(g=>{
-          g.name = '运动型人群包';
+          g.name = this.legendName;
           if (g.tag === '女') {
             man.push(g)
           }else {
