@@ -130,6 +130,7 @@
         series: seriesArr
       };
       myChart.setOption(option);
+      window.onresize = myChart.resize();
     },
     methods: {
     }

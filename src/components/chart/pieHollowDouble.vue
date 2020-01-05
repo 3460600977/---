@@ -100,6 +100,7 @@
         color:this.color
       };
       myChart.setOption(option);
+      window.onresize = myChart.resize();
     },
     methods: {
     }
