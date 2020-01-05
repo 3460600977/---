@@ -4,7 +4,7 @@ const SIGN_REGEXP = /([yMdhsm])(\1*)/g
 const DEFAULT_PATTERN = 'yyyy-MM-dd'
 
 let tools = {
-  
+
   /**
    * @description: 验证图片宽高
    * @param file: input->file
@@ -12,7 +12,7 @@ let tools = {
    * @param limitHeight:
    * @param allowRotate: 是否允许旋转的图片
    */
-  checkImageSize: async function(file, limitWidth, limitHeight, allowRotate = false) {
+  checkImageSize: async function (file, limitWidth, limitHeight, allowRotate = false) {
     if (!file) return;
     return new Promise((resolve) => {
       let offset = 5; // 误差5px
@@ -24,10 +24,10 @@ let tools = {
         let imgHeight = img.height;
         if (allowRotate) {
           if (
-            (imgWidth < limitWidth - offset || imgWidth > limitWidth + offset 
-              || imgWidth < limitHeight - offset  || imgHeight > limitHeight + offset)
-            && (imgHeight < limitWidth - offset || imgWidth > limitWidth + offset 
-              || imgHeight < limitHeight - offset  || imgHeight > limitHeight + offset) ) {
+            (imgWidth < limitWidth - offset || imgWidth > limitWidth + offset
+              || imgWidth < limitHeight - offset || imgHeight > limitHeight + offset)
+            && (imgHeight < limitWidth - offset || imgWidth > limitWidth + offset
+              || imgHeight < limitHeight - offset || imgHeight > limitHeight + offset)) {
             resolve('sizeError');
           }
         } else {
@@ -35,11 +35,11 @@ let tools = {
             resolve('widthError');
           }
 
-          if (imgHeight < limitHeight - offset  || imgHeight > limitHeight + offset) {
+          if (imgHeight < limitHeight - offset || imgHeight > limitHeight + offset) {
             resolve('heightError');
           }
         }
-        
+
         resolve('success');
       }
     })
@@ -355,10 +355,13 @@ let tools = {
   getWeek(i) {
     var now = new Date();
     var firstDay = new Date(now - (now.getDay() - 1) * 86400000);
-    console.log(now.getDay(),firstDay)
+    console.log(now.getDay(), firstDay)
     firstDay.setDate(firstDay.getDate() + i);
     var mon = Number(firstDay.getMonth()) + 1;
-    return now.getFullYear() + "-" + mon + "-" + firstDay.getDate();
+    var day = firstDay.getDate();
+    if (mon < 10) mon = '0' + mon;
+    if (day < 10) day = '0' + day;
+    return now.getFullYear() + "-" + mon + "-" + day;
   },
 
   /**

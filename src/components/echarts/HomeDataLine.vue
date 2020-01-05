@@ -1,5 +1,5 @@
 <template>
-  <div ref="lineBox" class="lineBox" style="width:1000px;height:450px;"></div>
+  <div ref="lineBox" class="lineBox" style="width:1150px;height:450px;"></div>
 </template>
 <script>
 import echarts from "echarts";
@@ -61,8 +61,12 @@ export default {
       let option = {
         //1、 格式化提示信息
         grid: {
-          width: "85%",
-          height: "70%"
+          width: "95%",
+          height: "80%",
+          left: "2%",
+          right: "3%",
+          bottom: "8%",
+          containLabel: true
         },
         tooltip: {
           trigger: "axis",
@@ -104,21 +108,27 @@ export default {
             interval: interval_left,
             axisLine: {
               lineStyle: {
-                color: "#999999"
+                color: "#606266"
               }
             },
             axisLabel: {
+              fontFamily: "DINMittelschrift",
               formatter: "{value}元"
             }
           },
           {
             type: "value",
-            name: "曝光度",
             min: 0,
             max: maxactive,
             splitNumber: 5,
             interval: interval_right,
+            axisLine: {
+              lineStyle: {
+                color: "#999999"
+              }
+            },
             axisLabel: {
+              fontFamily: "DINMittelschrift",
               formatter: "{value}"
             }
           }

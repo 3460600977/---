@@ -20,36 +20,34 @@
         class="account-money-box color-white"
       >
         <div class="accouint-title">新潮币</div>
-        <div
-          class="account-val font-number"
-        >¥ {{$tools.toThousands(summaryDetailList.xcMoney / 100)}}</div>
+        <div class="account-val font-number">{{$tools.toThousands(summaryDetailList.xcMoney / 100)}}</div>
       </div>
       <el-button class="create-put" type="primary" icon="el-icon-plus" @click="ToPathPlan">创建投放计划</el-button>
     </el-card>
     <el-card class="box-card data_card mid-center shadow">
       <div class="card_list">
-        <div @click="goToPath('goToPlan')">
+        <div @click="goToPath('goToPlan')" class="goToPath">
           <span class="blue">{{summaryDetailList.countCampaign}}</span>
           <p>
             投放计划
             <i class="el-icon-arrow-right"></i>
           </p>
         </div>
-        <div @click="goToPath('goToProject')">
+        <div @click="goToPath('goToProject')" class="goToPath">
           <span>{{summaryDetailList.countProjectUse}}</span>
           <p>
             投放中方案
             <i class="el-icon-arrow-right"></i>
           </p>
         </div>
-        <div @click="goToPath('goToUnPayProject')">
+        <div @click="goToPath('goToUnPayProject')" class="goToPath">
           <span class="red">{{summaryDetailList.countProjectNoUse}}</span>
           <p class="un-pay-p">
             未支付方案
             <i class="el-icon-arrow-right un-pay-p"></i>
           </p>
         </div>
-        <div @click="goToPath('goToDenyCreative')">
+        <div @click="goToPath('goToDenyCreative')" class="goToPath">
           <span class="red">{{summaryDetailList.countCreativeNoPass}}</span>
           <p>
             审核拒绝创意
@@ -63,7 +61,12 @@
         <h2>数据趋势</h2>
         <div class="line-echarts_change">
           <div>
-            <el-select placeholder="花费（元）" class="select_bar_line" v-model="selectLine.firstValue">
+            <el-select
+              placeholder="花费（元）"
+              class="select_bar_line"
+              v-model="selectLine.firstValue"
+              @change="changeFirstValue"
+            >
               <el-option
                 v-for="item in costList"
                 :key="item.value"
@@ -71,7 +74,12 @@
                 :value="item.value"
               ></el-option>
             </el-select>对比
-            <el-select placeholder="曝光数" class="select_bar_line" v-model="selectLine.secondValue">
+            <el-select
+              placeholder="曝光数"
+              class="select_bar_line"
+              v-model="selectLine.secondValue"
+              @change="changeSecondValue"
+            >
               <el-option
                 v-for="item in exposureList"
                 :key="item.value"
@@ -81,18 +89,22 @@
             </el-select>
           </div>
           <el-date-picker
-            v-model="name"
+            v-model="selectLine.selectTime"
             type="daterange"
             range-separator="--"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            @change="changeSelectTime"
+            value-format="yyyy-MM-dd"
           ></el-date-picker>
           <div class="line-echarts_tip">
             <span>
-              <i class="blue_bg"></i>花费(元)
+              <i class="blue_bg"></i>
+              {{selectLine.selectFirstLabel}}
             </span>
             <span>
-              <i class="red_bg"></i>曝光数
+              <i class="red_bg"></i>
+              {{selectLine.selectSecondLabel}}
             </span>
           </div>
         </div>
@@ -105,7 +117,7 @@
       <div class="el-carousel">
         <el-carousel arrow="always">
           <el-carousel-item v-for="item in imgList" :key="item">
-            <img class="imgItem" :src="item" @click="isShow=true" />
+            <img class="imgItem" :src="item" />
           </el-carousel-item>
         </el-carousel>
       </div>
@@ -113,7 +125,7 @@
     <el-card class="box-card news_list shadow">
       <h2>新闻资讯</h2>
       <div class="news_case_list">
-        <div class="news_case_item"  @click="toPathNew">
+        <div class="news_case_item" @click="toPathNew(158)">
           <div class="news_case_time">
             <span>2019</span>
             <p>12-19</p>
@@ -123,7 +135,7 @@
             <p>12月31日晚，2019年的最后一夜，罗振宇2019-2020“时间的朋友”跨年演讲在上海举行。今年跨年演讲的主题围绕着“基本盘”三个字展开，带着各位“时间的朋友”探索中国商业2020年的“基本盘”，厘清2020年的趋势和方向。新潮传媒作为联合特约合作伙伴，全程支持本次活动。</p>
           </div>
         </div>
-        <div class="news_case_item" @click="toPathNew(2)">
+        <div class="news_case_item" @click="toPathNew(156)">
           <div class="news_case_time">
             <span>2019</span>
             <p>12-19</p>
@@ -133,7 +145,7 @@
             <p>12月26日，由四川省市场监管局指导、四川省广告协会主办的“2019四川广告人荣耀之夜”在成都举行。此次盛典集政府领导、高校教授、媒体、知名品牌等齐聚一堂，打造广告产业链条融合交流的高效平台，推动广告传媒行业的繁荣发展。</p>
           </div>
         </div>
-        <div class="news_case_item" @click="toPathNew(3)">
+        <div class="news_case_item" @click="toPathNew(157)">
           <div class="news_case_time">
             <span>2019</span>
             <p>12-19</p>
@@ -143,7 +155,7 @@
             <p>12月25日，川商总会2020年新年演讲在成都举行。全国工商联副主席、四川省政协副主席、四川省工商联主席陈放，川商总会会长、新希望集团董事长刘永好，川商总会常务副会长、泸州老窖董事长刘淼等嘉宾齐聚盛典，聚焦商业前沿理念，探讨时代发展新趋势。</p>
           </div>
         </div>
-        <div class="news_case_item" @click="toPathNew(4)">
+        <div class="news_case_item" @click="toPathNew(155)">
           <div class="news_case_time">
             <span>2019</span>
             <p>12-19</p>
@@ -161,7 +173,7 @@
           <div class="logo"></div>
           <video
             id="playVideo"
-            src="https://cdn.xinchao.com/goods/201812/d41d8cd98f00b204e9800998ecf8427e1544319963.mp4"
+            :src="videoList[0]"
             preload="auto"
             controls="controls"
             width="100%"
@@ -192,14 +204,19 @@ export default {
       ],
       exposureList: [
         { label: "设备数", value: 0 },
-        { label: "曝光度", value: 1 },
+        { label: "花费（元）", value: 1 },
         { label: "曝光数", value: 2 }
       ],
       timeList: [{ label: "过去七天", value: 1 }],
       imgList: [
-        "https://cdn.xinchao.com/goods/201712/5a45dba483150.png",
-        "https://cdn.xinchao.com/goods/201712/5a2a391541744.jpg",
-        "https://cdn.xinchao.com/goods/201808/5b867fd84b09a.png"
+        "https://cdn.xinchao.com/goods/201806/5b2367bc96f13.png",
+        "https://cdn.xinchao.com/goods/201807/5b5ab83c7e3bd.jpg",
+        "https://cdn.xinchao.com/goods/201803/5a9df89704b31.jpg"
+      ],
+      videoList: [
+        "https://cdn.xinchao.com/goods/201912/b23d7a29773d52cfe3d0e5572d7c00a41576664715.mp4",
+        "https://cdn.xinchao.com/goods/201912/f9ec76497c75c2fdf378aae3ab7cfb801576666433.mp4",
+        "https://cdn.xinchao.com/goods/201912/3678d23889d5a75cffd3c829062388d71576668059.mp4"
       ],
       loading: false,
       images: {
@@ -223,7 +240,12 @@ export default {
       },
       selectLine: {
         firstValue: 1,
-        secondValue: 2
+        secondValue: 2,
+        selectFirstLabel: "花费（元）",
+        selectSecondLabel: "曝光数",
+        startTime: "",
+        endTime: "",
+        selectTime: [this.$tools.getWeek(-8), this.$tools.getWeek(-2)]
       }
     };
   },
@@ -231,21 +253,44 @@ export default {
     next(vm => {
       vm.getRefresh();
       vm.getSummaryDetail();
-      //vm.getSummaryData();
+      vm.getSummaryData();
     });
   },
-  mounted() {
-    //请求验证码接口
-    let userInfo = getUserInfo();
-    this.company = userInfo.company;
-    this.accountBalance = userInfo.accountBalance;
-    console.log("getWeek", this.$tools.getWeek(-8), this.$tools.getWeek(-2));
-    this.getSummaryData();
-  },
+  // mounted() {
+  //   //请求验证码接口
+  //   let userInfo = getUserInfo();
+  //   this.company = userInfo.company;
+  //   this.accountBalance = userInfo.accountBalance;
+  // },
   methods: {
+    changeSelectTime(selectTimeVal) {
+      this.startTime = selectTimeVal[0];
+      this.endTime = selectTimeVal[1];
+      this.getSummaryDataChange();
+    },
+    //选择第一个
+    changeFirstValue(selectFirst) {
+      let obj = {};
+      obj = this.costList.find(item => {
+        return item.value === selectFirst;
+      });
+      this.selectLine.selectFirstLabel = obj.label;
+      this.selectLine.firstValue = selectFirst;
+      this.getSummaryDataChange();
+    },
+    //选择第二个
+    changeSecondValue(selectSecond) {
+      let obj = {};
+      obj = this.exposureList.find(item => {
+        return item.value === selectSecond;
+      });
+      this.selectLine.selectSecondLabel = obj.label;
+      this.selectLine.secondValue = selectSecond;
+      this.getSummaryDataChange();
+    },
     //首页跳转到新闻页面
-    toPathNew(pathIndex){
-          this.$router.push({ path: "/home/new"+pathIndex, query: {} });
+    toPathNew(pathIndex) {
+      window.open("https://www.xinchao.com/articleDetail/" + pathIndex);
     },
     //首页跳转到投放计划,首页跳转到投放中方案,首页跳转到未支付方案,首页跳转到审核拒绝创意
     goToPath(pathName) {
@@ -302,9 +347,13 @@ export default {
     },
     //刷新首页 用户统计数据=》数据趋势
     getSummaryData: async function() {
+      this.selectLine.selectTime = [
+        this.$tools.getWeek(-8),
+        this.$tools.getWeek(-2)
+      ];
       let param = {
-        startTime: "2019-12-01",
-        endTime: "2019-12-31",
+        startTime: this.$tools.getWeek(-8),
+        endTime: this.$tools.getWeek(-2),
         first: this.selectLine.firstValue,
         second: this.selectLine.secondValue
       };
@@ -319,6 +368,26 @@ export default {
       if ("-997" === summaryData) {
       }
       this.loading = false;
+    },
+    getSummaryDataChange: function() {
+      let param = {
+        startTime: this.selectLine.startTime,
+        endTime: this.selectLine.endTime,
+        first: this.selectLine.firstValue,
+        second: this.selectLine.secondValue
+      };
+      this.$api.Login.getSummaryData(param)
+        .then(res => {
+          let summaryData = res.result;
+          summaryData.first.forEach(fItem => {
+            this.summaryLineData.sFirstData.push(fItem.summary);
+            this.summaryLineData.xdata.push(fItem.date);
+          });
+          summaryData.second.forEach(sItem => {
+            this.summaryLineData.sSecondData.push(sItem.summary);
+          });
+        })
+        .catch(res => {});
     },
     calMax(arr) {
       let max = arr[0];
@@ -340,7 +409,9 @@ export default {
 .home-body {
   width: 1200px;
   margin: 0 auto;
-
+  .goToPath {
+    cursor: pointer;
+  }
   .un-pay-p {
     color: $color-main;
   }
@@ -550,9 +621,6 @@ export default {
           .news_case_content {
             h4 {
               color: rgba(244, 74, 74, 1);
-            }
-            p {
-              border-bottom: 1px solid rgba(244, 74, 74, 1);
             }
           }
         }

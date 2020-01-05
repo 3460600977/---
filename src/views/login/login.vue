@@ -198,7 +198,6 @@ export default {
                 setMenuList(menuList);
                 this.$router.push({ path: "/home", query: {} });
               }
-              console.log('menuList',menuList,'audit',audit,'info',info.menu)
             })
             .catch(res => {
               this.loading = false;
