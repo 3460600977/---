@@ -37,6 +37,10 @@
         type: Object,
         required: true
       },
+      title:{
+        type: String,
+        default:""
+      },
       grid: {
         type: Object,
         default: function () {
@@ -50,7 +54,7 @@
     },
     data() {
       return {
-        myChart: null
+        myChart: null,
       }
     },
     watch: {
@@ -64,6 +68,13 @@
     mounted() {
       this.myChart = echarts.init(this.$refs.chartBox);
       let option = {
+        title:{
+          text:this.title,
+          textStyle:{
+            fontSize:14,
+            fontWeight:"normal"
+          }
+        },
         legend: {
           icon: 'circle',
           show: this.isShowLegend,
@@ -138,8 +149,15 @@
     },
     methods: {
       reDraw() {
-        this.myChart.clear()
+        this.myChart.clear();
         let option = {
+          title:{
+            text:this.title,
+            textStyle:{
+              fontSize:14,
+              fontWeight:"normal"
+            }
+          },
           legend: {
             icon: 'circle',
             show: this.isShowLegend,
