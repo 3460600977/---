@@ -10,16 +10,16 @@
     <el-card class="box-card area-distibution">
       <div class="report-form-title">常规属性</div>
       <div class="chart-box">
-        <div class="normal-box">
+
+        <div v-if="genderArr.length > 0" class="normal-box">
+          <img class="nannv-icon" :src="nanpvIcon">
           <pieHollowGroup
             width="100%"
             height="100%"
             :color="colors"
             :data="genderArr"
             :title="titles.gender"
-          >
-
-          </pieHollowGroup>
+          />
         </div>
 
         <div class="normal-box">
@@ -30,7 +30,7 @@
             :data="ageData"
             :isShowTitle="isShowTitle"
             :title="titles.age"
-          ></histogram>
+          />
         </div>
 
         <div class="normal-box">
@@ -41,7 +41,7 @@
             :data="educationData"
             :isShowTitle="isShowTitle"
             :title="titles.education"
-          ></histogram>
+          />
         </div>
 
         <div class="normal-box">
@@ -50,19 +50,18 @@
             height="100%"
             :color="colorType[2]"
             :data="consumeData"
-            :isShowTitle="isShowTitle"
             :title="titles.consume"
-          ></histogram>
+          />
         </div>
 
-        <div class="normal-box">
-          <histogram
+        <div v-if="privateCarData.length > 0" class="normal-box">
+          <pieHollowDouble
             width="100%"
             height="100%"
-            :color="colorType[1]"
+            :color="colorType[2]"
             :data="privateCarData"
             :title="titles.privateCar"
-          ></histogram>
+          />
         </div>
 
       </div>
@@ -71,7 +70,7 @@
 
 
     <!-- 线下消费指数 -->
-    <el-card class="box-card">
+    <el-card v-if="offlineConsumptionData.xAxis.length > 0" class="box-card">
       <div class="report-form-title">线下消费指数</div>
       <div class="big-box">
         <histogram
@@ -79,13 +78,13 @@
           height="100%"
           :color="colorType[2]"
           :data="offlineConsumptionData"
-        ></histogram>
+        />
       </div>
     </el-card>
 
 
     <!-- 社区兴趣爱好指数 -->
-    <el-card class="box-card">
+    <el-card v-if="interestData.xAxis.length > 0" class="box-card">
       <div class="report-form-title">社区兴趣爱好指数</div>
       <div class="big-box">
         <histogram
@@ -93,7 +92,7 @@
           height="100%"
           :color="colorType[2]"
           :data="interestData"
-        ></histogram>
+        />
       </div>
     </el-card>
 
@@ -106,13 +105,15 @@ import headerCondition from "./modeles/headerCondition";
 import arealDistribution from "./modeles/arealDistribution";
 import Histogram from "@/components/chart/Histogram.vue";
 import pieHollowGroup from "@/components/chart/pieHollowGroup";
+import pieHollowDouble from "@/components/chart/pieHollowDouble";
 
 export default {
   components: {
     headerCondition,
     arealDistribution,
     Histogram,
-    pieHollowGroup
+    pieHollowGroup,
+    pieHollowDouble
   },
   data() {
     return {
@@ -347,24 +348,9 @@ export default {
           }
         ]
       },
-      privateCarData: {  //车产状况
-        xAxis: [],
-        yAxis: [
-          {
-            "name": '运动型人群包',
-            "type": "bar",
-            "data": [],
-            "barWidth": 18
-          },
-          {
-            "name": "全网人群",
-            "type": "bar",
-            "data": [
-            ],
-            "barWidth": 18
-          }
-        ]
-      },
+      privateCarData: [],
+
+      nanpvIcon: require('@/assets/images/nannv.png'),
 
       offlineConsumptionData: {  //线下消费
         xAxis: [],
@@ -373,13 +359,13 @@ export default {
             "name": "运动型人群包",
             "type": "bar",
             "data": [],
-            "barWidth": 18
+            "barWidth": 30
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [],
-            "barWidth": 18
+            "barWidth": 30
           }
         ]
       },
@@ -390,23 +376,18 @@ export default {
             "name": "运动型人群包",
             "type": "bar",
             "data": [],
-            "barWidth": 18
+            "barWidth": 30
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [],
-            "barWidth": 18
+            "barWidth": 30
           }
         ]
       },
 
-      genderArr: [
-            {name: '男', value: 54},
-            {name: '男-全国', value: 38},
-            {name: '女', value: 24},
-            {name: '女-全国', value: 17},
-        ],
+      genderArr: [],
 
       colors : [
         ['rgba(244, 102, 74, 1)', 'rgba(236, 236, 236, 1)'],
@@ -431,20 +412,6 @@ export default {
   },
   methods: {
     search() {
-      // let barY = [
-      //   {
-      //     "name": '运动型人群包',
-      //     "type": "bar",
-      //     "data": [],
-      //     "barWidth": 18
-      //   },
-      //   {
-      //     "name": "全网人群",
-      //     "type": "bar",
-      //     "data": [],
-      //     "barWidth": 18
-      //   }
-      // ]
       let id= this.$route.query.id;
       this.loading = true;
       this.$api.peopleInsight.getPeopleAlalysis({id:id}).then( res => {
@@ -456,6 +423,9 @@ export default {
         obj.provinceTa = res.result.provinceTa;
         obj.cityTa = res.result.cityTa;
         this.areasList = {...obj};
+
+        let piVO = res.result.crowdInsightPoiVO;
+        let wholePiVO = res.result.crowdInsightPoiVO.wholeNetworkPoiVO;
 
         let barAarr = [
           {
@@ -470,10 +440,10 @@ export default {
             name: 'consumeData',
             key: 'consumptionDist'
           },
-          {
+         /* {
             name: 'privateCarData',
             key: 'privateCarDist'
-          },
+          },*/
           {
             name: 'offlineConsumptionData',
             key: 'offlineConsumption'
@@ -484,13 +454,43 @@ export default {
           }
         ];
         barAarr.forEach(item => {
-          //console.log(this[item.name])
-          this[item.name].xAxis = res.result.crowdInsightPoiVO[item.key].map(item => item.tag);
-          let yData = res.result.crowdInsightPoiVO[item.key].map(item => item.value);
-          let country = res.result.crowdInsightPoiVO.wholeNetworkPoiVO[item.key].map(item => item.value);
+          this[item.name].xAxis = piVO[item.key].map(item => item.tag);
+          let yData = piVO[item.key].map(item => item.value);
+          let country = wholePiVO[item.key].map(item => item.value);
           this[item.name].yAxis[0].data = yData;
           this[item.name].yAxis[1].data = country;
-        })
+        });
+        //车产
+        piVO['privateCarDist'].forEach((itemOther,index)=>{
+          itemOther.name = itemOther.tag;
+          wholePiVO['privateCarDist'][index].name = wholePiVO['privateCarDist'][index].tag;
+          piVO['genderDist'][index].name = piVO['genderDist'][index].tag;
+          wholePiVO['genderDist'][index].name = wholePiVO['genderDist'][index].tag;
+        });
+        this.privateCarData.push(piVO['privateCarDist']);
+        this.privateCarData.push(wholePiVO['privateCarDist']);
+        this.privateCarData.name = this.legendTitle;
+
+        //gender
+        let man = [];
+        let woman = [];
+        piVO['genderDist'].forEach(g=>{
+          g.name = '运动型人群包';
+          if (g.tag === '男') {
+            man.push(g)
+          }else {
+            woman.push(g)
+          }
+        });
+        wholePiVO['genderDist'].forEach(gw=>{
+          gw.name = '全网人群';
+          if (gw.tag === '男') {
+            man.push(gw)
+          }else {
+            woman.push(gw)
+          }
+        });
+        this.genderArr = man.concat(woman);
 
       }).catch(res => {
         this.loading = false;
@@ -505,6 +505,7 @@ export default {
   padding: 0 20px 20px;
   .area-distibution{
     .chart-box{
+      position: relative;
       margin: 0 -20px;
       .normal-box{
         float: left;
@@ -512,6 +513,12 @@ export default {
         height:306px;
         margin: 20px;
         border:1px solid rgba(236,236,236,1);
+      }
+      .nannv-icon{
+        position: absolute;
+        top: 100px;
+        left: 83px;
+        width: 28px;
       }
     }
   }
