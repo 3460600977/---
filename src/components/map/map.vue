@@ -105,7 +105,6 @@
       this.setCity({name: '成都市'})
       map.enableScrollWheelZoom();
       map.addControl(new BMap.ScaleControl());
-      console.log('5555')
       // this.initHotMap()
       this.mapBindEvent()
     },
