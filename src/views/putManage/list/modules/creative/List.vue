@@ -197,7 +197,7 @@
                   <label class="text-info">{{$tools.getObjectItemFromArray(MonitorData.thirdPartyMonitor, 'value', item.thirdPartyMonitor).name || '无'}}</label>
                 </div>
 
-                <div  class="text-col">
+                <div  class="text-col" v-if="item.thirdPartyMonitor != 'ky'">
                   <span class="text-title">监测地址</span>
                   <label class="text-info">{{item.thirdPartyMonitorUrl || '无'}}</label>
                 </div>
