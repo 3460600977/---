@@ -58,7 +58,7 @@
         <!-- 按周投放 -->
         <el-form-item v-if="formData.projectType.value == 0" label="投放时间" class="week-item mt-20" prop="date">
           <el-date-picker
-            @change="changePageData(); changeWeek()"
+            @change="changePageData()"
             :disabled="isEdit"
             :clearable="false"
             v-model="formData.date"
@@ -327,6 +327,19 @@
       mapChooseWindow,
     },
     data() {
+      let validateTime = (rule, value, callback) => {
+        if (!value) {
+          callback(new Error('请设置投放时间!'));
+        }
+        if (this.formData.date) {
+          let _dateBegin = new Date(this.formData.date[0]);
+          let _dateEnd = new Date(this.formData.date[1]);
+          if (_dateBegin.getDay() !== 6 || _dateEnd.getDay() !== 5 || _dateBegin === _dateEnd) {
+            callback(new Error('按周投放的开始时间必须是周六, 结束时间必须为周五, 请正确输入!'));
+          }
+        }
+        callback()
+      }
       return {
         closeEscTrue:false,
         projectConst,
@@ -407,7 +420,8 @@
             {required: true, message: '请选择投放方案行业!', trigger: 'change'},
           ],
           date: [
-            {required: true, message: '请设置投放时间!', trigger: 'blur'},
+            // {required: true, message: '请设置投放时间!', trigger: 'blur'},
+            { validator: validateTime, trigger: 'blur' }
           ],
           count: [
             {required: true, message: '请选投放频次!', trigger: 'change'},
@@ -545,21 +559,6 @@
       // 显示地图选点
       showMapChoose() {
         this.buildingDirection.mapChooseShow = true;
-      },
-
-
-      // 按周投放时间校验
-      changeWeek() {
-        if (!this.formData.date) return;
-        let _dateBegin = new Date(this.formData.date[0]);
-        let _dateEnd = new Date(this.formData.date[1]);
-        if (_dateBegin.getDay() !== 6 || _dateEnd.getDay() !== 5 || _dateBegin === _dateEnd) {
-          this.formData.date = '';
-          return this.$message({
-            message: '请选择周六开始, 周五结束',
-            type: 'error'
-          });
-        }
       },
 
 
@@ -846,7 +845,6 @@
         'buildsDetails'
       ]),
 
-      // TODO 余额不足
 
       // 时间限制
       pickerOptions() {
@@ -856,8 +854,6 @@
           firstDayOfWeek: 6,
           disabledDate(date) {
             return date.getTime() < Date.now() - 8.64e7 ||
-            // date.getTime() > _this.planData.data.endTime ||
-            // date.getTime() < _this.planData.data.beginTime ||
             (now.getDate() == date.getDate() && now.getMonth() === date.getMonth() && now.getDay() == 6 && now.getHours() > 18) ||
             (_this.formData.projectType.value == 0 && date.getDay() != 5 && date.getDay() != 6);
           }
