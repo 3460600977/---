@@ -20,6 +20,7 @@
             :data="genderArr"
             :title="titles.gender"
             :legend="legendTitle"
+            :center="positionType[2]"
           />
         </div>
 
@@ -67,7 +68,12 @@
             :title="titles.privateCar"
             :legend="legendTitle"
           />
+          <div style="position: relative;width: 100%">
+            <p class="text" :style="{'left': positionType[2][0][0]}">{{legendTitle[0]}}</p>
+            <p class="text" :style="{'left': positionType[2][1][0]}">{{legendTitle[1]}}</p>
+          </div>
         </div>
+
 
       </div>
 
@@ -408,6 +414,13 @@ export default {
         "consume":"收入水平",
         "privateCar":"车产状况",
         "marriage":"婚姻状况",
+      },
+
+      positionType: {
+        2: [
+          ['29%', '55%'],
+          ['69%', '55%']
+        ]
       }
 
 
@@ -525,6 +538,33 @@ export default {
         margin: 20px;
         border:1px solid rgba(236,236,236,1);
       }
+      .text {
+        color: $color-text-1;
+        position: absolute;
+        bottom: 20px;
+        display: inline-block;
+        transform: translateX(-50%);
+      }
+      .left {
+        width: 290px;
+        .img {
+          width: 100%;
+          height: 180px;
+          background: red;
+        }
+        .ul {
+          font-size: 0;
+          li {
+            display: inline-block;
+            font-size: 14px;
+            text-align: center;
+          }
+          .color-text-1 {
+            margin-top: 10px;
+            font-weight: 400;
+          }
+        }
+      }
       .nannv-icon{
         position: absolute;
         top: 100px;
@@ -539,4 +579,5 @@ export default {
     border-radius:4px;
   }
 }
+
 </style>
