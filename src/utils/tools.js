@@ -349,7 +349,7 @@ let tools = {
     let lastDay = new Date(curr.setDate(last))
     firstDay = this.getFormatDate(fmt, firstDay)
     lastDay = this.getFormatDate(fmt, lastDay)
-    return { firstWeekDay: firstDay, lastWeekDay: lastDay }
+    return [ firstDay, lastDay ]
   },
   //获取本周第i天日期
   getWeek(i) {
@@ -362,6 +362,11 @@ let tools = {
     if (mon < 10) mon = '0' + mon;
     if (day < 10) day = '0' + day;
     return now.getFullYear() + "-" + mon + "-" + day;
+  },
+   getLastWeek() {
+    var today = new Date();
+    var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+    return lastWeek;
   },
 
   /**

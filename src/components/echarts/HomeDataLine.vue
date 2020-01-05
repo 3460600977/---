@@ -71,7 +71,6 @@ export default {
         tooltip: {
           trigger: "axis",
           formatter: function(params) {
-            console.log(params);
             let str = `<p>${params[0].name}</p>`;
             params.forEach(item => {
               str += `
