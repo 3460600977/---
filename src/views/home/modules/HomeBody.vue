@@ -240,11 +240,14 @@ export default {
       summaryLineData: {
         sFirstData: [],
         xdata: [],
-        sSecondData: []
+        sSecondData: [],
+        selectLine: {}
       },
       selectLine: {
         firstValue: 1,
         secondValue: 2,
+        selectFirstLabelLine: "花费（元）¥ ",
+        selectSecondLabelLine: "曝光数",
         selectFirstLabel: "花费（元）",
         selectSecondLabel: "曝光数",
         startTime: this.$tools.getFormatDate(
@@ -293,6 +296,10 @@ export default {
       });
       this.selectLine.selectFirstLabel = obj.label;
       this.selectLine.firstValue = selectFirst;
+      this.selectLine.selectFirstLabelLine = obj.label;
+      if (this.selectLine.firstValue === 1) {
+        this.selectLine.selectFirstLabelLine = "花费（元）¥ ";
+      }
       this.getSummaryDataChange();
     },
     //选择第二个
@@ -303,6 +310,10 @@ export default {
       });
       this.selectLine.selectSecondLabel = obj.label;
       this.selectLine.secondValue = selectSecond;
+      this.selectLine.selectSecondLabelLine = obj.label;
+      if (this.selectLine.secondValue === 1) {
+        this.selectLine.selectSecondLabelLine = "花费（元）¥ ";
+      }
       this.getSummaryDataChange();
     },
     //首页跳转到新闻页面
@@ -376,14 +387,19 @@ export default {
       };
       let summaryData = await this.$tools.getSummaryData(param);
       summaryData.first.forEach(fItem => {
+        if (this.selectLine.firstValue === 1) {
+          fItem.summary = this.$tools.toThousands(fItem.summary / 100, 2);
+        }
         this.summaryLineData.sFirstData.push(fItem.summary);
         this.summaryLineData.xdata.push(fItem.date);
       });
       summaryData.second.forEach(sItem => {
+        if (this.selectLine.secondValue === 1) {
+          sItem.summary = this.$tools.toThousands(sItem.summary / 100, 2);
+        }
         this.summaryLineData.sSecondData.push(sItem.summary);
       });
-      if ("-997" === summaryData) {
-      }
+      this.summaryLineData.selectLine = this.selectLine;
       this.loading = false;
     },
     getSummaryDataChange: function() {
@@ -400,12 +416,19 @@ export default {
         .then(res => {
           let summaryData = res.result;
           summaryData.first.forEach(fItem => {
+            if (this.selectLine.firstValue === 1) {
+              fItem.summary = this.$tools.toThousands(fItem.summary / 100, 2);
+            }
             this.summaryLineData.sFirstData.push(fItem.summary);
             this.summaryLineData.xdata.push(fItem.date);
           });
           summaryData.second.forEach(sItem => {
+            if (this.selectLine.secondValue === 1) {
+              sItem.summary = this.$tools.toThousands(sItem.summary / 100, 2);
+            }
             this.summaryLineData.sSecondData.push(sItem.summary);
           });
+          this.summaryLineData.selectLine = this.selectLine;
         })
         .catch(res => {});
     },
@@ -440,7 +463,7 @@ export default {
     .company-msg {
       float: left;
       height: 100px;
-      .msg-box{
+      .msg-box {
         display: flex;
         flex-direction: column;
         margin: 0 33px 0 14px;
