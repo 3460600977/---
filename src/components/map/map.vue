@@ -12,7 +12,7 @@
     data() {
       return {
         markerArr: [], // 存储marker覆盖物的变量 用于清除marker
-        isInit: true, // 控制只初始化促发事件
+        // isInit: true, // 控制只初始化促发事件
         labelsArr: [], // 存储label覆盖物的变量 用于清楚label
         map: null,
         points: [],
@@ -105,6 +105,7 @@
       this.setCity({name: '成都市'})
       map.enableScrollWheelZoom();
       map.addControl(new BMap.ScaleControl());
+      // this.initHotMap()
       this.mapBindEvent()
     },
     methods: {
@@ -161,6 +162,7 @@
         this.selectedBuildings = [] //当前选中楼盘
         this.indexArr = []
         this.pathArr = {}
+        this.heatmapOverlay = null
         this.map.clearOverlays()
         this.pointsOverlayObj = {
           selectedOverlay: null,
@@ -185,21 +187,18 @@
         this.map.centerAndZoom(city.name, 12);
       },
       initHotMap() {
-        if (this.isInit) {
-          let heatmapOverlay = new BMapLib.HeatmapOverlay({
-            "radius":20,
-            gradient: {
-              0:'rgb(9, 185, 253)',
-              .1:'rgb(86, 255, 0)',
-              .2:'rgb(255, 235, 0)',
-              .3:'rgb(244, 74, 74)'
-            },
-            opacity: 0.6
-          });
-          this.map.addOverlay(heatmapOverlay);
-          this.heatmapOverlay = heatmapOverlay
-          this.isInit = false
-        }
+        let heatmapOverlay = new BMapLib.HeatmapOverlay({
+          "radius":20,
+          gradient: {
+            0:'rgb(9, 185, 253)',
+            .1:'rgb(86, 255, 0)',
+            .2:'rgb(255, 235, 0)',
+            .3:'rgb(244, 74, 74)'
+          },
+          opacity: 0.6
+        });
+        this.map.addOverlay(heatmapOverlay);
+        this.heatmapOverlay = heatmapOverlay
       },
       location() {
         return new Promise((resolve) => {
@@ -713,16 +712,22 @@
           this.$emit('drawCancle')
         }
       },
-      tilesloaded() {
-        this.initHotMap()
-      },
+      // tilesloaded() {
+      //   if (this.isInit) {
+      //     setTimeout(() => {
+      //       console.log('6666')
+      //       // this.initHotMap()
+      //       this.isInit = false
+      //     }, 0)
+      //   }
+      // },
       mapBindEvent() {
         this.map.addEventListener('dragend', this.drawMarkersByVisual)
         this.map.addEventListener('zoomend', this.mapZoomEnd)
         this.map.addEventListener('click', this.mapLeftClick)
         this.map.addEventListener('mousemove', this.mapMouseMove)
         this.map.addEventListener('rightclick', this.mapRightClick)
-        this.map.addEventListener('tilesloaded', this.tilesloaded)
+        // this.map.addEventListener('tilesloaded', this.tilesloaded)
       },
       drawCircle(point, info) {
         let marker = this.addMarkerIcon(point)
@@ -768,7 +773,12 @@
       },
       // 热力图
       drawHotMap(arr) {
-        this.heatmapOverlay.setDataSet({data:arr, max:100});
+        if (this.heatmapOverlay) {
+          this.heatmapOverlay.setDataSet({data:arr, max:100});
+        } else {
+          this.initHotMap()
+          this.heatmapOverlay.setDataSet({data:arr, max:100});
+        }
       },
       showHotMap() {
         if (this.heatmapOverlay) {
