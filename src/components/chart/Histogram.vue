@@ -153,6 +153,7 @@
         series: this.data.yAxis
       };
       this.myChart.setOption(option);
+      window.onresize = this.myChart.resize();
     },
     methods: {
       reDraw() {
@@ -237,6 +238,9 @@
           series: this.data.yAxis
         };
         this.myChart.setOption(option, true);
+        window.onresize = function(){
+          this.myChart.resize();
+        }
       },
     }
   }
