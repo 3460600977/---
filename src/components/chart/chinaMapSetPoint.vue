@@ -1,6 +1,6 @@
 <template>
-    <div ref="chinaMap" class="container">
-    </div>
+  <div ref="chinaMap" class="container">
+  </div>
 </template>
 
 <script>
@@ -12,6 +12,9 @@
     props: {
       list: {
         type: Array,
+        // default: function () {
+        //   return []
+        // }
         required: true
       },
     },
@@ -35,25 +38,6 @@
       initMap() {
         let mapOptions = { // 进行相关配置
           backgroundColor: "#fff",
-          visualMap: [{
-            type: 'piecewise', // 定义为分段型 visualMap
-            text:['高', '低'],
-            inverse: true,
-            itemWidth: 20,
-            itemHeight: 8,
-            itemSymbol: 'rect',
-            //itemSymbol: 'rect',
-            orient: 'horizontal',
-            realtime: false,
-            calculable: true,
-            inRange: {
-              color: ['#F4A3A3', '#F44A4A']
-            },
-            splitList: [
-              {start: 0}
-            ],
-          }],
-
           geo: {
             map: 'china',
             label: {
@@ -67,24 +51,41 @@
                 color: '#facdcd'
               },
               emphasis: {
-                areaColor: '#F44C4A',
+                label: {
+                  show: false
+                },
+                borderColor: '#fff',
+                color: '#facdcd',
                 shadowOffsetX: 0,
                 shadowOffsetY: 0,
                 shadowBlur: 20,
                 borderWidth: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                shadowColor: 'rgba(255, 255, 255, 0.5)'
               }
             }
           },
-          series: [{
-            type: 'scatter',
-            coordinateSystem: 'geo', // 对应上方配置
-          },
+          series: [
             {
-              type: 'map',
-              geoIndex: 0,
-              data: this.list
-            }
+              type: 'scatter',
+              coordinateSystem: 'geo',
+              data: this.list,
+              symbolSize: function (val) {
+                return 10;
+              },
+              label: {
+                formatter: '{b}',
+                position: 'right',
+                show: false
+              },
+              itemStyle: {
+                color: 'purple'
+              },
+              emphasis: {
+                label: {
+                  show: true
+                }
+              }
+            },
           ]
         };
         this.myChart.setOption(mapOptions, true)
