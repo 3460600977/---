@@ -677,7 +677,7 @@
         } else {
           if (this.pointsOverlayObj.isShow === false) {
             this.togglePoints(this.pointsOverlayObj.isShow)
-            this.drawDevicePoints()
+            // this.drawDevicePoints()
           }
           this.removeMarkers()
         }
