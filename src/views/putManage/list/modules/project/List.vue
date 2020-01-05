@@ -3,8 +3,6 @@
 
     
     <!-- 查询 -->
-    <!-- <searchCondition @searchByCondition="handleSearch" :searchType="'project'"/> -->
-      <!-- 投放管理 列表搜索条件 -->
     <el-form :inline="true" class="list-form-inline clearfix">
       <!-- 投放计划名称 -->
       <el-form-item class="line-space" label="投放计划名称">
@@ -54,7 +52,7 @@
 
       <!-- 查询 -->
       <el-form-item class="list-query-button">
-        <el-button type="primary" plain @click="resetPageIndex(); search(); ">查询</el-button>
+        <el-button type="primary" plain @click="handleSearch(); search(); ">查询</el-button>
       </el-form-item>
 
 
@@ -72,7 +70,9 @@
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
         <el-table-column prop="name" label="投放方案名称">
           <template slot-scope="scope">
-            <span class="hand">{{scope.row.name}}</span>
+            <router-link :to="`/putManage?active=creative&projectId=${scope.row.projectId}`">
+              <span class="hand">{{scope.row.name}}</span>
+            </router-link>
           </template>
         </el-table-column>
 
@@ -240,22 +240,17 @@ export default {
   },
 
   watch: {
-    '$route': function() {
-      if (this.$route.query.active !== 'project') return;
-      if (this.$route.query.planId) {
-        this.searchParam.condition.plan.data.id = this.$route.query.planId;
+    '$route': {
+      handler() {
+        this.getAllCity()
+        if (this.$route.query.active !== 'project') return;
+        if (this.$route.query.planId) {
+          this.getPlanNameList()
+          this.searchParam.plan.id = this.$route.query.planId;
+        }
         this.search()
-      }
-    }
-  },
-
-  beforeMount() {
-    this.getAllCity()
-    if (this.$route.query.planId) {
-      this.searchParam.condition.plan.data.id = this.$route.query.planId;
-      this.search()
-    } else {
-      this.search()
+      },
+      immediate: true
     }
   },
 
@@ -287,6 +282,7 @@ export default {
 
     // 城市列表
     getAllCity() {
+      if (this.cityList.length > 0) return;
       this.$api.CityList.AllList()
         .then(res => {
           this.cityList = res.result;
@@ -347,9 +343,10 @@ export default {
         })
     },
 
-    // 重置翻页为1
-    resetPageIndex() {
+    // 重置  翻页为1  重置传入的planid
+    handleSearch() {
       this.searchParam.page.pageIndex = 1;
+      this.$router.replace('/putManage?active=project')
     },
 
     handleSizeChange(val) {

@@ -65,7 +65,6 @@ export default {
   watch: {
     value: {
       handler(newVal) {
-        console.log(newVal)
         this.screenType = this.$tools.getObjectItemFromArray(this.projectConst.screenType, 'value', newVal);
       },
       immediate: true

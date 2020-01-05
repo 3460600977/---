@@ -20,7 +20,7 @@
 
         <!-- 屏幕类型 -->
         <el-form-item class="screen-type-preview-box mt-20" prop="type" label="屏幕类型">
-          <ScreenType  :value="formData.type" @changeScreenType="changeScreenType" :disabled="isEdit"/>
+          <ScreenType  :value="formData.type.value" @changeScreenType="changeScreenType" :disabled="isEdit"/>
         </el-form-item>
 
         <!-- 投放类型 -->
@@ -248,7 +248,7 @@
         </div>
       </template>
 
-      <noData v-else>无可售数据</noData>
+      <noData v-loading="buildingDirection.builds.loading" v-else>无可售数据</noData>
 
 
       <el-divider></el-divider>

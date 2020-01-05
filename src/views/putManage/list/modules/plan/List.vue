@@ -211,17 +211,20 @@ export default {
           }
         })
     },
+    
 
     // 重置翻页为1
     resetPageIndex() {
       this.searchParam.page.pageIndex = 1;
     },
 
+
     handleSizeChange(val) {
       this.searchParam.page.pageSize = val;
       this.searchParam.page.pageIndex = 0;
       this.search()
     },
+    
 
     handleCurrentChange(val) {
       debugger
