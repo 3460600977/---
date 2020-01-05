@@ -78,11 +78,11 @@ export const fileType = [
 
 // 投放目的
 export const PutGoal = [
-  {name: '品牌宣传', value: 0, icon: require('../assets/images/plan_title_red_1.png')},
-  {name: '产品促销', value: 1, icon: require('../assets/images/plan_title_red_2.png')},
-  {name: '到店引流', value: 2, icon: require('../assets/images/plan_title_red_3.png')},
-  {name: '搜索热度提升', value: 3, icon: require('../assets/images/plan_title_red_4.png')},
-  {name: '新品上市', value: 4, icon: require('../assets/images/plan_title_red_4.png')}
+  {name: '品牌宣传', value: 0, icon: require('@/assets/images/plan_title_red_1.png')},
+  {name: '产品促销', value: 1, icon: require('@/assets/images/plan_title_red_2.png')},
+  {name: '到店引流', value: 2, icon: require('@/assets/images/plan_title_red_3.png')},
+  {name: '搜索热度提升', value: 3, icon: require('@/assets/images/plan_title_red_4.png')},
+  {name: '新品上市', value: 4, icon: require('@/assets/images/xinpin_title_red.png')}
 ]
 
 
@@ -105,7 +105,7 @@ export const Budget = [
 
 // 创意状态
 export const creativeStatus = [
-  {name: '待审核', value: 0},
+  {name: '待审核',   value: 0},
   {name: '审核通过', value: 2},
   {name: '审核拒绝', value: 1}
 ]

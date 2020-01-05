@@ -269,8 +269,16 @@ export default {
         if (this.$route.query.planId) {
           this.getPlanNameList()
           this.searchParam.plan.id = this.$route.query.planId;
-        } else {
+        }
+        
+        else if (this.$route.query.status) {
+          this.getPlanNameList()
+          this.searchParam.plan.status = this.$route.query.status;
+        } 
+
+        else {
           this.searchParam.plan.id = '';
+          this.searchParam.plan.status = ''
         }
         
         this.search()

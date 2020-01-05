@@ -158,9 +158,9 @@
       <el-tabs v-model="activeName">
         <el-tab-pane label="创意资质" name="aptitude" class="aptitude">
           <div v-loading="detailDialog.loading">
-            <div class="no-pass">
+            <div class="no-pass" v-if="detailDialog.data.status == 1">
               <img class="no-pass-img" :src="noPassImg" alt="" srcset="">
-              <div>资质不符合要求，请上传相关资质</div>
+              <div>{{JSON.parse(detailDialog.data.rejectReason).join(',')}}</div>
             </div>
             <div class="text-col">
               <span class="text-title">广告创意名称</span>
@@ -360,8 +360,15 @@ export default {
         if (this.$route.query.projectId) {
           this.getProjectNameList()
           this.searchParam.project.id = this.$route.query.projectId;
-        } else {
+        } 
+
+        else if (this.$route.query.status) {
+          this.searchParam.creative.status = +this.$route.query.status;
+        } 
+
+        else {
           this.searchParam.project.id = '';
+          this.searchParam.creative.status = '';
         }
 
         this.search()
