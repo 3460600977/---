@@ -59,10 +59,6 @@ export default {
     projectId: {
       type: Number,
       required: true
-    },
-    activeTab: {
-      type: String,
-      default: 'project'
     }
   },
 
@@ -80,6 +76,8 @@ export default {
         loading: true,
         data: ''
       },
+
+      activeTab: 'project',
 
       indurstryList: [],
 
