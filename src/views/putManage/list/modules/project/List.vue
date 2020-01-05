@@ -243,11 +243,16 @@ export default {
     '$route': {
       handler() {
         this.getAllCity()
+
         if (this.$route.query.active !== 'project') return;
+
         if (this.$route.query.planId) {
           this.getPlanNameList()
           this.searchParam.plan.id = this.$route.query.planId;
+        } else {
+          this.searchParam.plan.id = '';
         }
+        
         this.search()
       },
       immediate: true
@@ -346,7 +351,7 @@ export default {
     // 重置  翻页为1  重置传入的planid
     handleSearch() {
       this.searchParam.page.pageIndex = 1;
-      this.$router.replace('/putManage?active=project')
+      // this.$router.replace('/putManage?active=project')
     },
 
     handleSizeChange(val) {

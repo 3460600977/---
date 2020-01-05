@@ -36,14 +36,16 @@ export default {
     };
   },
 
-  beforeMount() {
-    this.activeName = this.$route.query.active || "plan";
-  },
-
   watch: {
-    '$route.query.active': function(val) {
-      this.activeName = val;
-    }
+    '$route': {
+      handler: function(val) {
+        this.activeName = val.query.active || "plan";
+        if (!val.query.active) {
+          this.$router.replace('/putManage?active=plan')
+        }
+      },
+      immediate: true
+    } 
   },
 
   methods: {
