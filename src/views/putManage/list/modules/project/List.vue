@@ -3,8 +3,6 @@
 
     
     <!-- 查询 -->
-    <!-- <searchCondition @searchByCondition="handleSearch" :searchType="'project'"/> -->
-      <!-- 投放管理 列表搜索条件 -->
     <el-form :inline="true" class="list-form-inline clearfix">
       <!-- 投放计划名称 -->
       <el-form-item class="line-space" label="投放计划名称">
@@ -54,7 +52,7 @@
 
       <!-- 查询 -->
       <el-form-item class="list-query-button">
-        <el-button type="primary" plain @click="resetPageIndex(); search(); ">查询</el-button>
+        <el-button type="primary" plain @click="handleSearch(); search(); ">查询</el-button>
       </el-form-item>
 
 
@@ -240,22 +238,18 @@ export default {
   },
 
   watch: {
-    '$route': function() {
-      if (this.$route.query.active !== 'project') return;
-      if (this.$route.query.planId) {
-        this.searchParam.condition.plan.data.id = this.$route.query.planId;
+    '$route': {
+      handler() {
+        this.getAllCity()
+        if (this.$route.query.active !== 'project') return;
+        console.log(1)
+        if (this.$route.query.planId) {
+          this.getPlanNameList()
+          this.searchParam.plan.id = this.$route.query.planId;
+        }
         this.search()
-      }
-    }
-  },
-
-  beforeMount() {
-    this.getAllCity()
-    if (this.$route.query.planId) {
-      this.searchParam.condition.plan.data.id = this.$route.query.planId;
-      this.search()
-    } else {
-      this.search()
+      },
+      immediate: true
     }
   },
 
@@ -348,8 +342,9 @@ export default {
     },
 
     // 重置翻页为1
-    resetPageIndex() {
+    handleSearch() {
       this.searchParam.page.pageIndex = 1;
+      this.$router.replace('/putManage?active=project')
     },
 
     handleSizeChange(val) {
