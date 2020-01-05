@@ -297,7 +297,7 @@
     <el-dialog
       :visible.sync="buildingDirection.mapChooseShow"
       width="98%"
-      class="map-choose"
+      class="map-choose-dialog"
       :close-on-press-escape="closeEscTrue">
       <map-choose-window @hideMapPoint="hideMapPoint"
                          @submitSelectedBuildPoint="submitSelectedBuildPoint">
@@ -889,6 +889,18 @@
 
 <style scoped lang="scss">
   .put-project {
+    .map-choose-dialog{
+      top: -13%;
+      /deep/ .el-dialog__header {
+        display: none;
+      }
+      /deep/ .el-dialog__body {
+        padding: 10px;
+      }
+      /deep/ .el-dialog__footer {
+        padding: 12px 40px 20px 0;
+      }
+    }
     .el-tabs__content {
       overflow: visible;
     }
