@@ -63,6 +63,16 @@
       submitForm(form) {
         this.$refs[form].validate((valid) => {
           if (valid) {
+            let city = "";
+            this.crowdProject.tagNames.forEach((tags,index)=>{
+              if (tags.tid === this.crowdProject.cityTid) {
+                city = tags.tags[0].name;
+              }
+            });
+            if (city === ""){
+              this.$message.error('请选择一个城市');
+              return false;
+            }
             this.dialogShowContent = true
           } else {
             return false;
@@ -97,11 +107,6 @@
           }
         });
 
-        if (city === ""){
-          this.$message.error('城市必选');
-          this.fullscreenLoading = false;
-          return false;
-        }
         this.form.tags = childTids;
         this.form.tagsName = JSON.stringify(this.crowdProject.tagNames);
         this.form.city = city;
