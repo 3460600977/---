@@ -5,12 +5,17 @@
 export const putProject = {
   state: {
     list: [], // 楼盘列表
+    statistics: '', // 楼盘数据未寻量统计
   },
 
   mutations: {
     setBuildsList(state, data) {
       state.list = data;
-    }
+    },
+
+    setStatistics(state, data) {
+      state.statistics = data;
+    },
   },
 
   getters: {
@@ -68,7 +73,7 @@ export const putProject = {
       })
       result = result.join(',')
       return result;
-    }
+    },
 
   }
 }
