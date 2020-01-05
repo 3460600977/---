@@ -91,7 +91,7 @@
                     position: 'center',
                     show: true,
                     textStyle: {
-                      fontSize: '14',
+                      fontSize: '12',
                       color: colors[index][0]
                     }
                   }
