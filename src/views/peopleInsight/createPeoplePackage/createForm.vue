@@ -98,10 +98,8 @@
         });
 
         if (city === ""){
-          this.$message({
-            type: 'warning',
-            message: '城市必选'
-          });
+          this.$message.error('城市必选');
+          this.fullscreenLoading = false;
           return false;
         }
         this.form.tags = childTids;
@@ -116,10 +114,7 @@
           })
           .catch(res => {
             this.fullscreenLoading = false;
-            this.$message({
-              type: 'info',
-              message: '保存失败'
-            })
+            this.$message.error('保存失败');
           })
       },
       backToList(){

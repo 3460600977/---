@@ -186,7 +186,16 @@
       },
       initHotMap() {
         if (this.isInit) {
-          let heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
+          let heatmapOverlay = new BMapLib.HeatmapOverlay({
+            "radius":20,
+            gradient: {
+              0:'rgb(9, 185, 253)',
+              .1:'rgb(86, 255, 0)',
+              .2:'rgb(255, 235, 0)',
+              .3:'rgb(244, 74, 74)'
+            },
+            opacity: 0.6
+          });
           this.map.addOverlay(heatmapOverlay);
           this.heatmapOverlay = heatmapOverlay
           this.isInit = false
@@ -375,20 +384,12 @@
       drawErrorTip(e) {
         let p = e.overlay.getPath()
         if (p.length === 1 || this.isAllEqual(p)) {
-          this.$notify({
-            title: '警告',
-            message: '当前选点的位置太接近，无法进行地图选点！',
-            type: 'warning'
-          });
+          this.$message.error('当前选点的位置太接近，无法进行地图选点！');
           this.$emit('drawCancle')
           return false
         }
         if (e.drawingMode === "polygon" && p.length === 2) {
-          this.$notify({
-            title: '警告',
-            message: '多边形至少进行三次选点才能形成有效选点区域！',
-            type: 'warning'
-          });
+          this.$message.error('多边形至少进行三次选点才能形成有效选点区域！');
           this.$emit('drawCancle')
           this.map.removeOverlay(e.overlay)
           return false
@@ -613,7 +614,9 @@
 
         if (type === 1) {
           marker.addEventListener('mousedown', (e) => {
-            this.$emit('buildingClick', point)
+            if (this.currentSelectType === null) {
+              this.$emit('buildingClick', point)
+            }
           })
           marker.addEventListener('mouseover', (e) => {
             if (this.currentSelectType === null && this.activePath === null) {
@@ -674,7 +677,7 @@
         } else {
           if (this.pointsOverlayObj.isShow === false) {
             this.togglePoints(this.pointsOverlayObj.isShow)
-            this.drawDevicePoints()
+            // this.drawDevicePoints()
           }
           this.removeMarkers()
         }
@@ -874,7 +877,9 @@
         }
       },
       pointEventClick(event) {
-        this.$emit('buildingClick', event.point)
+        if (this.currentSelectType === null) {
+          this.$emit('buildingClick', event.point)
+        }
       },
       /*
        * 画背景点方法 0：已选 1：未选

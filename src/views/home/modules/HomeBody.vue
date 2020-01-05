@@ -113,7 +113,37 @@
     <el-card class="box-card news_list shadow">
       <h2>新闻资讯</h2>
       <div class="news_case_list">
-        <div class="news_case_item" v-for="(item,index) in 4" :key="index">
+        <div class="news_case_item"  @click="toPathNew">
+          <div class="news_case_time">
+            <span>2019</span>
+            <p>12-19</p>
+          </div>
+          <div class="news_case_content">
+            <h4>新潮传媒携手时间的朋友，探索2020年的基本盘</h4>
+            <p>12月31日晚，2019年的最后一夜，罗振宇2019-2020“时间的朋友”跨年演讲在上海举行。今年跨年演讲的主题围绕着“基本盘”三个字展开，带着各位“时间的朋友”探索中国商业2020年的“基本盘”，厘清2020年的趋势和方向。新潮传媒作为联合特约合作伙伴，全程支持本次活动。</p>
+          </div>
+        </div>
+        <div class="news_case_item" @click="toPathNew(2)">
+          <div class="news_case_time">
+            <span>2019</span>
+            <p>12-19</p>
+          </div>
+          <div class="news_case_content">
+            <h4>四川广告人荣耀之夜：新潮传媒解析如何用科技重新定义电梯媒体</h4>
+            <p>12月26日，由四川省市场监管局指导、四川省广告协会主办的“2019四川广告人荣耀之夜”在成都举行。此次盛典集政府领导、高校教授、媒体、知名品牌等齐聚一堂，打造广告产业链条融合交流的高效平台，推动广告传媒行业的繁荣发展。</p>
+          </div>
+        </div>
+        <div class="news_case_item" @click="toPathNew(3)">
+          <div class="news_case_time">
+            <span>2019</span>
+            <p>12-19</p>
+          </div>
+          <div class="news_case_content">
+            <h4>川商总会2020新年演讲：新潮传媒张继学解码线下媒体数字化</h4>
+            <p>12月25日，川商总会2020年新年演讲在成都举行。全国工商联副主席、四川省政协副主席、四川省工商联主席陈放，川商总会会长、新希望集团董事长刘永好，川商总会常务副会长、泸州老窖董事长刘淼等嘉宾齐聚盛典，聚焦商业前沿理念，探讨时代发展新趋势。</p>
+          </div>
+        </div>
+        <div class="news_case_item" @click="toPathNew(4)">
           <div class="news_case_time">
             <span>2019</span>
             <p>12-19</p>
@@ -213,6 +243,10 @@ export default {
     this.getSummaryData();
   },
   methods: {
+    //首页跳转到新闻页面
+    toPathNew(pathIndex){
+          this.$router.push({ path: "/home/new"+pathIndex, query: {} });
+    },
     //首页跳转到投放计划,首页跳转到投放中方案,首页跳转到未支付方案,首页跳转到审核拒绝创意
     goToPath(pathName) {
       switch (pathName) {

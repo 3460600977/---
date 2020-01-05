@@ -350,8 +350,10 @@
         this.activeTab = val.value
       },
       loadHotMap(id) {
+        this.loading = true
         this.$api.peopleInsight.getPeopleInsightHotMap({crowdInsightId: id, max: 100, min: 0}).then((data) => {
           // this.$refs.dbmap.setCity(this.cityFilter)
+          this.loading = false
           if (data.result) {
             this.$refs.dbmap.drawHotMap(data.result)
           } else {
@@ -462,11 +464,16 @@
       getCityFilter() {
         this.$refs.dbmap.location().then((data) => {
           if (data.name === '全国') {
-            this.$notify({
-              title: '提示',
-              message: '定位失败，将自动设置成北京！',
+            this.$confirm('定位失败，将自动将城市设置为北京！', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              data.name = '北京市'
+              this.cityFilter = Object.assign({}, this.cityFilter, {name: data.name})
+              return
+            }).catch(() => {
             });
-            data.name = '北京市'
           }
           this.cityFilter = Object.assign({}, this.cityFilter, {name: data.name})
         })
@@ -494,10 +501,7 @@
       },
       loadData() {
         if (this.cityFilter.cityCode === null) {
-          this.$notify({
-            title: '提示',
-            message: '当前城市尚未开通，我们已在快马加鞭，敬请期待！',
-          });
+          this.$message.error('当前城市尚未开通，我们已在快马加鞭，敬请期待！');
           this.loading = false
           return
         }
@@ -576,6 +580,7 @@
       * */
       returnSelectedBuildings(val) {
         this.selectedBuildings = val
+        this.rightShow = 0
       },
       // mapPopup里面点击删除(0)和确定按钮(1)
       operate(val, item) {

@@ -10,39 +10,30 @@
 
       <div class="content-left">
         <div class="choose-type">
-          <el-radio v-model="mapType" label="1">TA人数</el-radio>
-          <el-radio v-model="mapType" label="2">TA浓度</el-radio>
+          <el-radio v-model="mapType" :label="0">TA人数</el-radio>
+          <el-radio v-model="mapType" :label="1">TA浓度</el-radio>
         </div>
-
-        <div class="ta-people-map" ref="taMap"></div>
+        <div class="ta-people-map">
+          <div class="ta-people-map" ref="taMap"></div>
+        </div>
       </div>
 
       <div class="content-right">
         <el-tabs  class="thin-tab small" v-model="activeTab">
           <el-tab-pane label="省份" name="province">
-            <ul class="map-list">
-              <!--<li v-for="(item, index) in list" :key="index" class="map-list-item">-->
-              <li v-for="(item, index) in topTen" :key="index" class="map-list-item">
-                <label class="t-name">{{index+1}}、{{item.name}}</label>
-                <label class=t-value>
-                  <div :style="`width: ${+item.percent}%`" class="value-content"></div>
-                </label>
-                <label class="value-text color-text-1">{{mapType === '1' ? item.count : item.percent + "%"}}</label>
-              </li>
-            </ul>
           </el-tab-pane>
           <el-tab-pane label="城市" name="city">
-            <ul class="map-list">
-              <!--<li v-for="(item, index) in list" :key="index" class="map-list-item">-->
-              <li v-for="(item, index) in topTen" :key="index" class="map-list-item">
-                <label class="t-name">{{index+1}}、{{item.name}}</label>
-                <label class=t-value>
-                  <div :style="`width: ${+item.percent}%`" class="value-content"></div>
-                </label>
-                <label class="value-text color-text-1">{{mapType === '1' ? item.count : item.percent+ "%"}}</label>
-              </li>
-            </ul>
           </el-tab-pane>
+          <ul class="map-list">
+            <li v-for="(item, index) in data[activeTab][mapType]" :key="index" class=" mid-between map-list-item">
+              <label class="t-name text-ellipsis">{{item.name}}</label>
+              <label class='t-value flex1'>
+                <div :style="{'width': item.countPercent}" class="value-content"></div>
+              </label>
+              <label v-if="activeTab === 'province'" class="value-text color-text-1">{{mapType === 0?item.value: item.countPercent}}</label>
+              <label v-else class="value-text color-text-1">{{mapType === 0?item.label: item.countPercent}}</label>
+            </li>
+          </ul>
         </el-tabs>
       </div>
 
@@ -51,8 +42,10 @@
 </template>
 
 <script>
+
 import echarts from 'echarts'
 require('echarts/map/js/china.js');
+
 export default {
   props: {
     areasList: {
@@ -67,175 +60,204 @@ export default {
   },
   data() {
     return {
-      chanaJson: '../../../../assets/china.json',
-      mapType: '1',
+      mapType: 0,
       activeTab: 'province',
       mapData: [],
-      /*list: [
-        {
-          "name": "北京",
-          "count": 999
-        },
-        {
-          "name": "湖北",
-          "count": 810
-        },
-        {
-          "name": "四川",
-          "count": 453
-        },
-        {
-          "name": "上海",
-          "count": 142
-        },
-        {
-          "name": "广东",
-          "count": 142
-        },
-        {
-          "name": "深圳",
-          "count": 92
-        },
-        {
-          "name": "黑龙江",
-          "count": 44
-        },
-        {
-          "name": "湖北",
-          "count": 42
-        },
-        {
-          "name": "浙江",
-          "count": 20
-        },
-        {
-          "name": "江西",
-          "count": 15
-        },
-        {
-          "name": "新疆",
-          "count": 15
-        },
-        {
-          "name": "海南",
-          "count": 15
-        },
-      ],*/
-      topTen:[],
-      mapOptions:{},
+      data: {}
     }
+  },
+  created() {
+    this.data.province = this.normalizeProvinceData(this.areasList.provinceTa)
+    this.data.city = this.normalizeCityData(this.areasList.cityTa)
+  },
+  mounted() {
+    this.myChart = echarts.init(this.$refs.taMap); //这里是为了获得容器所在位置
+    window.onresize = this.myChart.resize;
+    this.reDrawMap()
   },
   watch: {
-    areasList(val) {
-      console.log(val)
-    }
-  },
-  computed: {
-    list() {
-      console.log(this.areasList)
-      let result = [];
-      let list = this.areasList.provinceTa;
-      console.log(list);
-      if(this.activeTab === 'city') {  //城市
-        list = this.areasList.cityTa;
-      }
-      list.forEach(item => {
-        let percent = 0;
-        if(this.mapType === '1') {  //人数
-          percent = item.countPercent * 100;
-        } else {
-          percent = (item.density*100).toFixed(2); //浓度
-        }
-        let name = item.name.replace(/省/g,"").replace(/市/,"");
-        let value = Number(item.count);
-        result.push({name: name, value: value, percent: percent, count: item.count})
-      });
-      // console.log(result)
-      // this.mapData = [{
-      //   "name": "北京",
-      //     "value": 999
-      // },
-      // {
-      //   "name": "湖北",
-      //   "value": 810
-      // }]
-
-      // this.mapData=({
-      //   "name": "湖北",
-      //     "value": 810
-      // },{
-      //   'name': "北京",
-      //   'value': 999
-      // })
-      this.topTen = result.filter((item,index) => {
-        return index < 10;
-      });
-      return result;
-    }
+    mapType() {
+      this.reDrawMap()
+    },
+    activeTab() {
+      this.reDrawMap()
+    },
   },
   methods: {
-    initMap() {
-      let myChart = echarts.init(this.$refs.taMap); //这里是为了获得容器所在位置
-      window.onresize = myChart.resize;
-      this.mapOptions = { // 进行相关配置
-        backgroundColor: "#fff",
-        visualMap: [{
-          type: 'piecewise', // 定义为分段型 visualMap
-          min: 10,
-          max: 1000,
-          text:['高', '低'],
-          inverse: true,
-          itemWidth: 20,
-          itemHeight: 8,
-          itemSymbol: 'rect',
-          //itemSymbol: 'rect',
-          orient: 'horizontal',
-          realtime: false,
-          calculable: true,
-          inRange: {
-            color: ['#F4A3A3', '#F44A4A']
-          }
-        }],
-
-        geo: {
+    reDrawMap() {
+      let list = this.data[this.activeTab][this.mapType]
+      let mapOptions = {}
+      if (this.activeTab === 'province') {
+        mapOptions = { // 进行相关配置
+           backgroundColor: "#fff",
+           visualMap: [{
+             type: 'piecewise', // 定义为分段型 visualMap
+             text:['高', '低'],
+             inverse: true,
+             itemWidth: 20,
+             itemHeight: 8,
+             itemSymbol: 'rect',
+             orient: 'horizontal',
+             realtime: false,
+             calculable: true,
+             inRange: {
+               color: ['#F4A3A3', '#F44A4A']
+             },
+             splitList: [
+               {start: 0}
+             ],
+           }],
+           geo: {
+             map: 'china',
+             label: {
+               normal: {
+                 show: false, // 是否显示对应地名
+               }
+             },
+             itemStyle: {
+               normal: {
+                 borderColor: '#fff',
+                 color: '#facdcd'
+               },
+               emphasis: {
+                 areaColor: '#F44C4A',
+                 shadowOffsetX: 0,
+                 shadowOffsetY: 0,
+                 shadowBlur: 20,
+                 borderWidth: 0,
+                 shadowColor: 'rgba(0, 0, 0, 0.5)'
+               }
+             },
+             emphasis: {
+               label: {
+                 show: false
+               },
+             },
+           },
+           tooltip: {
+             trigger: 'item',
+             formatter(val) {
+               if (val.data) {
+                 return `${val.data.name}: ${val.data.countPercent}`
+               } else {
+                 return `${val.name}: 0%`
+               }
+             },
+           },
+           series: [{
+             type: 'scatter',
+             coordinateSystem: 'geo', // 对应上方配置
+           },
+             {
+               type: 'map',
+               geoIndex: 0,
+               data: list
+             }
+           ]
+         }
+      } else {
+        mapOptions = { // 进行相关配置
+          backgroundColor: "#fff",
+          geo: {
           map: 'china',
-          label: {
-            normal: {
-              show: false, // 是否显示对应地名
-            }
-          },
+            label: {
+              normal: {
+                show: false, // 是否显示对应地名
+              }
+            },
           itemStyle: {
             normal: {
               borderColor: '#fff',
               color: '#facdcd'
             },
             emphasis: {
-              areaColor: '#F44C4A',
+              label: {
+                show: false
+              },
+              borderColor: '#fff',
+              color: '#facdcd',
               shadowOffsetX: 0,
               shadowOffsetY: 0,
               shadowBlur: 20,
               borderWidth: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)'
+              shadowColor: 'rgba(255, 255, 255, 0.5)'
             }
-          }
+          },
+          emphasis: {
+            label: {
+              show: false
+            },
+          },
         },
-        series: [{
-          type: 'scatter',
-          coordinateSystem: 'geo', // 对应上方配置
-        },
-          {
-            type: 'map',
-            geoIndex: 0,
-            //data: this.mapData
-            data: this.list
-          }
-        ]
-      };
-      myChart.setOption(this.mapOptions)
-    }
-  },
-  mounted() {
-    this.initMap()
+          tooltip: {
+            trigger: 'item',
+            formatter(val) {
+              if (val.data) {
+                return `${val.data.name}: ${val.data.countPercent}`
+              } else {
+                return `${val.name}: 0%`
+              }
+            },
+          },
+          series: [
+            {
+              type: 'scatter',
+              coordinateSystem: 'geo',
+              data: list,
+              symbolSize: function (val) {
+                return 10;
+              },
+              // `${val.data.name}: ${val.data.countPercent}`
+              //this.$tools.colorMain
+              // label: {
+              //   formatter: '{b}',
+              //   position: 'right'
+              // },
+              itemStyle: {
+                color: this.$tools.colorMain
+              },
+              emphasis: {
+                label: {
+                  show: false,
+                  // formatter(val) {
+                  //   return `${val.data.name}: ${val.data.countPercent}`
+                  // },
+                }
+              }
+            },
+          ]
+        }
+      }
+      this.myChart.setOption(mapOptions, true)
+    },
+    normalizeProvinceData(arr) {
+      // 0是ta人数的值 1是ta浓度的值
+      let data = {0: [], 1: []}
+      arr.forEach((item) => {
+        data[0].push({value: item.count, name: item.name.replace(/省/g,"").replace(/市/,""), countPercent: parseInt(item.countPercent, 10) * 100 + '%'})
+        data[1].push({value: (item.density * 100).toFixed(2), name: item.name.replace(/省/g,"").replace(/市/,""), countPercent: (item.density * 100).toFixed(2) + '%'})
+      })
+      return data
+    },
+    normalizeCityData(arr) {
+      // 0是ta人数的值 1是ta浓度的值
+      let data = {0: [], 1: []}
+      arr.forEach((item) => {
+        let val = [Number(item.lng), Number(item.lat)]
+        data[0].push({
+          value: val.concat(Number(item.count)),
+          label: item.count,
+          name: item.name.replace(/省/g,"").replace(/市/,""),
+          countPercent: parseInt(item.countPercent * 100, 10) + '%'
+        })
+        data[1].push({
+          value: val.concat((item.density * 100).toFixed(2)),
+          name: item.name.replace(/省/g,"").replace(/市/,""),
+          countPercent: (item.density * 100).toFixed(2) + '%'
+        })
+      })
+      return data
+    },
   },
 }
 </script>
@@ -276,7 +298,7 @@ export default {
               }
               .t-name{
                 display: inline-block;
-                width: 190px;
+                width: 100px;
               }
               .t-value{
                 position: relative;
@@ -293,7 +315,9 @@ export default {
                 }
               }
               .value-text{
-                margin-left: 50px;
+                width: 100px;
+                text-align: right;
+                display: inline-block;
               }
             }
           }

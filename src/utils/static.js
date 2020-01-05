@@ -78,11 +78,11 @@ export const fileType = [
 
 // 投放目的
 export const PutGoal = [
-  {name: '品牌宣传', value: 0, icon: require('../assets/images/plan_title_red_1.png')},
-  {name: '产品促销', value: 1, icon: require('../assets/images/plan_title_red_2.png')},
-  {name: '到店引流', value: 2, icon: require('../assets/images/plan_title_red_3.png')},
-  {name: '搜索热度提升', value: 3, icon: require('../assets/images/plan_title_red_4.png')},
-  {name: '新品上市', value: 4, icon: require('../assets/images/plan_title_red_4.png')}
+  {name: '品牌宣传', value: 0, icon: require('@/assets/images/plan_title_red_1.png')},
+  {name: '产品促销', value: 1, icon: require('@/assets/images/plan_title_red_2.png')},
+  {name: '到店引流', value: 2, icon: require('@/assets/images/plan_title_red_3.png')},
+  {name: '搜索热度提升', value: 3, icon: require('@/assets/images/plan_title_red_4.png')},
+  {name: '新品上市', value: 4, icon: require('@/assets/images/xinpin_title_red.png')}
 ]
 
 
@@ -105,7 +105,7 @@ export const Budget = [
 
 // 创意状态
 export const creativeStatus = [
-  {name: '待审核', value: 0},
+  {name: '待审核',   value: 0},
   {name: '审核通过', value: 2},
   {name: '审核拒绝', value: 1}
 ]
@@ -220,7 +220,12 @@ export const DenyDialogReason = [
 export const MenuList =
   [
     {"code": "9999", "name": "登录", "selected": false, "path": "/login", "children": []},
-    {"code": "1000", "name": "首页", "selected": false, "path": "/home", "children": []},
+    {"code": "1000", "name": "首页", "selected": false, "path": "/home", "children": [
+      {"code": "1001", "name": "新闻1", "selected": false, "path": "/home/new", "children": []},
+      {"code": "1002", "name": "新闻2", "selected": false, "path": "/home/new2", "children": []},
+      {"code": "1003", "name": "新闻3", "selected": false, "path": "/home/new3", "children": []},
+      {"code": "1004", "name": "新闻4", "selected": false, "path": "/home/new4", "children": []},
+    ]},
     {
       "code": "1100", "name": "人群洞察", "selected": false, "path": "/peopleInsight/list", "children": [
         {"code": "1101", "name": "创建人群包", "selected": false, "path": "/peopleInsight/createCrowd", "children": []},

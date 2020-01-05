@@ -52,14 +52,6 @@
           </template>
         </el-table-column>
 
-        <!-- <el-table-column prop="beginTime" label="投放时间">
-          <template slot-scope="scope">
-            {{$tools.getFormatDate('YY/mm/dd', scope.row.beginTime)}}
-            -
-            {{$tools.getFormatDate('YY/mm/dd', scope.row.endTime)}}
-          </template>
-        </el-table-column> -->
-
         <el-table-column prop="action" label="操作" fixed="right" width="400">
           <template slot-scope="scope">
             <span class="icon-space hand"
@@ -130,15 +122,10 @@
 </template>
 
 <script>
-import searchCondition from '../../../templates/searchCondition'
 import { PutGoal, projectConst, MonitorData } from '@/utils/static'
 
 export default {
   name: "planList",
-
-  components: {
-    searchCondition
-  },
 
   props: {
     active: {

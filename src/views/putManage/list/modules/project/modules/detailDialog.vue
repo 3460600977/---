@@ -59,10 +59,6 @@ export default {
     projectId: {
       type: Number,
       required: true
-    },
-    activeTab: {
-      type: String,
-      default: 'project'
     }
   },
 
@@ -81,7 +77,7 @@ export default {
         data: ''
       },
 
-      indurstryList: [],
+      activeTab: 'project',
 
       pointDetail: {
         param: {
@@ -111,7 +107,7 @@ export default {
         loading: true,
         data: ''
       }
-      this.indurstryList = await this.getIndustryList();
+
       this.$api.PutProject.GetProjectDetailById(projectId)
         .then(res => {
           this.projectDetail = {
@@ -145,15 +141,6 @@ export default {
         })
     },
 
-    getIndustryList: async function() {
-      return new Promise((resolve, reject) => {
-        // if (this.indurstryList.length > 0) return;
-        this.$api.IndustryList.AllList()
-          .then(res => {
-            resolve(res.result)
-          })
-      })
-    }
   },
 
   watch: {
