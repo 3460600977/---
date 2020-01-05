@@ -32,6 +32,10 @@
         type: String,
         default:""
       },
+      legend:{
+        type: Array,
+        required: true
+      },
       center: {
         type: Array,
         default: function () {
@@ -113,7 +117,7 @@
           }
         },
         legend: {
-          data: ['运动型人群包', '全网人群'],
+          data: this.legend,
           icon: 'circle',
           top: 20,
           right: 40,
