@@ -408,6 +408,7 @@ export default {
         screenType: '',// 屏幕类型，003联动，001上屏，002下屏
         fileType: 1,//上屏文件类型，1：视频,2:图片
         industry: '', // 广告创意行业
+        industryName: '',
         top: '', // 上屏
         bottom720Image: '',
         bottom880Image: '',
@@ -501,6 +502,7 @@ export default {
           this.formData.durationType = resData.durationType;
           this.formData.fileType = +resData.fileType;
           this.formData.industry = resData.industry
+          this.formData.industryName = resData.industryName
           this.formData.monitor = resData.monitor || [
           { 
             mode: '', 
@@ -586,6 +588,7 @@ export default {
     // 方案数据回显
     setPageProjectDetail() {
       this.formData.industry = this.projectData.industry;
+      this.formData.industryName = this.projectData.industryName;
       this.formData.durationType = this.projectData.second;
       this.formData.screenType = this.projectData.type;
     },
@@ -593,8 +596,9 @@ export default {
     // 生成创意名字
     generateCreativeName(industryName) {
       if (this.createType === 'edit') return;
+      let _industryName = industryName || this.projectData.industryName;
       let type = this.formData.screenType == '003' ? '联动' : this.formData.screenType == '001' ? '上屏' : '下屏';
-      this.formData.name = `${industryName || '行业'}_${type}_${this.$tools.getFormatDate('mm_dd')}`;
+      this.formData.name = `${_industryName || '行业'}_${type}_${this.$tools.getFormatDate('mm_dd')}`;
     },
 
     /**
@@ -815,6 +819,7 @@ export default {
 
       return { top, bottom880 };
     },
+
   },
 
 }

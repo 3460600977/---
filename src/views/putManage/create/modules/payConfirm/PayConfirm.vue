@@ -31,7 +31,7 @@
           <span class="color-text-1">{{project.data.campaignName}}</span>
         </el-form-item>
         <el-form-item label="方案行业">
-          <span class="color-text-1">{{project.data.industry}}</span>
+          <span class="color-text-1">{{project.data.industryName}}</span>
         </el-form-item>
         <el-form-item label="屏幕类型">
           <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.screenType, 'value', project.data.type).name}}</span>

@@ -162,6 +162,7 @@
               <img class="no-pass-img" :src="noPassImg" alt="" srcset="">
               <div>{{JSON.parse(detailDialog.data.rejectReason).join(',')}}</div>
             </div>
+            
             <div class="text-col">
               <span class="text-title">广告创意名称</span>
               <label class="text-info">{{detailDialog.data.name}}</label>

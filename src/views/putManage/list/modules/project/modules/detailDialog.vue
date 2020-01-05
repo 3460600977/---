@@ -12,7 +12,7 @@
           </label>
         </el-form-item>
         <el-form-item label="投放方案行业">
-          <span class="color-text-1">{{projectDetail.data.industry}}</span>
+          <span class="color-text-1">{{projectDetail.data.industryName}}</span>
         </el-form-item>
         <el-form-item label="投放类型">
           <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.putType, 'value', projectDetail.data.projectType).name}}</span>
