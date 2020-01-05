@@ -1,5 +1,5 @@
 <template>
-  <div class="put-plan" v-loading="edit.loading">
+  <div class="put-plan" v-loading="edit.loading || formData.saving">
     <!-- HI, 请选择投放目的 -->
     <PutMangeCard :title="'HI, 请选择投放目的'" class="form-box put-goal">
       <!-- 目的 -->
@@ -65,7 +65,7 @@
     <!-- 保存 取消 -->
     <PutMangeCard class="save-box">
       <div class="float-right">
-        <el-button :loading='formData.saving' @click="savePlan" style="width: 136px" type="primary">{{edit.isEdit ? '保存并关闭' : '下一步'}}</el-button>
+        <el-button :disabled="!validateFrom()" :loading='formData.saving' @click="savePlan" style="width: 136px" type="primary">{{edit.isEdit ? '保存并关闭' : '下一步'}}</el-button>
       </div>
     </PutMangeCard>
   </div>
@@ -112,14 +112,14 @@ export default {
       
       formDataRules: {
         name: [
-          { required: true, message: '请输入计划名称!', trigger: 'blur' },
-          { max: 50, message: '计划名称100字以内!'}
+          { required: true, message: '请输入计划名称!', trigger: ['blur', 'change'] },
+          { max: 50, message: '计划名称不超过50个字,请正确输入!'}
         ],
         // putDate: [
         //   { required: true, message: '请选择投放时间!', trigger: 'blur' }
         // ],
         totalBudget: [
-          { validator: validateBudget, trigger: 'blur' }
+          { validator: validateBudget, trigger:  ['blur', 'change'] }
         ],
       },
 
@@ -162,13 +162,12 @@ export default {
       
     },
 
-    // 下一步/保存并关闭
-    savePlan() {
-      let isPassEnptyCheck = true,
-          validateForms = ['planTop', 'planName'],
-          param;
 
-      this.formData.saving = true;
+    // 校验表单
+    validateFrom() {
+      let isPassEnptyCheck = true,
+          validateForms = ['planTop', 'planName'];
+
       for (let i=0; i<validateForms.length; i++) {
         let item = this.$refs[validateForms[i]];
         if (item) {
@@ -179,17 +178,16 @@ export default {
         if (!isPassEnptyCheck) break;
       }
 
+      return isPassEnptyCheck;
+    },
 
-      if (!isPassEnptyCheck) {
-        this.formData.saving = false;
-        return this.$notify({
-          title: '警告',
-          message: '还有必填字段未填写',
-          type: 'warning'
-        });
-      } 
-
-      param = {
+    // 下一步/保存并关闭
+    savePlan() {
+      
+      if (!this.validateFrom()) return false;
+      
+      this.formData.saving = true;
+      let param = {
         name: this.formData.name,
         campaignType: this.formData.goal,
         totalBudget: this.formData.totalBudget * 100,

@@ -327,10 +327,14 @@ export default {
     '$route': {
       handler() {
         if (this.$route.query.active !== 'creative') return;
+
         if (this.$route.query.projectId) {
           this.getProjectNameList()
           this.searchParam.project.id = this.$route.query.projectId;
+        } else {
+          this.searchParam.project.id = '';
         }
+
         this.search()
       },
       immediate: true
@@ -487,7 +491,7 @@ export default {
     // 重置翻页为1 重置projectId
     handleSearch() {
       this.searchParam.page.pageIndex = 1;
-      this.$router.replace('/putManage?active=creative')
+      // this.$router.replace('/putManage?active=creative')
     },
 
     handleSizeChange(val) {
