@@ -133,6 +133,11 @@ export default {
   padding: 25px 20px 20px 20px;
   text-align: justify;
   text-align-last: justify;
+  /deep/.el-button {
+    width: 136px;
+    height: 34px;
+    border-radius: 2px;
+  }
 }
 .padding {
   padding-left: 20px;
