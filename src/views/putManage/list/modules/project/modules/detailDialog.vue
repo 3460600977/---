@@ -79,8 +79,6 @@ export default {
 
       activeTab: 'project',
 
-      indurstryList: [],
-
       pointDetail: {
         param: {
           pageIndex: 0, 
@@ -109,7 +107,7 @@ export default {
         loading: true,
         data: ''
       }
-      this.indurstryList = await this.getIndustryList();
+
       this.$api.PutProject.GetProjectDetailById(projectId)
         .then(res => {
           this.projectDetail = {
@@ -143,15 +141,6 @@ export default {
         })
     },
 
-    getIndustryList: async function() {
-      return new Promise((resolve, reject) => {
-        // if (this.indurstryList.length > 0) return;
-        this.$api.IndustryList.AllList()
-          .then(res => {
-            resolve(res.result)
-          })
-      })
-    }
   },
 
   watch: {
