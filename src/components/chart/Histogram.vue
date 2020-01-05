@@ -43,7 +43,9 @@
       },
       legend:{
         type: Array,
-        default: []
+        default: function () {
+          return []
+        }
       },
       grid: {
         type: Object,
