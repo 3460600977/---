@@ -50,7 +50,6 @@
       let myChart = echarts.init(this.$refs.chartBox);
       let seriesArr = [];
       this.data.forEach((item,index)=>{
-        item.legend = this.legend;
         seriesArr.push(
           {
             name: this.data.name[index],
@@ -68,18 +67,6 @@
                 },
               }
             },
-            /*label: {
-              normal: {
-                formatter: function(){
-                  return item.legend[index];
-                },
-                position: 'center',
-                show: true,
-                textStyle: {
-                  fontSize: '12',
-                }
-              }
-            },*/
             data: [
               item[0],item[1]
             ]
@@ -96,7 +83,7 @@
         },
         tooltip: {
           trigger: 'item',
-          formatter: "{a} <br/>{b} : {c} ({d}%)"
+          formatter: "{a} <br/>{b} : {d}% "
         },
         legend: {
           data: ['有车','无车'],
