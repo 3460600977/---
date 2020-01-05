@@ -36,15 +36,17 @@ export default {
     };
   },
 
-  beforeMount() {
-    this.activeName = this.$route.query.active || "plan";
+  watch: {
+    '$route': {
+      handler: function(val) {
+        this.activeName = val.query.active || "plan";
+        if (!val.query.active) {
+          this.$router.replace('/putManage?active=plan')
+        }
+      },
+      immediate: true
+    } 
   },
-
-  // watch: {
-  //   '$route.query': function(val) {
-  //     console.log(val)
-  //   }
-  // },
 
   methods: {
     changeTab() {

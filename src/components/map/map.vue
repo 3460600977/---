@@ -168,14 +168,17 @@
           isShow: false
         }
       },
-      initMap(val) {
-        this.points = this.normalizePointsAll(val)
+      reGetAreaPoint() {
         if (Object.keys(this.pathArr).length) {
           for(let key in this.pathArr) {
             this.isInArea(this.pathArr[key])
           }
         }
+      },
+      initMap(val) {
+        this.points = this.normalizePointsAll(val)
         this.pointsOverlayObj.isShow = true
+        this.reGetAreaPoint()
         this.jugDraw()
       },
       setCity(city) {
@@ -270,14 +273,16 @@
         if (item.anotherOverlay) {
           this.map.removeOverlay(item.anotherOverlay)
         }
-        delete this.pathArr[item.index]
-        this.pathArr = {...this.pathArr}
-        this.setActivePathNull()
-        if (Object.keys(this.pathArr).length) {
+        if (Object.keys(this.pathArr).length > 1) {
           this.changePathPointType(item.index, -2)
+          delete this.pathArr[item.index]
+          this.reGetAreaPoint()
         } else {
+          delete this.pathArr[item.index]
           this.changePathPointType(null, -1)
         }
+        this.pathArr = {...this.pathArr}
+        this.setActivePathNull()
         this.jugDraw()
       },
       /*
@@ -460,11 +465,11 @@
           }
         } else if (path.type === 'circle') {
           for(let key in points) {
+            let b = points[key].point;
             if (this.getPointChangeAble(points[key], path.index)) {
-              let b = points[key].point;
               if (BMapLib.GeoUtils.isPointInCircle(b, path.overlay)) {
-                points[key].type = path.index
-              } else {
+                  points[key].type = path.index
+                } else {
                 points[key].type = -2
               }
             }
@@ -747,8 +752,6 @@
           offset: new BMap.Size(0, -11),
         });
         marker.addEventListener('click', (event) => {
-          console.log('5555')
-          // e.preventDefault()
           this.$emit('buildingClick', point)
         })
         this.map.addOverlay(marker);

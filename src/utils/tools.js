@@ -521,7 +521,7 @@ let tools = {
         setUserInfo(userInfo)
         resolve(userInfo)
       }).catch(res => {
-        reject(res)
+        reject('-999')
       });
     })
   }

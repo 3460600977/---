@@ -55,7 +55,7 @@
             <transition name="to-top">
               <div v-show="rightMsg.dropMenuShow" class="drop-box absolute font-14">
                 <ul>
-                  <li class="o-item center" @click="handleToAccount">账号管理</li>
+                  <li class="o-item center" @click="handleToAccount" v-if="auditShow">账号管理</li>
                   <li class="o-item center" @click="handleToPass">修改密码</li>
                   <li
                     class="o-item center color-red"
@@ -107,7 +107,7 @@ export default {
       MenuList,
       dialogEditPass: false,
       loading: false,
-
+      auditShow:true,
       images: {
         logo: require("../../../assets/images/icon_logo.png"),
         money: require("../../../assets/images/icons/icon_money.png"),
@@ -167,7 +167,6 @@ export default {
       },
 
       username: "admin",
-      audit: [{ code: "1010", selected: true }],
       toolMenu: [
         { code: "1010", selected: true },
         { code: "1201", selected: true },
@@ -277,6 +276,9 @@ export default {
       let menuListArr = getMenuList();
       let canMenu = false;
       menuListArr.forEach(item => {
+        if(parseInt(item.code) === 1600&&item.selected){
+          this.auditShow=false
+        }
         if (parseInt(item.code) === 1201 || parseInt(item.code) === 1010) {
           canMenu = true;
         }
@@ -292,9 +294,7 @@ export default {
         }
       });
       if (audit) {
-        this.audit.forEach(item => {
-          menuList.push(item);
-        });
+
       } else {
         this.toolMenu.forEach(item => {
           menuList.push(item);
@@ -362,7 +362,7 @@ export default {
     cursor: pointer;
     user-select: none;
     .logo-xinchao {
-      width: 124px;
+      width: 50px;
     }
     .logo-split {
       width: 1px;

@@ -20,7 +20,7 @@
 
         <!-- 屏幕类型 -->
         <el-form-item class="screen-type-preview-box mt-20" prop="type" label="屏幕类型">
-          <ScreenType  :value="formData.type" @changeScreenType="changeScreenType" :disabled="isEdit"/>
+          <ScreenType  :value="formData.type.value" @changeScreenType="changeScreenType" :disabled="isEdit"/>
         </el-form-item>
 
         <!-- 投放类型 -->
@@ -248,7 +248,7 @@
         </div>
       </template>
 
-      <noData v-else>无可售数据</noData>
+      <noData v-loading="buildingDirection.builds.loading" v-else>无可售数据</noData>
 
 
       <el-divider></el-divider>
@@ -296,7 +296,7 @@
     <el-dialog
       :visible.sync="buildingDirection.mapChooseShow"
       width="98%"
-      class="map-choose"
+      class="map-choose-dialog"
       :close-on-press-escape="closeEscTrue">
       <map-choose-window @hideMapPoint="hideMapPoint"
                          @submitSelectedBuildPoint="submitSelectedBuildPoint">
@@ -401,6 +401,7 @@
         formDataRules: {
           name: [
             {required: true, message: '请输入投放方案名称!', trigger: 'blur'},
+            { max: 50, message: '方案名称不超过50个字,请正确输入!'}
           ],
           industry: [
             {required: true, message: '请选择投放方案行业!', trigger: 'change'},
@@ -748,13 +749,7 @@
         let param;
         let isformValidatePass = this.validataForm();
 
-        if (!isformValidatePass) {
-          return this.$notify({
-            title: '警告',
-            message: '还有必填字段未填写',
-            type: 'warning'
-          });
-        }
+        if (!isformValidatePass) return;
 
         this.planData.loading = true;
         this.formData.confirming = true;
@@ -859,8 +854,8 @@
           firstDayOfWeek: 6,
           disabledDate(date) {
             return date.getTime() < Date.now() - 8.64e7 ||
-            date.getTime() > _this.planData.data.endTime ||
-            date.getTime() < _this.planData.data.beginTime ||
+            // date.getTime() > _this.planData.data.endTime ||
+            // date.getTime() < _this.planData.data.beginTime ||
             (now.getDate() == date.getDate() && now.getMonth() === date.getMonth() && now.getDay() == 6 && now.getHours() > 18) ||
             (_this.formData.projectType.value == 0 && date.getDay() != 5 && date.getDay() != 6);
           }
@@ -885,8 +880,20 @@
   }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
   .put-project {
+    .map-choose-dialog{
+      top: -13%;
+      /deep/ .el-dialog__header {
+        display: none;
+      }
+      /deep/ .el-dialog__body {
+        padding: 10px;
+      }
+      /deep/ .el-dialog__footer {
+        padding: 12px 40px 20px 0;
+      }
+    }
     .el-tabs__content {
       overflow: visible;
     }

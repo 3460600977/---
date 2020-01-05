@@ -1,5 +1,5 @@
 <template>
-  <div class="container cityInsight" v-loading="loading">
+  <div class="map-dialog-show" v-loading="loading">
     <div class="map-box">
       <div class="city-build-select">
         <div class="left-info">
@@ -311,8 +311,8 @@ export default {
       this.$emit("hideMapPoint", false);
     },
     //选中的楼盘数据保存
-    submitSelectedBuildPoint(selectedList,cityList) {
-      this.$emit("submitSelectedBuildPoint",selectedList,cityList);
+    submitSelectedBuildPoint(selectedList, cityList) {
+      this.$emit("submitSelectedBuildPoint", selectedList, cityList);
       this.$emit("hideMapPoint", false);
     },
     // 添加资源包成功后触发事件
@@ -626,38 +626,19 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.dialog-footer {
-  padding-top: 10px;
-  text-align: right;
-  .el-button {
-    width: 136px;
-    height: 34px;
-    border-radius: 2px;
+<style scoped lang="scss">
+.map-dialog-show {
+  .map-box {
+    width: 100%;
+    height: calc(100vh - 60px);
+    position: relative;
+    overflow: hidden;
   }
-}
-.map-choose {
-  top: -12% !important;
-  .el-dialog__header {
-    display: none;
-  }
-  .el-dialog__body {
-    padding: 10px;
-    .map-box {
-      width: 100%;
-      height: calc(100vh - 60px);
-      position: relative;
-      overflow: hidden;
+  .map-btn {
+    & + .map-btn {
+      margin-left: 60px;
     }
-  }
-  .el-dialog__footer {
-    padding: 12px 40px 20px 0;
-    .map-btn {
-      & + .map-btn {
-        margin-left: 60px;
-      }
-      width: 100px;
-    }
+    width: 100px;
   }
   .city-build-select {
     z-index: 3;
@@ -666,10 +647,6 @@ export default {
     top: 10px;
     .mid-start {
       display: block;
-    }
-    .city-select {
-      .active {
-      }
     }
   }
   .draw-select {
