@@ -520,8 +520,7 @@ export default {
       let _file = event.target.files[0];
       if (mediaType === 'topVideo') {
         if (!this.$tools.checkSuffix(_file.name, ['mp4', 'avi'])) {
-          return this.$notify({
-            title: '错误',
+          return this.$message({
             message: '请上传MP4、AVI格式的视频',
             type: 'error'
           })
@@ -531,8 +530,7 @@ export default {
 
       if (mediaType === 'topImage' || mediaType === 'bottom880Image' || mediaType === 'bottom720Image') {
         if (!this.$tools.checkSuffix(_file.name, ['jpg'])) {
-          return this.$notify({
-            title: '错误',
+          return this.$message({
             message: '请上传MP4、AVI格式的视频',
             type: 'error'
           })
@@ -561,8 +559,7 @@ export default {
             if (mediaType === 'bottom720Image') {
               this.clearBottom720File();
             }
-            this.$notify({
-              title: '错误',
+            this.$message({
               message: err.msg,
               type: 'error'
             })

@@ -60,10 +60,9 @@ service.interceptors.response.use(
           this.$router.replace('/login');
         })
       }
-      Notification({
-        title: '警告',
+      Message ({
         message: res.msg || '网络异常, 请稍后再试',
-        type: 'warning'
+        type: 'error'
       });
       return Promise.reject(res)
     } else {
@@ -75,8 +74,7 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err' + error) // for debug
-    Notification({
-      title: '错误',
+    Message ({
       message: error.msg || '网络异常, 请稍后再试',
       type: 'error',
     })

@@ -1692,16 +1692,16 @@
         color: #FFFFFF;
         background-color: #999999; }
   .el-tag.el-tag--success {
-    background-color: #feeded;
-    border-color: #fddbdb;
-    color: #f44a4a; }
+    background-color: #e9faf1;
+    border-color: #d2f5e4;
+    color: #1ecf77; }
     .el-tag.el-tag--success.is-hit {
-      border-color: #F44A4A; }
+      border-color: #1ecf77; }
     .el-tag.el-tag--success .el-tag__close {
-      color: #f44a4a; }
+      color: #1ecf77; }
       .el-tag.el-tag--success .el-tag__close:hover {
         color: #FFFFFF;
-        background-color: #f44a4a; }
+        background-color: #1ecf77; }
   .el-tag.el-tag--warning {
     background-color: #fffae6;
     border-color: #fff5cc;
@@ -1761,16 +1761,16 @@
           color: #FFFFFF;
           background-color: #adadad; }
     .el-tag--dark.el-tag--success {
-      background-color: #f44a4a;
-      border-color: #f44a4a;
+      background-color: #1ecf77;
+      border-color: #1ecf77;
       color: white; }
       .el-tag--dark.el-tag--success.is-hit {
-        border-color: #F44A4A; }
+        border-color: #1ecf77; }
       .el-tag--dark.el-tag--success .el-tag__close {
         color: white; }
         .el-tag--dark.el-tag--success .el-tag__close:hover {
           color: #FFFFFF;
-          background-color: #f66e6e; }
+          background-color: #4bd992; }
     .el-tag--dark.el-tag--warning {
       background-color: #ffcc00;
       border-color: #ffcc00;
@@ -1817,15 +1817,15 @@
           background-color: #999999; }
     .el-tag--plain.el-tag--success {
       background-color: white;
-      border-color: #fbb7b7;
-      color: #f44a4a; }
+      border-color: #a5ecc9;
+      color: #1ecf77; }
       .el-tag--plain.el-tag--success.is-hit {
-        border-color: #F44A4A; }
+        border-color: #1ecf77; }
       .el-tag--plain.el-tag--success .el-tag__close {
-        color: #f44a4a; }
+        color: #1ecf77; }
         .el-tag--plain.el-tag--success .el-tag__close:hover {
           color: #FFFFFF;
-          background-color: #f44a4a; }
+          background-color: #1ecf77; }
     .el-tag--plain.el-tag--warning {
       background-color: white;
       border-color: #ffeb99;

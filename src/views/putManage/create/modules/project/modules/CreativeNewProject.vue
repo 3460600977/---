@@ -60,7 +60,6 @@
           <el-date-picker
             @change="changePageData(); changeWeek()"
             :disabled="isEdit"
-            :onPick="pichWeek()"
             :clearable="false"
             v-model="formData.date"
             value-format="yyyy-MM-dd"
@@ -548,11 +547,6 @@
         this.buildingDirection.mapChooseShow = true;
       },
 
-      // 
-      pichWeek(maxDate, minDate) {
-        console.log(maxDate)
-        console.log(minDate)
-      },
 
       // 按周投放时间校验
       changeWeek() {
@@ -561,10 +555,9 @@
         let _dateEnd = new Date(this.formData.date[1]);
         if (_dateBegin.getDay() !== 6 || _dateEnd.getDay() !== 5 || _dateBegin === _dateEnd) {
           this.formData.date = '';
-          return this.$notify({
-            title: '警告',
+          return this.$message({
             message: '请选择周六开始, 周五结束',
-            type: 'warning'
+            type: 'error'
           });
         }
       },
@@ -680,10 +673,9 @@
         let param;
         if (!this.$tools.checkSuffix(file.name, ['xls', 'xlsx'])) {
           this.$refs.uplaodBuild.value = '';
-          return this.$notify({
-                                title: '警告',
+          return this.$message({
                                 message: '请上传正确格式的文件',
-                                type: 'warning'
+                                type: 'error'
                               });
         }
 
@@ -781,8 +773,7 @@
               .then(res => {
                 this.formData.confirming = false;
                 this.planData.loading = false;
-                this.$notify({
-                  title: '成功',
+                this.$message({
                   message: '修改方案成功',
                   type: 'success'
                 });
@@ -792,27 +783,27 @@
                  */
                 if (this.formData.creativeStatus === 0 || this.formData.creativeStatus === 2) {
                   this.$router.push({
-                                      path: '/putManage',
-                                      query: {
-                                        active: 'project'
-                                      }
-                                    })
+                    path: '/putManage',
+                    query: {
+                      active: 'project'
+                    }
+                  })
                 } else {
                   if (this.projectDetail.status === 0) {
                     this.$router.push({
-                                        path: '/putManage/create/creative',
-                                        query: {
-                                          projectId: this.$route.query.editProjectId,
-                                          createType: 'step'
-                                        }
-                                      })
+                      path: '/putManage/create/creative',
+                      query: {
+                        projectId: this.$route.query.editProjectId,
+                        createType: 'step'
+                      }
+                    })
                   } else {
                     this.$router.push({
-                                        path: '/putManage/create/payConfirm',
-                                        query: {
-                                          projectId: this.$route.query.editProjectId,
-                                        }
-                                      })
+                      path: '/putManage/create/payConfirm',
+                      query: {
+                        projectId: this.$route.query.editProjectId,
+                      }
+                    })
                   }
                 }
               })
@@ -827,12 +818,16 @@
               .then(res => {
                 this.formData.confirming = false;
                 this.planData.loading = false;
+                this.$message({
+                  message: '创建方案成功',
+                  type: 'success'
+                });
                 this.$router.push({
-                                    path: '/putManage/create/payConfirm',
-                                    query: {
-                                      projectId: res.result.projectId,
-                                    }
-                                  })
+                  path: '/putManage/create/payConfirm',
+                  query: {
+                    projectId: res.result.projectId,
+                  }
+                })
               })
               .catch(res => {
                 this.formData.confirming = false;

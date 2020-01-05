@@ -130,15 +130,10 @@
 </template>
 
 <script>
-import searchCondition from '../../../templates/searchCondition'
 import { PutGoal, projectConst, MonitorData } from '@/utils/static'
 
 export default {
   name: "planList",
-
-  components: {
-    searchCondition
-  },
 
   props: {
     active: {

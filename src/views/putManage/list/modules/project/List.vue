@@ -181,7 +181,6 @@
 
 <script>
 import { projectConst, projectStatus } from '../../../../../utils/static'
-import searchCondition from '../../../templates/searchCondition'
 import detailDialog from './modules/detailDialog'
 
 export default {
@@ -194,8 +193,7 @@ export default {
   },
 
   components: {
-    detailDialog,
-    searchCondition
+    detailDialog
   },
 
   data() {

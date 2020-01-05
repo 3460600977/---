@@ -254,14 +254,12 @@
 
 <script>
 import { creativeStatus, projectStatus, PutGoal, projectConst, MonitorData } from '../../../../../utils/static'
-import searchCondition from '../../../templates/searchCondition'
 import Industry from '../../../templates/Industry'
 
 export default {
   name: "planList",
   
   components: {
-    searchCondition,
     Industry
   },
 
@@ -468,8 +466,7 @@ export default {
       this.$api.CreateCreative.DeleteCreativeById(creativeId)
         .then(res => {
           this.tableData.loading = false;
-          this.$notify({
-            title: '成功',
+          this.$message({
             message: '删除创意成功',
             type: 'success'
           });

@@ -31,18 +31,6 @@
             <template slot="append">元</template>
           </el-input>
         </el-form-item>
-        
-        <!-- <el-form-item prop="putDate" class="mt-20" label="投放时间">
-          <el-date-picker
-            v-model="formData.putDate"
-            value-format="yyyy-MM-dd"
-            :picker-options="pickerOptions"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期">
-          </el-date-picker>
-        </el-form-item> -->
       </el-form>
         
     </PutMangeCard>
@@ -106,7 +94,6 @@ export default {
         name: '',
         saving: false,
         totalBudget: '',
-        // putDate: '',
         goal: ''
       },
       
@@ -115,9 +102,6 @@ export default {
           { required: true, message: '请输入计划名称!', trigger: ['blur', 'change'] },
           { max: 50, message: '计划名称不超过50个字,请正确输入!'}
         ],
-        // putDate: [
-        //   { required: true, message: '请选择投放时间!', trigger: 'blur' }
-        // ],
         totalBudget: [
           { validator: validateBudget, trigger:  ['blur', 'change'] }
         ],
@@ -203,8 +187,7 @@ export default {
         this.$api.PutPlan.EditPlan(param)
           .then(res => {
             this.formData.saving = false;
-            this.$notify({
-              title: '成功',
+            this.$message({
               message: '修改投放计划成功',
               type: 'success'
             });
@@ -222,8 +205,7 @@ export default {
         this.$api.PutPlan.AddPlan(param)
           .then(res => {
             this.formData.saving = false;
-            this.$notify({
-              title: '成功',
+            this.$message({
               message: '创建投放计划成功',
               type: 'success'
             });
