@@ -2,8 +2,88 @@
   <div class="list">
 
     <!-- 查询 -->
-    <searchCondition @searchByCondition="handleSearch" :searchType="'creative'"/>
+    <el-form :inline="true" class="list-form-inline clearfix">
+      <!-- 投放计划名称 -->
+      <el-form-item class="line-space" label="投放计划名称">
+        <el-select 
+          @focus="getPlanNameList"
+          @change="changePlan"
+          value-key="id"
+          :loading="planNameList.loading" 
+          v-model="searchParam.plan.id" 
+          placeholder="请选择" 
+          filterable
+          clearable>
+          <el-option
+            v-for="item in planNameList.data"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+      </el-form-item>
 
+
+      <!-- 投放方案名称 -->
+      <el-form-item  class="line-space" label="投放方案名称">
+        <el-select 
+          @focus="getProjectNameList"
+          @change="changeProject"
+          :loading="projectNameList.loading"
+          v-model="searchParam.project.id" 
+          placeholder="请选择" 
+          filterable
+          clearable>
+          <el-option
+            v-for="item in projectNameList.data"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+
+
+
+      <!-- 广告创意名称 -->
+      <el-form-item  class="line-space" label="广告创意名称">
+        <el-input clearable v-model="searchParam.creative.name" placeholder="请输入"></el-input>
+      </el-form-item>
+
+
+      <!-- 创意状态 -->
+      <el-form-item class="line-space" label="创意状态">
+        <el-select 
+          v-model="searchParam.creative.status" 
+          placeholder="不限"
+          value-key="value"
+          filterable
+          clearable>
+          <el-option
+            v-for="item in creativeStatus"
+            :key="item.value"
+            :label="item.name"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+
+
+      <!-- 查询 -->
+      <el-form-item class="list-query-button">
+        <el-button type="primary" plain @click="handleSearch(); search(); ">查询</el-button>
+      </el-form-item>
+
+
+      <!-- 新建 -->
+      <el-form-item class="list-new-button">
+        <router-link to="/putManage/create/creative?createType=single">
+          <el-button type="primary">新建广告创意</el-button>
+        </router-link>
+      </el-form-item>
+
+
+    </el-form>
 
     <div class="query_result">
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
@@ -40,7 +120,7 @@
             </span>
             <span class="icon-space hand">
               <router-link :to="`/putManage/create/creative?createType=edit&creativeId=${scope.row.id}`">
-                <i class="iconfont icon-baobiao icon-color"></i>修改
+                <i class="iconfont icon-baobiao icon-color"></i>编辑
               </router-link>
             </span>
             <span 
@@ -173,16 +253,13 @@
 </template>
 
 <script>
-import { putManageMixin } from '../putManageMixin'
-import { PutGoal, projectConst, MonitorData } from '../../../../../utils/static'
+import { creativeStatus, projectStatus, PutGoal, projectConst, MonitorData } from '../../../../../utils/static'
 import searchCondition from '../../../templates/searchCondition'
 import Industry from '../../../templates/Industry'
 
 export default {
   name: "planList",
   
-  mixins: [putManageMixin],
-
   components: {
     searchCondition,
     Industry
@@ -192,9 +269,38 @@ export default {
     return {
       PutGoal,
       MonitorData,
+      creativeStatus,
+      projectStatus,
       screenType: projectConst.screenType,
 
       activeName: 'aptitude',
+
+      planNameList: {
+        loading: true,
+        data: []
+      },
+
+      projectNameList: {
+        loading: true,
+        data: []
+      },
+
+      searchParam: {
+        plan: {
+          id: ''
+        },
+        project: {
+          id: ''
+        },
+        creative: {
+          name: '',
+          status: ''
+        },
+        page: {
+          pageSize: 10,
+          pageIndex: 1,
+        }
+      },
 
       detailDialog: {
         show: false,
@@ -202,25 +308,116 @@ export default {
         data: ''
       },
 
+      tableData: {
+        loading: true,
+        data: [],
+        page: {
+          currentPage: 0,
+          totalCount: 0
+        }
+      },
+
       industryList: []
 
     };
   },
 
+  
+  watch: {
+    '$route': {
+      handler() {
+        if (this.$route.query.active !== 'creative') return;
 
+        if (this.$route.query.projectId) {
+          this.getProjectNameList()
+          this.searchParam.project.id = this.$route.query.projectId;
+        } else {
+          this.searchParam.project.id = '';
+        }
+
+        this.search()
+      },
+      immediate: true
+    }
+  },
 
   methods: {
+
+    // 下拉框数据 计划名字列表
+    getPlanNameList() {
+      if (this.planNameList.data.length > 0) return false;
+      this.planNameList.loading = true;
+      this.$api.PutPlan.PlanNameList()
+        .then(res => {
+          this.planNameList = {
+            loading: false,
+            data: res.result,
+          }
+        })
+        .catch(res => {
+          this.planNameList = {
+            loading: false,
+            data: []
+          }
+        })
+    },
+
+
+    // 下拉框数据 方案名字列表
+    getProjectNameList() {
+      this.projectNameList.loading = true;
+      if (this.searchParam.plan.id) {
+        return this.$api.PutProject.ProjectNameListByCamId(+this.searchParam.plan.id)
+          .then(res => {
+            this.projectNameList = {
+              loading: false,
+              data: res.result,
+            }
+          })
+          .catch(res => {
+            this.projectNameList = {
+              loading: false,
+              data: [],
+            }
+          })
+      }
+      this.$api.PutProject.ProjectNameList()
+        .then(res => {
+          this.projectNameList = {
+            loading: false,
+            data: res.result,
+          }
+        })
+        .catch(res => {
+          this.projectNameList = {
+            loading: false,
+            data: []
+          }
+        })
+    },
+
+    // change计划
+    changePlan() {
+      this.searchParam.project.id = '';
+      this.creativeName = '';
+    },
+    
+
+    // change方案
+    changeProject() {
+      this.creativeName = '';
+    },
    
     // 搜索
     search() {
       this.tableData.loading = true;
       let param = {
-        campaignId: 'plan' in this.searchParam.condition ? this.searchParam.condition.plan.data.id : '',
-        name: 'creative' in this.searchParam.condition ? this.searchParam.condition.creative.data.name : '',
+        campaignId: this.searchParam.plan.id,
+        name: this.searchParam.creative.name,
         pageIndex: this.searchParam.page.pageIndex,
         pageSize: this.searchParam.page.pageSize,
-        projectId: 'project' in this.searchParam.condition ? this.searchParam.condition.project.data.id : '',
-        status: 'creative' in this.searchParam.condition ? this.searchParam.condition.creative.status.value : '',
+        projectId: this.searchParam.project.id,
+        status: this.searchParam.creative.status
       }
       this.$api.CreateCreative.CreativeList(param)
         .then(res => {
@@ -290,6 +487,23 @@ export default {
             this.industryList = res.result;
           })
     },
+
+    // 重置翻页为1 重置projectId
+    handleSearch() {
+      this.searchParam.page.pageIndex = 1;
+      // this.$router.replace('/putManage?active=creative')
+    },
+
+    handleSizeChange(val) {
+      this.searchParam.page.pageSize = val;
+      this.searchParam.page.pageIndex = 0;
+      this.search()
+    },
+
+    handleCurrentChange(val) {
+      this.searchParam.page.pageIndex = val;
+      this.search()
+    }
 
   }
 };

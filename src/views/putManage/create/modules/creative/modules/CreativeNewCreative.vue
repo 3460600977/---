@@ -269,7 +269,7 @@
     <PutMangeCard class="save-box clearfix">
       <div class="float-right">
         <el-button  style="width: 136px" @click="nextPage()">取消</el-button>
-        <el-button  style="width: 136px" @click="saveCreative" type="primary">
+        <el-button  style="width: 136px" :disabled="!validateForm()" @click="saveCreative" type="primary">
           {{createType === 'edit' ? '确认并关闭' : '新建并关闭'}}
         </el-button>
       </div>
@@ -340,7 +340,7 @@ export default {
       formDataRules: {
         name: [
           { required: true, message: '请输入广告创意名称!', trigger: ['change', 'blur'] },
-          { max: 100, message: '创意名称100字以内!'}
+          { max: 50, message: '创意名称不超过50个字,请正确输入!'}
         ],
         durationType: [
           { required: true, message: '请选择投放时长!', trigger: 'change' },
@@ -507,6 +507,7 @@ export default {
 
     // 生成创意名字
     generateCreativeName(industryName) {
+      if (this.createType === 'edit') return;
       let type = this.formData.screenType == '003' ? '联动' : this.formData.screenType == '001' ? '上屏' : '下屏';
       this.formData.name = `${industryName || '行业'}_${type}_${this.$tools.getFormatDate('mm_dd')}`;
     },
@@ -648,13 +649,7 @@ export default {
     // 保存
     saveCreative() {
       
-      if (!this.validateForm()) {
-        return this.$notify({
-          title: '警告',
-          message: '还有必填字段未填写',
-          type: 'warning'
-        });
-      }
+      if (!this.validateForm()) return;
 
       this.pageLoading = true;
       let paramForm = new FormData();
