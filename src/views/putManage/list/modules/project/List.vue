@@ -144,7 +144,11 @@
               <i class="iconfont icon-kuaijiezhifu1 icon-color"></i>支付
             </span>
 
-            <span @click="cancleProject(scope.row.projectId)" v-if="scope.row.status == 0 || scope.row.status == 4" class="icon-space hand">
+            <span @click="deleteDialog.data.name = scope.row.name; 
+              deleteDialog.data.id = scope.row.id;
+              deleteDialog.show = true" 
+              v-if="scope.row.status == 0 || scope.row.status == 4" 
+              class="icon-space hand">
               <i class="iconfont icon-error1 icon-color"></i>取消
             </span>
 
@@ -172,6 +176,19 @@
       <detailDialog :activeTab="detailDialog.activeTab" :projectId="detailDialog.projectId"/>
       <span slot="footer" class="dialog-footer center">
         <el-button style="width: 136px;" type="primary" @click="detailDialog.show = false">确定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 取消 提示弹窗 -->
+    <el-dialog title="取消方案"
+      :visible.sync="cancleDialog.show"
+      width="568px"
+      class="my-dialog"
+    >
+      <p>确认是否取消投放方案 <span class="color-main">【{{cancleDialog.data.name}}】？</span></p>
+      <span slot="footer">
+        <el-button @click="cancleDialog.show = false" class="btn1">取 消</el-button>
+        <el-button type="primary" class="btn1" @click="cancleProject(cancleDialog.data.id); cancleDialog.show = false">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -207,6 +224,11 @@ export default {
         show: false,
         projectId: '',
         activeTab: 'project'
+      },
+
+      cancleDialog: {
+        data: {name: '加载失败', id: ''},
+        show: false
       },
 
       planNameList: {
@@ -298,6 +320,10 @@ export default {
       this.tableData.loading = true;
       this.$api.PutProject.CancelProject({projectId: projectId})
         .then(res => {
+          this.$message({
+            message: '已取消',
+            type: 'success'
+          });
           this.search()
         })
         .catch(res => {

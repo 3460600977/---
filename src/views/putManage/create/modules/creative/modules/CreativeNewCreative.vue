@@ -607,45 +607,6 @@ export default {
         return this.formData.bottom720Image = _file;
       }
 
-      return
-
-      if (mediaType === 'topImage' || mediaType === 'bottom880Image' || mediaType === 'bottom720Image') {
-        if (!this.$tools.checkSuffix(_file.name, ['jpg'])) {
-          return this.$message({
-            message: '请上传jpg格式的图片',
-            type: 'error'
-          })
-        }
-        let param = [
-          _file, 
-          mediaType === 'bottom720Image' ? 1280 : 1080, 
-          mediaType === 'topImage' ? 1920 : mediaType === 'bottom880Image' ? 880 : 720,
-        ]
-        return this.$tools.checkImageSize(...param)
-          .then(res => {
-            if (mediaType === 'topImage') {
-              return this.formData.top = _file;
-            }
-            if (mediaType === 'bottom880Image' || mediaType === 'bottom720Image'){
-              return this.formData[mediaType] = _file;
-            }
-          })
-          .catch(err => {
-            if (mediaType === 'topImage') {
-              this.clearTopFile();
-            }
-            if (mediaType === 'bottom880Image') {
-              this.clearBottom880File();
-            }
-            if (mediaType === 'bottom720Image') {
-              this.clearBottom720File();
-            }
-            this.$message({
-              message: err.msg,
-              type: 'error'
-            })
-          })
-      }
     },
 
     /**
@@ -682,9 +643,6 @@ export default {
     switchFileType(value) {
       if (this.formData.fileType === value) return;
       this.formData.fileType = value;
-      // if (this.createType === 'single') {
-      //   this.formData.durationType = '';
-      // }
       this.formData.top = '';
     },
 

@@ -124,7 +124,9 @@
               </router-link>
             </span>
             <span 
-              @click="delCreativeById(scope.row.id)"
+              @click="deleteDialog.data.name = scope.row.name; 
+              deleteDialog.data.id = scope.row.id;
+              deleteDialog.show = true"
               v-if="scope.row.statusName != '审核通过'" 
               class="icon-space hand">
               <i class="iconfont icon-error icon-color"></i>删除
@@ -144,7 +146,7 @@
     </div>
 
 
-
+    <!-- 详情弹窗 -->
     <el-dialog 
       title="广告创意详情" 
       width="1000px" 
@@ -249,6 +251,21 @@
         <el-button style="width: 136px;" type="primary" @click="detailDialog.show = false">确 定</el-button>
       </span>
     </el-dialog>
+
+
+    
+    <!-- 删除 提示弹窗 -->
+    <el-dialog title="取消方案"
+      :visible.sync="deleteDialog.show"
+      width="568px"
+      class="my-dialog"
+    >
+      <p>确认是否取消投放方案 <span class="color-main">【{{deleteDialog.data.name}}】？</span></p>
+      <span slot="footer">
+        <el-button @click="deleteDialog.show = false" class="btn1">取 消</el-button>
+        <el-button type="primary" class="btn1" @click="delCreativeById(deleteDialog.data.id); deleteDialog.show = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -304,6 +321,11 @@ export default {
         show: false,
         loading: false,
         data: ''
+      },
+
+      deleteDialog: {
+        data: {name: '加载失败', id: ''},
+        show: false
       },
 
       tableData: {
