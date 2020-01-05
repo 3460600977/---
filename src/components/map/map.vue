@@ -186,7 +186,11 @@
       },
       initHotMap() {
         if (this.isInit) {
-          let heatmapOverlay = new BMapLib.HeatmapOverlay({"radius": 20});
+          let heatmapOverlay = new BMapLib.HeatmapOverlay({
+            radius: 20,
+            gradient: '',
+            opacity: 50
+          });
           this.map.addOverlay(heatmapOverlay);
           this.heatmapOverlay = heatmapOverlay
           this.isInit = false
