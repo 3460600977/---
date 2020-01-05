@@ -29,7 +29,7 @@
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
         <el-table-column prop="name" label="投放计划名称">
           <template slot-scope="scope">
-            <router-link class="color-origin-blue" :to="`/putManage?active=project&planId=${scope.row.id}`">
+            <router-link :to="`/putManage?active=project&planId=${scope.row.id}`">
               <span class="hand">{{scope.row.name}}</span>
             </router-link>
           </template>

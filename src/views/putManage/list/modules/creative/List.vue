@@ -114,7 +114,7 @@
         <el-table-column prop="action" label="操作" fixed="right" width="400">
           <template slot-scope="scope">
             <span class="icon-space hand" 
-              @click="getCreativeDetail(scope.row.id)"
+              @click="getCreativeDetail(scope.row.id); detailDialog.loading = true"
             >
               <i class="iconfont icon-shuxingliebiaoxiangqing2 icon-color"></i>详情
             </span>
@@ -483,11 +483,10 @@ export default {
         show: true,
         data: ''
       }
-      this.getIndustryList()
       this.$api.CreateCreative.CreativeDetail(creativeId)
         .then(res => {
-          this.detailDialog.loading = false;
           this.detailDialog.data = res.result;
+            this.detailDialog.loading = false;
         })
         .catch(res => {
           this.detailDialog = {

@@ -70,7 +70,7 @@
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
         <el-table-column prop="name" label="投放方案名称">
           <template slot-scope="scope">
-            <router-link class="color-origin-blue" :to="`/putManage?active=creative&projectId=${scope.row.projectId}`">
+            <router-link :to="`/putManage?active=creative&projectId=${scope.row.projectId}`">
               <span class="hand">{{scope.row.name}}</span>
             </router-link>
           </template>
@@ -270,7 +270,7 @@ export default {
           this.getPlanNameList()
           this.searchParam.plan.id = this.$route.query.planId;
         }
-        
+
         else if (this.$route.query.status) {
           this.getPlanNameList()
           this.searchParam.plan.status = this.$route.query.status;
