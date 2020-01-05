@@ -663,6 +663,7 @@ export default {
     align-items: center;
     padding: 16px 20px;
     background:rgba(83,160,255,0.08);
+    line-height: 1.5;
     .no-pass-img{
       width: 65px;
       height: 46px;
