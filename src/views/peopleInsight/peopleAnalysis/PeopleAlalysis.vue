@@ -4,7 +4,7 @@
     <headerCondition :peopleName="peopleType" :headerTags="headerTags"/>
 
     <!-- 地域分析 -->
-    <arealDistribution :areasList="areasList"/>
+    <arealDistribution v-if="areasList !== null" :areasList="areasList"/>
 
     <!-- 常规属性 -->
     <el-card class="box-card area-distibution">
@@ -16,6 +16,7 @@
             height="100%"
             :color="colors"
             :data="genderArr"
+            :title="titles.gender"
           >
 
           </pieHollowGroup>
@@ -28,7 +29,7 @@
             :color="colorType[2]"
             :data="ageData"
             :isShowTitle="isShowTitle"
-            titleText="年龄分布"
+            :title="titles.age"
           ></histogram>
         </div>
 
@@ -39,7 +40,7 @@
             :color="colorType[2]"
             :data="educationData"
             :isShowTitle="isShowTitle"
-            titleText="学历"
+            :title="titles.education"
           ></histogram>
         </div>
 
@@ -50,7 +51,7 @@
             :color="colorType[2]"
             :data="consumeData"
             :isShowTitle="isShowTitle"
-            titleText="消费水平"
+            :title="titles.consume"
           ></histogram>
         </div>
 
@@ -60,6 +61,7 @@
             height="100%"
             :color="colorType[1]"
             :data="privateCarData"
+            :title="titles.privateCar"
           ></histogram>
         </div>
 
@@ -118,10 +120,7 @@ export default {
       result: {},
       peopleType: '',
       headerTags: [],
-      areasList: { //地域分析
-        provinceTa: [],
-        cityTa: []
-      },
+      areasList: null,
       isShowTitle: true,
       colorType: {
         0: [
@@ -413,7 +412,16 @@ export default {
         ['rgba(244, 102, 74, 1)', 'rgba(236, 236, 236, 1)'],
         ['rgba(91, 126, 255, 1)', 'rgba(236, 236, 236, 1)'],
         ['rgba(244, 102, 74, 1)', 'rgba(236, 236, 236, 1)'],
-        ['rgba(91, 126, 255, 1)', 'rgba(236, 236, 236, 1)']],
+        ['rgba(91, 126, 255, 1)', 'rgba(236, 236, 236, 1)']
+      ],
+      titles: {
+        "gender":"男女",
+        "age":"年龄分布",
+        "education":"学历",
+        "consume":"收入水平",
+        "privateCar":"车产状况",
+        "marriage":"婚姻状况",
+      }
 
 
     };
@@ -444,8 +452,10 @@ export default {
         this.result = res.result;
         this.peopleType = res.result.crowdInsightName;
         this.headerTags = JSON.parse(res.result.tagName);
-        this.areasList.provinceTa = res.result.provinceTa;
-        this.areasList.cityTa = res.result.cityTa;
+        let obj = {};
+        obj.provinceTa = res.result.provinceTa;
+        obj.cityTa = res.result.cityTa;
+        this.areasList = {...obj};
 
         let barAarr = [
           {
