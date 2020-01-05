@@ -596,14 +596,10 @@
       // 选择下拉已有资源包 根据洞察id获取城市洞察包详情
       getCityInsightDetail(id) {
         if (!id) return;
-        this.buildingDirection.builds.loading = true;
         this.$api.cityInsight.GetCityInsightDetailById(id)
             .then(res => {
               this.formData.projectCity = res.result.city;
               this.getBuildsAvalable(res.result)
-            })
-            .catch(res => {
-              this.buildingDirection.builds.loading = false;
             })
       },
 
@@ -626,7 +622,9 @@
       // 根据 城市洞察详情和筛选条件 查询楼盘余量
       getBuildsAvalable(cityInsight) {
         if (!cityInsight) return
-        
+
+        this.buildingDirection.builds.loading = true;
+
         let param = {
           beginTime: this.formData.date[0],
           endTime: this.formData.date[1],
@@ -658,6 +656,9 @@
       // POST根据订单信息计算预估总价
       estimatePrice: async function() {
         if (!this.validataForm()) return;
+
+        this.buildingDirection.builds.loading = true;
+
         let param = {
           beginTime: this.formData.date[0],
           endTime: this.formData.date[1],
@@ -671,8 +672,10 @@
         this.$api.CityList.EstimateTotalPrice(param)
             .then(res => {
               this.buildingDirection.estimatePrice = res.result;
+              this.buildingDirection.builds.loading = false;
             })
             .catch(res => {
+              this.buildingDirection.builds.loading = false;
             })
       },
 
