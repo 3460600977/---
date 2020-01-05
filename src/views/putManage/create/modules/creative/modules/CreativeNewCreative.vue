@@ -5,6 +5,7 @@
     <PutMangeCard 
       class="form-box creative" 
       :title="'制作创意'">
+
       <!-- 上屏 -->
       <el-form  
         ref="creativeFormMaterialTop"
@@ -307,12 +308,87 @@ export default {
   },
 
   data() {
+    let _this = this;
+
+    let validateTop = async function(rule, value, callback)  {
+      if (!value) {
+        callback(new Error('请上传创意!'))
+      }
+
+      // 视频
+      if (_this.formData.fileType === 1 && !_this.$tools.checkSuffix(value, ['mp4', 'avi'])) {
+        callback(new Error('请上传MP4、AVI格式的视频!'))
+      }
+
+      // 图片
+      if (_this.formData.fileType === 2) {
+        if (!_this.$tools.checkSuffix(value, ['jpg'])) {
+          callback(new Error('请上传JPG格式的图片!'))
+        }
+       
+        let sizeInfo = await _this.$tools.checkImageSize(_this.formData.top, 1080, 1920, true)
+
+        if (sizeInfo === 'sizeError') {
+          callback(new Error('图片尺寸不符合!'))
+        }
+
+      }
+      
+      callback()
+    };
+
+    let bottom720 = async function(rule, value, callback) {
+      if (!value) {
+        callback(new Error('请上传创意!'))
+      }
+
+      if (!_this.$tools.checkSuffix(value, ['jpg'])) {
+        callback(new Error('请上传JPG格式的图片!'))
+      }
+
+      let sizeInfo = await _this.$tools.checkImageSize(_this.formData.bottom720Image, 1280, 720)
+      
+      if (sizeInfo === 'widthError') {
+        callback(new Error('图片宽度不符合!'))
+      }
+
+      if (sizeInfo === 'heightError') {
+        callback(new Error('图片高度不符合!'))
+      }
+
+      callback()
+    };
+
+    let bottom880 = async function(rule, value, callback) {
+      if (!value) {
+        callback(new Error('请上传创意!'))
+      }
+
+      if (!_this.$tools.checkSuffix(value, ['jpg'])) {
+        callback(new Error('请上传JPG格式的图片!'))
+      }
+
+      let sizeInfo = await _this.$tools.checkImageSize(_this.formData.bottom880Image, 1080, 880)
+
+      if (sizeInfo === 'widthError') {
+        callback(new Error('图片宽度不符合!'))
+      }
+
+      if (sizeInfo === 'heightError') {
+        callback(new Error('图片高度不符合!'))
+      }
+
+      callback()
+    };
+
     return {
       // 常量
       MonitorData,
       projectConst,
       fileType,
       
+
+      test: '',
       createType: 'single', // single 联动,  top 上,  bottom 下屏
       haveProject: false, // 编辑时后端返回的是否绑定创意, 判断是否可以选择上下屏类型
       pageLoading: true, // 页面加载中 数据保存中
@@ -349,13 +425,13 @@ export default {
           { required: true, message: '请选择广告创意行业!', trigger: 'change' },
         ],
         'top.name': [
-          { required: true, message: '请上传创意!', trigger: 'change' },
+          { validator: validateTop, trigger: 'change' }
         ],
         'bottom720Image.name': [
-          { required: true, message: '请上传创意!', trigger: 'change' },
+          { validator: bottom720, trigger: 'change' }
         ],
         'bottom880Image.name': [
-          { required: true, message: '请上传创意!', trigger: 'change' },
+          { validator: bottom880, trigger: 'change' }
         ],
       },
 
@@ -518,20 +594,25 @@ export default {
      */
     uploadMedia(event, mediaType) {
       let _file = event.target.files[0];
-      if (mediaType === 'topVideo') {
-        if (!this.$tools.checkSuffix(_file.name, ['mp4', 'avi'])) {
-          return this.$message({
-            message: '请上传MP4、AVI格式的视频',
-            type: 'error'
-          })
-        }
+
+      if (mediaType === 'topVideo' || mediaType === 'topImage') {
         this.formData.top =  _file;
       }
+
+      if (mediaType === 'bottom880Image'){
+        return this.formData.bottom880Image = _file;
+      }
+
+      if (mediaType === 'bottom720Image'){
+        return this.formData.bottom720Image = _file;
+      }
+
+      return
 
       if (mediaType === 'topImage' || mediaType === 'bottom880Image' || mediaType === 'bottom720Image') {
         if (!this.$tools.checkSuffix(_file.name, ['jpg'])) {
           return this.$message({
-            message: '请上传MP4、AVI格式的视频',
+            message: '请上传jpg格式的图片',
             type: 'error'
           })
         }

@@ -24,7 +24,7 @@
         </el-form-item>
 
         <!-- 投放类型 -->
-        <el-form-item class="mt-20" prop="projectType" label="投放时间" >
+        <el-form-item class="mt-20" prop="projectType" label="投放日期" >
           <label slot="label"><span class="color-red">* </span>投放类型</label>
           <div class="mid-between width-240">
             <el-button
@@ -40,7 +40,7 @@
         </el-form-item>
 
         <!-- 按天投放 -->
-        <el-form-item v-if="formData.projectType.value == 1" label="投放时间" class="mt-20" prop="date">
+        <el-form-item v-if="formData.projectType.value == 1" label="投放日期" class="mt-20" prop="date">
           <el-date-picker
             @change="changePageData"
             :disabled="isEdit"
@@ -50,13 +50,14 @@
             type="daterange"
             :picker-options="pickerOptions"
             range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间">
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
           </el-date-picker>
         </el-form-item>
 
         <!-- 按周投放 -->
-        <el-form-item v-if="formData.projectType.value == 0" label="投放时间" class="week-item mt-20" prop="date">
+        <el-form-item v-if="formData.projectType.value == 0" class="week-item mt-20" prop="date">
+          <label slot="label"><i class="color-red">*&nbsp;</i>投放日期</label>
           <el-date-picker
             @change="changePageData()"
             :disabled="isEdit"
@@ -66,8 +67,8 @@
             type="daterange"
             :picker-options="pickerOptions"
             range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间">
+            start-placeholder="开始日期"
+            end-placeholder="结束日期">
           </el-date-picker>
         </el-form-item>
 
@@ -329,13 +330,13 @@
     data() {
       let validateTime = (rule, value, callback) => {
         if (!value) {
-          callback(new Error('请设置投放时间!'));
+          callback(new Error('请设置投放日期!'));
         }
-        if (this.formData.date) {
+        if (this.formData.projectType.value === 0 && this.formData.date) {
           let _dateBegin = new Date(this.formData.date[0]);
           let _dateEnd = new Date(this.formData.date[1]);
           if (_dateBegin.getDay() !== 6 || _dateEnd.getDay() !== 5 || _dateBegin === _dateEnd) {
-            callback(new Error('按周投放的开始时间必须是周六, 结束时间必须为周五, 请正确输入!'));
+            callback(new Error('按周投放的开始日期必须是周六, 结束日期必须为周五, 请正确输入!'));
           }
         }
         callback()
@@ -420,7 +421,6 @@
             {required: true, message: '请选择投放方案行业!', trigger: 'change'},
           ],
           date: [
-            // {required: true, message: '请设置投放时间!', trigger: 'blur'},
             { validator: validateTime, trigger: 'blur' }
           ],
           count: [
@@ -846,7 +846,7 @@
       ]),
 
 
-      // 时间限制
+      // 日期限制
       pickerOptions() {
         let _this = this;
         let now = new Date();
