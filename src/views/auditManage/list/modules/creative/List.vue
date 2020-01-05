@@ -207,7 +207,6 @@
 
 <script>
 const PAGE_SIZE = [10, 20, 30, 40, 50];
-import { Notification } from "element-ui";
 import { DenyDialogReason } from "../../../../../utils/static";
 
 export default {
@@ -554,10 +553,7 @@ export default {
       this.submit.rejectReason = [];
       this.denyDialogReasonList.forEach(item => {
         if (item.select === true) {
-          this.submit.rejectReason.push({
-            index: item.index,
-            reason: item.reason
-          });
+          this.submit.rejectReason.push(item.reason);
         }
       });
       this.submit.rejectReason = JSON.stringify(this.submit.rejectReason);
@@ -578,17 +574,15 @@ export default {
         .then(res => {
           console.log(queryParam, res.result);
           if (this.submit.status === 2) {
-            Notification({
-              title: "成功",
-              message: "创意:" + creativeName + ",通过审查",
+            this.$message({
+              message: "成功,创意:" + creativeName + ",通过审查",
               type: "success"
             });
           }
           if (this.submit.status === 1) {
-            Notification({
-              title: "审核拒绝成功",
-              message: "创意:" + creativeName + ",审核拒绝",
-              type: "info"
+            this.$message({
+              message: "审核拒绝,创意:" + creativeName + ",审核拒绝",
+              type: "error"
             });
             this.dialogDenyVisible = false;
           }

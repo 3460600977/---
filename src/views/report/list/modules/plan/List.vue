@@ -356,8 +356,7 @@ export default {
                 item.value = 0;
               } else if (property === "cost") {
                 let costValue = cardList[property];
-                costValue = this.$tools.formatCentToYuan(costValue);
-                item.value = "¥ " + this.$tools.toThousands(costValue);
+                item.value = "¥ " + this.$tools.toThousands(costValue/100);
               } else {
                 item.value = this.$tools.toThousands(cardList[property], false);
               }
@@ -504,8 +503,7 @@ export default {
           this.pageIndex = res.page.currentPage;
           this.resultData.forEach(item => {
             let costValue = item.cost;
-            costValue = this.$tools.formatCentToYuan(costValue);
-            item.cost = "¥ " + this.$tools.toThousands(costValue);
+            item.cost = "¥ " + this.$tools.toThousands(costValue/100);
             item.startTime = item.startTime + "~" + item.endTime;
           });
         })

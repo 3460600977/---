@@ -32,6 +32,6 @@ export const reportCenterRouter = [
   {
     path: '/reportList/projectDetail',
     component: () => import('@/views/report/projectDetail/projectDetail'),
-    meta: {code: '1421', requiresAuth: false},
+    meta: {code: '1421', white: true},
   },
 ]
