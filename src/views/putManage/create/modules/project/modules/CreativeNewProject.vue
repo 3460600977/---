@@ -401,6 +401,7 @@
         formDataRules: {
           name: [
             {required: true, message: '请输入投放方案名称!', trigger: 'blur'},
+            { max: 50, message: '方案名称不超过50个字,请正确输入!'}
           ],
           industry: [
             {required: true, message: '请选择投放方案行业!', trigger: 'change'},
@@ -748,13 +749,7 @@
         let param;
         let isformValidatePass = this.validataForm();
 
-        if (!isformValidatePass) {
-          return this.$notify({
-            title: '警告',
-            message: '还有必填字段未填写',
-            type: 'warning'
-          });
-        }
+        if (!isformValidatePass) return;
 
         this.planData.loading = true;
         this.formData.confirming = true;
