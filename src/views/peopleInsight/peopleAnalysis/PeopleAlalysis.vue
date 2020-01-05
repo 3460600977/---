@@ -456,7 +456,6 @@ export default {
           }
         ];
         barAarr.forEach(item => {
-          //console.log(this[item.name])
           this[item.name].xAxis = piVO[item.key].map(item => item.tag);
           let yData = piVO[item.key].map(item => item.value);
           let country = wholePiVO[item.key].map(item => item.value);
@@ -467,10 +466,20 @@ export default {
         piVO['privateCarDist'].forEach((itemOther,index)=>{
           itemOther.name = itemOther.tag;
           wholePiVO['privateCarDist'][index].name = wholePiVO['privateCarDist'][index].tag;
+          piVO['genderDist'][index].name = piVO['genderDist'][index].tag;
+          wholePiVO['genderDist'][index].name = wholePiVO['genderDist'][index].tag;
         });
         this.privateCarData.push(piVO['privateCarDist']);
         this.privateCarData.push(wholePiVO['privateCarDist']);
         this.privateCarData.name = this.legendTitle;
+
+        //gender
+        let man = [];
+        let woman = [];
+        piVO['genderDist'].forEach((gender,gIndex)=>{
+
+        });
+        this.genderArr.push()
 
 
       }).catch(res => {
