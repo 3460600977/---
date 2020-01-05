@@ -21,7 +21,7 @@ $color-table-title:#333333; // 表格标题主色
 $color-text:       #181819; // 文字主色
 $color-text-1:     #999999; // 文字辅色
 $color-text-2:     #969CBE; // 文字辅助
-$color-text-3:     #606266;// 文字辅助2
+$color-text-3:     #606266; // 文字辅助2
 $color-shadow-1:   rgba(239,189,38,0.25); // 文字投影1
 $color-shadow-2:   rgba(45,90,255,0.25); // 文字投影2
 $color-shadow-3:   rgba(245,77,77,0.25); // 文字投影3
@@ -41,7 +41,7 @@ $color-disabled:   #C5C8CE; // 失效
 $color-step:       #D9DFE9; // 步骤虚线
 $color-step:       #D9DFE9; // 步骤虚线
 $color-icon:       #ACACAC; // 图标颜色
-$color-origin-blue:#2D5AFF;
+$color-origin-blue:#2D5AFF; // 超链接颜色
 
 
 /**
@@ -76,6 +76,9 @@ $color-origin-blue:#2D5AFF;
 }
 .color-white{
   color: #ffffff !important;
+}
+.color-origin-blue{
+  color: $color-origin-blue
 }
 
 $headerHeight: 76px;

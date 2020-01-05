@@ -5,6 +5,7 @@
     <PutMangeCard 
       class="form-box creative" 
       :title="'制作创意'">
+
       <!-- 上屏 -->
       <el-form  
         ref="creativeFormMaterialTop"
@@ -44,11 +45,11 @@
                   @change="uploadMedia($event, 'topVideo')" 
                   type="file" 
                   accept=".avi, .mp4"
-                  class="input-real"/>
+                  class="input-real width-240"/>
                 <el-input
                   suffix-icon="iconfont icon-uploading1"
                   placeholder="请上传"
-                  v-model="formData.top.name" class="input-fake"></el-input>
+                  v-model="formData.top.name" class="input-fake width-240"></el-input>
               </div>
               <p class="decription color-text-1 font-12"><span class="color-red">*</span>上传1080X1920的视频，仅支持avi、mp4格式 仅支持5s、10s、15s的视频</p>
             </div>
@@ -61,11 +62,11 @@
                   @change="uploadMedia($event, 'topImage')"
                   type="file" 
                   accept=".jpg"
-                  class="input-real"/>
+                  class="input-real width-240"/>
                 <el-input
                   suffix-icon="iconfont icon-uploading1"
                   placeholder="请上传"
-                  v-model="formData.top.name" class="input-fake"></el-input>
+                  v-model="formData.top.name" class="input-fake width-240"></el-input>
               </div>
               <p class="decription color-text-1 font-12"><span class="color-red">*</span>上传1080X1920的图片，仅支持jpg格式</p>
             </div>
@@ -75,7 +76,7 @@
 
         <!-- 时长  -->
         <el-form-item prop="durationType" label="投放时长">
-          <el-select class="width-100-p"
+          <el-select class="width-240"
             :disabled="this.createType === 'step' || haveProject"
             v-model="formData.durationType" 
             placeholder="请选择">
@@ -115,11 +116,11 @@
                 @change="uploadMedia($event, 'bottom880Image')"
                 type="file" 
                 accept=".jpg"
-                class="input-real"/>
+                class="input-real width-240"/>
               <el-input
                 suffix-icon="iconfont icon-uploading1"
                 placeholder="请上传"
-                v-model="formData.bottom880Image.name" class="input-fake"></el-input>
+                v-model="formData.bottom880Image.name" class="input-fake width-240"></el-input>
             </div>
             <p class="decription color-text-1 font-12"><span class="color-red">*</span>上传1080x880的图片，仅支持jpg格式</p>
           </el-form-item>
@@ -139,11 +140,11 @@
                 @change="uploadMedia($event, 'bottom720Image')"
                 type="file" 
                 accept=".jpg"
-                class="input-real"/>
+                class="input-real width-240"/>
               <el-input
                 suffix-icon="iconfont icon-uploading1"
                 placeholder="请上传"
-                v-model="formData.bottom720Image.name" class="input-fake"></el-input>
+                v-model="formData.bottom720Image.name" class="input-fake width-240"></el-input>
             </div>
             <p class="decription color-text-1 font-12"><span class="color-red">*</span>上传1280x720的图片，仅支持jpg格式</p>
           </el-form-item>
@@ -207,7 +208,7 @@
 
         <div class="monitor-box" v-for="(monitor, index) in formData.monitor" :key="index">
           <el-form-item label="监测模式">
-            <el-select class="width-100-p" v-model="formData.monitor[index].mode" placeholder="请选择">
+            <el-select class="width-240" v-model="formData.monitor[index].mode" placeholder="请选择">
               <el-option
                 v-for="item in MonitorData.mode"
                 :key="item"
@@ -219,7 +220,7 @@
 
           <div v-show="formData.monitor[index].mode">
             <el-form-item class="mt-10" label="第三方监测">
-              <el-select class="width-100-p" v-model="formData.monitor[index].thirdPartyMonitor" placeholder="请选择">
+              <el-select class="width-240" v-model="formData.monitor[index].thirdPartyMonitor" placeholder="请选择">
                 <el-option
                   v-for="(item, index) in MonitorData.thirdPartyMonitor"
                   :key="index"
@@ -230,7 +231,7 @@
             </el-form-item>
 
             <el-form-item v-show="formData.monitor[index].thirdPartyMonitor == 'mz'" class="mt-10" label="第三方监测地址">
-              <el-input v-model="formData.monitor[index].thirdPartyMonitorUrl" placeholder="多个地址英文逗号隔开"></el-input>
+              <el-input class="width-240" v-model="formData.monitor[index].thirdPartyMonitorUrl" placeholder="多个地址英文逗号隔开"></el-input>
             </el-form-item>
           </div>
 
@@ -260,7 +261,7 @@
         :label-position="'left'" 
         label-width="112px" class="put-form">
         <el-form-item prop="name" label="广告创意名称">
-          <el-input v-model.trim="formData.name" clearable placeholder="请输入名称"></el-input>
+          <el-input class="width-240" v-model.trim="formData.name" clearable placeholder="请输入名称"></el-input>
         </el-form-item>
       </el-form>
     </PutMangeCard>
@@ -307,12 +308,96 @@ export default {
   },
 
   data() {
+    let _this = this;
+
+    let validateTop = async function(rule, value, callback)  {
+      if (!value) {
+        callback(new Error('请上传创意!'))
+      }
+
+      // 视频
+      if (_this.formData.fileType === 1 && !_this.$tools.checkSuffix(value, ['mp4', 'avi'])) {
+        callback(new Error('请上传MP4、AVI格式的视频!'))
+      }
+
+      // 图片
+      if (_this.formData.fileType === 2) {
+        if (!_this.$tools.checkSuffix(value, ['jpg'])) {
+          callback(new Error('请上传JPG格式的图片!'))
+        }
+
+        if (_this.formData.top.size) {
+          let sizeInfo = await _this.$tools.checkImageSize(_this.formData.top, 1080, 1920, true)
+  
+          if (sizeInfo === 'sizeError') {
+            callback(new Error('图片尺寸不符合!'))
+          }
+        }
+       
+
+      }
+      
+      callback()
+    };
+
+    let bottom720 = async function(rule, value, callback) {
+      if (!value) {
+        callback(new Error('请上传创意!'))
+      }
+
+      if (!_this.$tools.checkSuffix(value, ['jpg'])) {
+        callback(new Error('请上传JPG格式的图片!'))
+      }
+
+      if (_this.formData.bottom720Image.size) {
+        let sizeInfo = await _this.$tools.checkImageSize(_this.formData.bottom720Image, 1280, 720)
+        
+        if (sizeInfo === 'widthError') {
+          callback(new Error('图片宽度不符合!'))
+        }
+  
+        if (sizeInfo === 'heightError') {
+          callback(new Error('图片高度不符合!'))
+        }
+      }
+
+
+      callback()
+    };
+
+    let bottom880 = async function(rule, value, callback) {
+      if (!value) {
+        callback(new Error('请上传创意!'))
+      }
+
+      if (!_this.$tools.checkSuffix(value, ['jpg'])) {
+        callback(new Error('请上传JPG格式的图片!'))
+      }
+
+      if (_this.formData.bottom880Image.size) {
+        let sizeInfo = await _this.$tools.checkImageSize(_this.formData.bottom880Image, 1080, 880)
+  
+        if (sizeInfo === 'widthError') {
+          callback(new Error('图片宽度不符合!'))
+        }
+  
+        if (sizeInfo === 'heightError') {
+          callback(new Error('图片高度不符合!'))
+        }
+      }
+
+
+      callback()
+    };
+
     return {
       // 常量
       MonitorData,
       projectConst,
       fileType,
       
+
+      test: '',
       createType: 'single', // single 联动,  top 上,  bottom 下屏
       haveProject: false, // 编辑时后端返回的是否绑定创意, 判断是否可以选择上下屏类型
       pageLoading: true, // 页面加载中 数据保存中
@@ -349,13 +434,13 @@ export default {
           { required: true, message: '请选择广告创意行业!', trigger: 'change' },
         ],
         'top.name': [
-          { required: true, message: '请上传创意!', trigger: 'change' },
+          { validator: validateTop, trigger: 'change' }
         ],
         'bottom720Image.name': [
-          { required: true, message: '请上传创意!', trigger: 'change' },
+          { validator: bottom720, trigger: 'change' }
         ],
         'bottom880Image.name': [
-          { required: true, message: '请上传创意!', trigger: 'change' },
+          { validator: bottom880, trigger: 'change' }
         ],
       },
 
@@ -518,56 +603,19 @@ export default {
      */
     uploadMedia(event, mediaType) {
       let _file = event.target.files[0];
-      if (mediaType === 'topVideo') {
-        if (!this.$tools.checkSuffix(_file.name, ['mp4', 'avi'])) {
-          return this.$notify({
-            title: '错误',
-            message: '请上传MP4、AVI格式的视频',
-            type: 'error'
-          })
-        }
+
+      if (mediaType === 'topVideo' || mediaType === 'topImage') {
         this.formData.top =  _file;
       }
 
-      if (mediaType === 'topImage' || mediaType === 'bottom880Image' || mediaType === 'bottom720Image') {
-        if (!this.$tools.checkSuffix(_file.name, ['jpg'])) {
-          return this.$notify({
-            title: '错误',
-            message: '请上传MP4、AVI格式的视频',
-            type: 'error'
-          })
-        }
-        let param = [
-          _file, 
-          mediaType === 'bottom720Image' ? 1280 : 1080, 
-          mediaType === 'topImage' ? 1920 : mediaType === 'bottom880Image' ? 880 : 720,
-        ]
-        return this.$tools.checkImageSize(...param)
-          .then(res => {
-            if (mediaType === 'topImage') {
-              return this.formData.top = _file;
-            }
-            if (mediaType === 'bottom880Image' || mediaType === 'bottom720Image'){
-              return this.formData[mediaType] = _file;
-            }
-          })
-          .catch(err => {
-            if (mediaType === 'topImage') {
-              this.clearTopFile();
-            }
-            if (mediaType === 'bottom880Image') {
-              this.clearBottom880File();
-            }
-            if (mediaType === 'bottom720Image') {
-              this.clearBottom720File();
-            }
-            this.$notify({
-              title: '错误',
-              message: err.msg,
-              type: 'error'
-            })
-          })
+      if (mediaType === 'bottom880Image'){
+        return this.formData.bottom880Image = _file;
       }
+
+      if (mediaType === 'bottom720Image'){
+        return this.formData.bottom720Image = _file;
+      }
+
     },
 
     /**
@@ -604,9 +652,6 @@ export default {
     switchFileType(value) {
       if (this.formData.fileType === value) return;
       this.formData.fileType = value;
-      // if (this.createType === 'single') {
-      //   this.formData.durationType = '';
-      // }
       this.formData.top = '';
     },
 

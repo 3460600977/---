@@ -70,7 +70,7 @@
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
         <el-table-column prop="name" label="投放方案名称">
           <template slot-scope="scope">
-            <router-link :to="`/putManage?active=creative&projectId=${scope.row.projectId}`">
+            <router-link class="color-origin-blue" :to="`/putManage?active=creative&projectId=${scope.row.projectId}`">
               <span class="hand">{{scope.row.name}}</span>
             </router-link>
           </template>
@@ -144,7 +144,11 @@
               <i class="iconfont icon-kuaijiezhifu1 icon-color"></i>支付
             </span>
 
-            <span @click="cancleProject(scope.row.projectId)" v-if="scope.row.status == 0 || scope.row.status == 4" class="icon-space hand">
+            <span @click="deleteDialog.data.name = scope.row.name; 
+              deleteDialog.data.id = scope.row.id;
+              deleteDialog.show = true" 
+              v-if="scope.row.status == 0 || scope.row.status == 4" 
+              class="icon-space hand">
               <i class="iconfont icon-error1 icon-color"></i>取消
             </span>
 
@@ -175,13 +179,25 @@
       </span>
     </el-dialog>
 
+    <!-- 取消 提示弹窗 -->
+    <el-dialog title="取消方案"
+      :visible.sync="cancleDialog.show"
+      width="568px"
+      class="my-dialog"
+    >
+      <p>确认是否取消投放方案 <span class="color-main">【{{cancleDialog.data.name}}】？</span></p>
+      <span slot="footer">
+        <el-button @click="cancleDialog.show = false" class="btn1">取 消</el-button>
+        <el-button type="primary" class="btn1" @click="cancleProject(cancleDialog.data.id); cancleDialog.show = false">确 定</el-button>
+      </span>
+    </el-dialog>
+
 
   </div>
 </template>
 
 <script>
 import { projectConst, projectStatus } from '../../../../../utils/static'
-import searchCondition from '../../../templates/searchCondition'
 import detailDialog from './modules/detailDialog'
 
 export default {
@@ -194,8 +210,7 @@ export default {
   },
 
   components: {
-    detailDialog,
-    searchCondition
+    detailDialog
   },
 
   data() {
@@ -209,6 +224,11 @@ export default {
         show: false,
         projectId: '',
         activeTab: 'project'
+      },
+
+      cancleDialog: {
+        data: {name: '加载失败', id: ''},
+        show: false
       },
 
       planNameList: {
@@ -249,8 +269,16 @@ export default {
         if (this.$route.query.planId) {
           this.getPlanNameList()
           this.searchParam.plan.id = this.$route.query.planId;
-        } else {
+        }
+        
+        else if (this.$route.query.status) {
+          this.getPlanNameList()
+          this.searchParam.plan.status = this.$route.query.status;
+        } 
+
+        else {
           this.searchParam.plan.id = '';
+          this.searchParam.plan.status = ''
         }
         
         this.search()
@@ -300,6 +328,10 @@ export default {
       this.tableData.loading = true;
       this.$api.PutProject.CancelProject({projectId: projectId})
         .then(res => {
+          this.$message({
+            message: '已取消',
+            type: 'success'
+          });
           this.search()
         })
         .catch(res => {

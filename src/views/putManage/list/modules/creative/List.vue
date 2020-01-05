@@ -118,17 +118,22 @@
             >
               <i class="iconfont icon-shuxingliebiaoxiangqing2 icon-color"></i>详情
             </span>
-            <span class="icon-space hand">
+
+            <span v-if="scope.row.statusName !== '审核通过'" class="icon-space hand">
               <router-link :to="`/putManage/create/creative?createType=edit&creativeId=${scope.row.id}`">
-                <i class="iconfont icon-baobiao icon-color"></i>编辑
+                <i class="iconfont icon-bianji icon-color"></i>编辑
               </router-link>
             </span>
+
             <span 
-              @click="delCreativeById(scope.row.id)"
+              @click="deleteDialog.data.name = scope.row.name; 
+              deleteDialog.data.id = scope.row.id;
+              deleteDialog.show = true"
               v-if="scope.row.statusName != '审核通过'" 
               class="icon-space hand">
               <i class="iconfont icon-error icon-color"></i>删除
             </span>
+
           </template>
         </el-table-column>
       </el-table>
@@ -144,7 +149,7 @@
     </div>
 
 
-
+    <!-- 详情弹窗 -->
     <el-dialog 
       title="广告创意详情" 
       width="1000px" 
@@ -153,6 +158,10 @@
       <el-tabs v-model="activeName">
         <el-tab-pane label="创意资质" name="aptitude" class="aptitude">
           <div v-loading="detailDialog.loading">
+            <div class="no-pass" v-if="detailDialog.data.status == 1">
+              <img class="no-pass-img" :src="noPassImg" alt="" srcset="">
+              <div>{{JSON.parse(detailDialog.data.rejectReason).join(',')}}</div>
+            </div>
             <div class="text-col">
               <span class="text-title">广告创意名称</span>
               <label class="text-info">{{detailDialog.data.name}}</label>
@@ -249,19 +258,32 @@
         <el-button style="width: 136px;" type="primary" @click="detailDialog.show = false">确 定</el-button>
       </span>
     </el-dialog>
+
+
+    
+    <!-- 删除 提示弹窗 -->
+    <el-dialog title="取消方案"
+      :visible.sync="deleteDialog.show"
+      width="568px"
+      class="my-dialog"
+    >
+      <p>确认是否取消投放方案 <span class="color-main">【{{deleteDialog.data.name}}】？</span></p>
+      <span slot="footer">
+        <el-button @click="deleteDialog.show = false" class="btn1">取 消</el-button>
+        <el-button type="primary" class="btn1" @click="delCreativeById(deleteDialog.data.id); deleteDialog.show = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { creativeStatus, projectStatus, PutGoal, projectConst, MonitorData } from '../../../../../utils/static'
-import searchCondition from '../../../templates/searchCondition'
 import Industry from '../../../templates/Industry'
 
 export default {
   name: "planList",
   
   components: {
-    searchCondition,
     Industry
   },
 
@@ -272,6 +294,8 @@ export default {
       creativeStatus,
       projectStatus,
       screenType: projectConst.screenType,
+
+      noPassImg: require('@/assets/images/icon_not_passed.png'),
 
       activeName: 'aptitude',
 
@@ -308,6 +332,11 @@ export default {
         data: ''
       },
 
+      deleteDialog: {
+        data: {name: '加载失败', id: ''},
+        show: false
+      },
+
       tableData: {
         loading: true,
         data: [],
@@ -331,8 +360,15 @@ export default {
         if (this.$route.query.projectId) {
           this.getProjectNameList()
           this.searchParam.project.id = this.$route.query.projectId;
-        } else {
+        } 
+
+        else if (this.$route.query.status) {
+          this.searchParam.creative.status = +this.$route.query.status;
+        } 
+
+        else {
           this.searchParam.project.id = '';
+          this.searchParam.creative.status = '';
         }
 
         this.search()
@@ -468,8 +504,7 @@ export default {
       this.$api.CreateCreative.DeleteCreativeById(creativeId)
         .then(res => {
           this.tableData.loading = false;
-          this.$notify({
-            title: '成功',
+          this.$message({
             message: '删除创意成功',
             type: 'success'
           });
@@ -512,6 +547,17 @@ export default {
 <style lang='scss' scoped>
 @import '../listCommonStyle.scss';
 .creative-dialog {
+  .no-pass{
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    background:rgba(83,160,255,0.08);
+    .no-pass-img{
+      width: 65px;
+      height: 46px;
+      margin-right: 23px;
+    }
+  }
   .el-dialog {
     margin-top: 10vh !important;
   }

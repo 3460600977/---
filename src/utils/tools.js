@@ -4,91 +4,44 @@ const SIGN_REGEXP = /([yMdhsm])(\1*)/g
 const DEFAULT_PATTERN = 'yyyy-MM-dd'
 
 let tools = {
-  /**
-   * @description: 验证MP4视频时长, 宽高
-   * @param file: input->file
-   * @param limitTime: 时间 毫秒
-   * @param timeRange: 时间误差
-   * @param limitWidth:
-   * @param limitHeight:
-   */
-  checkVideoTimeAndSize: (file, limitTime, timeRange = 0, limitWidth, limitHeight) => {
-    return new Promise((resolve, reject) => {
-      if (!file) {
-        return reject({msg: '未选择任何文件'});
-      }
-      let url = URL.createObjectURL(file);
-      let video = document.createElement('video');
-      
-      if (file.type !== 'video/mp4') {
-        console.log('avi格式不支持前端校验')
-        return resolve({
-          msg: '添加视频成功',
-        });
-      }
-      
-      video.src = url;
-      
-      video.style = "position: relative; z-index: -1; opacity: 0;"
-      
-      video.setAttribute('style', "position: absolute; z-index: -100; top: 0; opacity: 0; width: 200px");
-      
-      document.getElementById('app').appendChild(video)
-      
-      video.addEventListener('canplay', (e) => {
-        let videoTime = e.target.duration * 1000;
-        let videoWidth = e.target.videoWidth;
-        let videoHeight = e.target.videoHeight;
-        let durationToSecondes = (videoTime / 1000
-        ).toFixed(0);
-        // 001-5s/次，002-10s/次，003-15s/次 依次类推
-        
-        video.remove()
-        
-        if (limitTime - timeRange > videoTime || limitTime + timeRange < videoTime) {
-          return reject({msg: '视频时间长度不符合要求！'});
-        }
-        if (limitWidth - 5 > videoWidth || limitWidth + 5 < videoWidth) {
-          return reject({msg: '视频宽度不符合要求！'});
-        }
-        if (limitHeight - 5 > videoHeight || limitHeight + 5 < videoHeight) {
-          return reject({msg: '视频高度不符合要求！'});
-        }
-        return resolve({
-          msg: '添加视频成功',
-        });
-      })
-    })
-  },
-  
   
   /**
    * @description: 验证图片宽高
    * @param file: input->file
    * @param limitWidth:
    * @param limitHeight:
+   * @param allowRotate: 是否允许旋转的图片
    */
-  checkImageSize: (file, limitWidth, limitHeight) => {
-    return new Promise((resolve, reject) => {
-      if (!file) {
-        return reject({msg: '未选择任何文件'});
-      }
+  checkImageSize: async function(file, limitWidth, limitHeight, allowRotate = false) {
+    if (!file) return;
+    return new Promise((resolve) => {
+      let offset = 5; // 误差5px
       let img = new Image();
       img.src = URL.createObjectURL(file);
+
       img.onload = () => {
         let imgWidth = img.width;
         let imgHeight = img.height;
-        if (limitWidth - 5 > imgWidth || limitWidth + 5 < imgWidth) {
-          return reject({msg: '图片宽度不符合要求'});
+        if (allowRotate) {
+          if (
+            (imgWidth < limitWidth - offset || imgWidth > limitWidth + offset 
+              || imgWidth < limitHeight - offset  || imgHeight > limitHeight + offset)
+            && (imgHeight < limitWidth - offset || imgWidth > limitWidth + offset 
+              || imgHeight < limitHeight - offset  || imgHeight > limitHeight + offset) ) {
+            resolve('sizeError');
+          }
+        } else {
+          if (imgWidth < limitWidth - offset || imgWidth > limitWidth + offset) {
+            resolve('widthError');
+          }
+
+          if (imgHeight < limitHeight - offset  || imgHeight > limitHeight + offset) {
+            resolve('heightError');
+          }
         }
-        if (limitHeight - 5 > imgHeight || limitHeight + 5 < imgHeight) {
-          return reject({msg: '图片高度不符合要求'});
-        }
-        return resolve({
-          msg: '添加图片成功！',
-        });
+        
+        resolve('success');
       }
-      
     })
   },
   
