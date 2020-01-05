@@ -116,13 +116,13 @@ export default {
         ],
         verifyValue: [{ trigger: ["blur", "change"], validator: checkVerify }]
       },
-      audit: [{ code: "1010", selected: true }],
       toolMenu: [
         { code: "1010", selected: true },
         { code: "1201", selected: true },
         { code: "1101", selected: true },
         { code: "1102", selected: true },
-        { code: "1340", selected: true }
+        { code: "1340", selected: true },
+        { code: "1421", selected: true }
       ]
     };
   },
@@ -189,18 +189,16 @@ export default {
                 }
               });
               if (audit) {
-                this.audit.forEach(item => {
-                  menuList.push(item);
-                });
                 setMenuList(menuList);
                 this.$router.push({ path: "/auditList", query: {} });
               } else {
                 this.toolMenu.forEach(item => {
-                  menuList.push(item);
+                  menuList.push({code:item.code,selected:item.selected});
                 });
                 setMenuList(menuList);
                 this.$router.push({ path: "/home", query: {} });
               }
+              console.log('menuList',menuList,'audit',audit,'info',info.menu)
             })
             .catch(res => {
               this.loading = false;
