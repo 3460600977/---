@@ -1,8 +1,7 @@
 <template>
   <div class="selected-list">
 
-
-    <!-- 选择洞察包 统计列表 -->
+    <!-- 选择洞察包 统计列表 未寻量 -->
     <template v-if="buildingDirectionActiveType === 'exist'">
       <ul class="selected-list-data-box" v-loading="loading">
         <noData v-if="buildsNumber <= 0 || deviceNumber <= 0">无可售数据</noData>
@@ -216,16 +215,17 @@ export default {
       "unitNum"
     ]),
     
+    ...mapState(['putProject']),
     ...mapState({
       localProject: "putProject"
     }),
 
     existList() {
       let res = [
-        { name: "楼盘数", value: this.buildsNumber },
-        { name: "单元数", value: this.unitNum },
-        { name: "点位数", value: this.deviceNumber },
-        { name: "覆盖人次", value: this.peopleNumber }
+        { name: "楼盘数", value: this.putProject.statistics.premiseNum },
+        { name: "单元数", value: this.putProject.statistics.unitNum },
+        { name: "点位数", value: this.putProject.statistics.deviceNum },
+        { name: "覆盖人次", value: this.putProject.statistics.weekForPeople }
       ];
       return res;
     }

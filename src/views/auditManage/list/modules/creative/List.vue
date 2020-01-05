@@ -146,6 +146,8 @@
             <span class="text-title">{{aItem.label}}</span>
             <div class="demo-image__preview" v-if="aItem.label==='创意资质'">
               <el-image
+                v-for="(item, index) in aItem.value"
+                :key="index"
                 style="width: 100px; height: 158px;border-radius: 2px"
                 :src="aItem.value"
                 :preview-src-list="aItem.srcList"
@@ -493,11 +495,8 @@ export default {
             let property = item.field;
             if (reviewList.hasOwnProperty(property)) {
               if (property === "industryIdentify") {
-                item.srcList = [
-                  "http://digital-publish.obs.cn-east-2.myhuaweicloud.com/industry/INDUSTRY_0_9958d63090e4473e936e1844faa9334a_INDUSTRYIMAGE.jpg"
-                ];
-                item.value =
-                  "http://digital-publish.obs.cn-east-2.myhuaweicloud.com/industry/INDUSTRY_0_9958d63090e4473e936e1844faa9334a_INDUSTRYIMAGE.jpg";
+                item.srcList = JSON.parse(reviewList.industryIdentify);
+                item.value = JSON.parse(reviewList.industryIdentify);
               } else if (property === "screenType") {
                 let screenType = reviewList[property];
                 this.screenTypeList.forEach((screen, index) => {

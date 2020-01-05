@@ -32,6 +32,10 @@
         type: String,
         default:""
       },
+      legend:{
+        type: Array,
+        required: true
+      },
       center: {
         type: Array,
         default: function () {
@@ -63,20 +67,6 @@
                 },
               }
             },
-            label: {
-              normal: {
-                formatter: function(){
-                  let result = item.value*100;
-                  result = result.toFixed(2);
-                  return result+"%";
-                },
-                position: 'center',
-                show: true,
-                textStyle: {
-                  fontSize: '12',
-                }
-              }
-            },
             data: [
               item[0],item[1]
             ]
@@ -93,7 +83,7 @@
         },
         tooltip: {
           trigger: 'item',
-          formatter: "{a} <br/>{b} : {c} ({d}%)"
+          formatter: "{a} <br/>{b} : {d}% "
         },
         legend: {
           data: ['有车','无车'],

@@ -162,6 +162,7 @@
         this.selectedBuildings = [] //当前选中楼盘
         this.indexArr = []
         this.pathArr = {}
+        this.heatmapOverlay = null
         this.map.clearOverlays()
         this.pointsOverlayObj = {
           selectedOverlay: null,

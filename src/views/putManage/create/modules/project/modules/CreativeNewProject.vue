@@ -126,11 +126,12 @@
               <el-select
                 class="bigger"
                 @focus="getCityInsightList"
-                @change="getCityInsightDetail(buildingDirection.cityInsight.selectedItemId)"
+                @change="getCityInsightDetail(buildingDirection.cityInsight.selectedItem.id); setStatistics(buildingDirection.cityInsight.selectedItem)"
                 @clear="setBuildsList([])"
                 :loading="buildingDirection.cityInsight.loading"
                 :disabled="!validataForm()"
-                v-model="buildingDirection.cityInsight.selectedItemId"
+                value-key="id"
+                v-model="buildingDirection.cityInsight.selectedItem"
                 filterable
                 clearable
                 placeholder="请选择">
@@ -138,7 +139,7 @@
                   v-for="item in buildingDirection.cityInsight.data"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.id">
+                  :value="item">
                 </el-option>
               </el-select>
               <router-link to="/cityInsight/list">
@@ -211,6 +212,9 @@
       <BuildList
         :buildingDirectionActiveType="buildingDirection.activeType"
         :loading="buildingDirection.builds.loading"/>
+
+      <div style="margin-top: 10px;" v-if="buildingDirection.activeType === 'exist'"><i class="color-red">*&nbsp;</i>可售投放数详见浮窗, 实际投放数据以支付成功为准。</div>
+
     </PutMangeCard>
 
     <!-- 楼盘预估数面板 -->
@@ -392,7 +396,7 @@
           cityInsight: {
             loading: true,
             data: '',
-            selectedItemId: ''
+            selectedItem: ''
           },
           // 楼盘余量
           builds: {
@@ -452,7 +456,7 @@
     },
 
     methods: {
-      ...mapMutations(['setBuildsList']),
+      ...mapMutations(['setBuildsList', 'setStatistics']),
 
       // 切换行业
       changeIndustry(industry) {
@@ -560,7 +564,7 @@
 
       // 清除楼盘定向列表
       clearBuildDirection() {
-        this.buildingDirection.cityInsight.selectedItemId = '';
+        this.buildingDirection.cityInsight.selectedItem = '';
         this.setBuildsList([])
       },
 
@@ -609,8 +613,8 @@
         if (!this.validataForm()) return;
 
         // 没选已有资源包不重新获取
-        if (!!this.buildingDirection.cityInsight.selectedItemId) {
-          this.getCityInsightDetail(this.buildingDirection.cityInsight.selectedItemId)
+        if (!!this.buildingDirection.cityInsight.selectedItem) {
+          this.getCityInsightDetail(this.buildingDirection.cityInsight.selectedItem.id)
         }
 
         if (this.buildingDirection.builds.hasData) {
