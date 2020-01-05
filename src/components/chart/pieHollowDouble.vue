@@ -32,6 +32,10 @@
         type: String,
         default:""
       },
+      legend:{
+        type: Array,
+        required: true
+      },
       center: {
         type: Array,
         default: function () {
@@ -46,6 +50,7 @@
       let myChart = echarts.init(this.$refs.chartBox);
       let seriesArr = [];
       this.data.forEach((item,index)=>{
+        item.legend = this.legend;
         seriesArr.push(
           {
             name: this.data.name[index],
@@ -63,12 +68,10 @@
                 },
               }
             },
-            label: {
+            /*label: {
               normal: {
                 formatter: function(){
-                  let result = item.value*100;
-                  result = result.toFixed(2);
-                  return result+"%";
+                  return item.legend[index];
                 },
                 position: 'center',
                 show: true,
@@ -76,7 +79,7 @@
                   fontSize: '12',
                 }
               }
-            },
+            },*/
             data: [
               item[0],item[1]
             ]
