@@ -438,8 +438,8 @@ export default {
         this.result = res.result;
         this.legendName = this.peopleType = res.result.crowdInsightName;
         this.headerTags = JSON.parse(res.result.tagName);
-        if(this.legendName.length > 6){
-          this.legendName = this.legendName.substring(0,6) + '...';
+        if(this.legendName.length > 20){
+          this.legendName = this.legendName.substring(0,20) + '...';
         }
         this.legendTitle = [this.legendName,"全网人群"];
         let obj = {};
