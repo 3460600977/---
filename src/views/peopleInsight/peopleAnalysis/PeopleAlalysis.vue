@@ -11,7 +11,8 @@
       <div class="report-form-title">常规属性</div>
       <div class="chart-box">
 
-        <div class="normal-box">
+        <div v-if="genderArr.length > 0" class="normal-box">
+          <img class="nannv-icon" :src="nanpvIcon">
           <pieHollowGroup
             width="100%"
             height="100%"
@@ -349,6 +350,8 @@ export default {
       },
       privateCarData: [],
 
+      nanpvIcon: require('@/assets/images/nannv.png'),
+
       offlineConsumptionData: {  //线下消费
         xAxis: [],
         yAxis: [
@@ -384,12 +387,7 @@ export default {
         ]
       },
 
-      genderArr: [
-            {name: '运动型人群包', value: 0.54},
-            {name: '全网人群', value: 0.38},
-            {name: '运动型人群包', value: 0.24},
-            {name: '全网人群', value: 0.17},
-        ],
+      genderArr: [],
 
       colors : [
         ['rgba(244, 102, 74, 1)', 'rgba(236, 236, 236, 1)'],
@@ -476,11 +474,23 @@ export default {
         //gender
         let man = [];
         let woman = [];
-        piVO['genderDist'].forEach((gender,gIndex)=>{
-
+        piVO['genderDist'].forEach(g=>{
+          g.name = '运动型人群包';
+          if (g.tag === '男') {
+            man.push(g)
+          }else {
+            woman.push(g)
+          }
         });
-        this.genderArr.push()
-
+        wholePiVO['genderDist'].forEach(gw=>{
+          gw.name = '全网人群';
+          if (gw.tag === '男') {
+            man.push(gw)
+          }else {
+            woman.push(gw)
+          }
+        });
+        this.genderArr = man.concat(woman);
 
       }).catch(res => {
         this.loading = false;
@@ -495,6 +505,7 @@ export default {
   padding: 0 20px 20px;
   .area-distibution{
     .chart-box{
+      position: relative;
       margin: 0 -20px;
       .normal-box{
         float: left;
@@ -502,6 +513,12 @@ export default {
         height:306px;
         margin: 20px;
         border:1px solid rgba(236,236,236,1);
+      }
+      .nannv-icon{
+        position: absolute;
+        top: 100px;
+        left: 83px;
+        width: 28px;
       }
     }
   }

@@ -84,7 +84,9 @@
                 label: {
                   normal: {
                     formatter: function(){
-                      return (item.value*100)+"%";
+                      let result = item.value*100;
+                      result = result.toFixed(2);
+                      return result+"%";
                     },
                     position: 'center',
                     show: true,

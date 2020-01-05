@@ -45,7 +45,6 @@
     mounted() {
       let myChart = echarts.init(this.$refs.chartBox);
       let seriesArr = [];
-      let titleArr = [];
       this.data.forEach((item,index)=>{
         seriesArr.push(
           {
@@ -67,16 +66,6 @@
             data: [
               item[0],item[1]
             ]
-          }
-        );
-        titleArr.push(
-          {
-            left: 'center',
-            textAlign: 'center',
-            text: '期末考试',
-            textStyle: {
-              fontSize: 14,
-            },
           }
         );
       });
