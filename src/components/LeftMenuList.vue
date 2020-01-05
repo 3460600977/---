@@ -2,11 +2,11 @@
   <div class="left-menu clearfix" :class="{'hide': !isShowReportRoute}">
     <div style="height: 300px;">
       <div class="step_arrow">
-        <a href="#" @click="handleShow">
+        <span href="#" @click="handleShow">
           <span class="step_arrow_span">
             <i :class="{'rotate': !isShowReportRoute}" class="iconfont icon-icon-test2 icon-color"></i>
           </span>
-        </a>
+        </span>
       </div>
       <el-menu
         :collapse="menuCollapse"
@@ -118,7 +118,7 @@ export default {
     color: inherit;
   }
   /deep/ .el-menu-item {
-    color: $color-blue;
+    color: $color-text-1;
     padding-left: 55px !important;
     &.item_active {
       border-right: 3px solid $color-main;
@@ -127,6 +127,7 @@ export default {
   .is-active,
   .item_active {
     background-color: $color-bg;
+    color: $color-main
   }
   /deep/ .el-submenu {
     background-color: $color-bg-3;
@@ -187,14 +188,18 @@ export default {
   }
   a {
     text-decoration: none;
-    color: inherit;
+    color: $color-text-1;
   }
   .el-menu-item {
     color: $color-blue;
   }
   .is-active,
   .item_active {
+    color: $color-main;
     background-color: $color-bg;
+  }
+  .item_active a{
+    color: $color-main;
   }
 }
 </style>

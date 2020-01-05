@@ -21,7 +21,8 @@
         <el-tabs  class="thin-tab small" v-model="activeTab">
           <el-tab-pane label="省份" name="province">
             <ul class="map-list">
-              <li v-for="(item, index) in list" :key="index" class="map-list-item">
+              <!--<li v-for="(item, index) in list" :key="index" class="map-list-item">-->
+              <li v-for="(item, index) in topTen" :key="index" class="map-list-item">
                 <label class="t-name">{{index+1}}、{{item.name}}</label>
                 <label class=t-value>
                   <div :style="`width: ${+item.percent}%`" class="value-content"></div>
@@ -32,7 +33,8 @@
           </el-tab-pane>
           <el-tab-pane label="城市" name="city">
             <ul class="map-list">
-              <li v-for="(item, index) in list" :key="index" class="map-list-item">
+              <!--<li v-for="(item, index) in list" :key="index" class="map-list-item">-->
+              <li v-for="(item, index) in topTen" :key="index" class="map-list-item">
                 <label class="t-name">{{index+1}}、{{item.name}}</label>
                 <label class=t-value>
                   <div :style="`width: ${+item.percent}%`" class="value-content"></div>
@@ -68,68 +70,85 @@ export default {
       chanaJson: '../../../../assets/china.json',
       mapType: '1',
       activeTab: 'province',
-      mapOptions: {},
       mapData: [],
-      // list: [
-      //   {
-      //     "name": "北京",
-      //     "value": 999
-      //   },
-      //   {
-      //     "name": "湖北",
-      //     "value": 810
-      //   },
-      //   {
-      //     "name": "四川",
-      //     "value": 453
-      //   },
-      //   {
-      //     "name": "上海",
-      //     "value": 142
-      //   },
-      //   {
-      //     "name": "广东",
-      //     "value": 142
-      //   },
-      //   {
-      //     "name": "深圳",
-      //     "value": 92
-      //   },
-      //   {
-      //     "name": "黑龙江",
-      //     "value": 44
-      //   },
-      //   {
-      //     "name": "湖北",
-      //     "value": 42
-      //   },
-      //   {
-      //     "name": "浙江",
-      //     "value": 20
-      //   },
-      //   {
-      //     "name": "江西",
-      //     "value": 15
-      //   },
-      // ]
+      /*list: [
+        {
+          "name": "北京",
+          "count": 999
+        },
+        {
+          "name": "湖北",
+          "count": 810
+        },
+        {
+          "name": "四川",
+          "count": 453
+        },
+        {
+          "name": "上海",
+          "count": 142
+        },
+        {
+          "name": "广东",
+          "count": 142
+        },
+        {
+          "name": "深圳",
+          "count": 92
+        },
+        {
+          "name": "黑龙江",
+          "count": 44
+        },
+        {
+          "name": "湖北",
+          "count": 42
+        },
+        {
+          "name": "浙江",
+          "count": 20
+        },
+        {
+          "name": "江西",
+          "count": 15
+        },
+        {
+          "name": "新疆",
+          "count": 15
+        },
+        {
+          "name": "海南",
+          "count": 15
+        },
+      ],*/
+      topTen:[],
+      mapOptions:{},
+    }
+  },
+  watch: {
+    areasList(val) {
+      console.log(val)
     }
   },
   computed: {
     list() {
+      console.log(this.areasList)
       let result = [];
       let list = this.areasList.provinceTa;
+      console.log(list);
       if(this.activeTab === 'city') {  //城市
         list = this.areasList.cityTa;
       }
       list.forEach(item => {
         let percent = 0;
-        console.log(this.mapType)
         if(this.mapType === '1') {  //人数
           percent = item.countPercent * 100;
         } else {
           percent = (item.density*100).toFixed(2); //浓度
         }
-        result.push({name: item.name, value: item.count, percent: percent, count: item.count})
+        let name = item.name.replace(/省/g,"").replace(/市/,"");
+        let value = Number(item.count);
+        result.push({name: name, value: value, percent: percent, count: item.count})
       });
       // console.log(result)
       // this.mapData = [{
@@ -148,14 +167,11 @@ export default {
       //   'name': "北京",
       //   'value': 999
       // })
-      this.mapData = result.filter((item,index) => {
+      this.topTen = result.filter((item,index) => {
         return index < 10;
-      })
+      });
       return result;
     }
-  },
-  mounted() {
-    this.initMap()
   },
   methods: {
     initMap() {
@@ -172,7 +188,7 @@ export default {
           itemWidth: 20,
           itemHeight: 8,
           itemSymbol: 'rect',
-          itemSymbol: 'rect',
+          //itemSymbol: 'rect',
           orient: 'horizontal',
           realtime: false,
           calculable: true,
@@ -210,13 +226,17 @@ export default {
           {
             type: 'map',
             geoIndex: 0,
-            data: this.mapData
+            //data: this.mapData
+            data: this.list
           }
         ]
       };
       myChart.setOption(this.mapOptions)
     }
-  }
+  },
+  mounted() {
+    this.initMap()
+  },
 }
 </script>
 
