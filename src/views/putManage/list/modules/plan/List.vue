@@ -29,7 +29,7 @@
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
         <el-table-column prop="name" label="投放计划名称">
           <template slot-scope="scope">
-            <router-link :to="`/putManage?active=project&planId=${scope.row.id}`">
+            <router-link class="color-origin-blue" :to="`/putManage?active=project&planId=${scope.row.id}`">
               <span class="hand">{{scope.row.name}}</span>
             </router-link>
           </template>
@@ -51,14 +51,6 @@
             </span>
           </template>
         </el-table-column>
-
-        <!-- <el-table-column prop="beginTime" label="投放时间">
-          <template slot-scope="scope">
-            {{$tools.getFormatDate('YY/mm/dd', scope.row.beginTime)}}
-            -
-            {{$tools.getFormatDate('YY/mm/dd', scope.row.endTime)}}
-          </template>
-        </el-table-column> -->
 
         <el-table-column prop="action" label="操作" fixed="right" width="400">
           <template slot-scope="scope">
@@ -130,15 +122,10 @@
 </template>
 
 <script>
-import searchCondition from '../../../templates/searchCondition'
 import { PutGoal, projectConst, MonitorData } from '@/utils/static'
 
 export default {
   name: "planList",
-
-  components: {
-    searchCondition
-  },
 
   props: {
     active: {

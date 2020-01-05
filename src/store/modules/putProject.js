@@ -58,6 +58,17 @@ export const putProject = {
         })
       })
       return result;
+    },
+
+    // 设备id数组
+    premiseIds: state => {
+      let result = [];
+      state.list.forEach(item => {
+        result.push(item.premisesId)
+      })
+      result = result.join(',')
+      return result;
     }
+
   }
 }

@@ -117,6 +117,15 @@
     background-color: $color-blue !important;
   }
 }
+
+.width-240 {
+  width: 240px !important;
+  .el-input{
+    width: 240px !important;
+  }
+}
+
+
 // 自定义滚动条样式
 .customScroll {
 

@@ -2,6 +2,7 @@
   <!-- 行业选择和回显 -->
   <div>
   <el-cascader
+    class="width-240"
     :class="{'just-display': !originStyle}"
     ref="industryList"
     :disabled="disabled"
