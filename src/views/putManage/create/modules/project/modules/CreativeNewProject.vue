@@ -248,7 +248,7 @@
         </div>
       </template>
 
-      <noData v-else>无可售数据</noData>
+      <noData v-loading="buildingDirection.builds.loading" v-else>无可售数据</noData>
 
 
       <el-divider></el-divider>

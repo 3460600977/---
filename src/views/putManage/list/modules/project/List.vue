@@ -70,7 +70,9 @@
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
         <el-table-column prop="name" label="投放方案名称">
           <template slot-scope="scope">
-            <span class="hand">{{scope.row.name}}</span>
+            <router-link :to="`/putManage?active=creative&projectId=${scope.row.projectId}`">
+              <span class="hand">{{scope.row.name}}</span>
+            </router-link>
           </template>
         </el-table-column>
 
@@ -242,7 +244,6 @@ export default {
       handler() {
         this.getAllCity()
         if (this.$route.query.active !== 'project') return;
-        console.log(1)
         if (this.$route.query.planId) {
           this.getPlanNameList()
           this.searchParam.plan.id = this.$route.query.planId;
@@ -281,6 +282,7 @@ export default {
 
     // 城市列表
     getAllCity() {
+      if (this.cityList.length > 0) return;
       this.$api.CityList.AllList()
         .then(res => {
           this.cityList = res.result;
@@ -341,7 +343,7 @@ export default {
         })
     },
 
-    // 重置翻页为1
+    // 重置  翻页为1  重置传入的planid
     handleSearch() {
       this.searchParam.page.pageIndex = 1;
       this.$router.replace('/putManage?active=project')

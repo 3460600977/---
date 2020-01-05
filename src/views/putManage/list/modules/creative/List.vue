@@ -2,8 +2,6 @@
   <div class="list">
 
     <!-- 查询 -->
-    <!-- <searchCondition @searchByCondition="handleSearch" :searchType="'creative'"/> -->
-    <!-- 投放管理 列表搜索条件 -->
     <el-form :inline="true" class="list-form-inline clearfix">
       <!-- 投放计划名称 -->
       <el-form-item class="line-space" label="投放计划名称">
@@ -73,7 +71,7 @@
 
       <!-- 查询 -->
       <el-form-item class="list-query-button">
-        <el-button type="primary" plain @click="resetPageIndex(); search(); ">查询</el-button>
+        <el-button type="primary" plain @click="handleSearch(); search(); ">查询</el-button>
       </el-form-item>
 
 
@@ -324,9 +322,19 @@ export default {
     };
   },
 
-
-  beforeMount() {
-    this.search()
+  
+  watch: {
+    '$route': {
+      handler() {
+        if (this.$route.query.active !== 'creative') return;
+        if (this.$route.query.projectId) {
+          this.getProjectNameList()
+          this.searchParam.project.id = this.$route.query.projectId;
+        }
+        this.search()
+      },
+      immediate: true
+    }
   },
 
   methods: {
@@ -476,9 +484,10 @@ export default {
           })
     },
 
-    // 重置翻页为1
-    resetPageIndex() {
+    // 重置翻页为1 重置projectId
+    handleSearch() {
       this.searchParam.page.pageIndex = 1;
+      this.$router.replace('/putManage?active=creative')
     },
 
     handleSizeChange(val) {
