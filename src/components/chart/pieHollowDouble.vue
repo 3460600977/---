@@ -10,7 +10,7 @@
   import echarts from 'echarts';
 
   export default {
-    name: "pieGroup",
+    name: "pieDouble",
     props: {
       width: {
         type: String,
@@ -36,10 +36,8 @@
         type: Array,
         default: function () {
           return [
-            ['32%', '32%'],
-            ['55%', '32%'],
-            ['32%', '70%'],
-            ['55%', '70%']
+            ['29%', '55%'],
+            ['69%', '55%'],
           ]
         }
       }
@@ -47,18 +45,15 @@
     mounted() {
       let myChart = echarts.init(this.$refs.chartBox);
       let seriesArr = [];
-      let colors = this.color;
       this.data.forEach((item,index)=>{
         seriesArr.push(
           {
-            //name: item.name,
+            name: this.data.name[index],
             type: 'pie',
-            clockWise: false,
-            radius: ['16%', '25%'],
+            radius: ['29%', '50%'],
+            center: this.center[index],
             itemStyle:  {
               normal: {
-                color: colors[index][0],
-                shadowColor: colors[index][0],
                 shadowBlur: 0,
                 label: {
                   show: false
@@ -68,41 +63,11 @@
                 },
               }
             },
-            hoverAnimation: true,
-            center: this.center[index],
             data: [
-              {
-                value: 1-item.value,
-                itemStyle: {
-                  normal: {
-                    color: colors[index][1]
-                  },
-                  emphasis: {
-                    color: colors[index][1]
-                  }
-                },
-                label: {
-                  normal: {
-                    formatter: function(){
-                      let result = item.value*100;
-                      result = result.toFixed(2);
-                      return result+"%";
-                    },
-                    position: 'center',
-                    show: true,
-                    textStyle: {
-                      fontSize: '12',
-                      color: colors[index][0]
-                    }
-                  }
-                }
-              },{
-                value: item.value,
-                name: item.name,
-              }
+              item[0],item[1]
             ]
           }
-        )
+        );
       });
       let option = {
         title:{
@@ -112,8 +77,12 @@
             fontWeight:"normal"
           }
         },
+        tooltip: {
+          trigger: 'item',
+          formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
         legend: {
-          data: ['运动型人群包', '全网人群'],
+          data: ['有车','无车'],
           icon: 'circle',
           top: 20,
           right: 40,
@@ -123,7 +92,8 @@
             color: '#999999'
           }
         },
-        series: seriesArr
+        series: seriesArr,
+        color:this.color
       };
       myChart.setOption(option);
     },
