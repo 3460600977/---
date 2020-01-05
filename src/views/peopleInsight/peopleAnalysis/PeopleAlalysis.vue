@@ -359,13 +359,13 @@ export default {
             "name": "运动型人群包",
             "type": "bar",
             "data": [],
-            "barWidth": 18
+            "barWidth": 30
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [],
-            "barWidth": 18
+            "barWidth": 30
           }
         ]
       },
@@ -376,13 +376,13 @@ export default {
             "name": "运动型人群包",
             "type": "bar",
             "data": [],
-            "barWidth": 18
+            "barWidth": 30
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [],
-            "barWidth": 18
+            "barWidth": 30
           }
         ]
       },
