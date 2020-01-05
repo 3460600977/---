@@ -81,11 +81,12 @@
 
     <!-- 社区商品交易指数 -->
     <el-card v-if="offlineConsumptionData.xAxis.length > 0" class="box-card">
-      <div class="report-form-title">社区商品交易指数</div>
+      <!--<div class="report-form-title">社区商品交易指数</div>-->
       <div class="big-box">
         <histogram
           width="100%"
           height="100%"
+          :title="titles.offlineConsumption"
           :color="colorType[2]"
           :data="offlineConsumptionData"
         />
@@ -95,15 +96,21 @@
 
     <!-- 社区兴趣爱好指数 -->
     <el-card v-if="interestData.xAxis.length > 0" class="box-card">
-      <div class="report-form-title">社区兴趣爱好指数</div>
+      <!--<div class="report-form-title">社区兴趣爱好指数</div>-->
       <div class="big-box">
         <histogram
           width="100%"
           height="100%"
+          :title="titles.interest"
           :color="colorType[2]"
           :data="interestData"
         />
       </div>
+    </el-card>
+
+    <el-card class="btns padding text-right">
+      <el-button  @click="toList">返回</el-button>
+      <el-button type="primary"  @click="toSelectPoint">新建资源包</el-button>
     </el-card>
 
 
@@ -116,9 +123,11 @@ import arealDistribution from "./modeles/arealDistribution";
 import Histogram from "@/components/chart/Histogram.vue";
 import pieHollowGroup from "@/components/chart/pieHollowGroup";
 import pieHollowDouble from "@/components/chart/pieHollowDouble";
+import BottomBack from "@/components/Back";
 
 export default {
   components: {
+    BottomBack,
     headerCondition,
     arealDistribution,
     Histogram,
@@ -413,6 +422,8 @@ export default {
         "consume":"收入水平",
         "privateCar":"车产状况",
         "marriage":"婚姻状况",
+        "offlineConsumption":"社区商品交易指数",
+        "interest":"社区兴趣爱好指数",
       },
 
       positionType: {
@@ -518,6 +529,12 @@ export default {
       }).catch(res => {
         this.loading = false;
       })
+    },
+    toList() {
+      this.$router.push('/peopleInsight/list')
+    },
+    toSelectPoint() {
+      this.$router.push('/cityInsight/selectPoint')
     }
   }
 };
@@ -573,9 +590,9 @@ export default {
     }
   }
   .big-box{
-    width:1880px;
+    //width:100%;
     height:400px;
-    border-radius:4px;
+    //border-radius:4px;
   }
 }
 
