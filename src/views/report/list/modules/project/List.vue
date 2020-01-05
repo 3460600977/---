@@ -337,6 +337,7 @@ export default {
     //触发改变投放计划事件
     changePlanValue(selVal) {
       console.log("changePlanValue", this.projectList);
+      this.projectList.selectProject=''
       if (selVal) {
         this.projectList.campaignId = selVal;
         this.getProjectListInPlan(selVal);
@@ -381,6 +382,7 @@ export default {
               this.projectList.selectPlan = item.name;
             }
           });
+        
           this.reportPlanList.loading = false;
         })
         .catch(res => {
