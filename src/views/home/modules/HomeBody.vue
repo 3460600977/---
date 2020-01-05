@@ -3,14 +3,17 @@
     <el-card class="box-card mid shadow">
       <div class="company-msg mid">
         <img width="48px" :src="images.grayHead" alt="头像" />
-        <span class="company-name">{{summaryDetailList.company}}</span>
+        <div class="msg-box">
+          <span class="company-name">{{summaryDetailList.company}}</span>
+          <span class>{{summaryDetailList.brandName}}</span>
+        </div>
       </div>
       <!--  -->
       <div
         :style="`background-image:url('${images.moneyBg}')`"
         class="account-money-box color-white"
       >
-        <div class="accouint-title">现金账户</div>
+        <div class="accouint-title">资金账户</div>
         <div
           class="account-val font-number"
         >¥ {{$tools.toThousands(summaryDetailList.accountBalance / 100)}}</div>
@@ -22,7 +25,7 @@
         <div class="accouint-title">新潮币</div>
         <div class="account-val font-number">{{$tools.toThousands(summaryDetailList.xcMoney / 100)}}</div>
       </div>
-      <el-button class="create-put" type="primary" icon="el-icon-plus" @click="ToPathPlan">创建投放计划</el-button>
+      <el-button class="create-put" type="primary" icon="el-icon-plus" @click="ToPathPlan">创建投放方案</el-button>
     </el-card>
     <el-card class="box-card data_card mid-center shadow">
       <div class="card_list">
@@ -92,6 +95,7 @@
             v-model="selectLine.selectTime"
             type="daterange"
             range-separator="--"
+            :picker-options="pickerOptions"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             @change="changeSelectTime"
@@ -243,9 +247,12 @@ export default {
         secondValue: 2,
         selectFirstLabel: "花费（元）",
         selectSecondLabel: "曝光数",
-        startTime: "",
-        endTime: "",
-        selectTime: [this.$tools.getWeek(-8), this.$tools.getWeek(-2)]
+        startTime: this.$tools.getFormatDate(
+          "YYYY-mm-dd",
+          this.$tools.getLastWeek()
+        ),
+        endTime: this.$tools.getFormatDate("YYYY-mm-dd", new Date()),
+        selectTime: []
       }
     };
   },
@@ -262,6 +269,16 @@ export default {
   //   this.company = userInfo.company;
   //   this.accountBalance = userInfo.accountBalance;
   // },
+  computed: {
+    // 日期限制
+    pickerOptions() {
+      return {
+        disabledDate(date) {
+          return date.getTime() > Date.now();
+        }
+      };
+    }
+  },
   methods: {
     changeSelectTime(selectTimeVal) {
       this.startTime = selectTimeVal[0];
@@ -312,7 +329,7 @@ export default {
           break;
         case "goToDenyCreative":
           this.$router.push({
-            path: "putManage?active=creative&status=",
+            path: "putManage?active=creative&status=1",
             query: {}
           });
           break;
@@ -348,12 +365,12 @@ export default {
     //刷新首页 用户统计数据=》数据趋势
     getSummaryData: async function() {
       this.selectLine.selectTime = [
-        this.$tools.getWeek(-8),
-        this.$tools.getWeek(-2)
+        this.$tools.getFormatDate("YYYY-mm-dd", this.$tools.getLastWeek()),
+        this.$tools.getFormatDate("YYYY-mm-dd", new Date())
       ];
       let param = {
-        startTime: this.$tools.getWeek(-8),
-        endTime: this.$tools.getWeek(-2),
+        startTime: this.selectLine.selectTime[0],
+        endTime: this.selectLine.selectTime[1],
         first: this.selectLine.firstValue,
         second: this.selectLine.secondValue
       };
@@ -376,7 +393,10 @@ export default {
         first: this.selectLine.firstValue,
         second: this.selectLine.secondValue
       };
-      this.$api.Login.getSummaryData(param)
+      this.summaryLineData.sFirstData = [];
+      this.summaryLineData.xdata = [];
+      this.summaryLineData.sSecondData = [];
+      this.$api.Login.GetSummaryData(param)
         .then(res => {
           let summaryData = res.result;
           summaryData.first.forEach(fItem => {
@@ -420,12 +440,16 @@ export default {
     .company-msg {
       float: left;
       height: 100px;
-      .company-name {
+      .msg-box{
+        display: flex;
+        flex-direction: column;
         margin: 0 33px 0 14px;
-        width: 168px;
-        font-size: 14px;
-        line-height: 28px;
-        color: rgba(24, 24, 25, 1);
+        .company-name {
+          width: 240px;
+          font-size: 14px;
+          line-height: 28px;
+          color: rgba(24, 24, 25, 1);
+        }
       }
     }
     .accouint-title {
