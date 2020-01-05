@@ -31,7 +31,7 @@
           <span class="color-text-1">{{project.data.campaignName}}</span>
         </el-form-item>
         <el-form-item label="方案行业">
-          <span class="color-text-1"><Industry :disabled="true" :originStyle="false" :value="project.data.industry" /></span>
+          <span class="color-text-1">{{project.data.industry}}</span>
         </el-form-item>
         <el-form-item label="屏幕类型">
           <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.screenType, 'value', project.data.type).name}}</span>
@@ -56,7 +56,7 @@
       <div class="font-16" style="margin-bottom: 30px;">点位信息</div>
        <!-- 楼盘定向->选中列表 -->
       <BuildList
-        :buildingDirectionActiveType="'exist'"
+        :buildingDirectionActiveType="'payConfirm'"
         :loading="false"/>
     </PutMangeCard>
 

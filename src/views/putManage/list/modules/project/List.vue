@@ -144,9 +144,9 @@
               <i class="iconfont icon-kuaijiezhifu1 icon-color"></i>支付
             </span>
 
-            <span @click="deleteDialog.data.name = scope.row.name; 
-              deleteDialog.data.id = scope.row.id;
-              deleteDialog.show = true" 
+            <span @click="cancleDialog.data.name = scope.row.name; 
+              cancleDialog.data.id = scope.row.projectId;
+              cancleDialog.show = true" 
               v-if="scope.row.status == 0 || scope.row.status == 4" 
               class="icon-space hand">
               <i class="iconfont icon-error1 icon-color"></i>取消
