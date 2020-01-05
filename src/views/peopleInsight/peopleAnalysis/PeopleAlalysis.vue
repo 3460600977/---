@@ -476,7 +476,7 @@ export default {
         let woman = [];
         piVO['genderDist'].forEach(g=>{
           g.name = '运动型人群包';
-          if (g.tag === '男') {
+          if (g.tag === '女') {
             man.push(g)
           }else {
             woman.push(g)
@@ -484,7 +484,7 @@ export default {
         });
         wholePiVO['genderDist'].forEach(gw=>{
           gw.name = '全网人群';
-          if (gw.tag === '男') {
+          if (gw.tag === '女') {
             man.push(gw)
           }else {
             woman.push(gw)

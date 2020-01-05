@@ -95,7 +95,7 @@
                     <p>
                     <span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;
                     background:linear-gradient(187deg,${item.color.colorStops[0].color}, ${item.color.colorStops[1].color});"></span>
-                    <span>${item.seriesName}: ${parseInt(item.data * 100)}%</span>
+                    <span>${item.seriesName}: ${(item.data * 100).toFixed(2)}%</span>
                     </p>
                   `
             })
@@ -126,7 +126,7 @@
           type: 'value',
           axisLabel: {
             formatter: function (v) {
-              return `${parseInt(v * 100)}%`
+              return (v * 100).toFixed(2)+'%'
             }
           },
           splitLine:{
@@ -178,7 +178,7 @@
                     <p>
                     <span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;
                     background:linear-gradient(187deg,${item.color.colorStops[0].color}, ${item.color.colorStops[1].color});"></span>
-                    <span>${item.seriesName}: ${parseInt(item.data * 100)}%</span>
+                    <span>${item.seriesName}: ${(item.data * 100).toFixed(2)}%</span>
                     </p>
                   `
               })
@@ -209,7 +209,7 @@
             type: 'value',
             axisLabel: {
               formatter: function (v) {
-                return `${parseInt(v * 100)}%`
+                return (v * 100).toFixed(2)+'%'
               }
             },
             splitLine:{
