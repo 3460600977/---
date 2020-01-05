@@ -293,6 +293,12 @@ export default {
             cursor: pointer;
             padding: 0 10px;
             height: 100%;
+            i {
+              transition: 0.3s;
+            }
+            .active{
+              transform: rotate(180deg);
+            }
           }
           .addr {
             line-height: 12px;
