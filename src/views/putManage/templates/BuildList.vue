@@ -2,7 +2,7 @@
   <div class="selected-list">
 
     <!-- 选择洞察包 统计列表 未寻量 -->
-    <template v-if="buildingDirectionActiveType === 'exist'">
+    <template v-if="buildingDirectionActiveType === 'exist' || buildingDirectionActiveType === 'payConfirm'">
       <ul class="selected-list-data-box" v-loading="loading">
         <noData v-if="buildsNumber <= 0 || deviceNumber <= 0">无可售数据</noData>
 
@@ -19,6 +19,8 @@
         </li>
       </ul>
     </template>
+
+
 
 
 
@@ -139,7 +141,8 @@ export default {
     },
 
     /**
-     * exist: 统计出信息
+     * exist: 统计未寻量出信息
+     * payConfirm: 统计出信息 确认支付
      * create: 列表 可以下载删除
      * list: 列表 向下箭头展开设备信息
      */
@@ -221,12 +224,26 @@ export default {
     }),
 
     existList() {
-      let res = [
-        { name: "楼盘数", value: this.putProject.statistics.premiseNum },
-        { name: "单元数", value: this.putProject.statistics.unitNum },
-        { name: "点位数", value: this.putProject.statistics.deviceNum },
-        { name: "覆盖人次", value: this.putProject.statistics.weekForPeople }
-      ];
+      let res;
+
+      if (this.buildingDirectionActiveType === 'exist') {
+        res = [
+          { name: "楼盘数", value: this.putProject.statistics.premiseNum },
+          { name: "单元数", value: this.putProject.statistics.unitNum },
+          { name: "点位数", value: this.putProject.statistics.deviceNum },
+          { name: "覆盖人次", value: this.putProject.statistics.weekForPeople }
+        ];
+      }
+
+      if (this.buildingDirectionActiveType === 'payConfirm') {
+        res = [
+          { name: "楼盘数", value: this.buildsNumber },
+          { name: "单元数", value: this.unitNum },
+          { name: "点位数", value: this.deviceNumber },
+          { name: "覆盖人次", value: this.peopleNumber }
+        ];
+      }
+
       return res;
     }
   }

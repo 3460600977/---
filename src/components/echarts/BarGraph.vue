@@ -154,7 +154,7 @@
         handler: function (newVal, oldVal) {
           if (newVal.sortField === 'cost') {
             newVal.series.data.forEach((item, index, arr) => {
-              arr[index] = this.$tools.formatCentToYuan(item)
+              arr[index] = this.$tools.toThousands(item/100)
             })
           }
           this.initChart(newVal)

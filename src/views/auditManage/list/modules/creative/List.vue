@@ -146,6 +146,8 @@
             <span class="text-title">{{aItem.label}}</span>
             <div class="demo-image__preview" v-if="aItem.label==='创意资质'">
               <el-image
+                v-for="(item, index) in aItem.value"
+                :key="index"
                 style="width: 100px; height: 158px;border-radius: 2px"
                 :src="aItem.value"
                 :preview-src-list="aItem.srcList"
@@ -205,7 +207,6 @@
 
 <script>
 const PAGE_SIZE = [10, 20, 30, 40, 50];
-import { Notification } from "element-ui";
 import { DenyDialogReason } from "../../../../../utils/static";
 
 export default {
@@ -494,11 +495,8 @@ export default {
             let property = item.field;
             if (reviewList.hasOwnProperty(property)) {
               if (property === "industryIdentify") {
-                item.srcList = [
-                  "http://digital-publish.obs.cn-east-2.myhuaweicloud.com/industry/INDUSTRY_0_9958d63090e4473e936e1844faa9334a_INDUSTRYIMAGE.jpg"
-                ];
-                item.value =
-                  "http://digital-publish.obs.cn-east-2.myhuaweicloud.com/industry/INDUSTRY_0_9958d63090e4473e936e1844faa9334a_INDUSTRYIMAGE.jpg";
+                item.srcList = JSON.parse(reviewList.industryIdentify);
+                item.value = JSON.parse(reviewList.industryIdentify);
               } else if (property === "screenType") {
                 let screenType = reviewList[property];
                 this.screenTypeList.forEach((screen, index) => {
@@ -555,10 +553,7 @@ export default {
       this.submit.rejectReason = [];
       this.denyDialogReasonList.forEach(item => {
         if (item.select === true) {
-          this.submit.rejectReason.push({
-            index: item.index,
-            reason: item.reason
-          });
+          this.submit.rejectReason.push(item.reason);
         }
       });
       this.submit.rejectReason = JSON.stringify(this.submit.rejectReason);
@@ -579,17 +574,15 @@ export default {
         .then(res => {
           console.log(queryParam, res.result);
           if (this.submit.status === 2) {
-            Notification({
-              title: "成功",
-              message: "创意:" + creativeName + ",通过审查",
+            this.$message({
+              message: "成功,创意:" + creativeName + ",通过审查",
               type: "success"
             });
           }
           if (this.submit.status === 1) {
-            Notification({
-              title: "审核拒绝成功",
-              message: "创意:" + creativeName + ",审核拒绝",
-              type: "info"
+            this.$message({
+              message: "审核拒绝,创意:" + creativeName + ",审核拒绝",
+              type: "error"
             });
             this.dialogDenyVisible = false;
           }

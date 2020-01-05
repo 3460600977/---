@@ -220,7 +220,12 @@ export const DenyDialogReason = [
 export const MenuList =
   [
     {"code": "9999", "name": "登录", "selected": false, "path": "/login", "children": []},
-    {"code": "1000", "name": "首页", "selected": false, "path": "/home", "children": []},
+    {"code": "1000", "name": "首页", "selected": false, "path": "/home", "children": [
+      {"code": "1001", "name": "新闻1", "selected": false, "path": "/home/new", "children": []},
+      {"code": "1002", "name": "新闻2", "selected": false, "path": "/home/new2", "children": []},
+      {"code": "1003", "name": "新闻3", "selected": false, "path": "/home/new3", "children": []},
+      {"code": "1004", "name": "新闻4", "selected": false, "path": "/home/new4", "children": []},
+    ]},
     {
       "code": "1100", "name": "人群洞察", "selected": false, "path": "/peopleInsight/list", "children": [
         {"code": "1101", "name": "创建人群包", "selected": false, "path": "/peopleInsight/createCrowd", "children": []},

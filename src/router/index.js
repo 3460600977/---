@@ -25,6 +25,31 @@ const router = new Router({
           meta: {code: '1000'},
           component: () => import('@/views/home/modules/HomeBody'),
         },
+        {
+          path: '/home/new',
+          meta: {code: '1001',white: true},
+          component: () => import('@/views/home/modules/HomeNew'),
+        },
+        {
+          path: '/home/new2',
+          meta: {code: '1002',white: true},
+          component: () => import('@/views/home/modules/HomeNew2'),
+        },
+        {
+          path: '/home/new3',
+          meta: {code: '1003',white: true},
+          component: () => import('@/views/home/modules/HomeNew3'),
+        },
+        {
+          path: '/home/new4',
+          meta: {code: '1004',white: true},
+          component: () => import('@/views/home/modules/HomeNew4'),
+        },
+        {
+          path: '/',
+          meta: {code: '1000'},
+          component: () => import('@/views/home/modules/HomeBody'),
+        },
         ...putManageRouter,
         ...cityInsightRouter,
         ...reportCenterRouter,

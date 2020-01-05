@@ -37,13 +37,13 @@ export const putManageRouter = [
       {
         path: '/putManage/create/payConfirm',
         component: () => import ('@/views/putManage/create/modules/payConfirm/PayConfirm'),
-        meta: {code: '1330'},
+        meta: {code: '1330',white: true},
       },
       // 创建创意
       {
         path: '/putManage/create/creative',
         component: () => import ('@/views/putManage/create/modules/creative/Creative'),
-        meta: {code: '1340'},
+        meta: {code: '1340',white: true},
       },
     ]
   }

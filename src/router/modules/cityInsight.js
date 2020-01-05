@@ -2,13 +2,13 @@ export const cityInsightRouter = [
   {
     path: '/cityInsight/selectPoint',
     component: () => import('@/views/cityInsight/cityInsight/'),
-    meta: {code: '1201'},
+    meta: { code: '1201', white: true },
   },
   // 资源包
   {
     path: '/cityInsight/list',
     component: () => import('@/views/toolBox/resourceBundle/'),
-    meta: {code: '1200'},
+    meta: { code: '1200' },
   },
   {
     path: '/buildingDetail/:id',
