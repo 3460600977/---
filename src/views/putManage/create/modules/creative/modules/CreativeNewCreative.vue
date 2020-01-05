@@ -44,11 +44,11 @@
                   @change="uploadMedia($event, 'topVideo')" 
                   type="file" 
                   accept=".avi, .mp4"
-                  class="input-real"/>
+                  class="input-real width-240"/>
                 <el-input
                   suffix-icon="iconfont icon-uploading1"
                   placeholder="请上传"
-                  v-model="formData.top.name" class="input-fake"></el-input>
+                  v-model="formData.top.name" class="input-fake width-240"></el-input>
               </div>
               <p class="decription color-text-1 font-12"><span class="color-red">*</span>上传1080X1920的视频，仅支持avi、mp4格式 仅支持5s、10s、15s的视频</p>
             </div>
@@ -61,11 +61,11 @@
                   @change="uploadMedia($event, 'topImage')"
                   type="file" 
                   accept=".jpg"
-                  class="input-real"/>
+                  class="input-real width-240"/>
                 <el-input
                   suffix-icon="iconfont icon-uploading1"
                   placeholder="请上传"
-                  v-model="formData.top.name" class="input-fake"></el-input>
+                  v-model="formData.top.name" class="input-fake width-240"></el-input>
               </div>
               <p class="decription color-text-1 font-12"><span class="color-red">*</span>上传1080X1920的图片，仅支持jpg格式</p>
             </div>
@@ -75,7 +75,7 @@
 
         <!-- 时长  -->
         <el-form-item prop="durationType" label="投放时长">
-          <el-select class="width-100-p"
+          <el-select class="width-240"
             :disabled="this.createType === 'step' || haveProject"
             v-model="formData.durationType" 
             placeholder="请选择">
@@ -115,11 +115,11 @@
                 @change="uploadMedia($event, 'bottom880Image')"
                 type="file" 
                 accept=".jpg"
-                class="input-real"/>
+                class="input-real width-240"/>
               <el-input
                 suffix-icon="iconfont icon-uploading1"
                 placeholder="请上传"
-                v-model="formData.bottom880Image.name" class="input-fake"></el-input>
+                v-model="formData.bottom880Image.name" class="input-fake width-240"></el-input>
             </div>
             <p class="decription color-text-1 font-12"><span class="color-red">*</span>上传1080x880的图片，仅支持jpg格式</p>
           </el-form-item>
@@ -139,11 +139,11 @@
                 @change="uploadMedia($event, 'bottom720Image')"
                 type="file" 
                 accept=".jpg"
-                class="input-real"/>
+                class="input-real width-240"/>
               <el-input
                 suffix-icon="iconfont icon-uploading1"
                 placeholder="请上传"
-                v-model="formData.bottom720Image.name" class="input-fake"></el-input>
+                v-model="formData.bottom720Image.name" class="input-fake width-240"></el-input>
             </div>
             <p class="decription color-text-1 font-12"><span class="color-red">*</span>上传1280x720的图片，仅支持jpg格式</p>
           </el-form-item>
@@ -207,7 +207,7 @@
 
         <div class="monitor-box" v-for="(monitor, index) in formData.monitor" :key="index">
           <el-form-item label="监测模式">
-            <el-select class="width-100-p" v-model="formData.monitor[index].mode" placeholder="请选择">
+            <el-select class="width-240" v-model="formData.monitor[index].mode" placeholder="请选择">
               <el-option
                 v-for="item in MonitorData.mode"
                 :key="item"
@@ -219,7 +219,7 @@
 
           <div v-show="formData.monitor[index].mode">
             <el-form-item class="mt-10" label="第三方监测">
-              <el-select class="width-100-p" v-model="formData.monitor[index].thirdPartyMonitor" placeholder="请选择">
+              <el-select class="width-240" v-model="formData.monitor[index].thirdPartyMonitor" placeholder="请选择">
                 <el-option
                   v-for="(item, index) in MonitorData.thirdPartyMonitor"
                   :key="index"
@@ -230,7 +230,7 @@
             </el-form-item>
 
             <el-form-item v-show="formData.monitor[index].thirdPartyMonitor == 'mz'" class="mt-10" label="第三方监测地址">
-              <el-input v-model="formData.monitor[index].thirdPartyMonitorUrl" placeholder="多个地址英文逗号隔开"></el-input>
+              <el-input class="width-240" v-model="formData.monitor[index].thirdPartyMonitorUrl" placeholder="多个地址英文逗号隔开"></el-input>
             </el-form-item>
           </div>
 
@@ -260,7 +260,7 @@
         :label-position="'left'" 
         label-width="112px" class="put-form">
         <el-form-item prop="name" label="广告创意名称">
-          <el-input v-model.trim="formData.name" clearable placeholder="请输入名称"></el-input>
+          <el-input class="width-240" v-model.trim="formData.name" clearable placeholder="请输入名称"></el-input>
         </el-form-item>
       </el-form>
     </PutMangeCard>

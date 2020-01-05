@@ -15,7 +15,7 @@
 
         <!-- 投放方案行业 -->
         <el-form-item class="mt-20" prop="industry" label="方案行业">
-          <Industry :disabled="isEdit" @changeIndustry="changeIndustry"/>
+          <Industry class="width-240" :disabled="isEdit" @changeIndustry="changeIndustry"/>
         </el-form-item>
 
         <!-- 屏幕类型 -->
@@ -26,7 +26,7 @@
         <!-- 投放类型 -->
         <el-form-item class="mt-20" prop="projectType" label="投放时间" >
           <label slot="label"><span class="color-red">* </span>投放类型</label>
-          <div class="mid-between" style="width: 240px">
+          <div class="mid-between width-240">
             <el-button
               :disabled="isEdit"
               style="width: 102px"
@@ -60,6 +60,7 @@
           <el-date-picker
             @change="changePageData(); changeWeek()"
             :disabled="isEdit"
+            :onPick="pichWeek()"
             :clearable="false"
             v-model="formData.date"
             value-format="yyyy-MM-dd"
@@ -545,6 +546,12 @@
       // 显示地图选点
       showMapChoose() {
         this.buildingDirection.mapChooseShow = true;
+      },
+
+      // 
+      pichWeek(maxDate, minDate) {
+        console.log(maxDate)
+        console.log(minDate)
       },
 
       // 按周投放时间校验

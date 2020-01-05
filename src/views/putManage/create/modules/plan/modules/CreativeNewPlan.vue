@@ -57,7 +57,7 @@
         :label-position="'left'" 
         label-width="112px" class="put-form">
         <el-form-item prop="name" label="投放计划名称">
-          <el-input v-model.trim="formData.name" clearable placeholder="请输入名称"></el-input>
+          <el-input class="width-240" v-model.trim="formData.name" clearable placeholder="请输入名称"></el-input>
         </el-form-item>
       </el-form>
     </PutMangeCard>
