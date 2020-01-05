@@ -216,6 +216,9 @@ export default {
     ]),
     
     ...mapState(['putProject']),
+    ...mapState({
+      localProject: "putProject"
+    }),
 
     existList() {
       let res = [
