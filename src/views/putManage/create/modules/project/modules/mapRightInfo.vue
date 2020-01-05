@@ -112,11 +112,7 @@ export default {
     },
     createPackage() {
       if (!this.selectedBuildings.length) {
-        this.$notify({
-          title: "警告",
-          message: "没有选中的楼盘数据！",
-          type: "warning"
-        });
+        this.$message.error('没有选中的楼盘数据不能创建资源包！');
         return;
       }
       this.$emit("createPackage");
