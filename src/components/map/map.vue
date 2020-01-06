@@ -32,11 +32,11 @@
         pointsOptions: {
           0: {
             shape: BMAP_POINT_SHAPE_CIRCLE,
-            color: '#F44A4A'
+            color: '#F44A4A',
           },
           1: {
             shape: BMAP_POINT_SHAPE_CIRCLE,
-            color: 'rgba(158, 158, 158, 0.7)'
+            color: 'rgba(158, 158, 158, 0.7)',
           }
         },
         styleOptions: {
@@ -185,6 +185,7 @@
         this.pointsOverlayObj.isShow = true
         this.reGetAreaPoint()
         this.jugDraw()
+        this.initHotMap()
       },
       setCity(city) {
         this.map.centerAndZoom(city.name, 12);
@@ -198,6 +199,7 @@
             .6:'rgb(255, 235, 0)',
             .8:'rgb(244, 74, 74)'
           },
+          zIndex: 199,
           opacity: 0.6
         });
         this.map.addOverlay(heatmapOverlay);
@@ -749,6 +751,7 @@
           radius: this.defaultRadius,
           points: circle.getCenter()
         }
+
         if (this.$tools.type(info) === 'object') {
           path.name = info.title
           path.address = info.address
@@ -779,7 +782,7 @@
         if (this.heatmapOverlay) {
           this.heatmapOverlay.setDataSet({data:arr, max:100});
         } else {
-          this.initHotMap()
+          // this.initHotMap()
           this.heatmapOverlay.setDataSet({data:arr, max:100});
         }
       },
