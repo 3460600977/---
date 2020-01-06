@@ -123,11 +123,9 @@ import arealDistribution from "./modeles/arealDistribution";
 import Histogram from "@/components/chart/Histogram.vue";
 import pieHollowGroup from "@/components/chart/pieHollowGroup";
 import pieHollowDouble from "@/components/chart/pieHollowDouble";
-import BottomBack from "@/components/Back";
 
 export default {
   components: {
-    BottomBack,
     headerCondition,
     arealDistribution,
     Histogram,
