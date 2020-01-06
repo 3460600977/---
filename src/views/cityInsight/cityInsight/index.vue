@@ -19,6 +19,7 @@
             title="城市列表"
             :selectDatas="cityDatas"
             :filters="cityFilter"
+            :currentItem="cityFilter"
             @hide="() => hide(0)"
             @returnResult="(val) => returnResult(val, 0)"
           ></singleSelect-popup>
@@ -180,7 +181,7 @@
     },
     data() {
       return {
-        isInit: true,
+        // isInit: true,
         buildingDatas: { // 楼宇标签
           title: '楼宇标签',
           options: [
@@ -404,21 +405,21 @@
       // 各种弹窗返回数据触发方法 type表示楼盘标签是 0清空还是2选择
       returnResult(val, index, type) {
         if (index === 0) { // 城市切换
-          if (this.isInit) {
+          // if (this.isInit) {
+          //   this.cityFilter = val
+          //   this.resetLeftPopup(index, type)
+          //   this.isInit = false
+          // } else {
+          this.$confirm('切换城市后，系统将清空当前城市的操作数据，是否切换？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
             this.cityFilter = val
             this.resetLeftPopup(index, type)
-            this.isInit = false
-          } else {
-            this.$confirm('切换城市后，系统将清空当前城市的操作数据，是否切换？', '提示', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning'
-            }).then(() => {
-              this.cityFilter = val
-              this.resetLeftPopup(index, type)
-            }).catch(() => {
-            });
-          }
+          }).catch(() => {
+          });
+          // }
         } else if (index === 1) { // 楼盘标签选择
           if (type === 0) {
             this.buildingFilterSelected = false
@@ -464,6 +465,13 @@
       hide(val) {
         this.isShow[val] = false
       },
+      findItem(val, arr) {
+        let arrTotal = this.$tools.operation(arr, 'values')
+        let result =  arrTotal.find((item) => {
+          return item.name == val.name
+        })
+        return result
+      },
       getCityFilter() {
         this.$refs.dbmap.location().then((data) => {
           if (data.name === '全国') {
@@ -478,7 +486,17 @@
             }).catch(() => {
             });
           }
-          this.cityFilter = Object.assign({}, this.cityFilter, {name: data.name})
+          let result = Object.assign({}, this.cityFilter, {name: data.name})
+          let result1 = this.findItem(result, this.cityDatas)
+          if (result1) {
+            this.cityFilter = result1
+            this.resetLeftPopup(0)
+          } else {
+            this.cityFilter = result
+            this.$message.error('当前城市尚未开通，我们已在快马加鞭，敬请期待！');
+            this.loading = false
+            return
+          }
         })
       },
       loadCitys() {
@@ -503,11 +521,6 @@
         }
       },
       loadData() {
-        if (this.cityFilter.cityCode === null) {
-          this.$message.error('当前城市尚未开通，我们已在快马加鞭，敬请期待！');
-          this.loading = false
-          return
-        }
         this.loading = true
         this.$api.cityInsight.getPremisesByCity({cityCode: this.cityFilter.cityCode, tag: this.buildingFilter}).then((data) => {
           if (data.result) {
