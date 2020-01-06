@@ -327,7 +327,6 @@
       // 添加资源包成功后触发事件
       createSuc() {
         this.$refs.dbmap.clearPathArr()
-        this.$refs.dbmap.drawDevicePoints()
       },
       // 查找选点按钮点击
       searchDrawTypeClick() {
@@ -369,33 +368,37 @@
         this.switchChange(false)
         this.$refs.peopleInsight.resetSelect()
       },
-      resetTags() {
-        if (this.buildingFilterSelected) { // 如果标签选择过，则清空标签选择结果
-          this.$refs.dbmap.clearMap()
-          this.$refs.tagsSelect.operate(0)
-        } else {
-          this.createSuc()
+      resetTagsAndLoad() {
+        this.buildingFilter = {
+          buildType: [],
+          premiseAvgFee: [],
+          occupancyRate: [],
+          buildingAge: [],
+          parkingNum: [],
+          propertyRent: []
         }
+        if (this.$refs.tagsSelect) {
+          this.$refs.tagsSelect.clear()
+        }
+        this.buildingFilterSelected = false
+        this.loadData()
       },
+
       resetLeftPopup(index) {
         if (index === 0) {
-          this.buildingFilter = {
-            buildType: [],
-            premiseAvgFee: [],
-            occupancyRate: [],
-            buildingAge: [],
-            parkingNum: [],
-            propertyRent: []
-          }
-          this.buildingFilterSelected = false
           this.rightShow = 0
           this.activeTab = 0
           this.leftShow = new Array(this.leftShow.length).fill(false)
-          this.loadData()
+          this.resetTagsAndLoad()
         } else if (index === 1) {
           this.resetHotMap()
         } else if (index === 2) {
-          this.resetTags()
+          if (this.buildingFilterSelected) { // 如果标签选择过，则清空标签选择结果
+            this.$refs.dbmap.clearMap()
+            this.resetTagsAndLoad()
+          } else {
+            this.createSuc()
+          }
         }
       },
       // 各种弹窗返回数据触发方法 type表示楼盘标签是 0清空还是2选择

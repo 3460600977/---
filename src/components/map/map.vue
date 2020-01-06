@@ -155,6 +155,8 @@
           }
         }
         this.pathArr = {}
+        this.changePathPointType(null, -1)
+        this.jugDraw()
       },
       clearMap() {
         this.activePath = null
@@ -577,6 +579,7 @@
       zoomSinglePathChange(path) {
         if (path.type === 'polygon') return
         let radius = this.RealDistanceTranPixels(path.radius)
+        console.log(radius)
         if (path.type === 'polyline') {
           path.overlay.setStrokeWeight(2 * radius)
         } else if (path.type === 'circle') {
