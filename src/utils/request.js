@@ -41,6 +41,7 @@ service.interceptors.response.use(
    * 以下代码均为样例，请结合自生需求加以修改，若不需要，则可删除
    */
   response => {
+    debugger
     const res = response.data;
     // 下载 csv xls
     if (response.headers['content-type'].toLowerCase() === 'application/xls;charset=utf-8' ||
@@ -56,7 +57,7 @@ service.interceptors.response.use(
           type: 'warning'
         }).then(() => {
           removeUserInfo()
-          this.$store.commit('setToken', '')
+          store.commit('setToken', '')
           window.location.href = "/login";
         })
       }
