@@ -105,6 +105,7 @@
           :budget="budget"
           :city="cityFilter"
           :currentSelectType="currentSelectType"
+          @hidePopup="hidePopup"
           @buildingClick="buildingClick"
           @pathArrChange="pathArrChange"
           @activePathChange="activePathChange"
@@ -325,6 +326,11 @@
       document.documentElement.removeEventListener('keydown', this.cancleCircleDrawType)
     },
     methods: {
+      // 隐藏弹出框
+      hidePopup() {
+        this.hideAll()
+        this.$refs.drawType.hide()
+      },
       // 添加资源包成功后触发事件
       createSuc() {
         this.$refs.dbmap.clearPathArr()

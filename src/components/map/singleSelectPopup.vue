@@ -2,7 +2,7 @@
   <div class="selectPopUp" v-show="isShow">
     <p class="title border-bottom padding mid-between">
       <span>{{title}}</span>
-      <span class="iconfont icon1 icon-error2 hand" @click="hide"></span>
+<!--      <span class="iconfont icon1 icon-error2 hand" @click="hide"></span>-->
     </p>
     <p class="current padding margin3">当前城市：<span class="color-main">{{currentItem.name}}</span></p>
     <div class="content padding customScroll">

@@ -700,6 +700,7 @@
           })
           this.$emit('drawCancle')
         }
+        this.$emit('hidePopup')
       },
       mapZoomEnd() {
         this.drawMarkersByVisual()
@@ -730,6 +731,7 @@
         this.map.addEventListener('click', this.mapLeftClick)
         this.map.addEventListener('mousemove', this.mapMouseMove)
         this.map.addEventListener('rightclick', this.mapRightClick)
+        // this.map.addEventListener('click', this.mapRightClick)
         // this.map.addEventListener('tilesloaded', this.tilesloaded)
       },
       drawCircle(point, info) {
