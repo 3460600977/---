@@ -234,19 +234,19 @@
               <label class="name">点位数</label><label class="bold">{{$tools.toThousands(deviceNumber, false)}}</label>个
             </li>
             <li class="item">
-              <label class="name">覆盖人次</label><label class="bold">{{$tools.toThousands(peopleNumber, false)}}</label>人
+              <label class="name">覆盖人数</label><label class="bold">{{$tools.toThousands(peopleNumber, false)}}</label>人
             </li>
           </ul>
 
 
           <ul class="money-box">
             <li class="item">
-              <span>预算:&emsp;</span>
+              <span>预估费用:&emsp;</span>
               <span class="color-red">¥</span>
               <span class="color-red font-16 bold">{{$tools.toThousands(buildingDirection.estimatePrice/100)}}</span>
             </li>
             <li class="item">
-              <span>余额:&emsp;</span>
+              <span>账户余额:&emsp;</span>
               <span>¥</span>
               <span class="font-16 bold">{{$tools.toThousands(userInfo.accountBalance/100)}}</span>
               <span class="color-red" v-if="buildingDirection.estimatePrice > userInfo.accountBalance">(余额不足)</span>
