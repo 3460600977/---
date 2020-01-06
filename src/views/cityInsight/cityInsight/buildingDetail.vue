@@ -28,7 +28,7 @@
         <div class="mid-start margin-top-20">
           <p class="name">入住时间</p>
 <!--          <p>{{// formatDate("YYYY-mm-dd", buildDetail.inTime)}}</p>-->
-          <p class="color-text-1">{{formatDate(buildDetail.inTime * 1000, 'yyyy-MM-dd hh:mm:ss')}}</p>
+          <p class="color-text-1">{{formatDate(buildDetail.inTime * 1000, 'yyyy-MM-dd')}}</p>
         </div>
         <div class="mid-start margin-top-20">
           <p class="name">入住率</p>
