@@ -492,6 +492,16 @@ export default {
           this[item.name].yAxis[0].name = this.legendName;
           this[item.name].yAxis[1].data = country;
         });
+
+
+        if (this.offlineConsumptionData.yAxis.length > 0) {
+          this.downSort('offlineConsumptionData');
+        }
+
+        if (this.interestData.yAxis.length > 0) {
+          this.downSort('interestData');
+        }
+
         //车产
         piVO['privateCarDist'].forEach((itemOther,index)=>{
           itemOther.name = itemOther.tag;
@@ -533,6 +543,22 @@ export default {
     },
     toSelectPoint() {
       this.$router.push('/cityInsight/selectPoint')
+    },
+    downSort(data) {
+      let offLine = this[data].yAxis;
+      let offLineArray = [];
+      offLine[0].data.forEach((off,index)=>{
+        offLineArray.push({'a':off,'b':offLine[1].data[index]});
+      });
+      offLineArray.sort(function (a,b) {
+        return (b.a - a.a)
+      });
+      this[data].yAxis[0].data = [];
+      this[data].yAxis[1].data = [];
+      offLineArray.forEach(line=>{
+        this[data].yAxis[0].data.push(line.a);
+        this[data].yAxis[1].data.push(line.b);
+      })
     }
   }
 };
