@@ -75,6 +75,7 @@
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
+                :disabled="item.disabled"
               ></el-option>
             </el-select>对比
             <el-select
@@ -88,6 +89,7 @@
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
+                :disabled="item.disabled"
               ></el-option>
             </el-select>
           </div>
@@ -190,14 +192,14 @@ export default {
   data() {
     return {
       costList: [
-        { label: "设备数", value: 0 },
-        { label: "花费（元）", value: 1 },
-        { label: "曝光数", value: 2 }
+        { label: "设备数", value: 0, disabled: false },
+        { label: "花费（元）", value: 1, disabled: false },
+        { label: "曝光数", value: 2, disabled: true }
       ],
       exposureList: [
-        { label: "设备数", value: 0 },
-        { label: "花费（元）", value: 1 },
-        { label: "曝光数", value: 2 }
+        { label: "设备数", value: 0, disabled: false },
+        { label: "花费（元）", value: 1, disabled: true },
+        { label: "曝光数", value: 2, disabled: false }
       ],
       timeList: [{ label: "过去七天", value: 1 }],
       imgList: [
@@ -295,8 +297,8 @@ export default {
     },
     //时间改变，对应的数据趋势图发生改变
     changeSelectTime(selectTimeVal) {
-      this.startTime = selectTimeVal[0];
-      this.endTime = selectTimeVal[1];
+      this.selectLine.startTime = selectTimeVal[0];
+      this.selectLine.endTime = selectTimeVal[1];
       this.getSummaryDataChange();
     },
     //选择第一个，对应的数据趋势图发生改变
@@ -311,6 +313,12 @@ export default {
       if (this.selectLine.firstValue === 1) {
         this.selectLine.selectFirstLabelLine = "花费（元）¥ ";
       }
+      this.exposureList.forEach(item => {
+        item.disabled = false;
+        if (item.value === this.selectLine.firstValue) {
+          item.disabled = true;
+        }
+      });
       this.getSummaryDataChange();
     },
     //选择第二个，对应的数据趋势图发生改变
@@ -325,6 +333,12 @@ export default {
       if (this.selectLine.secondValue === 1) {
         this.selectLine.selectSecondLabelLine = "花费（元）¥ ";
       }
+      this.costList.forEach(item => {
+        item.disabled = false;
+        if (item.value === this.selectLine.secondValue) {
+          item.disabled = true;
+        }
+      });
       this.getSummaryDataChange();
     },
     //首页跳转到新闻页面
