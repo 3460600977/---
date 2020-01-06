@@ -92,6 +92,7 @@
             </el-select>
           </div>
           <el-date-picker
+            :clearable="false"
             v-model="selectLine.selectTime"
             type="daterange"
             range-separator="--"
@@ -120,8 +121,8 @@
       <h2>合作标杆</h2>
       <div class="el-carousel">
         <el-carousel arrow="always">
-          <el-carousel-item v-for="item in imgList" :key="item">
-            <img class="imgItem" :src="item" />
+          <el-carousel-item v-for="(item,imgIndex) in imgList" :key="imgIndex">
+            <img class="imgItem" :src="item" @click="showPlayVideo(imgIndex)" />
           </el-carousel-item>
         </el-carousel>
       </div>
@@ -132,7 +133,7 @@
         <div class="news_case_item" @click="toPathNew(158)">
           <div class="news_case_time">
             <span>2019</span>
-            <p>12-19</p>
+            <p>12-31</p>
           </div>
           <div class="news_case_content">
             <h4>新潮传媒携手时间的朋友，探索2020年的基本盘</h4>
@@ -142,7 +143,7 @@
         <div class="news_case_item" @click="toPathNew(156)">
           <div class="news_case_time">
             <span>2019</span>
-            <p>12-19</p>
+            <p>12-26</p>
           </div>
           <div class="news_case_content">
             <h4>四川广告人荣耀之夜：新潮传媒解析如何用科技重新定义电梯媒体</h4>
@@ -152,7 +153,7 @@
         <div class="news_case_item" @click="toPathNew(157)">
           <div class="news_case_time">
             <span>2019</span>
-            <p>12-19</p>
+            <p>12-25</p>
           </div>
           <div class="news_case_content">
             <h4>川商总会2020新年演讲：新潮传媒张继学解码线下媒体数字化</h4>
@@ -171,34 +172,21 @@
         </div>
       </div>
     </el-card>
-    <template v-if="isShow">
-      <el-dialog center width="800px" :visible.sync="isShow">
-        <div class="video_box">
-          <div class="logo"></div>
-          <video
-            id="playVideo"
-            :src="videoList[0]"
-            preload="auto"
-            controls="controls"
-            width="100%"
-            playsinline
-            x-webkit-airplay="deny"
-            webkit-playsinline
-            autoplay="true"
-          ></video>
-        </div>
-      </el-dialog>
-    </template>
+
+    <el-dialog center width="900px" :visible.sync="isShow" class="play-dialog-video">
+      <play-video :playVideoUrl="playVideoUrl" @closePlayDialog="closePlayDialog"></play-video>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { getUserInfo, setUserInfo } from "@/utils/auth";
 import HomeDataLine from "../../../components/echarts/HomeDataLine";
+import PlayVideo from "../../../components/PlayVideo";
 import echarts from "echarts";
 export default {
   name: "HomeBody",
-  components: { HomeDataLine },
+  components: { HomeDataLine, PlayVideo },
   data() {
     return {
       costList: [
@@ -217,11 +205,24 @@ export default {
         "https://cdn.xinchao.com/goods/201807/5b5ab83c7e3bd.jpg",
         "https://cdn.xinchao.com/goods/201803/5a9df89704b31.jpg"
       ],
-      videoList: [
-        "https://cdn.xinchao.com/goods/201912/b23d7a29773d52cfe3d0e5572d7c00a41576664715.mp4",
-        "https://cdn.xinchao.com/goods/201912/f9ec76497c75c2fdf378aae3ab7cfb801576666433.mp4",
-        "https://cdn.xinchao.com/goods/201912/3678d23889d5a75cffd3c829062388d71576668059.mp4"
+      playVideoList: [
+        {
+          video:
+            "https://cdn.xinchao.com/goods/201912/b23d7a29773d52cfe3d0e5572d7c00a41576664715.mp4",
+          img: "https://cdn.xinchao.com/goods/201803/5aa73f41d9812.jpg"
+        },
+        {
+          video:
+            "https://cdn.xinchao.com/goods/201912/f9ec76497c75c2fdf378aae3ab7cfb801576666433.mp4",
+          img: "https://cdn.xinchao.com/goods/201807/5b5ab8636ed5b.jpg"
+        },
+        {
+          video:
+            "https://cdn.xinchao.com/goods/201912/3678d23889d5a75cffd3c829062388d71576668059.mp4",
+          img: "https://cdn.xinchao.com/goods/201803/5a9df89f94f37.jpg"
+        }
       ],
+      playVideoUrl: {},
       loading: false,
       images: {
         userHead: require("../../../assets/images/icons/icon_tx.png"),
@@ -283,12 +284,22 @@ export default {
     }
   },
   methods: {
+    //展示走马灯图片对应的视频展示框
+    showPlayVideo(index) {
+      this.isShow = true;
+      this.playVideoUrl = this.playVideoList[index];
+    },
+    //隐藏走马灯图片对应的视频展示框
+    closePlayDialog() {
+      this.isShow = false;
+    },
+    //时间改变，对应的数据趋势图发生改变
     changeSelectTime(selectTimeVal) {
       this.startTime = selectTimeVal[0];
       this.endTime = selectTimeVal[1];
       this.getSummaryDataChange();
     },
-    //选择第一个
+    //选择第一个，对应的数据趋势图发生改变
     changeFirstValue(selectFirst) {
       let obj = {};
       obj = this.costList.find(item => {
@@ -302,7 +313,7 @@ export default {
       }
       this.getSummaryDataChange();
     },
-    //选择第二个
+    //选择第二个，对应的数据趋势图发生改变
     changeSecondValue(selectSecond) {
       let obj = {};
       obj = this.exposureList.find(item => {
@@ -681,6 +692,17 @@ export default {
       background: url(../../../assets/images/logo_new.png) no-repeat;
       background-size: 100%;
       margin-bottom: 15px;
+    }
+  }
+  .play-dialog-video {
+    /deep/ .el-dialog {
+      margin-top: 8vh !important;
+    }
+    /deep/ .el-dialog__header {
+      display: none;
+    }
+    /deep/ .el-dialog__body {
+      padding: 0;
     }
   }
 }
