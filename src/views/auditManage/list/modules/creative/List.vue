@@ -73,7 +73,10 @@
               </div>
             </div>
             <div v-else-if="col.prop === 'creativeContent'">
-              <div class="show-contents" @click="showContent(scope.row.id); detailDialogMsg = scope.row;">
+              <div
+                class="show-contents"
+                @click="showContent(scope.row.id); detailDialogMsg = scope.row;"
+              >
                 <span>查看</span>
               </div>
             </div>
@@ -139,9 +142,11 @@
     </el-dialog>
     <el-dialog title="创意内容" :visible.sync="dialogShowContent" class="creative-dialog">
       <el-tabs v-model="activeName">
-
-        <div class="no-pass" v-if="detailDialogMsg.status === 1 && detailDialogMsg.rejectReason">
-          <img class="no-pass-img" :src="noPassImg" alt="" srcset="">
+        <div
+          class="no-pass"
+          v-if="detailDialogMsg.status === 1 && detailDialogMsg.rejectReason&&activeName==='aptitude'"
+        >
+          <img class="no-pass-img" :src="noPassImg" alt srcset />
           <div>{{JSON.parse(detailDialogMsg.rejectReason).join(',')}}</div>
         </div>
 
@@ -154,7 +159,6 @@
                 :key="index"
                 style="width: 100px; height: 158px;border-radius: 2px"
                 :src="aItem.value"
-                :preview-src-list="aItem.srcList"
               ></el-image>
             </div>
             <label class="text-info" v-else>{{aItem.value}}</label>
@@ -226,7 +230,7 @@ export default {
       dialogShowContent: false,
       formLabelWidth: "120px",
       currentPage: 50,
-      noPassImg: require('@/assets/images/icon_not_passed.png'),
+      noPassImg: require("@/assets/images/icon_not_passed.png"),
       checkFormInline: {
         selectCreativeName: "",
         selectCreativeStatus: ""
@@ -317,7 +321,7 @@ export default {
       pageSize: 10,
       loading: false,
 
-      detailDialogMsg: ''
+      detailDialogMsg: ""
     };
   },
   created() {
@@ -498,13 +502,11 @@ export default {
         .then(res => {
           this.reviewCreativeDetail.loading = false;
           let reviewList = res.result;
+          let industryIdentify = JSON.parse(reviewList.industryIdentify);
           this.reviewCreativeDetail.data.forEach(item => {
             let property = item.field;
             if (reviewList.hasOwnProperty(property)) {
-              if (property === "industryIdentify") {
-                item.srcList = JSON.parse(reviewList.industryIdentify);
-                item.value = JSON.parse(reviewList.industryIdentify);
-              } else if (property === "screenType") {
+              if (property === "screenType") {
                 let screenType = reviewList[property];
                 this.screenTypeList.forEach((screen, index) => {
                   if (screen["id"] === screenType) {
@@ -658,13 +660,13 @@ export default {
 
 <style lang="scss">
 .creative-list {
-  .no-pass{
+  .no-pass {
     display: flex;
     align-items: center;
     padding: 16px 20px;
-    background:rgba(83,160,255,0.08);
+    background: rgba(83, 160, 255, 0.08);
     line-height: 1.5;
-    .no-pass-img{
+    .no-pass-img {
       width: 65px;
       height: 46px;
       flex-shrink: 0;
