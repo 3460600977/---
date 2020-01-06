@@ -157,8 +157,9 @@
               <el-image
                 v-for="(item, index) in aItem.value"
                 :key="index"
-                style="width: 100px; height: 158px;border-radius: 2px"
+                style="width: 100px; height: 158px;border-radius: 2px;margin-right:10px"
                 :src="item"
+                :preview-src-list="aItem.value"
               ></el-image>
             </div>
             <label class="text-info" v-else>{{aItem.value}}</label>
