@@ -46,8 +46,21 @@
         }
       }
     },
+    data() {
+      return {
+        myChart: null,
+      }
+    },
+    watch: {
+      data: {
+        handler() {
+          this.reDraw()
+        },
+        deep: true
+      },
+    },
     mounted() {
-      let myChart = echarts.init(this.$refs.chartBox);
+      this.myChart = echarts.init(this.$refs.chartBox);
       let seriesArr = [];
       this.data.forEach((item,index)=>{
         seriesArr.push(
@@ -99,9 +112,72 @@
         series: seriesArr,
         color:this.color
       };
-      myChart.setOption(option);
+      this.myChart.setOption(option);
+      window.addEventListener('resize', this.resize)
+    },
+    beforeDestroy() {
+      window.removeEventListener('resize', this.resize)
     },
     methods: {
+      resize() {
+        this.myChart.resize();
+      },
+      reDraw() {
+        this.myChart.clear();
+        let seriesArr = [];
+        this.data.forEach((item,index)=>{
+          seriesArr.push(
+            {
+              name: this.data.name[index],
+              type: 'pie',
+              radius: ['29%', '50%'],
+              center: this.center[index],
+              itemStyle:  {
+                normal: {
+                  shadowBlur: 0,
+                  label: {
+                    show: false
+                  },
+                  labelLine: {
+                    show: false
+                  },
+                }
+              },
+              data: [
+                item[0],item[1]
+              ]
+            }
+          );
+        });
+        let option = {
+          title:{
+            text:this.title,
+            textStyle:{
+              fontSize:14,
+              fontWeight:"normal"
+            }
+          },
+          tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {d}% "
+          },
+          legend: {
+            data: ['有车','无车'],
+            icon: 'circle',
+            top: 20,
+            right: 40,
+            padding: 0,
+            itemHeight: 12,
+            textStyle: {
+              color: '#999999'
+            }
+          },
+          series: seriesArr,
+          color:this.color
+        };
+        this.myChart.setOption(option);
+      }
+
     }
   }
 </script>

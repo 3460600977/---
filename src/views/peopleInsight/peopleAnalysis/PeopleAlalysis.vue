@@ -581,9 +581,9 @@ export default {
       }
       .nannv-icon{
         position: absolute;
-        top: 100px;
-        left: 83px;
-        width: 28px;
+        top: 109px;
+        left: 86px;
+        width: 30px;
       }
     }
   }
