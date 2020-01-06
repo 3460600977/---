@@ -132,7 +132,7 @@
         <div class="news_case_item" @click="toPathNew(158)">
           <div class="news_case_time">
             <span>2019</span>
-            <p>12-19</p>
+            <p>12-31</p>
           </div>
           <div class="news_case_content">
             <h4>新潮传媒携手时间的朋友，探索2020年的基本盘</h4>
@@ -142,7 +142,7 @@
         <div class="news_case_item" @click="toPathNew(156)">
           <div class="news_case_time">
             <span>2019</span>
-            <p>12-19</p>
+            <p>12-26</p>
           </div>
           <div class="news_case_content">
             <h4>四川广告人荣耀之夜：新潮传媒解析如何用科技重新定义电梯媒体</h4>
@@ -152,7 +152,7 @@
         <div class="news_case_item" @click="toPathNew(157)">
           <div class="news_case_time">
             <span>2019</span>
-            <p>12-19</p>
+            <p>12-25</p>
           </div>
           <div class="news_case_content">
             <h4>川商总会2020新年演讲：新潮传媒张继学解码线下媒体数字化</h4>
