@@ -166,11 +166,12 @@
         this.pathArr = {}
         this.heatmapOverlay = null
         this.map.clearOverlays()
-        this.pointsOverlayObj = {
-          selectedOverlay: null,
-          unSelectedOverlay: null,
-          isShow: false
-        }
+        this.pointsOverlayObj.isShow = false
+        // this.pointsOverlayObj = {
+        //   selectedOverlay: null,
+        //   unSelectedOverlay: null,
+        //   isShow: false
+        // }
       },
       reGetAreaPoint() {
         if (Object.keys(this.pathArr).length) {
@@ -903,6 +904,7 @@
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
           this.map.addOverlay(pointsOverlay);
+          pointsOverlay.disableMassClear()
           pointsOverlay.addEventListener('mouseover',  this.pointEvent);
           pointsOverlay.addEventListener('mouseout',  this.pointEventOut);
           pointsOverlay.addEventListener('click',  this.pointEventClick);
