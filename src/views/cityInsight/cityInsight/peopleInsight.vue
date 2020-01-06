@@ -81,11 +81,13 @@
     },
     watch: {
       activeItem(val) {
-        this.$api.peopleInsight.getPeopleInsightDetail(val).then((data) => {
-          this.tags = JSON.parse(data.result.tagsName)
-          // this.tags =
-          //   [{"name":"教育水平","tid":3098,"tags":[{"tid":3099,"pid":3098,"name":"高中及以下","childTags":null},{"tid":20606,"pid":3098,"name":"大专","childTags":null},{"tid":32994,"pid":3098,"name":"本科及以上","childTags":null}]},{"name":"性别","tid":19397,"tags":[{"tid":19398,"pid":19397,"name":"男","childTags":null}]},{"name":"城市","tid":99999,"tags":[{"tid":189,"name":"南充市"}]},{"name":"影视音乐","tid":1,"tags":[{"tid":107786,"pid":1,"name":"综艺","childTags":null}]},{"name":"游戏","tid":8,"tags":[{"tid":8,"pid":42,"name":"有兴趣偏好","childTags":null}]}]
-        })
+        if (val === null) {
+          this.tags = []
+        } else {
+          this.$api.peopleInsight.getPeopleInsightDetail(val).then((data) => {
+            this.tags = JSON.parse(data.result.tagsName)
+          })
+        }
       },
     },
     methods: {

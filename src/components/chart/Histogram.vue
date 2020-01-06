@@ -133,7 +133,7 @@
           type: 'value',
           axisLabel: {
             formatter: function (v) {
-              return (v * 100)+'%'
+              return `${parseInt(v * 100)}%`
             }
           },
           splitLine:{
@@ -153,8 +153,15 @@
         series: this.data.yAxis
       };
       this.myChart.setOption(option);
+      window.addEventListener('resize', this.resize)
+    },
+    beforeDestroy() {
+      window.removeEventListener('resize', this.resize)
     },
     methods: {
+      resize() {
+        this.myChart.resize();
+      },
       reDraw() {
         this.myChart.clear();
         let option = {

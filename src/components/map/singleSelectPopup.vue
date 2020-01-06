@@ -2,7 +2,7 @@
   <div class="selectPopUp" v-show="isShow">
     <p class="title border-bottom padding mid-between">
       <span>{{title}}</span>
-      <span class="iconfont icon1 icon-error2 hand" @click="hide"></span>
+<!--      <span class="iconfont icon1 icon-error2 hand" @click="hide"></span>-->
     </p>
     <p class="current padding margin3">当前城市：<span class="color-main">{{currentItem.name}}</span></p>
     <div class="content padding customScroll">
@@ -24,7 +24,7 @@
         type: Array,
         required: true
       },
-      filters: {
+      currentItem: {
         type: Object,
         required: true
       },
@@ -35,37 +35,29 @@
     },
     data() {
       return {
-        currentItem: {},
         isShow: true
       }
     },
     watch: {
-      filters(val) {
-        let item = this.findItem(this.filters, this.selectDatas)
-        if (item) {
-          this.currentItem = this.findItem(this.filters, this.selectDatas)
-        } else {
-          this.currentItem = val
-        }
-      },
-      currentItem(val) {
-        this.$emit('returnResult', val)
-      },
+      // filters(val) {
+      //   let item = this.findItem(this.filters, this.selectDatas)
+      //   if (item) {
+      //     this.currentItem = this.findItem(this.filters, this.selectDatas)
+      //   } else {
+      //     this.currentItem = val
+      //   }
+      // },
+      // currentItem(val) {
+      //   this.$emit('returnResult', val)
+      // },
     },
     methods: {
-      findItem(val, arr) {
-        let arrTotal = this.$tools.operation(arr, 'values')
-        let result =  arrTotal.find((item) => {
-          return item.name == val.name
-        })
-        return result
-      },
       hide() {
         // this.isShow = false
         this.$emit('hide')
       },
       typeClick(val) {
-        this.currentItem = val
+        this.$emit('returnResult', val)
         this.hide()
       },
     }

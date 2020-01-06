@@ -155,6 +155,8 @@
           }
         }
         this.pathArr = {}
+        this.changePathPointType(null, -1)
+        this.jugDraw()
       },
       clearMap() {
         this.activePath = null
@@ -191,9 +193,9 @@
           "radius":20,
           gradient: {
             0:'rgb(9, 185, 253)',
-            .1:'rgb(86, 255, 0)',
-            .2:'rgb(255, 235, 0)',
-            .3:'rgb(244, 74, 74)'
+            .3:'rgb(86, 255, 0)',
+            .6:'rgb(255, 235, 0)',
+            .8:'rgb(244, 74, 74)'
           },
           opacity: 0.6
         });
@@ -577,6 +579,7 @@
       zoomSinglePathChange(path) {
         if (path.type === 'polygon') return
         let radius = this.RealDistanceTranPixels(path.radius)
+        console.log(radius)
         if (path.type === 'polyline') {
           path.overlay.setStrokeWeight(2 * radius)
         } else if (path.type === 'circle') {
@@ -682,7 +685,7 @@
         }
       },
       removeEvent() {
-        this.map.removeEventListener('dragend', this.drawLabelsByVisual)
+        this.map.removeEventListener('dragend', this.drawMarkersByVisual)
         this.map.removeEventListener('click', this.mapLeftClick)
         this.map.removeEventListener('zoomend', this.mapZoomEnd)
         this.map.removeEventListener('mousemove', this.mapMouseMove)
@@ -697,6 +700,7 @@
           })
           this.$emit('drawCancle')
         }
+        this.$emit('hidePopup')
       },
       mapZoomEnd() {
         this.drawMarkersByVisual()
@@ -727,6 +731,7 @@
         this.map.addEventListener('click', this.mapLeftClick)
         this.map.addEventListener('mousemove', this.mapMouseMove)
         this.map.addEventListener('rightclick', this.mapRightClick)
+        // this.map.addEventListener('click', this.mapRightClick)
         // this.map.addEventListener('tilesloaded', this.tilesloaded)
       },
       drawCircle(point, info) {
@@ -759,9 +764,6 @@
           icon: myIcon,
           offset: new BMap.Size(0, -11),
         });
-        marker.addEventListener('click', (event) => {
-          this.$emit('buildingClick', point)
-        })
         this.map.addOverlay(marker);
         return marker
       },

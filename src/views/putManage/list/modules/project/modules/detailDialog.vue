@@ -1,6 +1,7 @@
 <template>
   <!-- 详情 -->
-  <el-tabs @tab-click="showPointDetails" class="thin-tab small" v-model="activeTab">
+  <el-tabs class="thin-tab small" v-model="activeTab">
+    
     <el-tab-pane label="方案信息" name="project">
       <el-form class="info-form" v-loading="projectDetail.loading" label-position='left' label-width="150px">
         <el-form-item label="投放方案名称">
@@ -12,7 +13,7 @@
           </label>
         </el-form-item>
         <el-form-item label="投放方案行业">
-          <span class="color-text-1">{{projectDetail.data.industry}}</span>
+          <span class="color-text-1">{{projectDetail.data.industryName}}</span>
         </el-form-item>
         <el-form-item label="投放类型">
           <span class="color-text-1">{{$tools.getObjectItemFromArray(projectConst.putType, 'value', projectDetail.data.projectType).name}}</span>
@@ -79,18 +80,6 @@ export default {
 
       activeTab: 'project',
 
-      pointDetail: {
-        param: {
-          pageIndex: 0, 
-          pageSize: 1000, 
-          projectId: '', 
-          record: 0, 
-          startIndex: 0, 
-          totalPageCount: 0
-        },
-        loading: true,
-        data: []
-      },
     }
   },
 
@@ -121,23 +110,6 @@ export default {
               loading: false,
               data: ''
             }
-        })
-    },
-
-    // 楼盘列表
-    showPointDetails() {
-      // if (this.activeTab === 'project' && this.pointDetail.data.length > 0) return;
-      this.pointDetail.param.projectId = this.projectId;
-      this.pointDetail.loading = true;
-      this.pointDetail.data = [];
-      this.$api.PutProject.ProjectBuildList(this.pointDetail.param)
-        .then(res => {
-          this.pointDetail.loading = false;
-          this.pointDetail.data = res.result;
-        })
-        .catch(res => {
-          this.pointDetail.loading = true;
-          this.pointDetail.data = [];
         })
     },
 

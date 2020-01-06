@@ -160,8 +160,10 @@
           <div v-loading="detailDialog.loading">
             <div class="no-pass" v-if="detailDialog.data.status == 1">
               <img class="no-pass-img" :src="noPassImg" alt="" srcset="">
-              <div>{{JSON.parse(detailDialog.data.rejectReason).join(',')}}</div>
+              <div v-if="detailDialog.data.rejectReason">{{JSON.parse(detailDialog.data.rejectReason).join(',')}}</div>
+              <div v-else>未知原因</div>
             </div>
+            
             <div class="text-col">
               <span class="text-title">广告创意名称</span>
               <label class="text-info">{{detailDialog.data.name}}</label>
@@ -357,7 +359,6 @@ export default {
     };
   },
 
-  
   watch: {
     '$route': {
       handler() {
@@ -557,10 +558,12 @@ export default {
     align-items: center;
     padding: 16px 20px;
     background:rgba(83,160,255,0.08);
+    line-height: 1.5;
     .no-pass-img{
       width: 65px;
       height: 46px;
       margin-right: 23px;
+      flex-shrink: 0;
     }
   }
   .el-dialog {

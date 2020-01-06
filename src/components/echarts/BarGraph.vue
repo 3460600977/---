@@ -106,7 +106,7 @@
               margin: 20,
               formatter: function (value, index) {
                 if (chartParam.sortField === 'cost') {
-                  return '¥ ' +value.toFixed(2);
+                  return '¥ ' + value.toFixed(2);
                 }
                 return value
               }

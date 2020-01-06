@@ -31,16 +31,16 @@ export default {
     };
   },
   mounted() {
-    this.initChart(this.localData);
+    this.initChart(this.summaryLineData);
   },
   methods: {
     calMax(arr = []) {
       if (arr.length === 0) return 0;
-      let max = arr[0];
+      let max = parseFloat(arr[0]);
       for (let i = 1; i < arr.length; i++) {
         // 求出一组数组中的最大值
-        if (max < arr[i]) {
-          max = arr[i];
+        if (max < parseFloat(arr[i])) {
+          max = parseFloat(arr[i]);
         }
       }
       let maxint = Math.ceil(max / 10); // 向上取整
@@ -48,14 +48,16 @@ export default {
       return maxval; // 输出最大值
     },
     initChart(chartParam) {
+      let _that = this;
       this.myChart = this.myChart
         ? this.myChart
         : echarts.init(this.$refs.lineBox);
       let appregnum = chartParam.sFirstData;
       let activenum = chartParam.sSecondData;
-      console.log("appregnum", appregnum, "activenum", activenum);
       let maxappreg = this.calMax(appregnum); //花费Y轴值
       let maxactive = this.calMax(activenum); //曝光度Y轴值
+      console.log("appregnum", appregnum, "activenum", activenum);
+      console.log(maxappreg, maxactive);
       let interval_left = maxappreg / 5; //左轴间隔
       let interval_right = maxactive / 5; //右轴间隔
       let option = {
@@ -71,7 +73,6 @@ export default {
         tooltip: {
           trigger: "axis",
           formatter: function(params) {
-            console.log(params);
             let str = `<p>${params[0].name}</p>`;
             params.forEach(item => {
               str += `
@@ -113,7 +114,12 @@ export default {
             },
             axisLabel: {
               fontFamily: "DINMittelschrift",
-              formatter: "{value}元"
+              formatter: function(value, index) {
+                if (chartParam.selectLine.firstValue === 1) {
+                  return "¥ " + value;
+                }
+                return value;
+              }
             }
           },
           {
@@ -129,60 +135,24 @@ export default {
             },
             axisLabel: {
               fontFamily: "DINMittelschrift",
-              formatter: "{value}"
+              formatter: function(value, index) {
+                if (chartParam.selectLine.secondValue === 1) {
+                  return "¥ " + value;
+                }
+                return value;
+              }
             }
           }
         ],
         series: [
           {
-            name: "花费",
+            name: chartParam.selectLine.selectFirstLabelLine,
             type: "line",
             smooth: true,
             yAxisIndex: 0,
             animationDuration: 2800,
             animationEasing: "cubicInOut",
             data: appregnum,
-            itemStyle: {
-              normal: {
-                color: "#f44a4a",
-                lineStyle: {
-                  color: "#f44a4a",
-                  width: 2
-                }
-                // label : {show: true}
-              }
-            },
-            areaStyle: {
-              normal: {
-                color: {
-                  type: "linear", //设置线性渐变
-                  x: 0,
-                  y: 0,
-                  x2: 0,
-                  y2: 1,
-                  colorStops: [
-                    {
-                      offset: 0,
-                      color: "#f44a4a" // 0% 处的颜色
-                    },
-                    {
-                      offset: 1,
-                      color: "white" // 100% 处的颜色
-                    }
-                  ],
-                  globalCoord: false // 缺省为 false
-                }
-              }
-            }
-          },
-          {
-            name: "曝光度",
-            type: "line",
-            yAxisIndex: 1,
-            smooth: true,
-            animationDuration: 2800,
-            animationEasing: "cubicInOut",
-            data: activenum,
             itemStyle: {
               normal: {
                 color: "#2d5aff",
@@ -205,6 +175,47 @@ export default {
                     {
                       offset: 0,
                       color: "#2d5aff" // 0% 处的颜色
+                    },
+                    {
+                      offset: 1,
+                      color: "white" // 100% 处的颜色
+                    }
+                  ],
+                  globalCoord: false // 缺省为 false
+                }
+              }
+            }
+          },
+          {
+            name: chartParam.selectLine.selectSecondLabelLine,
+            type: "line",
+            yAxisIndex: 1,
+            smooth: true,
+            animationDuration: 2800,
+            animationEasing: "cubicInOut",
+            data: activenum,
+            itemStyle: {
+              normal: {
+                color: "#f44a4a",
+                lineStyle: {
+                  color: "#f44a4a",
+                  width: 2
+                }
+                // label : {show: true}
+              }
+            },
+            areaStyle: {
+              normal: {
+                color: {
+                  type: "linear", //设置线性渐变
+                  x: 0,
+                  y: 0,
+                  x2: 0,
+                  y2: 1,
+                  colorStops: [
+                    {
+                      offset: 0,
+                      color: "#f44a4a" // 0% 处的颜色
                     },
                     {
                       offset: 1,

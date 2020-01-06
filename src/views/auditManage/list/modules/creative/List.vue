@@ -73,10 +73,8 @@
               </div>
             </div>
             <div v-else-if="col.prop === 'creativeContent'">
-              <div class="show-contents" @click="showContent(scope.row.id)">
-                <a href="#">
-                  <span>查看</span>
-                </a>
+              <div class="show-contents" @click="showContent(scope.row.id); detailDialogMsg = scope.row;">
+                <span>查看</span>
               </div>
             </div>
             <div v-else>{{scope.row[scope.column.property]}}</div>
@@ -141,6 +139,12 @@
     </el-dialog>
     <el-dialog title="创意内容" :visible.sync="dialogShowContent" class="creative-dialog">
       <el-tabs v-model="activeName">
+
+        <div class="no-pass" v-if="detailDialogMsg.status === 1 && detailDialogMsg.rejectReason">
+          <img class="no-pass-img" :src="noPassImg" alt="" srcset="">
+          <div>{{JSON.parse(detailDialogMsg.rejectReason).join(',')}}</div>
+        </div>
+
         <el-tab-pane label="创意资质" name="aptitude" class="aptitude">
           <div v-for="(aItem,aIndex) in reviewCreativeDetail.data" :key="aIndex" class="text-col">
             <span class="text-title">{{aItem.label}}</span>
@@ -222,6 +226,7 @@ export default {
       dialogShowContent: false,
       formLabelWidth: "120px",
       currentPage: 50,
+      noPassImg: require('@/assets/images/icon_not_passed.png'),
       checkFormInline: {
         selectCreativeName: "",
         selectCreativeStatus: ""
@@ -310,7 +315,9 @@ export default {
       resultData: null,
       pageIndex: 1,
       pageSize: 10,
-      loading: false
+      loading: false,
+
+      detailDialogMsg: ''
     };
   },
   created() {
@@ -553,7 +560,7 @@ export default {
       this.submit.rejectReason = [];
       this.denyDialogReasonList.forEach(item => {
         if (item.select === true) {
-          this.submit.rejectReason.push(item.reason);
+          this.submit.rejectReason.push(item.name);
         }
       });
       this.submit.rejectReason = JSON.stringify(this.submit.rejectReason);
@@ -575,14 +582,14 @@ export default {
           console.log(queryParam, res.result);
           if (this.submit.status === 2) {
             this.$message({
-              message: "成功,创意:" + creativeName + ",通过审查",
+              message: "创意" + creativeName + ", 已通过审查",
               type: "success"
             });
           }
           if (this.submit.status === 1) {
             this.$message({
-              message: "审核拒绝,创意:" + creativeName + ",审核拒绝",
-              type: "error"
+              message: "已拒绝, 创意" + creativeName,
+              type: "success"
             });
             this.dialogDenyVisible = false;
           }
@@ -651,6 +658,19 @@ export default {
 
 <style lang="scss">
 .creative-list {
+  .no-pass{
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    background:rgba(83,160,255,0.08);
+    line-height: 1.5;
+    .no-pass-img{
+      width: 65px;
+      height: 46px;
+      flex-shrink: 0;
+      margin-right: 23px;
+    }
+  }
   .report-top-form {
     height: 160px;
     border-radius: 4px;
