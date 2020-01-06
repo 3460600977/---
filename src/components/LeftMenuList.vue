@@ -75,7 +75,6 @@ export default {
   },
   computed: {
     onRoutes() {
-      console.log(this.$route.path);
       // 当前激活菜单的 index
       return this.$route.path;
     }
