@@ -96,6 +96,9 @@
           @returnSelectedBuildings="returnSelectedBuildings"
         ></db-map>
       </div>
+      <div class="add-dialog">
+        <add-dialog-pro ref="addDialog" :cityCode="cityFilter.cityCode" @selectLocation="addLocation"></add-dialog-pro>
+      </div>
     </div>
   </div>
 </template>
@@ -107,6 +110,7 @@ const CITY_MAPPING = {
 };
 //import rightInfo from "../../../../../cityInsight/cityInsight/rightInfo";
 import mapRightInfo from "./mapRightInfo";
+import addDialogPro from "./addDialog";
 import leftInfo from "../../../../../cityInsight/cityInsight/leftInfo";
 import drawType from "../../../../../../components/map/drawType";
 import mapPopup from "../../../../../../components/map/mapPopup";
@@ -138,6 +142,7 @@ export default {
     dbMap,
     leftTab,
     addDialog,
+    addDialogPro,
     mapPopup,
     drawType,
     multipleSelectPopUp,

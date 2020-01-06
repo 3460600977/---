@@ -116,7 +116,7 @@ export default {
               fontFamily: "DINMittelschrift",
               formatter: function(value, index) {
                 if (chartParam.selectLine.firstValue === 1) {
-                  return "¥ " + value;
+                  return "¥ " + value.toFixed(2);
                 }
                 return value;
               }
@@ -137,7 +137,7 @@ export default {
               fontFamily: "DINMittelschrift",
               formatter: function(value, index) {
                 if (chartParam.selectLine.secondValue === 1) {
-                  return "¥ " + value;
+                  return "¥ " + value.toFixed(2);
                 }
                 return value;
               }
