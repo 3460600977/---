@@ -123,11 +123,9 @@ import arealDistribution from "./modeles/arealDistribution";
 import Histogram from "@/components/chart/Histogram.vue";
 import pieHollowGroup from "@/components/chart/pieHollowGroup";
 import pieHollowDouble from "@/components/chart/pieHollowDouble";
-import BottomBack from "@/components/Back";
 
 export default {
   components: {
-    BottomBack,
     headerCondition,
     arealDistribution,
     Histogram,
@@ -583,9 +581,9 @@ export default {
       }
       .nannv-icon{
         position: absolute;
-        top: 100px;
-        left: 83px;
-        width: 28px;
+        top: 109px;
+        left: 86px;
+        width: 30px;
       }
     }
   }
