@@ -481,16 +481,18 @@
               type: 'warning'
             }).then(() => {
               data.name = '北京市'
-              this.cityFilter = Object.assign({}, this.cityFilter, {name: data.name})
-              return
+              let result = Object.assign({}, this.cityFilter, {name: data.name})
+              this.cityFilter = this.findItem(result, this.cityDatas)
+              this.loadData()
             }).catch(() => {
             });
+            return
           }
           let result = Object.assign({}, this.cityFilter, {name: data.name})
           let result1 = this.findItem(result, this.cityDatas)
           if (result1) {
             this.cityFilter = result1
-            this.resetLeftPopup(0)
+            this.loadData()
           } else {
             this.cityFilter = result
             this.$message.error('当前城市尚未开通，我们已在快马加鞭，敬请期待！');
