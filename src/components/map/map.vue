@@ -762,9 +762,6 @@
           icon: myIcon,
           offset: new BMap.Size(0, -11),
         });
-        marker.addEventListener('click', (event) => {
-          this.$emit('buildingClick', point)
-        })
         this.map.addOverlay(marker);
         return marker
       },
