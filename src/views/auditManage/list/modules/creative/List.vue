@@ -142,7 +142,10 @@
     </el-dialog>
     <el-dialog title="创意内容" :visible.sync="dialogShowContent" class="creative-dialog">
       <el-tabs v-model="activeName">
-        <div class="no-pass" v-if="detailDialogMsg.status === 1 && detailDialogMsg.rejectReason">
+        <div
+          class="no-pass"
+          v-if="detailDialogMsg.status === 1 && detailDialogMsg.rejectReason&&activeName==='aptitude'"
+        >
           <img class="no-pass-img" :src="noPassImg" alt srcset />
           <div>{{JSON.parse(detailDialogMsg.rejectReason).join(',')}}</div>
         </div>
@@ -503,7 +506,7 @@ export default {
           this.reviewCreativeDetail.data.forEach(item => {
             let property = item.field;
             if (reviewList.hasOwnProperty(property)) {
-if (property === "screenType") {
+              if (property === "screenType") {
                 let screenType = reviewList[property];
                 this.screenTypeList.forEach((screen, index) => {
                   if (screen["id"] === screenType) {
