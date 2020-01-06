@@ -685,7 +685,7 @@
         }
       },
       removeEvent() {
-        this.map.removeEventListener('dragend', this.drawLabelsByVisual)
+        this.map.removeEventListener('dragend', this.drawMarkersByVisual)
         this.map.removeEventListener('click', this.mapLeftClick)
         this.map.removeEventListener('zoomend', this.mapZoomEnd)
         this.map.removeEventListener('mousemove', this.mapMouseMove)
