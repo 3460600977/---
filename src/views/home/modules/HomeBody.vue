@@ -92,6 +92,7 @@
             </el-select>
           </div>
           <el-date-picker
+            :clearable="false"
             v-model="selectLine.selectTime"
             type="daterange"
             range-separator="--"
