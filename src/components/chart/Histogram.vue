@@ -224,7 +224,7 @@
             type: 'value',
             axisLabel: {
               formatter: function (v) {
-                return (v * 100).toFixed(2)+'%'
+                return (v * 100)+'%'
               }
             },
             splitLine:{
@@ -244,9 +244,6 @@
           series: this.data.yAxis
         };
         this.myChart.setOption(option, true);
-        window.onresize = function(){
-          this.myChart.resize();
-        }
       },
     }
   }
