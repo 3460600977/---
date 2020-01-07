@@ -184,13 +184,14 @@
         this.points = this.normalizePointsAll(val)
         this.pointsOverlayObj.isShow = true
         this.reGetAreaPoint()
-        this.jugDraw()
         this.initHotMap()
+        this.jugDraw()
       },
       setCity(city) {
         this.map.centerAndZoom(city.name, 12);
       },
       initHotMap() {
+        if (this.heatmapOverlay) return;
         let heatmapOverlay = new BMapLib.HeatmapOverlay({
           "radius":20,
           gradient: {
