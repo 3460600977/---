@@ -327,7 +327,7 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": '30%',
+            "barWidth": '35%',
             "barGap": '10%',
           },
           {
@@ -335,7 +335,7 @@ export default {
             "type": "bar",
             "data": [
             ],
-            "barWidth": '30%',
+            "barWidth": '35%',
             "barGap": '10%',
           }
         ]
@@ -591,22 +591,6 @@ export default {
         this[data+'Data'].yAxis[0].data.push(voArray[i].city);
         this[data+'Data'].yAxis[1].data.push(voArray[i].whole);
       }
-      /*let offLine = this[data].yAxis;
-      let offLineArray = [];
-
-      offLine[0].data.forEach((off,index)=>{
-
-        offLineArray.push({'a':off,'b':offLine[1].data[index]});
-      });
-      offLineArray.sort(function (a,b) {
-        return (b.a - a.a)
-      });
-      this[data].yAxis[0].data = [];
-      this[data].yAxis[1].data = [];
-      offLineArray.forEach(line=>{
-        this[data].yAxis[0].data.push(line.a);
-        this[data].yAxis[1].data.push(line.b);
-      })*/
     }
   }
 };
