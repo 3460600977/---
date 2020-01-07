@@ -1,5 +1,5 @@
 <template>
-    <div class="container cityInsight" v-loading="loading">
+    <div class="container cityInsight" v-loading="loading || hotLoading">
       <div class="left-info mid">
         <left-info
           :isShow="isShow"
@@ -265,6 +265,7 @@
           cityCode: null,
           name: '没有定位到城市！'
         },
+        hotLoading: false,
         loading: false,
         rightShow: 0, // 空控制右边面板显示点位信息还是楼盘详情
         showPathCopy: null, // 当前显示的path
@@ -356,15 +357,14 @@
         this.activeTab = val.value
       },
       loadHotMap(id) {
-        this.loading = true
+        this.hotLoading = true
         this.$api.peopleInsight.getPeopleInsightHotMap({crowdInsightId: id, max: 100, min: 0}).then((data) => {
-          // this.$refs.dbmap.setCity(this.cityFilter)
-          this.loading = false
           if (data.result) {
             this.$refs.dbmap.drawHotMap(data.result)
           } else {
             this.switchChange(false)
           }
+          this.hotLoading = false
         })
       },
       // 隐藏热力图
@@ -411,11 +411,6 @@
       // 各种弹窗返回数据触发方法 type表示楼盘标签是 0清空还是2选择
       returnResult(val, index, type) {
         if (index === 0) { // 城市切换
-          // if (this.isInit) {
-          //   this.cityFilter = val
-          //   this.resetLeftPopup(index, type)
-          //   this.isInit = false
-          // } else {
           this.$confirm('切换城市后，系统将清空当前城市的操作数据，是否切换？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
@@ -425,7 +420,6 @@
             this.resetLeftPopup(index, type)
           }).catch(() => {
           });
-          // }
         } else if (index === 1) { // 楼盘标签选择
           if (type === 0) {
             this.buildingFilterSelected = false
@@ -438,10 +432,24 @@
           this.hide(1)
           this.resetLeftPopup(index, type)
         } else if (index === 2) { // 热力图选择
-          this.loadHotMap(val)
-          this.hide(1)
-          this.resetLeftPopup(index, type)
+          if (!Object.keys(this.pathArr).length) {
+            this.getHotMap(val, index, type)
+            return
+          }
+          this.$confirm('系统加载人群包，将自动清空之前的操作数据，是否清空？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.getHotMap(val, index, type)
+          }).catch(() => {
+          });
         }
+      },
+      getHotMap(val, index, type) {
+        this.loadHotMap(val)
+        this.hide(1)
+        this.resetLeftPopup(index, type)
       },
       hideAll() {
         for (let key in this.isShow) {
