@@ -63,12 +63,88 @@ export default {
       mapType: 0,
       activeTab: 'province',
       mapData: [],
-      data: {}
+      data: {},
+      fackProvinceTa:[
+        {'value': "0", 'name': "上海", 'countPercent': "0%"},
+        {'value': "0", 'name': "北京", 'countPercent': "0%"},
+        {'value': "0", 'name': "成都", 'countPercent': "0%"},
+        {'value': "0", 'name': "天津", 'countPercent': "0%"},
+        {'value': "0", 'name': "广东", 'countPercent': "0%"},
+        {'value': "0", 'name': "湖北", 'countPercent': "0%"},
+        {'value': "0", 'name': "浙江", 'countPercent': "0%"},
+        {'value': "0", 'name': "四川", 'countPercent': "0%"},
+        {'value': "0", 'name': "江苏", 'countPercent': "0%"},
+        {'value': "0", 'name': "重庆", 'countPercent': "0%"},
+      ],
+      fackCityTa:[
+        {
+          'value':[121.487899486,31.24916171,0],
+          'label':'0',
+          'name':'上海',
+          'countPercent':'0%'
+        },
+        {
+          'value':[116.395645038,39.9299857781,0],
+          'label':'0',
+          'name':'北京',
+          'countPercent':'0%'
+        },
+        {
+          'value':[104.067923463,30.6799428454,0],
+          'label':'0',
+          'name':'成都',
+          'countPercent':'0%'
+        },
+        {
+          'value':[117.210813092,39.1439299033,0],
+          'label':'0',
+          'name':'天津',
+          'countPercent':'0%'
+        },
+        {
+          'value':[113.307649675,23.1200491021,0],
+          'label':'0',
+          'name':'广州',
+          'countPercent':'0%'
+        },
+        {
+          'value':[114.025973657,22.5460535462,0],
+          'label':'0',
+          'name':'深圳',
+          'countPercent':'0%'
+        },
+        {
+          'value':[118.778074408,32.0572355018,0],
+          'label':'0',
+          'name':'南京',
+          'countPercent':'0%'
+        },
+        {
+          'value':[120.219375416,30.2592444615,0],
+          'label':'0',
+          'name':'杭州',
+          'countPercent':'0%'
+        },
+        {
+          'value':[114.316200103,30.5810841269,0],
+          'label':'0',
+          'name':'武汉',
+          'countPercent':'0%'
+        },
+        {
+          'value':[106.530635013,29.5446061089,0],
+          'label':'0',
+          'name':'重庆',
+          'countPercent':'0%'
+        }
+      ],
     }
   },
   created() {
-    this.data.province = this.normalizeProvinceData(this.areasList.provinceTa)
-    this.data.city = this.normalizeCityData(this.areasList.cityTa)
+    this.data.province = this.normalizeProvinceData(this.areasList.provinceTa);
+    this.data.city = this.normalizeCityData(this.areasList.cityTa);
+    console.log(this.data.province);
+    console.log(this.data.city);
   },
   mounted() {
     this.myChart = echarts.init(this.$refs.taMap); //这里是为了获得容器所在位置
