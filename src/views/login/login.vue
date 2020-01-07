@@ -230,8 +230,6 @@ export default {
           this.$store.commit("setToken", info.token)
           setUserInfo(info)
           this.$router.replace('/home')
-          this.pageLoading = false;
-          this.loading = false;
         })
         .catch(res => {
           this.pageLoading = false;
@@ -251,8 +249,6 @@ export default {
           this.$store.commit("setToken", info.token)
           setUserInfo(info);
           this.$router.replace("/auditList");
-          this.pageLoading = false;
-          this.loading = false;
         })
         .catch(res => {
           this.pageLoading = false;
