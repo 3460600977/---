@@ -139,7 +139,6 @@
         //   return
         // }
         this.hotMapItem = this.activeItem
-        this.switchValue = true
         this.$emit('returnResult', this.hotMapItem)
       },
     },
