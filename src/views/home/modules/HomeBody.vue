@@ -1,5 +1,5 @@
 <template>
-  <div class="home-body" v-loading.fullscreen.lock="false">
+  <div class="home-body" v-loading.fullscreen.lock="loading">
     <el-card class="box-card mid shadow">
       <div class="company-msg mid">
         <img width="48px" :src="images.grayHead" alt="头像" />
@@ -18,13 +18,13 @@
           class="account-val font-number"
         >¥ {{$tools.toThousands(summaryDetailList.accountBalance / 100)}}</div>
       </div>
-      <div
+      <!-- <div
         :style="`background-image:url('${images.xinchaoBin}')`"
         class="account-money-box color-white"
       >
-        <div class="accouint-title">新潮币</div>
+        <div class="accouint-title">奖励金</div>
         <div class="account-val font-number">{{$tools.toThousands(summaryDetailList.xcMoney / 100)}}</div>
-      </div>
+      </div>-->
       <el-button class="create-put" type="primary" icon="el-icon-plus" @click="ToPathPlan">创建投放方案</el-button>
     </el-card>
     <el-card class="box-card data_card mid-center shadow">
@@ -400,6 +400,7 @@ export default {
     },
     //刷新首页 用户统计数据=》数据趋势
     getSummaryData: async function() {
+      this.loading = true;
       this.selectLine.selectTime = [
         this.$tools.getFormatDate("YYYY-mm-dd", this.$tools.getLastWeek()),
         this.$tools.getFormatDate("YYYY-mm-dd", new Date())
