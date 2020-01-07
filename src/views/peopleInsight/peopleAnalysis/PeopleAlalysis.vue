@@ -123,11 +123,9 @@ import arealDistribution from "./modeles/arealDistribution";
 import Histogram from "@/components/chart/Histogram.vue";
 import pieHollowGroup from "@/components/chart/pieHollowGroup";
 import pieHollowDouble from "@/components/chart/pieHollowDouble";
-import BottomBack from "@/components/Back";
 
 export default {
   components: {
-    BottomBack,
     headerCondition,
     arealDistribution,
     Histogram,
@@ -379,13 +377,13 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": 30
+            "barWidth": '40%'
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [],
-            "barWidth": 30
+            "barWidth": '40%'
           }
         ]
       },
@@ -396,13 +394,13 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": 30
+            "barWidth": '20%'
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [],
-            "barWidth": 30
+            "barWidth": '20%'
           }
         ]
       },
@@ -494,6 +492,16 @@ export default {
           this[item.name].yAxis[0].name = this.legendName;
           this[item.name].yAxis[1].data = country;
         });
+
+
+        if (this.offlineConsumptionData.yAxis.length > 0) {
+          this.downSort('offlineConsumptionData');
+        }
+
+        if (this.interestData.yAxis.length > 0) {
+          this.downSort('interestData');
+        }
+
         //车产
         piVO['privateCarDist'].forEach((itemOther,index)=>{
           itemOther.name = itemOther.tag;
@@ -535,6 +543,29 @@ export default {
     },
     toSelectPoint() {
       this.$router.push('/cityInsight/selectPoint')
+    },
+    downSort(data) {
+      let offLine = this[data].yAxis;
+      let offLineArray = [];
+      /*for (let i =0;i<offLine[0].data.length;i++){
+        if (i > 9){
+          break;
+        }
+        offLineArray.push({'a':offLine[0].data[i],'b':offLine[1].data[i]});
+      }*/
+      offLine[0].data.forEach((off,index)=>{
+
+        offLineArray.push({'a':off,'b':offLine[1].data[index]});
+      });
+      offLineArray.sort(function (a,b) {
+        return (b.a - a.a)
+      });
+      this[data].yAxis[0].data = [];
+      this[data].yAxis[1].data = [];
+      offLineArray.forEach(line=>{
+        this[data].yAxis[0].data.push(line.a);
+        this[data].yAxis[1].data.push(line.b);
+      })
     }
   }
 };
@@ -583,9 +614,9 @@ export default {
       }
       .nannv-icon{
         position: absolute;
-        top: 100px;
-        left: 83px;
-        width: 28px;
+        top: 109px;
+        left: 86px;
+        width: 30px;
       }
     }
   }

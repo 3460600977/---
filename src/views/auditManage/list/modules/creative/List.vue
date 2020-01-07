@@ -73,7 +73,10 @@
               </div>
             </div>
             <div v-else-if="col.prop === 'creativeContent'">
-              <div class="show-contents" @click="showContent(scope.row.id); detailDialogMsg = scope.row;">
+              <div
+                class="show-contents"
+                @click="showContent(scope.row.id); detailDialogMsg = scope.row;"
+              >
                 <span>查看</span>
               </div>
             </div>
@@ -139,9 +142,11 @@
     </el-dialog>
     <el-dialog title="创意内容" :visible.sync="dialogShowContent" class="creative-dialog">
       <el-tabs v-model="activeName">
-
-        <div class="no-pass" v-if="detailDialogMsg.status === 1 && detailDialogMsg.rejectReason">
-          <img class="no-pass-img" :src="noPassImg" alt="" srcset="">
+        <div
+          class="no-pass"
+          v-if="detailDialogMsg.status === 1 && detailDialogMsg.rejectReason&&activeName==='aptitude'"
+        >
+          <img class="no-pass-img" :src="noPassImg" alt srcset />
           <div>{{JSON.parse(detailDialogMsg.rejectReason).join(',')}}</div>
         </div>
 
@@ -152,9 +157,9 @@
               <el-image
                 v-for="(item, index) in aItem.value"
                 :key="index"
-                style="width: 100px; height: 158px;border-radius: 2px"
-                :src="aItem.value"
-                :preview-src-list="aItem.srcList"
+                style="width: 100px; height: 158px;border-radius: 2px;margin-right:10px"
+                :src="item"
+                :preview-src-list="aItem.value"
               ></el-image>
             </div>
             <label class="text-info" v-else>{{aItem.value}}</label>
@@ -226,7 +231,7 @@ export default {
       dialogShowContent: false,
       formLabelWidth: "120px",
       currentPage: 50,
-      noPassImg: require('@/assets/images/icon_not_passed.png'),
+      noPassImg: require("@/assets/images/icon_not_passed.png"),
       checkFormInline: {
         selectCreativeName: "",
         selectCreativeStatus: ""
@@ -282,8 +287,7 @@ export default {
           { value: "餐饮", label: "创意行业", field: "industry" },
           { value: "联动", label: "屏幕类型", field: "screenType" },
           {
-            value:
-              "https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2966610753,437054214&fm=26&gp=0.jpg",
+            value: [],
             label: "创意资质",
             field: "industryIdentify",
             srcList: []
@@ -317,7 +321,7 @@ export default {
       pageSize: 10,
       loading: false,
 
-      detailDialogMsg: ''
+      detailDialogMsg: ""
     };
   },
   created() {
@@ -474,15 +478,8 @@ export default {
             }
           }
           this.downloadCreative.data.screenType = videoList.screenType;
-          console.log(
-            "downloadCreative",
-            this.downloadCreative.data.topList,
-            this.downloadCreative.data.downList,
-            this.downloadCreative.data.screenType
-          );
         })
         .catch(res => {
-          console.log("downloadCreative", "false");
           this.downloadCreative.loading = false;
         });
     },
@@ -498,12 +495,12 @@ export default {
         .then(res => {
           this.reviewCreativeDetail.loading = false;
           let reviewList = res.result;
+          let industryIdentify = JSON.parse(reviewList.industryIdentify);
           this.reviewCreativeDetail.data.forEach(item => {
             let property = item.field;
             if (reviewList.hasOwnProperty(property)) {
               if (property === "industryIdentify") {
-                item.srcList = JSON.parse(reviewList.industryIdentify);
-                item.value = JSON.parse(reviewList.industryIdentify);
+                item.value = industryIdentify;
               } else if (property === "screenType") {
                 let screenType = reviewList[property];
                 this.screenTypeList.forEach((screen, index) => {
@@ -521,6 +518,10 @@ export default {
               }
             }
           });
+          console.log(
+            "this.reviewCreativeDetail.data",
+            this.reviewCreativeDetail.data
+          );
         })
         .catch(res => {
           this.reviewCreativeDetail.loading = false;
@@ -579,7 +580,6 @@ export default {
       this.submitCreative.loading = true;
       this.$api.AuditCreative.submitAuditCreative(queryParam)
         .then(res => {
-          console.log(queryParam, res.result);
           if (this.submit.status === 2) {
             this.$message({
               message: "创意" + creativeName + ", 已通过审查",
@@ -658,13 +658,13 @@ export default {
 
 <style lang="scss">
 .creative-list {
-  .no-pass{
+  .no-pass {
     display: flex;
     align-items: center;
     padding: 16px 20px;
-    background:rgba(83,160,255,0.08);
+    background: rgba(83, 160, 255, 0.08);
     line-height: 1.5;
-    .no-pass-img{
+    .no-pass-img {
       width: 65px;
       height: 46px;
       flex-shrink: 0;

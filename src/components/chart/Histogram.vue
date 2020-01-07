@@ -133,7 +133,7 @@
           type: 'value',
           axisLabel: {
             formatter: function (v) {
-              return (v * 100).toFixed(2)+'%'
+              return `${parseInt(v * 100)}%`
             }
           },
           splitLine:{
@@ -153,9 +153,15 @@
         series: this.data.yAxis
       };
       this.myChart.setOption(option);
-      window.onresize = this.myChart.resize();
+      window.addEventListener('resize', this.resize)
+    },
+    beforeDestroy() {
+      window.removeEventListener('resize', this.resize)
     },
     methods: {
+      resize() {
+        this.myChart.resize();
+      },
       reDraw() {
         this.myChart.clear();
         let option = {
@@ -218,7 +224,7 @@
             type: 'value',
             axisLabel: {
               formatter: function (v) {
-                return (v * 100).toFixed(2)+'%'
+                return (v * 100)+'%'
               }
             },
             splitLine:{
@@ -238,9 +244,6 @@
           series: this.data.yAxis
         };
         this.myChart.setOption(option, true);
-        window.onresize = function(){
-          this.myChart.resize();
-        }
       },
     }
   }

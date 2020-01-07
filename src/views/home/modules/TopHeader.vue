@@ -107,7 +107,7 @@ export default {
       MenuList,
       dialogEditPass: false,
       loading: false,
-      auditShow:true,
+      auditShow: true,
       images: {
         logo: require("../../../assets/images/icon_logo.png"),
         money: require("../../../assets/images/icons/icon_money.png"),
@@ -276,8 +276,8 @@ export default {
       let menuListArr = getMenuList();
       let canMenu = false;
       menuListArr.forEach(item => {
-        if(parseInt(item.code) === 1600&&item.selected){
-          this.auditShow=false
+        if (parseInt(item.code) === 1600 && item.selected) {
+          this.auditShow = false;
         }
         if (parseInt(item.code) === 1201 || parseInt(item.code) === 1010) {
           canMenu = true;
@@ -294,7 +294,6 @@ export default {
         }
       });
       if (audit) {
-
       } else {
         this.toolMenu.forEach(item => {
           menuList.push(item);
@@ -306,6 +305,9 @@ export default {
   mounted() {
     //请求验证码接口
     let userInfo = getUserInfo();
+    if (userInfo === null || userInfo === "") {
+      return false;
+    }
     //菜单处理
     for (let i = 0; i < this.MenuList.length; i++) {
       for (let j = 0; j < userInfo.menu.length; j++) {

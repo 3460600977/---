@@ -32,11 +32,11 @@
         pointsOptions: {
           0: {
             shape: BMAP_POINT_SHAPE_CIRCLE,
-            color: '#F44A4A'
+            color: '#F44A4A',
           },
           1: {
             shape: BMAP_POINT_SHAPE_CIRCLE,
-            color: 'rgba(158, 158, 158, 0.7)'
+            color: 'rgba(158, 158, 158, 0.7)',
           }
         },
         styleOptions: {
@@ -155,6 +155,8 @@
           }
         }
         this.pathArr = {}
+        this.changePathPointType(null, -1)
+        this.jugDraw()
       },
       clearMap() {
         this.activePath = null
@@ -164,11 +166,7 @@
         this.pathArr = {}
         this.heatmapOverlay = null
         this.map.clearOverlays()
-        this.pointsOverlayObj = {
-          selectedOverlay: null,
-          unSelectedOverlay: null,
-          isShow: false
-        }
+        this.pointsOverlayObj.isShow = false
       },
       reGetAreaPoint() {
         if (Object.keys(this.pathArr).length) {
@@ -181,20 +179,23 @@
         this.points = this.normalizePointsAll(val)
         this.pointsOverlayObj.isShow = true
         this.reGetAreaPoint()
+        this.initHotMap()
         this.jugDraw()
       },
       setCity(city) {
         this.map.centerAndZoom(city.name, 12);
       },
       initHotMap() {
+        if (this.heatmapOverlay) return;
         let heatmapOverlay = new BMapLib.HeatmapOverlay({
           "radius":20,
           gradient: {
             0:'rgb(9, 185, 253)',
-            .1:'rgb(86, 255, 0)',
-            .2:'rgb(255, 235, 0)',
-            .3:'rgb(244, 74, 74)'
+            .3:'rgb(86, 255, 0)',
+            .6:'rgb(255, 235, 0)',
+            .8:'rgb(244, 74, 74)'
           },
+          zIndex: 199,
           opacity: 0.6
         });
         this.map.addOverlay(heatmapOverlay);
@@ -577,6 +578,7 @@
       zoomSinglePathChange(path) {
         if (path.type === 'polygon') return
         let radius = this.RealDistanceTranPixels(path.radius)
+        console.log(radius)
         if (path.type === 'polyline') {
           path.overlay.setStrokeWeight(2 * radius)
         } else if (path.type === 'circle') {
@@ -682,7 +684,7 @@
         }
       },
       removeEvent() {
-        this.map.removeEventListener('dragend', this.drawLabelsByVisual)
+        this.map.removeEventListener('dragend', this.drawMarkersByVisual)
         this.map.removeEventListener('click', this.mapLeftClick)
         this.map.removeEventListener('zoomend', this.mapZoomEnd)
         this.map.removeEventListener('mousemove', this.mapMouseMove)
@@ -697,6 +699,7 @@
           })
           this.$emit('drawCancle')
         }
+        this.$emit('hidePopup')
       },
       mapZoomEnd() {
         this.drawMarkersByVisual()
@@ -727,6 +730,7 @@
         this.map.addEventListener('click', this.mapLeftClick)
         this.map.addEventListener('mousemove', this.mapMouseMove)
         this.map.addEventListener('rightclick', this.mapRightClick)
+        // this.map.addEventListener('click', this.mapRightClick)
         // this.map.addEventListener('tilesloaded', this.tilesloaded)
       },
       drawCircle(point, info) {
@@ -743,6 +747,7 @@
           radius: this.defaultRadius,
           points: circle.getCenter()
         }
+
         if (this.$tools.type(info) === 'object') {
           path.name = info.title
           path.address = info.address
@@ -759,9 +764,6 @@
           icon: myIcon,
           offset: new BMap.Size(0, -11),
         });
-        marker.addEventListener('click', (event) => {
-          this.$emit('buildingClick', point)
-        })
         this.map.addOverlay(marker);
         return marker
       },
@@ -776,7 +778,7 @@
         if (this.heatmapOverlay) {
           this.heatmapOverlay.setDataSet({data:arr, max:100});
         } else {
-          this.initHotMap()
+          // this.initHotMap()
           this.heatmapOverlay.setDataSet({data:arr, max:100});
         }
       },
@@ -901,6 +903,7 @@
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
           this.map.addOverlay(pointsOverlay);
+          pointsOverlay.disableMassClear()
           pointsOverlay.addEventListener('mouseover',  this.pointEvent);
           pointsOverlay.addEventListener('mouseout',  this.pointEventOut);
           pointsOverlay.addEventListener('click',  this.pointEventClick);

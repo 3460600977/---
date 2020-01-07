@@ -56,8 +56,6 @@ export default {
       let activenum = chartParam.sSecondData;
       let maxappreg = this.calMax(appregnum); //花费Y轴值
       let maxactive = this.calMax(activenum); //曝光度Y轴值
-      console.log("appregnum", appregnum, "activenum", activenum);
-      console.log(maxappreg, maxactive);
       let interval_left = maxappreg / 5; //左轴间隔
       let interval_right = maxactive / 5; //右轴间隔
       let option = {
@@ -75,11 +73,14 @@ export default {
           formatter: function(params) {
             let str = `<p>${params[0].name}</p>`;
             params.forEach(item => {
+              if (item.seriesName !== "花费（元）¥ ") {
+                item.data = _that.$tools.toThousands(item.data, 0);
+              }
               str += `
                         <p>
                         <span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;
                         background:${item.color};opacity:1"></span>
-                        <span>${item.seriesName}: ${parseInt(item.data)}</span>
+                        <span>${item.seriesName}: ${item.data}</span>
                         </p>
                       `;
             });
@@ -116,7 +117,9 @@ export default {
               fontFamily: "DINMittelschrift",
               formatter: function(value, index) {
                 if (chartParam.selectLine.firstValue === 1) {
-                  return "¥ " + value;
+                  return "¥ " + value.toFixed(2);
+                } else {
+                  return _that.$tools.toThousands(value, 0);
                 }
                 return value;
               }
@@ -137,7 +140,9 @@ export default {
               fontFamily: "DINMittelschrift",
               formatter: function(value, index) {
                 if (chartParam.selectLine.secondValue === 1) {
-                  return "¥ " + value;
+                  return "¥ " + value.toFixed(2);
+                } else {
+                  return _that.$tools.toThousands(value, 0);
                 }
                 return value;
               }

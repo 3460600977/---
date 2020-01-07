@@ -10,6 +10,7 @@
               title="城市列表"
               :selectDatas="cityDatas"
               :filters="cityFilter"
+              :currentItem="cityFilter"
               @hide="() => hide(0)"
               @returnResult="(val) => returnResult(val, 0)"
             ></singleSelect-popup>
@@ -30,6 +31,7 @@
                   :selectDatas="buildingDatas"
                   :filters="buildingFilter"
                   @returnResult="(val, type) => returnResult(val, 1, type)"
+                  @hide="() => hide(1)"
                 ></multiple-selectPopUp>
               </div>
             </div>
@@ -87,6 +89,7 @@
           :budget="budget"
           :city="cityFilter"
           :currentSelectType="currentSelectType"
+          @hidePopup="hidePopup"
           @buildingClick="buildingClick"
           @pathArrChange="pathArrChange"
           @activePathChange="activePathChange"
@@ -95,6 +98,13 @@
           @returnSearchResult="returnSearchResult"
           @returnSelectedBuildings="returnSelectedBuildings"
         ></db-map>
+      </div>
+      <div class="add-dialog">
+        <add-dialog-pro
+          ref="addDialog"
+          :cityCode="cityFilter.cityCode"
+          @selectLocation="addLocation"
+        ></add-dialog-pro>
       </div>
     </div>
   </div>
@@ -107,6 +117,7 @@ const CITY_MAPPING = {
 };
 //import rightInfo from "../../../../../cityInsight/cityInsight/rightInfo";
 import mapRightInfo from "./mapRightInfo";
+import addDialogPro from "./addDialog";
 import leftInfo from "../../../../../cityInsight/cityInsight/leftInfo";
 import drawType from "../../../../../../components/map/drawType";
 import mapPopup from "../../../../../../components/map/mapPopup";
@@ -138,6 +149,7 @@ export default {
     dbMap,
     leftTab,
     addDialog,
+    addDialogPro,
     mapPopup,
     drawType,
     multipleSelectPopUp,
@@ -153,7 +165,6 @@ export default {
   },
   data() {
     return {
-      isInit: true,
       buildingDatas: {
         // 楼宇标签
         title: "楼宇标签",
@@ -228,12 +239,12 @@ export default {
       isShow: {
         // 控制左边弹出框显示
         0: false,
-        1: true
+        1: false
       },
       cityFilter: {
         // 当前城市信息
         cityCode: null,
-        name: null
+        name: "没有定位到城市！"
       },
       loading: false,
       rightShow: 0, // 空控制右边面板显示点位信息还是楼盘详情
@@ -315,10 +326,14 @@ export default {
       this.$emit("submitSelectedBuildPoint", selectedList, cityList);
       this.$emit("hideMapPoint", false);
     },
+    // 隐藏弹出框
+    hidePopup() {
+      this.hideAll();
+      this.$refs.drawType.hide();
+    },
     // 添加资源包成功后触发事件
     createSuc() {
       this.$refs.dbmap.clearPathArr();
-      this.$refs.dbmap.drawDevicePoints();
     },
     // 查找选点按钮点击
     searchDrawTypeClick() {
@@ -341,13 +356,18 @@ export default {
       this.activeTab = val.value;
     },
     loadHotMap(id) {
-      this.$api.peopleInsight.getPeopleInsightHotMap({ id: id }).then(data => {
-        if (data.result) {
-          this.$refs.dbmap.drawHotMap(data.result);
-        } else {
-          this.switchChange(false);
-        }
-      });
+      this.loading = true;
+      this.$api.peopleInsight
+        .getPeopleInsightHotMap({ crowdInsightId: id, max: 100, min: 0 })
+        .then(data => {
+          // this.$refs.dbmap.setCity(this.cityFilter)
+          this.loading = false;
+          if (data.result) {
+            this.$refs.dbmap.drawHotMap(data.result);
+          } else {
+            this.switchChange(false);
+          }
+        });
     },
     // 隐藏热力图
     hideHotMap() {
@@ -357,60 +377,64 @@ export default {
       this.switchChange(false);
       this.$refs.peopleInsight.resetSelect();
     },
-    resetTags() {
-      if (this.buildingFilterSelected) {
-        // 如果标签选择过，则清空标签选择结果
-        this.$refs.dbmap.clearMap();
-        this.$refs.tagsSelect.operate(0);
-      } else {
-        this.createSuc();
+    resetTagsAndLoad() {
+      this.buildingFilter = {
+        buildType: [],
+        premiseAvgFee: [],
+        occupancyRate: [],
+        buildingAge: [],
+        parkingNum: [],
+        propertyRent: []
+      };
+      if (this.$refs.tagsSelect) {
+        this.$refs.tagsSelect.clear();
       }
+      this.buildingFilterSelected = false;
+      this.loadData();
     },
+
     resetLeftPopup(index) {
       if (index === 0) {
-        this.buildingFilter = {
-          buildType: [],
-          premiseAvgFee: [],
-          occupancyRate: [],
-          buildingAge: [],
-          parkingNum: [],
-          propertyRent: []
-        };
-        this.buildingFilterSelected = false;
         this.rightShow = 0;
         this.activeTab = 0;
         this.leftShow = new Array(this.leftShow.length).fill(false);
-        this.loadData();
+        this.resetTagsAndLoad();
       } else if (index === 1) {
         this.resetHotMap();
       } else if (index === 2) {
-        this.resetTags();
+        if (this.buildingFilterSelected) {
+          // 如果标签选择过，则清空标签选择结果
+          this.$refs.dbmap.clearMap();
+          this.resetTagsAndLoad();
+        } else {
+          this.createSuc();
+        }
       }
     },
     // 各种弹窗返回数据触发方法 type表示楼盘标签是 0清空还是2选择
     returnResult(val, index, type) {
       if (index === 0) {
         // 城市切换
-        if (this.isInit) {
-          this.cityFilter = val;
-          this.resetLeftPopup(index, type);
-          this.isInit = false;
-        } else {
-          this.$confirm(
-            "切换城市后，系统将清空当前城市的操作数据，是否切换？",
-            "提示",
-            {
-              confirmButtonText: "确定",
-              cancelButtonText: "取消",
-              type: "warning"
-            }
-          )
-            .then(() => {
-              this.cityFilter = val;
-              this.resetLeftPopup(index, type);
-            })
-            .catch(() => {});
-        }
+        // if (this.isInit) {
+        //   this.cityFilter = val
+        //   this.resetLeftPopup(index, type)
+        //   this.isInit = false
+        // } else {
+        this.$confirm(
+          "切换城市后，系统将清空当前城市的操作数据，是否切换？",
+          "提示",
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          }
+        )
+          .then(() => {
+            this.cityFilter = val;
+            this.resetLeftPopup(index, type);
+          })
+          .catch(() => {});
+        // }
       } else if (index === 1) {
         // 楼盘标签选择
         if (type === 0) {
@@ -458,11 +482,43 @@ export default {
     hide(val) {
       this.isShow[val] = false;
     },
+    findItem(val, arr) {
+      let arrTotal = this.$tools.operation(arr, "values");
+      let result = arrTotal.find(item => {
+        return item.name == val.name;
+      });
+      return result;
+    },
     getCityFilter() {
       this.$refs.dbmap.location().then(data => {
-        this.cityFilter = Object.assign({}, this.cityFilter, {
-          name: data.name
-        });
+        if (data.name === "全国") {
+          this.$confirm("定位失败，将自动将城市设置为北京！", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          })
+            .then(() => {
+              data.name = "北京市";
+              let result = Object.assign({}, this.cityFilter, {
+                name: data.name
+              });
+              this.cityFilter = this.findItem(result, this.cityDatas);
+              this.loadData();
+            })
+            .catch(() => {});
+          return;
+        }
+        let result = Object.assign({}, this.cityFilter, { name: data.name });
+        let result1 = this.findItem(result, this.cityDatas);
+        if (result1) {
+          this.cityFilter = result1;
+          this.loadData();
+        } else {
+          this.cityFilter = result;
+          this.$message.error("当前城市尚未开通，我们已在快马加鞭，敬请期待！");
+          this.loading = false;
+          return;
+        }
       });
     },
     loadCitys() {
@@ -568,11 +624,12 @@ export default {
       this.pathArr = val;
     },
     /*
-       /*
-       *
-       * */
+      /*
+      *
+      * */
     returnSelectedBuildings(val) {
       this.selectedBuildings = val;
+      this.rightShow = 0;
     },
     // mapPopup里面点击删除(0)和确定按钮(1)
     operate(val, item) {
