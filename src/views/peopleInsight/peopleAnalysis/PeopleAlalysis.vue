@@ -377,13 +377,13 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": 30
+            "barWidth": '40%'
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [],
-            "barWidth": 30
+            "barWidth": '40%'
           }
         ]
       },
@@ -394,13 +394,13 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": 30
+            "barWidth": '20%'
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [],
-            "barWidth": 30
+            "barWidth": '20%'
           }
         ]
       },
@@ -547,7 +547,14 @@ export default {
     downSort(data) {
       let offLine = this[data].yAxis;
       let offLineArray = [];
+      /*for (let i =0;i<offLine[0].data.length;i++){
+        if (i > 9){
+          break;
+        }
+        offLineArray.push({'a':offLine[0].data[i],'b':offLine[1].data[i]});
+      }*/
       offLine[0].data.forEach((off,index)=>{
+
         offLineArray.push({'a':off,'b':offLine[1].data[index]});
       });
       offLineArray.sort(function (a,b) {
