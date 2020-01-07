@@ -2,9 +2,9 @@
   <div
     v-loading="pageLoading"
     class="login-page"
-    v-bind:style="{ backgroundImage: 'url('+this.logo_back_img+')'}"
+    v-bind:style="{ backgroundImage: 'url('+this.loginBackgroundImage+')'}"
   >
-    <div class="login-box">
+    <div v-if="(!isSaleLogin && !isAuditorLogin) || !pageLoading" class="login-box">
       <div class="box-center">
         <div class="xinchao-logo" v-bind:style="{ width: imageWidth +'px' }">
           <el-image
@@ -92,8 +92,8 @@ export default {
 
     return {
       imageWidth: 442,
-      logo_img: require("../../assets/iconImg/icon_red@2x.png"),
-      logo_back_img: require("../../assets/iconImg/icon_bg@2x.png"),
+      logo_img: require("@/assets/iconImg/icon_red@2x.png"),
+      logo_back_img: require("@/assets/iconImg/icon_bg@2x.png"),
       login_capture_img: "",
       loginForm: {
         username: "",
@@ -140,7 +140,12 @@ export default {
 
     isAuditorLogin() {
       return !!this.$route.query.blmToken;
-    }
+    },
+
+    loginBackgroundImage() {
+      let url = (this.isSaleLogin || this.isAuditorLogin) || '@/assets/iconImg/icon_bg@2x.png';
+      return url;
+    },
   },
 
   beforeMount() {
@@ -217,15 +222,16 @@ export default {
       };
       this.$api.Login.SaleLogin(param)
         .then(res => {
+          debugger
           let info = res.result;
           let menuList = this.$tools.getAllMenuList(info.menu, []);
           
           this.pageLoading = false;
-          this.$router.replace('/home')
           this.loading = false;
           setMenuList(menuList)
           this.$store.commit("setToken", info.token)
           setUserInfo(info)
+          this.$router.replace('/home')
         })
         .catch(res => {
           this.pageLoading = false;
