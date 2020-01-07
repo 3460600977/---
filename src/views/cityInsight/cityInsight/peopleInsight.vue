@@ -91,6 +91,9 @@
       },
     },
     methods: {
+      setSwitchValue(val) {
+        this.switchValue = val
+      },
       toCreate() {
         this.$router.push('/peopleInsight/createCrowd')
       },
