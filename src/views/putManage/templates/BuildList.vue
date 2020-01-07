@@ -59,7 +59,7 @@
             </div>
 
             <DelCirclrButton
-              @click.native="$emit('update:data', $tools.removeArrayItemByIndex(localProject.list, index))"
+              @click.native="removeItem(localProject.list, index)"
               class="float-left"
             />
           </div>
@@ -207,6 +207,12 @@ export default {
       this.$api.PutProject.GetBuildDevice(param).then(res => {
         this.$set(this.localProject.list, index, { ...old, devices: res.result, active: true })
       });
+    },
+
+    // 删除地图选点列表
+    removeItem(list, index) {
+      this.$emit('delMapItem', list[index])
+      this.$tools.removeArrayItemByIndex(list, index)
     }
   },
 
