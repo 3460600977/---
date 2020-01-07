@@ -95,7 +95,7 @@
 
 
     <!-- 社区兴趣爱好指数 -->
-    <el-card v-if="interestData.xAxis.length > 0" class="box-card">
+    <el-card v-if="interestDistData.xAxis.length > 0" class="box-card">
       <!--<div class="report-form-title">社区兴趣爱好指数</div>-->
       <div class="big-box">
         <histogram
@@ -103,7 +103,7 @@
           height="100%"
           :title="titles.interest"
           :color="colorType[2]"
-          :data="interestData"
+          :data="interestDistData"
         />
       </div>
     </el-card>
@@ -319,14 +319,14 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": 18
+            "barWidth": '30%'
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [
             ],
-            "barWidth": 18
+            "barWidth": '30%'
           }
         ]
       },
@@ -337,14 +337,14 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": 18
+            "barWidth": '16%'
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [
             ],
-            "barWidth": 18
+            "barWidth": '16%'
           }
         ]
       },
@@ -355,14 +355,14 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": 18
+            "barWidth": '16%'
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [
             ],
-            "barWidth": 18
+            "barWidth": '16%'
           }
         ]
       },
@@ -377,30 +377,30 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": '40%'
+            "barWidth": '25%'
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [],
-            "barWidth": '40%'
+            "barWidth": '25%'
           }
         ]
       },
-      interestData: {  //社区兴趣
+      interestDistData: {  //社区兴趣
         xAxis: [],
         yAxis: [
           {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": '20%'
+            "barWidth": '20%',
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [],
-            "barWidth": '20%'
+            "barWidth": '20%',
           }
         ]
       },
@@ -475,14 +475,14 @@ export default {
             name: 'privateCarData',
             key: 'privateCarDist'
           },*/
-          {
+          /*{
             name: 'offlineConsumptionData',
             key: 'offlineConsumption'
-          },
-          {
-            name: 'interestData',
+          },*/
+         /* {
+            name: 'interestDistData',
             key: 'interestDist'
-          }
+          }*/
         ];
         barAarr.forEach(item => {
           this[item.name].xAxis = piVO[item.key].map(item => item.tag);
@@ -494,12 +494,14 @@ export default {
         });
 
 
-        if (this.offlineConsumptionData.yAxis.length > 0) {
-          this.downSort('offlineConsumptionData');
+
+        if (piVO['offlineConsumption'].length > 0) {
+
+          this.downSort('offlineConsumption',piVO,wholePiVO);
         }
 
-        if (this.interestData.yAxis.length > 0) {
-          this.downSort('interestData');
+        if (piVO['interestDist'].length > 0) {
+          this.downSort('interestDist',piVO,wholePiVO);
         }
 
         //车产
@@ -544,15 +546,30 @@ export default {
     toSelectPoint() {
       this.$router.push('/cityInsight/selectPoint')
     },
-    downSort(data) {
-      let offLine = this[data].yAxis;
-      let offLineArray = [];
-      /*for (let i =0;i<offLine[0].data.length;i++){
+    downSort(data,piVO,wholePiVO) {
+      let voArray = [];
+      piVO[data].forEach((pivo,indexPi)=>{
+        voArray.push({
+          'name':pivo.tag,
+          'city':pivo.value,
+          'whole':wholePiVO[data][indexPi].value
+        })
+      });
+      voArray.sort(function (a,b) {
+        return (b.city - a.city)
+      });
+      for (let i =0;i<voArray.length;i++){
         if (i > 9){
           break;
         }
-        offLineArray.push({'a':offLine[0].data[i],'b':offLine[1].data[i]});
-      }*/
+        this[data+'Data'].xAxis.push(voArray[i].name);
+        this[data+'Data'].yAxis[0].name = this.legendName;
+        this[data+'Data'].yAxis[0].data.push(voArray[i].city);
+        this[data+'Data'].yAxis[1].data.push(voArray[i].whole);
+      }
+      /*let offLine = this[data].yAxis;
+      let offLineArray = [];
+
       offLine[0].data.forEach((off,index)=>{
 
         offLineArray.push({'a':off,'b':offLine[1].data[index]});
@@ -565,7 +582,7 @@ export default {
       offLineArray.forEach(line=>{
         this[data].yAxis[0].data.push(line.a);
         this[data].yAxis[1].data.push(line.b);
-      })
+      })*/
     }
   }
 };
