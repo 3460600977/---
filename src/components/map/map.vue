@@ -147,7 +147,7 @@
         }
       },
       // 清空pathArr数据 并且清楚覆盖物
-      clearPathArr() {
+      clearPathArr(type = 0) {
         for (let key in this.pathArr) {
           this.map.removeOverlay(this.pathArr[key].overlay)
           if (this.pathArr[key].anotherOverlay) {
@@ -155,23 +155,20 @@
           }
         }
         this.pathArr = {}
-        this.changePathPointType(null, -1)
-        this.jugDraw()
+        if (type === 0) {
+          this.changePathPointType(null, -1)
+          this.jugDraw()
+        }
       },
       clearMap() {
         this.activePath = null
-        this.labelsArr = []
+        this.removeLabels()
+        this.removeMarkers()
         this.selectedBuildings = [] //当前选中楼盘
         this.indexArr = []
-        this.pathArr = {}
-        this.heatmapOverlay = null
-        this.map.clearOverlays()
+        this.hideHotMap()
+        this.clearPathArr(1)
         this.pointsOverlayObj.isShow = false
-        // this.pointsOverlayObj = {
-        //   selectedOverlay: null,
-        //   unSelectedOverlay: null,
-        //   isShow: false
-        // }
       },
       reGetAreaPoint() {
         if (Object.keys(this.pathArr).length) {
@@ -184,13 +181,14 @@
         this.points = this.normalizePointsAll(val)
         this.pointsOverlayObj.isShow = true
         this.reGetAreaPoint()
-        this.jugDraw()
         this.initHotMap()
+        this.jugDraw()
       },
       setCity(city) {
         this.map.centerAndZoom(city.name, 12);
       },
       initHotMap() {
+        if (this.heatmapOverlay) return;
         let heatmapOverlay = new BMapLib.HeatmapOverlay({
           "radius":20,
           gradient: {
@@ -582,7 +580,6 @@
       zoomSinglePathChange(path) {
         if (path.type === 'polygon') return
         let radius = this.RealDistanceTranPixels(path.radius)
-        console.log(radius)
         if (path.type === 'polyline') {
           path.overlay.setStrokeWeight(2 * radius)
         } else if (path.type === 'circle') {
@@ -779,12 +776,8 @@
       },
       // 热力图
       drawHotMap(arr) {
-        if (this.heatmapOverlay) {
-          this.heatmapOverlay.setDataSet({data:arr, max:100});
-        } else {
-          // this.initHotMap()
-          this.heatmapOverlay.setDataSet({data:arr, max:100});
-        }
+        this.heatmapOverlay.setDataSet({data:arr, max:100});
+        this.showHotMap()
       },
       showHotMap() {
         if (this.heatmapOverlay) {
@@ -907,6 +900,7 @@
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
           this.map.addOverlay(pointsOverlay);
+          console.log(pointsOverlay)
           pointsOverlay.disableMassClear()
           pointsOverlay.addEventListener('mouseover',  this.pointEvent);
           pointsOverlay.addEventListener('mouseout',  this.pointEventOut);

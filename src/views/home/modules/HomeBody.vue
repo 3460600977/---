@@ -621,6 +621,9 @@
         height: 540px;
         float: left;
         margin-bottom: 46px;
+        .imgItem {
+          cursor: pointer;
+        }
         /deep/ .el-carousel__arrow {
           color: $color-main;
           background-color: transparent;

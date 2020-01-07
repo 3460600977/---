@@ -32,6 +32,7 @@
             :isShowTitle="isShowTitle"
             :title="titles.age"
             :legend="legendTitle"
+            :isShowLine="true"
           />
         </div>
 
@@ -44,6 +45,7 @@
             :isShowTitle="isShowTitle"
             :title="titles.education"
             :legend="legendTitle"
+            :isShowLine="true"
           />
         </div>
 
@@ -55,6 +57,7 @@
             :data="consumeData"
             :title="titles.consume"
             :legend="legendTitle"
+            :isShowLine="true"
           />
         </div>
 
@@ -66,6 +69,7 @@
             :data="privateCarData"
             :title="titles.privateCar"
             :legend="legendTitle"
+            :isShowLine="true"
           />
           <div style="position: relative;width: 100%">
             <p class="text" :style="{'left': positionType[2][0][0]}">{{legendTitle[0]}}</p>
@@ -89,13 +93,15 @@
           :title="titles.offlineConsumption"
           :color="colorType[2]"
           :data="offlineConsumptionData"
+          :isShowLine="true"
+          :grid="grid"
         />
       </div>
     </el-card>
 
 
     <!-- 社区兴趣爱好指数 -->
-    <el-card v-if="interestData.xAxis.length > 0" class="box-card">
+    <el-card v-if="interestDistData.xAxis.length > 0" class="box-card">
       <!--<div class="report-form-title">社区兴趣爱好指数</div>-->
       <div class="big-box">
         <histogram
@@ -103,7 +109,9 @@
           height="100%"
           :title="titles.interest"
           :color="colorType[2]"
-          :data="interestData"
+          :data="interestDistData"
+          :isShowLine="true"
+          :grid="grid"
         />
       </div>
     </el-card>
@@ -319,14 +327,16 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": 18
+            "barWidth": '35%',
+            "barGap": '10%',
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [
             ],
-            "barWidth": 18
+            "barWidth": '35%',
+            "barGap": '10%',
           }
         ]
       },
@@ -337,14 +347,16 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": 18
+            "barWidth": '16%',
+            "barGap": '10%',
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [
             ],
-            "barWidth": 18
+            "barWidth": '16%',
+            "barGap": '10%',
           }
         ]
       },
@@ -355,14 +367,16 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": 18
+            "barWidth": '16%',
+            "barGap": '10%',
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [
             ],
-            "barWidth": 18
+            "barWidth": '16%',
+            "barGap": '10%',
           }
         ]
       },
@@ -377,30 +391,34 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": 30
+            "barWidth": '25%',
+            "barGap": '20%',
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [],
-            "barWidth": 30
+            "barWidth": '25%',
+            "barGap": '20%',
           }
         ]
       },
-      interestData: {  //社区兴趣
+      interestDistData: {  //社区兴趣
         xAxis: [],
         yAxis: [
           {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": 30
+            "barWidth": '20%',
+            "barGap": '20%',
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [],
-            "barWidth": 30
+            "barWidth": '20%',
+            "barGap": '20%',
           }
         ]
       },
@@ -429,7 +447,13 @@ export default {
           ['29%', '55%'],
           ['69%', '55%']
         ]
-      }
+      },
+
+      grid:{
+        left: '3%',
+        right: '3%',
+        bottom: 22,
+      },
 
 
     };
@@ -475,14 +499,14 @@ export default {
             name: 'privateCarData',
             key: 'privateCarDist'
           },*/
-          {
+          /*{
             name: 'offlineConsumptionData',
             key: 'offlineConsumption'
-          },
-          {
-            name: 'interestData',
+          },*/
+         /* {
+            name: 'interestDistData',
             key: 'interestDist'
-          }
+          }*/
         ];
         barAarr.forEach(item => {
           this[item.name].xAxis = piVO[item.key].map(item => item.tag);
@@ -494,12 +518,14 @@ export default {
         });
 
 
-        if (this.offlineConsumptionData.yAxis.length > 0) {
-          this.downSort('offlineConsumptionData');
+
+        if (piVO['offlineConsumption'].length > 0) {
+
+          this.downSort('offlineConsumption',piVO,wholePiVO);
         }
 
-        if (this.interestData.yAxis.length > 0) {
-          this.downSort('interestData');
+        if (piVO['interestDist'].length > 0) {
+          this.downSort('interestDist',piVO,wholePiVO);
         }
 
         //车产
@@ -544,21 +570,27 @@ export default {
     toSelectPoint() {
       this.$router.push('/cityInsight/selectPoint')
     },
-    downSort(data) {
-      let offLine = this[data].yAxis;
-      let offLineArray = [];
-      offLine[0].data.forEach((off,index)=>{
-        offLineArray.push({'a':off,'b':offLine[1].data[index]});
+    downSort(data,piVO,wholePiVO) {
+      let voArray = [];
+      piVO[data].forEach((pivo,indexPi)=>{
+        voArray.push({
+          'name':pivo.tag,
+          'city':pivo.value,
+          'whole':wholePiVO[data][indexPi].value
+        })
       });
-      offLineArray.sort(function (a,b) {
-        return (b.a - a.a)
+      voArray.sort(function (a,b) {
+        return (b.city - a.city)
       });
-      this[data].yAxis[0].data = [];
-      this[data].yAxis[1].data = [];
-      offLineArray.forEach(line=>{
-        this[data].yAxis[0].data.push(line.a);
-        this[data].yAxis[1].data.push(line.b);
-      })
+      for (let i =0;i<voArray.length;i++){
+        if (i > 9){
+          break;
+        }
+        this[data+'Data'].xAxis.push(voArray[i].name);
+        this[data+'Data'].yAxis[0].name = this.legendName;
+        this[data+'Data'].yAxis[0].data.push(voArray[i].city);
+        this[data+'Data'].yAxis[1].data.push(voArray[i].whole);
+      }
     }
   }
 };

@@ -1,7 +1,14 @@
 <template>
   <div class="condition-item-box">
-    <span>{{tagName}}：</span>
-    <el-button v-for="(item, index) in tagValues" :key="index">{{item}}</el-button>
+    <span >{{tagName}}：</span>
+    <el-tag
+      class="my-tag"
+      v-for="(item, index) in tagValues"
+      :key="index"
+      type="info"
+    >
+      {{item}}
+    </el-tag>
   </div>
 </template>
 
@@ -24,6 +31,10 @@
   .condition-item-box{
     float: left;
     margin-right: 30px;
-    margin-top: 20px;
+    margin-top: 10px;
+  }
+  .my-tag {
+    margin-left: 10px;
+    margin-top: 10px;
   }
 </style>
