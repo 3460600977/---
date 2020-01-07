@@ -6,8 +6,7 @@ export const auditManageRouter = [
   {
     path: '/auditList',
     component: () => import('@/views/auditManage/list/index'),
-    // meta: {code: '1600'},
-    meta: {code: '1003'},
+    meta: {code: '1600'},
     children: [
       //默认审核路径--创意审核列表
       {
