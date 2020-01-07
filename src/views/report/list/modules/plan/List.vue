@@ -92,7 +92,7 @@
         <el-table-column prop="campaignName" label="投放计划">
           <template slot-scope="scope">
             <router-link
-              :to="{path:'/reportList/project?campaignId='+scope.row['campaignId']+'&projectTime='+scope.row['startTime']}"
+              :to="{path:'/reportList/project?campaignId='+scope.row['campaignId']}"
               class="project-id"
             >{{scope.row[scope.column.property]}}</router-link>
           </template>
