@@ -157,8 +157,9 @@
               <el-image
                 v-for="(item, index) in aItem.value"
                 :key="index"
-                style="width: 100px; height: 158px;border-radius: 2px"
-                :src="aItem.value"
+                style="width: 100px; height: 158px;border-radius: 2px;margin-right:10px"
+                :src="item"
+                :preview-src-list="aItem.value"
               ></el-image>
             </div>
             <label class="text-info" v-else>{{aItem.value}}</label>
@@ -286,8 +287,7 @@ export default {
           { value: "餐饮", label: "创意行业", field: "industry" },
           { value: "联动", label: "屏幕类型", field: "screenType" },
           {
-            value:
-              "https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2966610753,437054214&fm=26&gp=0.jpg",
+            value: [],
             label: "创意资质",
             field: "industryIdentify",
             srcList: []
@@ -478,15 +478,8 @@ export default {
             }
           }
           this.downloadCreative.data.screenType = videoList.screenType;
-          console.log(
-            "downloadCreative",
-            this.downloadCreative.data.topList,
-            this.downloadCreative.data.downList,
-            this.downloadCreative.data.screenType
-          );
         })
         .catch(res => {
-          console.log("downloadCreative", "false");
           this.downloadCreative.loading = false;
         });
     },
@@ -506,7 +499,9 @@ export default {
           this.reviewCreativeDetail.data.forEach(item => {
             let property = item.field;
             if (reviewList.hasOwnProperty(property)) {
-              if (property === "screenType") {
+              if (property === "industryIdentify") {
+                item.value = industryIdentify;
+              } else if (property === "screenType") {
                 let screenType = reviewList[property];
                 this.screenTypeList.forEach((screen, index) => {
                   if (screen["id"] === screenType) {
@@ -523,6 +518,10 @@ export default {
               }
             }
           });
+          console.log(
+            "this.reviewCreativeDetail.data",
+            this.reviewCreativeDetail.data
+          );
         })
         .catch(res => {
           this.reviewCreativeDetail.loading = false;
@@ -581,7 +580,6 @@ export default {
       this.submitCreative.loading = true;
       this.$api.AuditCreative.submitAuditCreative(queryParam)
         .then(res => {
-          console.log(queryParam, res.result);
           if (this.submit.status === 2) {
             this.$message({
               message: "创意" + creativeName + ", 已通过审查",
