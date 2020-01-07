@@ -68,7 +68,7 @@
         });
         tagObj.tags = tags;
         tagArray.push(tagObj);
-        if (tagArray.length > 0) {
+        if (tagObj.tags.length > 0) {
           this.setTagNames(tagArray);
         }
         this.hotCons = []
