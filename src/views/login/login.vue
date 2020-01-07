@@ -144,17 +144,21 @@ export default {
   },
 
   beforeMount() {
+    // 销售登录
     if (this.isSaleLogin) {
       return this.saleLogin();
     }
+
+    // 审核登录
     if (this.isAuditorLogin) {
       return this.auditorLogin();
     }
+
     this.pageLoading = false;
   },
 
   mounted() {
-    if (!this.isSaleLogin) {
+    if (!this.isSaleLogin || !this.isAuditorLogin) {
       this.changeCaptureNUm();
     }
   },
@@ -180,8 +184,7 @@ export default {
               this.loading = false;
               this.$store.commit("setToken", info.token);
               setUserInfo(info);
-              let menuList = [];
-              menuList = this.$tools.getAllMenuList(info.menu, menuList);
+              let menuList = this.$tools.getAllMenuList(info.menu, []);
               let audit = false;
               menuList.forEach(item => {
                 if (item.code === "1600" && item.selected) {
@@ -215,18 +218,17 @@ export default {
       this.$api.Login.SaleLogin(param)
         .then(res => {
           let info = res.result;
+          let menuList = this.$tools.getAllMenuList(info.menu, []);
+          
           this.pageLoading = false;
-          this.$router.replace({
-            path: "/home",
-            query: {}
-          });
+          this.$router.replace('/home')
           this.loading = false;
-          this.$store.commit("setToken", info.token);
-          setUserInfo(info);
+          setMenuList(menuList)
+          this.$store.commit("setToken", info.token)
+          setUserInfo(info)
         })
         .catch(res => {
           this.pageLoading = false;
-          this.changeCaptureNUm();
         });
     },
 
@@ -238,18 +240,16 @@ export default {
       this.$api.Login.AuditorLogin(param)
         .then(res => {
           let info = res.result;
+          let menuList = this.$tools.getAllMenuList(info.menu, []);
           this.pageLoading = false;
-          this.$router.replace({
-            path: "/home",
-            query: {}
-          });
           this.loading = false;
-          this.$store.commit("setToken", info.token);
+          setMenuList(menuList)
+          this.$store.commit("setToken", info.token)
           setUserInfo(info);
+          this.$router.replace("/auditList");
         })
         .catch(res => {
           this.pageLoading = false;
-          this.changeCaptureNUm();
         });
     },
 
