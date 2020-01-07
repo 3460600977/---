@@ -226,8 +226,6 @@ export default {
           let info = res.result;
           let menuList = this.$tools.getAllMenuList(info.menu, []);
           
-          this.pageLoading = false;
-          this.loading = false;
           setMenuList(menuList)
           this.$store.commit("setToken", info.token)
           setUserInfo(info)
@@ -247,8 +245,6 @@ export default {
         .then(res => {
           let info = res.result;
           let menuList = this.$tools.getAllMenuList(info.menu, []);
-          this.pageLoading = false;
-          this.loading = false;
           setMenuList(menuList)
           this.$store.commit("setToken", info.token)
           setUserInfo(info);
