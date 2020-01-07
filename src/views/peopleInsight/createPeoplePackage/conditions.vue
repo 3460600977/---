@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-bottom: 86px">
+  <div style="margin-bottom: 40px">
     <template v-for="(tagObj,parentIndex) in crowdProject.tagNames">
       <div class="wrapper">
         <div class="font-0 mid-start">
