@@ -433,6 +433,8 @@
           this.resetLeftPopup(index, type)
         } else if (index === 2) { // 热力图选择
           if (!Object.keys(this.pathArr).length) {
+            // this.switchChange(true)
+            this.$refs.peopleInsight.setSwitchValue(true)
             this.getHotMap(val, index, type)
             return
           }
@@ -441,6 +443,8 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
+            this.$refs.peopleInsight.setSwitchValue(true)
+            // this.switchChange(true)
             this.getHotMap(val, index, type)
           }).catch(() => {
           });
