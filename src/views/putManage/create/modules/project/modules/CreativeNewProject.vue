@@ -873,11 +873,17 @@
         return {
           firstDayOfWeek: 6,
           disabledDate(date) {
-            return date.getTime() < Date.now() ||
-            // 周六六点以后不能选
-            (now.getDate() == date.getDate() && now.getMonth() === date.getMonth() && now.getDay() == 6 && now.getHours() > 18) ||
-            // 按周投放
-            (_this.formData.projectType.value == 0 && date.getDay() != 5 && date.getDay() != 6);
+            return date < now // 今天以前
+                // 按周投放
+                || _this.formData.projectType.value == 0 && date.getDay() != 5 && date.getDay() != 6 
+                  ||  ( now.getDate() == date.getDate() && now.getMonth() === date.getMonth() && now.getFullYear() === date.getFullYear() // 判断今天
+                          &&  ( 
+                                (  date.getDay() === 5 && date.getHours() > 18 ) // 周五6以后
+                                || date.getDay() === 6 // 周六
+                                || date.getDay() === 0 // 周日
+                              )
+                      )
+                
           }
         };
       },
