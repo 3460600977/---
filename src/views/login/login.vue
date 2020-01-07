@@ -2,9 +2,9 @@
   <div
     v-loading="pageLoading"
     class="login-page"
-    v-bind:style="{ backgroundImage: 'url('+this.logo_back_img+')'}"
+    v-bind:style="{ backgroundImage: 'url('+this.loginBackgroundImage+')'}"
   >
-    <div class="login-box">
+    <div v-if="(!isSaleLogin && !isAuditorLogin) || !pageLoading" class="login-box">
       <div class="box-center">
         <div class="xinchao-logo" v-bind:style="{ width: imageWidth +'px' }">
           <el-image
@@ -92,8 +92,8 @@ export default {
 
     return {
       imageWidth: 442,
-      logo_img: require("../../assets/iconImg/icon_red@2x.png"),
-      logo_back_img: require("../../assets/iconImg/icon_bg@2x.png"),
+      logo_img: require("@/assets/iconImg/icon_red@2x.png"),
+      logo_back_img: require("@/assets/iconImg/icon_bg@2x.png"),
       login_capture_img: "",
       loginForm: {
         username: "",
@@ -140,21 +140,30 @@ export default {
 
     isAuditorLogin() {
       return !!this.$route.query.blmToken;
-    }
+    },
+
+    loginBackgroundImage() {
+      let url = (this.isSaleLogin || this.isAuditorLogin) || '@/assets/iconImg/icon_bg@2x.png';
+      return url;
+    },
   },
 
   beforeMount() {
+    // 销售登录
     if (this.isSaleLogin) {
       return this.saleLogin();
     }
+
+    // 审核登录
     if (this.isAuditorLogin) {
       return this.auditorLogin();
     }
+
     this.pageLoading = false;
   },
 
   mounted() {
-    if (!this.isSaleLogin) {
+    if (!this.isSaleLogin || !this.isAuditorLogin) {
       this.changeCaptureNUm();
     }
   },
@@ -180,8 +189,7 @@ export default {
               this.loading = false;
               this.$store.commit("setToken", info.token);
               setUserInfo(info);
-              let menuList = [];
-              menuList = this.$tools.getAllMenuList(info.menu, menuList);
+              let menuList = this.$tools.getAllMenuList(info.menu, []);
               let audit = false;
               menuList.forEach(item => {
                 if (item.code === "1600" && item.selected) {
@@ -214,19 +222,17 @@ export default {
       };
       this.$api.Login.SaleLogin(param)
         .then(res => {
+          debugger
           let info = res.result;
-          this.pageLoading = false;
-          this.$router.replace({
-            path: "/home",
-            query: {}
-          });
-          this.loading = false;
-          this.$store.commit("setToken", info.token);
-          setUserInfo(info);
+          let menuList = this.$tools.getAllMenuList(info.menu, []);
+          
+          setMenuList(menuList)
+          this.$store.commit("setToken", info.token)
+          setUserInfo(info)
+          this.$router.replace('/home')
         })
         .catch(res => {
           this.pageLoading = false;
-          this.changeCaptureNUm();
         });
     },
 
@@ -238,18 +244,14 @@ export default {
       this.$api.Login.AuditorLogin(param)
         .then(res => {
           let info = res.result;
-          this.pageLoading = false;
-          this.$router.replace({
-            path: "/home",
-            query: {}
-          });
-          this.loading = false;
-          this.$store.commit("setToken", info.token);
+          let menuList = this.$tools.getAllMenuList(info.menu, []);
+          setMenuList(menuList)
+          this.$store.commit("setToken", info.token)
           setUserInfo(info);
+          this.$router.replace("/auditList");
         })
         .catch(res => {
           this.pageLoading = false;
-          this.changeCaptureNUm();
         });
     },
 

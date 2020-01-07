@@ -15,9 +15,6 @@ export const token = {
     },
   },
   getters: {
-    userToken: state => {
-      return getToken();
-    },
     refreshUserInfo: async state => {
       return new Promise((resolve, reject) => {
         api.Login.RefreshUser().then(res => {
