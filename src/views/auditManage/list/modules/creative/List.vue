@@ -155,15 +155,20 @@
 
         <el-tab-pane label="创意资质" name="aptitude" class="aptitude">
           <div v-for="(aItem,aIndex) in reviewCreativeDetail.data" :key="aIndex" class="text-col">
-            <span class="text-title" v-if="aItem.value!==null">{{aItem.label}}</span>
-            <div class="demo-image__preview" v-if="aItem.label==='创意资质'&& aItem.value!==null">
-              <el-image
-                v-for="(item, index) in aItem.value"
-                :key="index"
-                style="width: 100px; height: 158px;border-radius: 2px;margin-right:10px"
-                :src="item"
-                :preview-src-list="aItem.value"
-              ></el-image>
+            <span class="text-title">{{aItem.label}}</span>
+            <div class="demo-image__preview" v-if="aItem.label==='创意资质'">
+              <div v-if="aItem.value!==null">
+                <el-image
+                  v-for="(item, index) in aItem.value"
+                  :key="index"
+                  style="width: 100px; height: 158px;border-radius: 2px;margin-right:10px"
+                  :src="item"
+                  :preview-src-list="aItem.value"
+                ></el-image>
+              </div>
+              <div class="color-text-1" v-else>
+                未上传
+              </div>
             </div>
             <label class="text-info" v-else>{{aItem.value}}</label>
           </div>
