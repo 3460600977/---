@@ -167,11 +167,6 @@
         this.heatmapOverlay = null
         this.map.clearOverlays()
         this.pointsOverlayObj.isShow = false
-        // this.pointsOverlayObj = {
-        //   selectedOverlay: null,
-        //   unSelectedOverlay: null,
-        //   isShow: false
-        // }
       },
       reGetAreaPoint() {
         if (Object.keys(this.pathArr).length) {
