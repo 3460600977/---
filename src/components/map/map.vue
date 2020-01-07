@@ -147,7 +147,7 @@
         }
       },
       // 清空pathArr数据 并且清楚覆盖物
-      clearPathArr() {
+      clearPathArr(type = 0) {
         for (let key in this.pathArr) {
           this.map.removeOverlay(this.pathArr[key].overlay)
           if (this.pathArr[key].anotherOverlay) {
@@ -155,17 +155,19 @@
           }
         }
         this.pathArr = {}
-        this.changePathPointType(null, -1)
-        this.jugDraw()
+        if (type === 0) {
+          this.changePathPointType(null, -1)
+          this.jugDraw()
+        }
       },
       clearMap() {
         this.activePath = null
-        this.labelsArr = []
+        this.removeLabels()
+        this.removeMarkers()
         this.selectedBuildings = [] //当前选中楼盘
         this.indexArr = []
-        this.pathArr = {}
-        this.heatmapOverlay = null
-        this.map.clearOverlays()
+        this.hideHotMap()
+        this.clearPathArr(1)
         this.pointsOverlayObj.isShow = false
       },
       reGetAreaPoint() {
@@ -898,6 +900,7 @@
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
           this.map.addOverlay(pointsOverlay);
+          console.log(pointsOverlay)
           pointsOverlay.disableMassClear()
           pointsOverlay.addEventListener('mouseover',  this.pointEvent);
           pointsOverlay.addEventListener('mouseout',  this.pointEventOut);
