@@ -12,7 +12,6 @@
           clearable>
         </el-cascader>
         <el-button
-          type="primary"
           class="success-button"
           @click="setIndustryConsume(crowdProject.industryTid,hotCons)"
         >选择</el-button>
@@ -69,7 +68,7 @@
         });
         tagObj.tags = tags;
         tagArray.push(tagObj);
-        if (tagArray.length > 0) {
+        if (tagObj.tags.length > 0) {
           this.setTagNames(tagArray);
         }
         this.hotCons = []

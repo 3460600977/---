@@ -20,7 +20,6 @@
       </div>
     </div>
     <div class="fr">
-      <div class="logo clearfix"></div>
       <div class="play_box">
         <div class="video_box">
           <video

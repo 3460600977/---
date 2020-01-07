@@ -32,6 +32,7 @@
             :isShowTitle="isShowTitle"
             :title="titles.age"
             :legend="legendTitle"
+            :isShowLine="true"
           />
         </div>
 
@@ -44,6 +45,7 @@
             :isShowTitle="isShowTitle"
             :title="titles.education"
             :legend="legendTitle"
+            :isShowLine="true"
           />
         </div>
 
@@ -55,6 +57,7 @@
             :data="consumeData"
             :title="titles.consume"
             :legend="legendTitle"
+            :isShowLine="true"
           />
         </div>
 
@@ -66,6 +69,7 @@
             :data="privateCarData"
             :title="titles.privateCar"
             :legend="legendTitle"
+            :isShowLine="true"
           />
           <div style="position: relative;width: 100%">
             <p class="text" :style="{'left': positionType[2][0][0]}">{{legendTitle[0]}}</p>
@@ -89,6 +93,8 @@
           :title="titles.offlineConsumption"
           :color="colorType[2]"
           :data="offlineConsumptionData"
+          :isShowLine="true"
+          :grid="grid"
         />
       </div>
     </el-card>
@@ -104,6 +110,8 @@
           :title="titles.interest"
           :color="colorType[2]"
           :data="interestDistData"
+          :isShowLine="true"
+          :grid="grid"
         />
       </div>
     </el-card>
@@ -319,14 +327,16 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": '30%'
+            "barWidth": '35%',
+            "barGap": '10%',
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [
             ],
-            "barWidth": '30%'
+            "barWidth": '35%',
+            "barGap": '10%',
           }
         ]
       },
@@ -337,14 +347,16 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": '16%'
+            "barWidth": '16%',
+            "barGap": '10%',
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [
             ],
-            "barWidth": '16%'
+            "barWidth": '16%',
+            "barGap": '10%',
           }
         ]
       },
@@ -355,14 +367,16 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": '16%'
+            "barWidth": '16%',
+            "barGap": '10%',
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [
             ],
-            "barWidth": '16%'
+            "barWidth": '16%',
+            "barGap": '10%',
           }
         ]
       },
@@ -377,13 +391,15 @@ export default {
             "name": "",
             "type": "bar",
             "data": [],
-            "barWidth": '25%'
+            "barWidth": '25%',
+            "barGap": '20%',
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [],
-            "barWidth": '25%'
+            "barWidth": '25%',
+            "barGap": '20%',
           }
         ]
       },
@@ -395,12 +411,14 @@ export default {
             "type": "bar",
             "data": [],
             "barWidth": '20%',
+            "barGap": '20%',
           },
           {
             "name": "全网人群",
             "type": "bar",
             "data": [],
             "barWidth": '20%',
+            "barGap": '20%',
           }
         ]
       },
@@ -429,7 +447,13 @@ export default {
           ['29%', '55%'],
           ['69%', '55%']
         ]
-      }
+      },
+
+      grid:{
+        left: '3%',
+        right: '3%',
+        bottom: 22,
+      },
 
 
     };
@@ -567,22 +591,6 @@ export default {
         this[data+'Data'].yAxis[0].data.push(voArray[i].city);
         this[data+'Data'].yAxis[1].data.push(voArray[i].whole);
       }
-      /*let offLine = this[data].yAxis;
-      let offLineArray = [];
-
-      offLine[0].data.forEach((off,index)=>{
-
-        offLineArray.push({'a':off,'b':offLine[1].data[index]});
-      });
-      offLineArray.sort(function (a,b) {
-        return (b.a - a.a)
-      });
-      this[data].yAxis[0].data = [];
-      this[data].yAxis[1].data = [];
-      offLineArray.forEach(line=>{
-        this[data].yAxis[0].data.push(line.a);
-        this[data].yAxis[1].data.push(line.b);
-      })*/
     }
   }
 };
