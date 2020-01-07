@@ -74,7 +74,7 @@
         tags: null,
         switchValue: null,
         activeItem: null,
-        activeItemCopy: null,
+        hotMapItem: null,
         pageSizeSelectable: [5, 10, 15, 20],
         pageSize: 5,
       }
@@ -98,6 +98,7 @@
         this.activeItem = null
         this.switchValue = null
         this.tags = null
+        this.hotMapItem = null
         this.pageIndex = 1
         this.filterData.pageIndex = 1
       },
@@ -108,8 +109,6 @@
         this.$emit('switchChange', val)
       },
       hide() {
-        // this.activeItem = this.activeItemCopy
-        // this.resetSelect()
         this.$emit('hide')
       },
       loadFunction(param) {
@@ -135,9 +134,13 @@
         return index
       },
       returnResult() {
-        this.activeItemCopy = this.activeItem
+        // if (this.hotMapItem && this.hotMapItem === this.activeItem) {
+        //   this.$emit('hide')
+        //   return
+        // }
+        this.hotMapItem = this.activeItem
         this.switchValue = true
-        this.$emit('returnResult', this.activeItem)
+        this.$emit('returnResult', this.hotMapItem)
       },
     },
   }

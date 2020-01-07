@@ -578,7 +578,6 @@
       zoomSinglePathChange(path) {
         if (path.type === 'polygon') return
         let radius = this.RealDistanceTranPixels(path.radius)
-        console.log(radius)
         if (path.type === 'polyline') {
           path.overlay.setStrokeWeight(2 * radius)
         } else if (path.type === 'circle') {
@@ -775,12 +774,8 @@
       },
       // 热力图
       drawHotMap(arr) {
-        if (this.heatmapOverlay) {
-          this.heatmapOverlay.setDataSet({data:arr, max:100});
-        } else {
-          // this.initHotMap()
-          this.heatmapOverlay.setDataSet({data:arr, max:100});
-        }
+        this.heatmapOverlay.setDataSet({data:arr, max:100});
+        this.showHotMap()
       },
       showHotMap() {
         if (this.heatmapOverlay) {
