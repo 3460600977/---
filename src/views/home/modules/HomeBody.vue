@@ -315,7 +315,7 @@ export default {
     pickerOptions() {
       return {
         disabledDate(date) {
-          return date.getTime() > Date.now();
+           return date.getTime() > Date.now() - 3600 * 24 * 1000;
         }
       };
     }
