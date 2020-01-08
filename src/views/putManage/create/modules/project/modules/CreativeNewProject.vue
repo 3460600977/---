@@ -573,6 +573,9 @@
       clearBuildDirection() {
         this.buildingDirection.cityInsight.selectedItem = '';
         this.setBuildsList([])
+        if(this.$refs.mapDialog){
+          this.$refs.mapDialog.clearChoosePath();
+        }
       },
 
 
