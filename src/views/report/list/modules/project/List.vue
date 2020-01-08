@@ -50,6 +50,7 @@
             end-placeholder="结束日期"
             value-format="yyyy-MM-dd"
             @change="chooseReportTime"
+            :picker-options="pickerOptions"
           ></el-date-picker>
         </el-form-item>
         <el-form-item>
@@ -120,27 +121,18 @@
             <span class="report-time">{{scope.row[scope.column.property]}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="花费数（元）" sortable="custom">
-        </el-table-column>
+        <el-table-column prop="cost" label="花费数（元）" sortable="custom"></el-table-column>
         <el-table-column prop="showTimes" label="曝光数" sortable="custom">
-          <template slot-scope="scope">
-            {{$tools.toThousands(scope.row['showTimes'],false)}}
-          </template>
+          <template slot-scope="scope">{{$tools.toThousands(scope.row['showTimes'],false)}}</template>
         </el-table-column>
         <el-table-column prop="deviceNum" label="设备数" sortable="custom">
-          <template slot-scope="scope">
-            {{$tools.toThousands(scope.row['deviceNum'],false)}}
-          </template>
+          <template slot-scope="scope">{{$tools.toThousands(scope.row['deviceNum'],false)}}</template>
         </el-table-column>
         <el-table-column prop="totalPeople" label="受众人数" sortable="custom">
-          <template slot-scope="scope">
-            {{$tools.toThousands(scope.row['totalPeople'],false)}}
-          </template>
+          <template slot-scope="scope">{{$tools.toThousands(scope.row['totalPeople'],false)}}</template>
         </el-table-column>
         <el-table-column prop="watchedTimes" label="受众观看次数" sortable="custom">
-          <template slot-scope="scope">
-            {{$tools.toThousands(scope.row['watchedTimes'],false)}}
-          </template>
+          <template slot-scope="scope">{{$tools.toThousands(scope.row['watchedTimes'],false)}}</template>
         </el-table-column>
       </el-table>
     </div>
@@ -168,6 +160,16 @@ export default {
   name: "reportProjectList",
   //mixins: [tableMixin],
   components: { BarGraph },
+  computed: {
+    // 日期限制
+    pickerOptions() {
+      return {
+        disabledDate(date) {
+          return date.getTime() > Date.now() - 3600 * 24 * 1000;
+        }
+      };
+    }
+  },
   data() {
     return {
       companyName: "",
@@ -291,7 +293,7 @@ export default {
     }
 
     this.projectList.startTime = this.$tools.getMonthFirstDay();
-    this.projectList.endTime = this.$tools.getMonthLastDay();
+    this.projectList.endTime = this.$tools.getYesterday();
     if (
       this.$route.query.projectTime === "" ||
       this.$route.query.projectTime === null ||
@@ -354,7 +356,7 @@ export default {
     //触发改变投放计划事件
     changePlanValue(selVal) {
       console.log("changePlanValue", this.projectList);
-      this.projectList.selectProject=''
+      this.projectList.selectProject = "";
       if (selVal) {
         this.projectList.campaignId = selVal;
         this.getProjectListInPlan(selVal);
@@ -473,7 +475,7 @@ export default {
                 item.value = 0;
               } else if (property === "cost") {
                 let costValue = cardList[property];
-                item.value = "¥ " + this.$tools.toThousands(costValue/100);
+                item.value = "¥ " + this.$tools.toThousands(costValue / 100);
               } else {
                 item.value = this.$tools.toThousands(cardList[property], false);
               }
@@ -621,7 +623,7 @@ export default {
           this.pageIndex = res.page.currentPage;
           this.resultData.forEach(item => {
             let costValue = item.cost;
-            item.cost = "¥ " + this.$tools.toThousands(costValue/100);
+            item.cost = "¥ " + this.$tools.toThousands(costValue / 100);
             item.startTime = item.startTime + "~" + item.endTime;
           });
         })
