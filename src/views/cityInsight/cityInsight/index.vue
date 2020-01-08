@@ -492,13 +492,14 @@
       },
       getCityFilter() {
         this.$refs.dbmap.location().then((data) => {
-          if (data.name === '全国') {
-            this.$confirm('定位失败，将自动将城市设置为北京！', '提示', {
+          data = null
+          if (!data || (data && data.name === '全国')) {
+            this.$confirm('定位失败，将自动将城市设置为成都！', '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
               type: 'warning'
             }).then(() => {
-              data.name = '北京市'
+              data.name = '成都市'
               let result = Object.assign({}, this.cityFilter, {name: data.name})
               this.cityFilter = this.findItem(result, this.cityDatas)
               this.loadData()
