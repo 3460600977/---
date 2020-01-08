@@ -118,7 +118,7 @@
 
     <el-card class="btns padding text-right">
       <el-button  @click="toList">返回</el-button>
-      <el-button type="primary"  @click="toSelectPoint()">新建资源包</el-button>
+      <el-button type="primary"  @click="toSelectPoint">新建资源包</el-button>
     </el-card>
 
 

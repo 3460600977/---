@@ -497,7 +497,7 @@ let tools = {
       api.Login.GetSummaryDetail().then(res => {
         resolve(res.result)
       }).catch(res => {
-        reject('-998')
+        resolve('998')
       });
     })
   },
@@ -507,7 +507,7 @@ let tools = {
       api.Login.GetSummaryData(param).then(res => {
         resolve(res.result)
       }).catch(res => {
-        reject('-997')
+        resolve('-997')
       });
     })
   },
