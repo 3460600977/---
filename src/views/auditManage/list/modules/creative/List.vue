@@ -180,7 +180,7 @@
                   <preview-top-box
                     :innerWidth="324"
                     :top="downloadCreative.data.topList.pre"
-                    class="top-screen-pre"
+                    class="top-screen-pre" v-if="dialogShowContent"
                   ></preview-top-box>
                   <a
                     :href="downloadCreative.data.topList.downloadUrl"
