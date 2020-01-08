@@ -75,9 +75,9 @@
     },
     beforeDestroy() {
       this.removeEvent()
+      this.drawingManager = {}
       this.map.clearOverlays()
       this.map = null
-      this.drawingManager = null
     },
     watch: {
       buildings(val) {
