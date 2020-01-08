@@ -111,7 +111,7 @@
             type: 'value',
             max: maxappreg,
             splitNumber: 5,
-            interval: interval_left,
+            interval: maxappreg === 0 ? 1 : interval_left,
             axisTick: {show: false},
             axisLabel: {
               color: '#999999',
@@ -119,6 +119,7 @@
               fontWeight: 'normal',
               fontFamily: 'DINMittelschrift',
               margin: 20,
+              showMaxLabel: true,
               formatter: function (value, index) {
                 if (chartParam.sortField === 'cost') {
                   return '¥ ' + that.$tools.toThousands(value / 100, 2);
@@ -146,11 +147,20 @@
             //     },
             // },
             {
-              symbol: 'circle',
               symbolSize: 10,
+              animationDuration: 1800,
+              animationEasing: "cubicInOut",
+              smooth: true,
               type: 'line',
               itemStyle: {
-                normal: {color: 'rgba(244,74,74,1)'}
+                normal: {
+                  color: "rgba(244,74,74,1)",
+                  lineStyle: {
+                    color: "rgba(244,74,74,1)",
+                    width: 1
+                  }
+                  // label : {show: true}
+                }
                 // normal: {label: {show: true}, color: 'rgba(45,90,255,1)'}
               },
               legendHoverLink: false,
