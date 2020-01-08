@@ -190,9 +190,7 @@
       </div>
     </el-card>
 
-    <el-dialog center width="900px" :visible.sync="isShow" class="play-dialog-video">
-      <play-video :playVideoUrl="playVideoUrl" @closePlayDialog="closePlayDialog"></play-video>
-    </el-dialog>
+    <play-video :isShow="isShow" :playVideoUrl="playVideoUrl" @closePlayDialog="closePlayDialog"></play-video>
   </div>
 </template>
 
