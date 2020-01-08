@@ -118,7 +118,7 @@
 
     <el-card class="btns padding text-right">
       <el-button  @click="toList">返回</el-button>
-      <el-button type="primary"  @click="toSelectPoint">新建资源包</el-button>
+      <el-button type="primary"  @click="toSelectPoint()">新建资源包</el-button>
     </el-card>
 
 
@@ -147,6 +147,7 @@ export default {
       peopleType: '',
       legendName: '',
       headerTags: [],
+      cityCode: '',
       areasList: null,
       isShowTitle: true,
       colorType: {
@@ -381,9 +382,7 @@ export default {
         ]
       },
       privateCarData: [],
-
       nanpvIcon: require('@/assets/images/nannv.png'),
-
       offlineConsumptionData: {  //线下消费
         xAxis: [],
         yAxis: [
@@ -422,9 +421,7 @@ export default {
           }
         ]
       },
-
       genderArr: [],
-
       colors : [
         ['rgba(244, 102, 74, 1)', 'rgba(236, 236, 236, 1)'],
         ['rgba(91, 126, 255, 1)', 'rgba(236, 236, 236, 1)'],
@@ -441,21 +438,17 @@ export default {
         "offlineConsumption":"社区商品交易指数",
         "interest":"社区兴趣爱好指数",
       },
-
       positionType: {
         2: [
           ['29%', '55%'],
           ['69%', '55%']
         ]
       },
-
       grid:{
         left: '3%',
         right: '3%',
         bottom: 22,
       },
-
-
     };
   },
   created() {
@@ -470,6 +463,7 @@ export default {
         this.result = res.result;
         this.legendName = this.peopleType = res.result.crowdInsightName;
         this.headerTags = JSON.parse(res.result.tagName);
+        this.cityCode = res.result.cityCode;
         if(this.legendName.length > 20){
           this.legendName = this.legendName.substring(0,20) + '...';
         }
@@ -568,7 +562,22 @@ export default {
       this.$router.push('/peopleInsight/list')
     },
     toSelectPoint() {
-      this.$router.push('/cityInsight/selectPoint')
+      let cityName = '';
+      let cityFilter = {};
+      let crowdInfo = {};
+      this.headerTags.forEach(tag=>{
+        if (tag.name === "城市"){
+          cityName = tag.tags[0].name;
+        }
+      });
+      cityFilter.cityCode = Number(this.cityCode);
+      cityFilter.name = cityName;
+      crowdInfo.id = this.$router.query.id;
+      crowdInfo.name = this.peopleType;
+      this.$router.push({
+        path:'/cityInsight/selectPoint',
+        query:{cityFilter:JSON.stringify(cityFilter),crowdInfo:JSON.stringify(crowdInfo)}
+      })
     },
     downSort(data,piVO,wholePiVO) {
       let voArray = [];
