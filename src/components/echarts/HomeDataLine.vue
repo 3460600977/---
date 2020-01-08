@@ -44,8 +44,7 @@
           }
         }
         let maxint = Math.ceil(max / 10); // 向上取整
-        let maxval = maxint * 10; // 最终设置的最大值
-        return maxval; // 输出最大值
+        return maxint * 10; // 最终设置的最大值,输出最大值
       },
       initChart(chartParam) {
         let _that = this;
@@ -77,7 +76,7 @@
                 let str = `<p>${params[0].name}</p>`;
                 params.forEach(item => {
                   if (item.seriesName !== "花费（元）¥ ") {
-                    item.data = _that.$tools.toThousands(item.data, 0);
+                    item.data = _that.$tools.toThousands(item.data, false);
                   }
                   str += `
                         <p>
@@ -126,9 +125,8 @@
                     if (chartParam.selectLine.firstValue === 1) {
                       return "¥ " + value.toFixed(2);
                     } else {
-                      return _that.$tools.toThousands(value, 0);
+                      return _that.$tools.toThousands(value, false);
                     }
-                    return value;
                   }
                 }
               },
@@ -149,9 +147,8 @@
                     if (chartParam.selectLine.secondValue === 1) {
                       return "¥ " + value.toFixed(2);
                     } else {
-                      return _that.$tools.toThousands(value, 0);
+                      return _that.$tools.toThousands(value, false);
                     }
-                    return value;
                   }
                 },
               }
@@ -258,7 +255,7 @@
                 let str = `<p>${params[0].name}</p>`;
                 params.forEach(item => {
                   if (item.seriesName !== "花费（元）¥ ") {
-                    item.data = _that.$tools.toThousands(item.data, 0);
+                    item.data = _that.$tools.toThousands(item.data, false);
                   }
                   str += `
                         <p>
@@ -308,9 +305,8 @@
                     if (chartParam.selectLine.firstValue === 1) {
                       return "¥ " + value.toFixed(2);
                     } else {
-                      return _that.$tools.toThousands(value, 0);
+                      return _that.$tools.toThousands(value, false);
                     }
-                    return value;
                   }
                 }
               },
