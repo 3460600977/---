@@ -75,6 +75,9 @@
     },
     beforeDestroy() {
       this.removeEvent()
+      this.map.clearOverlays()
+      this.map = null
+      this.drawingManager = null
     },
     watch: {
       buildings(val) {
@@ -102,7 +105,7 @@
       let map = new BMap.Map(this.$refs.container, {enableMapClick: false});
       this.map = map
 
-      this.setCity({name: '成都市'})
+      // this.setCity({name: '成都市'})
       map.enableScrollWheelZoom();
       map.addControl(new BMap.ScaleControl());
       // this.initHotMap()
@@ -207,7 +210,6 @@
         return new Promise((resolve) => {
           let myCity = new BMap.LocalCity();
           myCity.get((result) => {
-            this.initMouse()
             resolve(result)
           });
         })
@@ -727,6 +729,7 @@
       //   }
       // },
       mapLoad() {
+        this.initMouse()
         if (this.map.getPanes().mapPane.getElementsByTagName('svg').length) {
           this.map.getPanes().mapPane.getElementsByTagName('svg')[0].style.zIndex = 1000
         }
