@@ -295,8 +295,6 @@
       }
     },
     created() {
-      this.cityFilter.cityCode = 50010;
-      this.cityFilter.name = '成都市';
       this.loading = true
     },
     mounted() {
