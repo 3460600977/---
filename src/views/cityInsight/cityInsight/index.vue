@@ -498,10 +498,7 @@
               cancelButtonText: '取消',
               type: 'warning'
             }).then(() => {
-              data = {
-                name: '成都市'
-              }
-              let result = Object.assign({}, this.cityFilter, {name: data.name})
+              let result = Object.assign({}, this.cityFilter, {name: '成都市'})
               this.cityFilter = this.findItem(result, this.cityDatas)
               this.loadData()
             }).catch(() => {
