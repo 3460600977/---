@@ -133,7 +133,6 @@
                 value-key="id"
                 v-model="buildingDirection.cityInsight.selectedItem"
                 filterable
-                clearable
                 placeholder="请选择">
                 <el-option
                   v-for="item in buildingDirection.cityInsight.data"
@@ -158,7 +157,7 @@
           </el-form>
         </el-tab-pane>
 
-        <span style="margin-left: 125px;" class="el-form-item__error" v-if="!validataForm()">* 请先完善上面投放设置!</span>
+        <span class="my_error" v-if="!validataForm()">* 请先完善投放设置！</span>
 
         <!-- 导入楼盘数据 -->
         <!-- <el-tab-pane label="导入楼盘数据" name="import">
@@ -335,6 +334,7 @@
       BuildList,
       mapChooseWindow,
     },
+
     data() {
       let validateTime = (rule, value, callback) => {
         if (!value) {
@@ -973,6 +973,14 @@
             padding-top: 30px;
           }
         }
+      }
+      .my_error{
+          color: #F44A4A;
+          font-size: 12px;
+          line-height: 1;
+          padding-top: 4px;
+          top: 100%;
+          margin-left: 125px;
       }
     }
     .estimate-box {

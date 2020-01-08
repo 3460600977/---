@@ -1,9 +1,9 @@
 <template>
-  <div class="selected-list">
+  <div class="selected-list" v-loading="loading">
 
     <!-- 选择洞察包 统计列表 未寻量 -->
     <template v-if="buildingDirectionActiveType === 'exist' || buildingDirectionActiveType === 'payConfirm'">
-      <ul class="selected-list-data-box" v-loading="loading">
+      <ul class="selected-list-data-box">
         <noData v-if="buildsNumber <= 0 || deviceNumber <= 0">无可售数据</noData>
 
         <li v-else class="item mid" v-for="(item, index) in existList" :key="index">
@@ -22,52 +22,49 @@
 
 
 
-
-
     <!-- 地图选点列表 -->
-    <template v-if="buildingDirectionActiveType === 'create'">
-      <div v-if="deviceNumber > 0" class="title clearfix mid-between">
-        <div>
-          <span>
-            已选择楼盘
-            <span class="color-main font-16">{{$tools.toThousands(buildsNumber, false)}}</span> 个
-          </span>
-          <span>
-            , 可售设备
-            <span class="color-main font-16">{{$tools.toThousands(deviceNumber, false)}}</span> 个
-          </span>
+      <template v-if="buildingDirectionActiveType === 'create'">
+        <div v-if="deviceNumber > 0" class="title clearfix mid-between">
+          <div>
+            <span>
+              已选择楼盘
+              <span class="color-main font-16">{{$tools.toThousands(buildsNumber, false)}}</span> 个
+            </span>
+            <span>
+              , 可售设备
+              <span class="color-main font-16">{{$tools.toThousands(deviceNumber, false)}}</span> 个
+            </span>
+          </div>
+
+          <el-button
+            class="float-right"
+            :loading="exporting"
+            @click="buildsListExport"
+            size="small"
+          >下载</el-button>
         </div>
 
-        <el-button
-          class="float-right"
-          :loading="exporting"
-          @click="buildsListExport"
-          size="small"
-        >下载</el-button>
-      </div>
+        <ul class="selected-list-data-box">
+          <li class="item mid" v-for="(item, index) in localProject.list" :key="index">
+            <div class="base">
+              <div class="left-info float-left" style="width: 550px;">
+                <p class="name">{{item.premiseName}}</p>
+              </div>
 
-      <ul class="selected-list-data-box" v-loading="loading">
-        <li class="item mid" v-for="(item, index) in localProject.list" :key="index">
-          <div class="base">
-            <div class="left-info float-left" style="width: 550px;">
-              <p class="name">{{item.premiseName}}</p>
+              <div class="account float-left" style="width: 100px;">
+                <span class="font-16 number">{{$tools.toThousands(item.deviceNum, false)}}</span>
+                <span class="font-14">个</span>
+              </div>
+
+              <DelCirclrButton
+                @click.native="removeItem(localProject.list, index)"
+                class="float-left"
+              />
             </div>
-
-            <div class="account float-left" style="width: 100px;">
-              <span class="font-16 number">{{$tools.toThousands(item.deviceNum, false)}}</span>
-              <span class="font-14">个</span>
-            </div>
-
-            <DelCirclrButton
-              @click.native="removeItem(localProject.list, index)"
-              class="float-left"
-            />
-          </div>
-        </li>
-
-        <noData v-if="buildsNumber <= 0">无可售数据</noData>
-      </ul>
-    </template>
+          </li>
+          <noData v-if="buildsNumber <= 0">无可售数据</noData>
+        </ul>
+      </template>
 
 
 
@@ -93,7 +90,7 @@
         >下载</el-button>
       </div>
 
-      <ul class="selected-list-data-box" v-loading="loading">
+      <ul class="selected-list-data-box">
         <li class="item" v-for="(item, index) in localProject.list" :key="index">
           <div class="clearfix base">
             <div class="left-info clearfix float-left">
@@ -237,7 +234,7 @@ export default {
           { name: "楼盘数", value: this.putProject.statistics.premiseNum },
           { name: "单元数", value: this.putProject.statistics.unitNum },
           { name: "点位数", value: this.putProject.statistics.deviceNum },
-          { name: "覆盖人次", value: this.putProject.statistics.weekForPeople }
+          { name: "覆盖人数", value: this.putProject.statistics.weekForPeople }
         ];
       }
 
@@ -246,7 +243,7 @@ export default {
           { name: "楼盘数", value: this.buildsNumber },
           { name: "单元数", value: this.unitNum },
           { name: "点位数", value: this.deviceNumber },
-          { name: "覆盖人次", value: this.peopleNumber }
+          { name: "覆盖人数", value: this.peopleNumber }
         ];
       }
 
