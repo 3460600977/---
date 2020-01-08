@@ -1,13 +1,17 @@
 <template>
   <div class="list">
 
+    <!-- 查询 -->
     <el-form :inline="true" class="list-form-inline clearfix">
+      <!-- 投放计划名称 -->
       <el-form-item class="line-space" label="投放计划名称">
         <el-select 
           @focus="getPlanNameList"
+          @change="changePlan"
+          value-key="id"
           :loading="planNameList.loading" 
-          v-model="searchParam.campaignId" 
-          placeholder="不限" 
+          v-model="searchParam.plan.id" 
+          placeholder="请选择" 
           filterable
           clearable>
           <el-option
@@ -19,12 +23,15 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item class="line-space" label="投放方案名称">
+
+      <!-- 投放方案名称 -->
+      <el-form-item  class="line-space" label="投放方案名称">
         <el-select 
           @focus="getProjectNameList"
-          :loading="projectNameList.loading" 
-          v-model="searchParam.projectId" 
-          placeholder="不限" 
+          @change="changeProject"
+          :loading="projectNameList.loading"
+          v-model="searchParam.project.id" 
+          placeholder="请选择" 
           filterable
           clearable>
           <el-option
@@ -36,27 +43,20 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item class="line-space" label="广告创意名称">
-        <el-select 
-          @focus="getCreativeNameList"
-          :loading="creativeNameList.loading" 
-          v-model="searchParam.name" 
-          placeholder="不限" 
-          filterable
-          clearable>
-          <el-option
-            v-for="item in creativeNameList.data"
-            :key="item.name"
-            :label="item.name"
-            :value="item.name"
-          ></el-option>
-        </el-select>
+
+
+      <!-- 广告创意名称 -->
+      <el-form-item  class="line-space" label="广告创意名称">
+        <el-input clearable v-model="searchParam.creative.name" placeholder="请输入"></el-input>
       </el-form-item>
 
+
+      <!-- 创意状态 -->
       <el-form-item class="line-space" label="创意状态">
         <el-select 
-          v-model="searchParam.status" 
-          placeholder="不限" 
+          v-model="searchParam.creative.status" 
+          placeholder="不限"
+          value-key="value"
           filterable
           clearable>
           <el-option
@@ -68,18 +68,22 @@
         </el-select>
       </el-form-item>
 
+
+      <!-- 查询 -->
       <el-form-item class="list-query-button">
-        <el-button type="primary" plain @click="search">查询</el-button>
+        <el-button type="primary" plain @click="handleSearch(); search(); ">查询</el-button>
       </el-form-item>
 
+
+      <!-- 新建 -->
       <el-form-item class="list-new-button">
         <router-link to="/putManage/create/creative?createType=single">
           <el-button type="primary">新建广告创意</el-button>
         </router-link>
       </el-form-item>
+
+
     </el-form>
-
-
 
     <div class="query_result">
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
@@ -110,21 +114,26 @@
         <el-table-column prop="action" label="操作" fixed="right" width="400">
           <template slot-scope="scope">
             <span class="icon-space hand" 
-              @click="getCreativeDetail(scope.row.id)"
+              @click="getCreativeDetail(scope.row.id); detailDialog.loading = true"
             >
               <i class="iconfont icon-shuxingliebiaoxiangqing2 icon-color"></i>详情
             </span>
-            <span class="icon-space hand">
+
+            <span v-if="scope.row.statusName !== '审核通过'" class="icon-space hand">
               <router-link :to="`/putManage/create/creative?createType=edit&creativeId=${scope.row.id}`">
-                <i class="iconfont icon-baobiao icon-color"></i>修改
+                <i class="iconfont icon-bianji icon-color"></i>编辑
               </router-link>
             </span>
+
             <span 
-              @click="delCreativeById(scope.row.id)"
+              @click="deleteDialog.data.name = scope.row.name; 
+              deleteDialog.data.id = scope.row.id;
+              deleteDialog.show = true"
               v-if="scope.row.statusName != '审核通过'" 
               class="icon-space hand">
               <i class="iconfont icon-error icon-color"></i>删除
             </span>
+
           </template>
         </el-table-column>
       </el-table>
@@ -140,7 +149,7 @@
     </div>
 
 
-
+    <!-- 详情弹窗 -->
     <el-dialog 
       title="广告创意详情" 
       width="1000px" 
@@ -149,6 +158,12 @@
       <el-tabs v-model="activeName">
         <el-tab-pane label="创意资质" name="aptitude" class="aptitude">
           <div v-loading="detailDialog.loading">
+            <div class="no-pass" v-if="detailDialog.data.status == 1">
+              <img class="no-pass-img" :src="noPassImg" alt="" srcset="">
+              <div v-if="detailDialog.data.rejectReason">{{JSON.parse(detailDialog.data.rejectReason).join(',')}}</div>
+              <div v-else>未知原因</div>
+            </div>
+            
             <div class="text-col">
               <span class="text-title">广告创意名称</span>
               <label class="text-info">{{detailDialog.data.name}}</label>
@@ -156,7 +171,7 @@
 
             <div  class="text-col">
               <span class="text-title">广告创意行业</span>
-              <label class="text-info">{{$tools.getObjectItemFromArray(industryList, 'industryId', detailDialog.data.industry).name}}</label>
+              <label class="text-info">{{detailDialog.data.industryName}}</label>
             </div>
 
             <div  class="text-col">
@@ -166,30 +181,31 @@
                   fit="cover"
                   v-for="(item, index) in JSON.parse(detailDialog.data.industryIdentify)" :key="index" 
                   :src="item"
-                  style="width: 100px; height: 158px;border-radius: 2px; margin-left: 10px;">
+                  style="width: 100px; height: 158px;border-radius: 2px; margin-right: 10px;">
                 </el-image>
               </div>
               <label v-else class="text-info">未上传</label>
             </div>
 
             <template v-if="detailDialog.data.monitor">
-              <template v-for="(item, index) in detailDialog.data.monitor">
-                <div  class="text-col" :key="index">
+              <div v-for="(item, index) in detailDialog.data.monitor" :key="index">
+                <div  class="text-col">
                   <span class="text-title">监测模式</span>
                   <label class="text-info">{{item.mode || '无'}}</label>
                 </div>
 
-                <div  class="text-col" :key="index">
+                <div  class="text-col">
                   <span class="text-title">第三方监测</span>
                   <label class="text-info">{{$tools.getObjectItemFromArray(MonitorData.thirdPartyMonitor, 'value', item.thirdPartyMonitor).name || '无'}}</label>
                 </div>
 
-                <div  class="text-col" :key="index">
+                <div  class="text-col" v-if="item.thirdPartyMonitor != 'ky'">
                   <span class="text-title">监测地址</span>
                   <label class="text-info">{{item.thirdPartyMonitorUrl || '无'}}</label>
                 </div>
-              </template>
+              </div>
             </template>
+
             <template v-else>
               <div  class="text-col">
                 <span class="text-title">监测模式</span>
@@ -211,30 +227,37 @@
         
         <el-tab-pane label="创意素材" name="material" class="material">
           <div v-loading="detailDialog.loading">
-            <div class="top-screen">
-              <p>上屏</p>
-              <template v-for="(item, index) in detailDialog.data.materials">
-                <a target="_black" :href="item.srcUrl" :key="index">
-                  <el-button v-if="item.screenType === 1" :key="index" plain type="primary">下载视频</el-button>
-                </a>
+
+            <div v-for="(item, index) in detailDialog.data.materials" :key="index">
+              <template v-if="item.screenType === 1">
+                <div class="top-screen">
+                  <p>上屏</p>
+                  <el-image class="img" v-if="$tools.getSuffix(item.srcUrl) === 'jpg'" :src="item.srcUrl"/>
+
+                  <a v-else target="_black" :href="item.srcUrl">
+                    <el-button v-if="item.screenType === 1" plain type="primary">下载视频</el-button>
+                  </a>
+                </div>
               </template>
             </div>
+
             <div class="bottom-screen">
-              <p>下屏</p>
-              <div class="bottom-screen-box">
-                <template v-for="(item, index) in detailDialog.data.materials">
-                  <div v-if="item.height === 880 && item.screenType === 2" :key="index" class="left-pre">
-                    <el-image :src="item.srcUrl"/>
-                  </div>
-                  <!-- <div class="left-pre mid-center" v-else :key="index">未上传</div> -->
-                </template>
-                <template v-for="(item, index) in detailDialog.data.materials">
-                  <div v-if="item.height === 720 && item.screenType === 2" class="right-pre" :key="index">
-                    <el-image :src="item.srcUrl"/>
-                  </div>
-                  <!-- <div class="right-pre mid-center" v-else :key="index">未上传</div> -->
-                </template>
-              </div>
+              <span v-for="(item, index) in detailDialog.data.materials">
+                <p v-if="item.screenType === 2 && item.height === 880" style="margin-bottom: 20px;">下屏</p>
+              </span>
+
+              <span v-for="(item, index) in detailDialog.data.materials">
+                <div v-if="item.screenType === 2 && item.height === 880" class="left-pre">
+                  <el-image :src="item.srcUrl"/>
+                </div>
+              </span>
+
+              <span v-for="(item, index) in detailDialog.data.materials">
+                <div v-if="item.screenType === 2 && item.height === 720" class="right-pre">
+                  <el-image :src="item.srcUrl"/>
+                </div>
+              </span>
+
             </div>
           </div>
         </el-tab-pane>
@@ -243,47 +266,83 @@
         <el-button style="width: 136px;" type="primary" @click="detailDialog.show = false">确 定</el-button>
       </span>
     </el-dialog>
+
+
+    
+    <!-- 删除 提示弹窗 -->
+    <el-dialog title="取消方案"
+      :visible.sync="deleteDialog.show"
+      width="568px"
+      class="my-dialog"
+    >
+      <p>确认是否取消投放方案 <span class="color-main">【{{deleteDialog.data.name}}】？</span></p>
+      <span slot="footer">
+        <el-button @click="deleteDialog.show = false" class="btn1">取 消</el-button>
+        <el-button type="primary" class="btn1" @click="delCreativeById(deleteDialog.data.id); deleteDialog.show = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { PutGoal, projectConst, MonitorData } from '../../../../../utils/static'
-import { resolve, reject } from 'q';
+import { creativeStatus, projectStatus, PutGoal, projectConst, MonitorData } from '../../../../../utils/static'
+import Industry from '../../../templates/Industry'
+
 export default {
   name: "planList",
+  
+  components: {
+    Industry
+  },
 
   data() {
     return {
       PutGoal,
       MonitorData,
+      creativeStatus,
+      projectStatus,
       screenType: projectConst.screenType,
+
+      noPassImg: require('@/assets/images/icon_not_passed.png'),
+
+      activeName: 'aptitude',
+
       planNameList: {
         loading: true,
         data: []
       },
+
       projectNameList: {
         loading: true,
         data: []
       },
-      creativeNameList: {
-        loading: true,
-        data: []
-      },
-      creativeStatus: [
-        { name: '待审核', value: 0},
-        { name: '审核通过', value: 2},
-        { name: '审核拒绝', value: 1}
-      ],
-
-      activeName: 'aptitude',
 
       searchParam: {
-        campaignId: '', 
-        name: '',
-        pageIndex:'',
-        pageSize: '',
-        projectId: '',
-        status: ''
+        plan: {
+          id: ''
+        },
+        project: {
+          id: ''
+        },
+        creative: {
+          name: '',
+          status: ''
+        },
+        page: {
+          pageSize: 10,
+          pageIndex: 1,
+        }
+      },
+
+      detailDialog: {
+        show: false,
+        loading: false,
+        data: ''
+      },
+
+      deleteDialog: {
+        data: {name: '加载失败', id: ''},
+        show: false
       },
 
       tableData: {
@@ -295,24 +354,41 @@ export default {
         }
       },
 
-      detailDialog: {
-        show: false,
-        loading: false,
-        data: ''
-      },
-
       industryList: []
 
     };
   },
 
-  beforeMount() {
-    this.search()
+  watch: {
+    '$route': {
+      handler() {
+        if (this.$route.query.active !== 'creative') return;
+
+        if (this.$route.query.projectId) {
+          this.getProjectNameList()
+          this.searchParam.project.id = this.$route.query.projectId;
+        } 
+
+        else if (this.$route.query.status) {
+          this.searchParam.creative.status = +this.$route.query.status;
+        } 
+
+        else {
+          this.searchParam.project.id = '';
+          this.searchParam.creative.status = '';
+        }
+
+        this.search()
+      },
+      immediate: true
+    }
   },
 
   methods: {
+
     // 下拉框数据 计划名字列表
     getPlanNameList() {
+      if (this.planNameList.data.length > 0) return false;
       this.planNameList.loading = true;
       this.$api.PutPlan.PlanNameList()
         .then(res => {
@@ -329,9 +405,25 @@ export default {
         })
     },
 
+
     // 下拉框数据 方案名字列表
     getProjectNameList() {
       this.projectNameList.loading = true;
+      if (this.searchParam.plan.id) {
+        return this.$api.PutProject.ProjectNameListByCamId(+this.searchParam.plan.id)
+          .then(res => {
+            this.projectNameList = {
+              loading: false,
+              data: res.result,
+            }
+          })
+          .catch(res => {
+            this.projectNameList = {
+              loading: false,
+              data: [],
+            }
+          })
+      }
       this.$api.PutProject.ProjectNameList()
         .then(res => {
           this.projectNameList = {
@@ -347,28 +439,30 @@ export default {
         })
     },
 
-    // 下拉框数据 创意名字列表
-    getCreativeNameList() {
-      this.creativeNameList.loading = true;
-      this.$api.CreateCreative.CreativeNameList()
-        .then(res => {
-          this.creativeNameList = {
-            loading: false,
-            data: res.result
-          };
-        })
-        .catch(res => {
-          this.creativeNameList = {
-            loading: false,
-            data: []
-          };
-        })
+    // change计划
+    changePlan() {
+      this.searchParam.project.id = '';
+      this.creativeName = '';
     },
+    
 
+    // change方案
+    changeProject() {
+      this.creativeName = '';
+    },
+   
     // 搜索
     search() {
       this.tableData.loading = true;
-      this.$api.CreateCreative.CreativeList(this.searchParam)
+      let param = {
+        campaignId: this.searchParam.plan.id,
+        name: this.searchParam.creative.name,
+        pageIndex: this.searchParam.page.pageIndex,
+        pageSize: this.searchParam.page.pageSize,
+        projectId: this.searchParam.project.id,
+        status: this.searchParam.creative.status
+      }
+      this.$api.CreateCreative.CreativeList(param)
         .then(res => {
           this.tableData = {
             loading: false,
@@ -396,11 +490,10 @@ export default {
         show: true,
         data: ''
       }
-      this.getIndustryList()
       this.$api.CreateCreative.CreativeDetail(creativeId)
         .then(res => {
-          this.detailDialog.loading = false;
           this.detailDialog.data = res.result;
+            this.detailDialog.loading = false;
         })
         .catch(res => {
           this.detailDialog = {
@@ -417,8 +510,7 @@ export default {
       this.$api.CreateCreative.DeleteCreativeById(creativeId)
         .then(res => {
           this.tableData.loading = false;
-          this.$notify({
-            title: '成功',
+          this.$message({
             message: '删除创意成功',
             type: 'success'
           });
@@ -437,17 +529,23 @@ export default {
           })
     },
 
+    // 重置翻页为1 重置projectId
+    handleSearch() {
+      this.searchParam.page.pageIndex = 1;
+      // this.$router.replace('/putManage?active=creative')
+    },
 
     handleSizeChange(val) {
-      this.searchParam.pageSize = val;
-      this.searchParam.pageIndex = 0;
+      this.searchParam.page.pageSize = val;
+      this.searchParam.page.pageIndex = 0;
       this.search()
     },
 
     handleCurrentChange(val) {
-      this.searchParam.pageIndex = val;
+      this.searchParam.page.pageIndex = val;
       this.search()
     }
+
   }
 };
 </script>
@@ -455,6 +553,19 @@ export default {
 <style lang='scss' scoped>
 @import '../listCommonStyle.scss';
 .creative-dialog {
+  .no-pass{
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    background:rgba(83,160,255,0.08);
+    line-height: 1.5;
+    .no-pass-img{
+      width: 65px;
+      height: 46px;
+      margin-right: 23px;
+      flex-shrink: 0;
+    }
+  }
   .el-dialog {
     margin-top: 10vh !important;
   }
@@ -481,16 +592,14 @@ export default {
       margin-top: 31px;
       display: flex;
     }
-
     .text-title {
+      width: 90px;
       color: $color-table-title;
     }
-
     .text-info {
       color: $color-text-1;
       margin-left: 90px;
     }
-
     .demo-image__preview {
       margin-left: 90px;
     }
@@ -498,24 +607,20 @@ export default {
 
   .material {
     .top-screen {
-      p {
-
-      }
-
+      margin-bottom: 40px;
       .el-button {
         margin-top: 24px;
       }
-
+      .img{
+        width: 260px; 
+        margin-top: 20px;
+      }
     }
-
     .bottom-screen {
-      margin-top: 50px;
-
       .bottom-screen-box {
         display: flex;
         margin-top: 24px;
       }
-
       .left-pre {
         display: inline-block;
         width: 260px;
@@ -524,7 +629,6 @@ export default {
         border: 1px solid rgba(229, 231, 233, 1);
         border-radius: 2px;
       }
-
       .right-pre {
         display: inline-block;
         width: 260px;

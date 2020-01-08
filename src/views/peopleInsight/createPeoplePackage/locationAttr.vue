@@ -4,13 +4,14 @@
       <p class="label">城市：</p>
       <el-cascader
         ref="location"
-        v-model="cities"
+        v-model="crowdProject.tagNamesObj[crowdProject.cityTid]"
         multiple placeholder="请选择"
         class="flex1 select content"
         :options="options"
         :props="props"
+        :show-all-levels="false"
         clearable
-        @change="setLocation(cities)"
+        @change="setLocation(crowdProject.cityTid,crowdProject.tagNamesObj[crowdProject.cityTid])"
       >
       </el-cascader>
     </div>
@@ -30,43 +31,36 @@
           children:'childTags',
         },
         options: [],
-        cities:[],
-      }
+       }
     },
     methods: {
-      ...mapMutations(["setTagNamesWithUpdate","removeTagNamesByName","setTagTid","setCity","removeCity"]),
+      ...mapMutations(["setTagNamesWithUpdate","removeTagNamesByName"]),
 
       getChildren(){
         this.$api.peopleInsight.getChildTags(this.$parent.activeTab)
           .then(res => {
             this.options = res.result;
+            this.$set(this.crowdProject.tagNamesObj, this.crowdProject.cityTid, []);
           })
           .catch(res => {
             this.options = null
           })
       },
 
-      setLocation(locationConsume){
-        let tagNames = [];
-        let tagTid = "";
-        let tagValues = [];
-        let tagObj = {'name':'城市'};
+      setLocation(tid,locationConsume){
+        let tags = [];
+        let tagArray = [];
+        let tagObj = {'name':'城市','tid':tid};
+        let cityTid = 0;
         if (locationConsume.length > 0){
-          tagTid += "("+ locationConsume[0] + ")";
-          let labels = this.$refs['location'].getCheckedNodes()[0].pathLabels;
-          let cityName = labels[labels.length-1];
-          tagValues.push(labels.join("/"));
-          tagObj.value = tagValues;
-          tagNames.push(tagObj);
-          //set city
-          this.setCity(cityName);
+          cityTid = locationConsume[locationConsume.length-1];
+          let tagNameArray = this.$refs['location'].getCheckedNodes()[0].pathLabels;
+          tags.push({'tid':cityTid,'name':tagNameArray[tagNameArray.length-1]});
+          tagObj.tags = tags;
+          tagArray.push(tagObj);
           //set方式不一样  这里是tag组只能有一个
-          this.setTagNamesWithUpdate(tagNames);
-          //TODO 先用push  后期优化
-          this.setTagTid(tagTid);
+          this.setTagNamesWithUpdate(tagArray);
         }else {
-          //移除当前tag组
-          this.removeCity();
           this.removeTagNamesByName({'name':'城市'});
         }
 
@@ -75,6 +69,9 @@
     },
     created() {
       this.getChildren();
+    },
+    computed:{
+      ...mapState(["crowdProject"])
     }
   }
 </script>

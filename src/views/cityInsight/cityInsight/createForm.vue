@@ -4,7 +4,7 @@
       <el-form-item label="资源包名称：" prop="name">
         <el-input v-model="form.name"></el-input>
       </el-form-item>
-      <el-form-item label="资源包描述：" style="margin-bottom: 20px">
+      <el-form-item label="资源包描述：" style="margin-bottom: 20px" prop="description">
         <el-input type="textarea" v-model="form.description"></el-input>
       </el-form-item>
       <el-form-item class="text-center">
@@ -22,7 +22,11 @@
       return {
         rules: {
           name: [
-            {required: true, message: '请输入人群包名称', trigger: 'blur'}
+            {required: true, message: '请输入人群包名称', trigger: 'blur'},
+            { max: 50, message: '长度在50个字符以内', trigger: 'blur' }
+          ],
+          description: [
+            { max: 200, message: '长度在200个字符以内', trigger: 'blur' }
           ],
         },
         form: {
@@ -45,7 +49,6 @@
         this.$refs[form].validate((valid) => {
           if (valid) {
             this.$emit('submit', this.form)
-            this.resetForm()
           } else {
             return false;
           }

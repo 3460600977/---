@@ -121,7 +121,7 @@ export default {
           })
           return this.$notify({
             title: '成功',
-            message: '创建创意成功',
+            message: '关联创意成功',
             type: 'success'
           })
         })

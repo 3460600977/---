@@ -1,26 +1,24 @@
 <template>
-  <div>
+  <div style="margin-bottom: 40px">
     <template v-for="(tagObj,parentIndex) in crowdProject.tagNames">
       <div class="wrapper">
         <div class="font-0 mid-start">
           <p class="label">{{tagObj.name}}</p>
           <div class="flex1 tags">
             <el-tag
-              :key="tag"
-              v-for="(tag,index) in tagObj.value"
+              v-for="(tag,index) in tagObj.tags"
+              :key="tag.tid"
               closable
-              :disable-transitions="false"
+              :disable-transitions="true"
               @close="handleClose(parentIndex,index )"
             >
-              {{tag}}
+              {{tag.name}}
             </el-tag>
           </div>
         </div>
       </div>
     </template>
   </div>
-
-
 </template>
 
 <script>

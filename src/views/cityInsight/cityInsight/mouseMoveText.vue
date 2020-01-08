@@ -16,7 +16,7 @@
     data() {
       return {
         text: {
-          circle: '点击左键标记位置，邮件或Esc退出',
+          circle: '点击左键标记位置，右鍵或Esc退出',
           polyline: '单击确定起点，双击结束绘制',
           polygon: '单击确定选点，至少选择3个点，双击结束绘制'
         }

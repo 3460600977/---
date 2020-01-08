@@ -36,10 +36,18 @@
           @hide="hide"
           @submit="submit"
         ></create-form>
-<!--        <span slot="footer" class="dialog-footer">-->
-<!--          <el-button @click="hide" class="btn">取消</el-button>-->
-<!--          <el-button type="primary" @click="" class="btn" @click="createCityPackage">确认</el-button>-->
-<!--        </span>-->
+        <el-dialog title="创建成功"
+             append-to-body
+             :visible.sync="dialogShowContent"
+             width="568px"
+             class="my-dialog inner-dialog"
+        >
+          <p>已成功创建资源包！可前往<span class="color-main">投放管理</span>创建广告计划。</p>
+          <span slot="footer">
+        <el-button @click="toUrl(0)" class="btn1">资源包列表</el-button>
+        <el-button type="primary" class="btn1" @click="toUrl(1)">创建广告计划</el-button>
+      </span>
+        </el-dialog>
       </el-dialog>
     </div>
 </template>
@@ -66,15 +74,24 @@
     },
     data() {
       return {
+        dialogShowContent: false,
         dialogVisible: false,
         pageSize: 5,
         pageSizeSelectable: [5, 10, 15, 20],
         deviceCount: 0,
+        unitNum: 0,
         coveredPeople: 0,
       };
     },
     created() {},
     methods: {
+      toUrl(type) {
+        if (type === 0) {
+          this.$router.push('/cityInsight/list')
+        } else {
+          this.$router.push('/putManage/create/plan')
+        }
+      },
       getBuildingIds(arr) {
         return arr.map((item) => {
           return item.premisesId
@@ -86,12 +103,19 @@
           city: this.city.cityCode,
           premiseIds: ids,
           condition: '',
+          deviceNum: this.deviceCount,
+          premiseNum: this.data.length,
+          unitNum: this.unitNum,
+          weekForPeople: this.coveredPeople,
           ...val
         }
         this.$api.cityInsight.createCityInsight(param).then((data) => {
           if (data.result) {
-            this.$router.push('/toolBox/resourceBundle')
+            this.dialogShowContent = true
           }
+          // if (data.result) {
+          //   this.$router.push('/cityInsight/list')
+          // }
         })
       },
       show() {
@@ -104,10 +128,12 @@
       },
       renderDatas(arr) {
         this.deviceCount = 0
+        this.unitNum = 0
         this.coveredPeople = 0
         arr.forEach((item) => {
           this.deviceCount += item.signElevatorNum
           this.coveredPeople += item.totalPeople
+          this.unitNum += item.unitNum? item.unitNum: 0
         })
       },
       loadFunction() {
@@ -170,6 +196,15 @@
   .title {
     margin-bottom: 20px;
     margin-top: 20px;
+  }
+}
+.inner-dialog {
+  & /deep/ .el-dialog__body {
+    padding-top: 57px;
+    padding-bottom: 105px;
+  }
+  .el-button + .el-button {
+    margin-left: 60px;
   }
 }
 </style>

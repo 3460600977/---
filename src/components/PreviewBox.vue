@@ -1,21 +1,21 @@
 <template>
   <div class="material-preview-box">
     <!-- 上屏 -->
-    <div class="top-box" 
-      :style="{width: `${innerWidth}px`, 
-        height: `${innerWidth / 1080 * 1920}px`, 
+    <div class="top-box"
+      :style="{width: `${innerWidth}px`,
+        height: `${innerWidth / 1080 * 1920}px`,
         margin: `${innerWidth / 10}px`}">
-        <video 
+        <video
           v-if="top.type === 'video/mp4' || top.type === 'mp4'"
           class="top"
-          controls 
+          controls
           autoplay
           loop
           :src="top.url"></video>
 
-        <img 
+        <img
           v-if="top.type === 'image/jpeg' || top.type === 'jpeg' || top.type === 'jpg'"
-          class="top" 
+          class="top"
           :src="top.url"/>
 
         <div v-if="top.type === 'video/avi' || top.type === 'avi'" class="top font-12 mid-center">
@@ -24,22 +24,22 @@
     </div>
 
     <!-- 下屏 -->
-    <div class="bottom-box" 
-      :style="{width: `${innerWidth}px`, 
-      height: bottom.height === '720' ? `${innerWidth / 1280 * 720}px` : `${innerWidth / 1080 * 880}px`, 
+    <div class="bottom-box"
+      :style="{width: `${innerWidth}px`,
+      height: bottom.height === '720' ? `${innerWidth / 1280 * 720}px` : `${innerWidth / 1080 * 880}px`,
       margin: `${innerWidth / 10}px`}">
-        <video 
+        <video
           v-if="bottom.type === 'video/mp4' || bottom.type === 'mp4'"
           class="bottom"
-          controls 
+          controls
           autoplay
           loop
           muted
           :src="bottom.url"></video>
 
-        <img 
+        <img
           v-if="bottom.type === 'image/jpeg' || bottom.type === 'jpeg' || bottom.type === 'jpg'"
-          class="bottom" 
+          class="bottom"
           :src="bottom.url"/>
 
         <div v-if="bottom.type === 'video/avi' || bottom.type === 'avi'" class="top font-12 mid-center">
@@ -60,10 +60,10 @@ export default {
     top: {
       type: Object,
       default: {
-        type: '', 
+        type: '',
         url: ''
       }
-      
+
     },
 
     bottom: {
@@ -78,7 +78,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style  scoped lang="scss">
 .material-preview-box{
   width: fit-content;
   background:rgba(236,235,233,1);

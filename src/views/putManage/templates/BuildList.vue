@@ -1,14 +1,13 @@
 <template>
-  <div class="selected-list">
+  <div class="selected-list" v-loading="loading">
 
-
-    <!-- 选择洞察包 统计列表 -->
-    <template v-if="buildingDirectionActiveType === 'exist'">
-      <ul class="selected-list-data-box" v-loading="loading">
+    <!-- 选择洞察包 统计列表 未寻量 -->
+    <template v-if="buildingDirectionActiveType === 'exist' || buildingDirectionActiveType === 'payConfirm'">
+      <ul class="selected-list-data-box">
         <noData v-if="buildsNumber <= 0 || deviceNumber <= 0">无可售数据</noData>
 
         <li v-else class="item mid" v-for="(item, index) in existList" :key="index">
-          <div class="left-info exist">
+          <div class="left-info exist" style="width: 200px;">
             <p class="name">{{item.name}}</p>
           </div>
 
@@ -24,56 +23,48 @@
 
 
     <!-- 地图选点列表 -->
-    <template v-if="buildingDirectionActiveType === 'create'">
-      <div v-if="deviceNumber > 0" class="title clearfix mid-between">
-        <div>
-          <span>
-            已选择楼盘
-            <span class="color-main font-16">{{$tools.toThousands(buildsNumber, false)}}</span> 个
-          </span>
-          <span>
-            , 可售设备
-            <span class="color-main font-16">{{$tools.toThousands(deviceNumber, false)}}</span> 个
-          </span>
+      <template v-if="buildingDirectionActiveType === 'create'">
+        <div v-if="deviceNumber > 0" class="title clearfix mid-between">
+          <div>
+            <span>
+              已选择楼盘
+              <span class="color-main font-16">{{$tools.toThousands(buildsNumber, false)}}</span> 个
+            </span>
+            <span>
+              , 可售设备
+              <span class="color-main font-16">{{$tools.toThousands(deviceNumber, false)}}</span> 个
+            </span>
+          </div>
+
+          <el-button
+            class="float-right"
+            :loading="exporting"
+            @click="buildsListExport"
+            size="small"
+          >下载</el-button>
         </div>
 
-        <el-button
-          class="float-right"
-          :loading="exporting"
-          @click="buildsListExport"
-          size="small"
-        >下载</el-button>
-      </div>
+        <ul class="selected-list-data-box">
+          <li class="item mid" v-for="(item, index) in localProject.list" :key="index">
+            <div class="base">
+              <div class="left-info float-left" style="width: 550px;">
+                <p class="name">{{item.premiseName}}</p>
+              </div>
 
-      <ul class="selected-list-data-box" v-loading="loading">
-        <li class="item mid" v-for="(item, index) in localProject.list" :key="index">
-          <div class="base">
-            <div class="left-info float-left" style="width: 550px;">
-              <p class="name">{{item.premisesName}}</p>
+              <div class="account float-left" style="width: 100px;">
+                <span class="font-16 number">{{$tools.toThousands(item.deviceNum, false)}}</span>
+                <span class="font-14">个</span>
+              </div>
+
+              <DelCirclrButton
+                @click.native="removeItem(localProject.list, index)"
+                class="float-left"
+              />
             </div>
-
-            <div class="account float-left" style="width: 100px;">
-              <span class="font-16 number">{{$tools.toThousands(item.signElevatorNum, false)}}</span>
-              <span class="font-14">个</span>
-            </div>
-
-            <DelCirclrButton
-              @click.native="$emit('update:data', $tools.removeArrayItemByIndex(localProject.list, index))"
-              class="float-left"
-            />
-          </div>
-        </li>
-
-        <noData v-if="buildsNumber <= 0">无可售数据</noData>
-      </ul>
-      <!-- 分页 -->
-      <!-- <el-pagination
-        class="float-right"
-        background
-        layout="total, sizes, prev, pager, next"
-        :total="20">
-      </el-pagination> -->
-    </template>
+          </li>
+          <noData v-if="buildsNumber <= 0">无可售数据</noData>
+        </ul>
+      </template>
 
 
 
@@ -99,7 +90,7 @@
         >下载</el-button>
       </div>
 
-      <ul class="selected-list-data-box" v-loading="loading">
+      <ul class="selected-list-data-box">
         <li class="item" v-for="(item, index) in localProject.list" :key="index">
           <div class="clearfix base">
             <div class="left-info clearfix float-left">
@@ -147,7 +138,8 @@ export default {
     },
 
     /**
-     * exist: 统计出信息
+     * exist: 统计未寻量出信息
+     * payConfirm: 统计出信息 确认支付
      * create: 列表 可以下载删除
      * list: 列表 向下箭头展开设备信息
      */
@@ -212,6 +204,12 @@ export default {
       this.$api.PutProject.GetBuildDevice(param).then(res => {
         this.$set(this.localProject.list, index, { ...old, devices: res.result, active: true })
       });
+    },
+
+    // 删除地图选点列表
+    removeItem(list, index) {
+      this.$emit('delMapItem', list[index])
+      this.$tools.removeArrayItemByIndex(list, index)
     }
   },
 
@@ -223,17 +221,32 @@ export default {
       "unitNum"
     ]),
     
+    ...mapState(['putProject']),
     ...mapState({
       localProject: "putProject"
     }),
 
     existList() {
-      let res = [
-        { name: "楼盘数", value: this.buildsNumber },
-        { name: "单元数", value: this.unitNum },
-        { name: "点位数", value: this.deviceNumber },
-        { name: "覆盖人次", value: this.peopleNumber }
-      ];
+      let res;
+
+      if (this.buildingDirectionActiveType === 'exist') {
+        res = [
+          { name: "楼盘数", value: this.putProject.statistics.premiseNum },
+          { name: "单元数", value: this.putProject.statistics.unitNum },
+          { name: "点位数", value: this.putProject.statistics.deviceNum },
+          { name: "覆盖人数", value: this.putProject.statistics.weekForPeople }
+        ];
+      }
+
+      if (this.buildingDirectionActiveType === 'payConfirm') {
+        res = [
+          { name: "楼盘数", value: this.buildsNumber },
+          { name: "单元数", value: this.unitNum },
+          { name: "点位数", value: this.deviceNumber },
+          { name: "覆盖人数", value: this.peopleNumber }
+        ];
+      }
+
       return res;
     }
   }
@@ -283,6 +296,12 @@ export default {
             cursor: pointer;
             padding: 0 10px;
             height: 100%;
+            i {
+              transition: 0.3s;
+            }
+            .active{
+              transform: rotate(180deg);
+            }
           }
           .addr {
             line-height: 12px;

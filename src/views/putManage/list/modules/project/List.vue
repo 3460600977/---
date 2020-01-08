@@ -1,14 +1,17 @@
 <template>
   <div class="list">
 
-
+    
+    <!-- 查询 -->
     <el-form :inline="true" class="list-form-inline clearfix">
+      <!-- 投放计划名称 -->
       <el-form-item class="line-space" label="投放计划名称">
         <el-select 
           @focus="getPlanNameList"
+          @change="changePlan"
           :loading="planNameList.loading" 
-          v-model="searchParam.campaignId" 
-          placeholder="不限" 
+          v-model="searchParam.plan.id" 
+          placeholder="请选择" 
           filterable
           clearable>
           <el-option
@@ -20,28 +23,20 @@
         </el-select>
       </el-form-item>
 
+
+      <!-- 投放方案名称 -->
       <el-form-item class="line-space" label="投放方案名称">
-        <el-select 
-          @focus="getProjectNameList"
-          :loading="projectNameList.loading" 
-          v-model="searchParam.projectId" 
-          placeholder="不限" 
-          filterable
-          clearable>
-          <el-option
-            v-for="item in projectNameList.data"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          ></el-option>
-        </el-select>
+        <el-input clearable v-model="searchParam.projectName" placeholder="请输入"></el-input>
       </el-form-item>
 
+
+      <!-- 方案状态 -->
       <el-form-item class="line-space" label="方案状态">
         <el-select 
           @focus="getPlanNameList"
           :loading="planNameList.loading" 
-          v-model="searchParam.status" 
+          value-key="value"
+          v-model="searchParam.plan.status" 
           placeholder="不限" 
           filterable
           clearable>
@@ -54,25 +49,30 @@
         </el-select>
       </el-form-item>
 
+
+      <!-- 查询 -->
       <el-form-item class="list-query-button">
-        <el-button type="primary" plain @click="search">查询</el-button>
+        <el-button type="primary" plain @click="handleSearch(); search(); ">查询</el-button>
       </el-form-item>
 
+
+      <!-- 新建 -->
       <el-form-item class="list-new-button">
         <router-link to="/putManage/create/plan">
           <el-button type="primary">新建投放方案</el-button>
         </router-link>
       </el-form-item>
+
+
     </el-form>
-    
-
-
 
     <div class="query_result">
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
         <el-table-column prop="name" label="投放方案名称">
           <template slot-scope="scope">
-            <span class="hand">{{scope.row.name}}</span>
+            <router-link :to="`/putManage?active=creative&projectId=${scope.row.projectId}`">
+              <span class="hand">{{scope.row.name}}</span>
+            </router-link>
           </template>
         </el-table-column>
 
@@ -84,10 +84,10 @@
 
         <el-table-column prop="status" label="创意状态">
           <template slot-scope="scope">
-            <span v-if="scope.row.creativeStatus === 0" class="pending status">待审核</span>
+            <span v-if="scope.row.creativeStatus === 0" class="status">待审核</span>
             <span v-else-if="scope.row.creativeStatus === 1" class="deny status">审核拒绝</span>
-            <span v-else-if="scope.row.creativeStatus === 2" class="pass status">审核通过</span>
-            <span v-else class="empty status">未上传</span>
+            <span v-else-if="scope.row.creativeStatus === 2" class="status">审核通过</span>
+            <span v-else class="status">未上传</span>
           </template>
         </el-table-column>
 
@@ -128,18 +128,10 @@
             >
               <i class="iconfont icon-shuxingliebiaoxiangqing2 icon-color"></i>详情
             </span>
-
-            <span v-if="scope.row.status == 0" class="icon-space hand">
-              <router-link :to="`/putManage/create/project?editProjectId=${scope.row.projectId}`">
-                <i class="iconfont icon-bianji icon-color"></i>修改
+            <span v-if="scope.row.status == 0 && scope.row.creativeStatus == null" class="icon-space hand">
+              <router-link :to="`/putManage/create/creative?projectId=${scope.row.projectId}&createType=step`">
+                <i class="iconfont icon-bianji icon-color"></i>编辑
               </router-link>
-            </span>
-
-            <span 
-              @click="detailDialog.projectId=+scope.row.projectId; detailDialog.show=true; detailDialog.activeTab='point'"
-              v-if="scope.row.status == 1 || scope.row.status == 2" 
-              class="icon-space hand">
-              <i class="iconfont icon-ziyuan icon-color"></i>点位
             </span>
 
             <span v-if="scope.row.status == 1 || scope.row.status == 2" class="icon-space hand">
@@ -152,7 +144,11 @@
               <i class="iconfont icon-kuaijiezhifu1 icon-color"></i>支付
             </span>
 
-            <span @click="cancleProject(scope.row.projectId)" v-if="scope.row.status == 0 || scope.row.status == 4" class="icon-space hand">
+            <span @click="cancleDialog.data.name = scope.row.name; 
+              cancleDialog.data.id = scope.row.projectId;
+              cancleDialog.show = true" 
+              v-if="scope.row.status == 0 || scope.row.status == 4" 
+              class="icon-space hand">
               <i class="iconfont icon-error1 icon-color"></i>取消
             </span>
 
@@ -171,9 +167,6 @@
     </div>
 
 
-
-
-
     <!-- 详情 -->
     <el-dialog
       class="my-dialog"
@@ -185,15 +178,30 @@
         <el-button style="width: 136px;" type="primary" @click="detailDialog.show = false">确定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 取消 提示弹窗 -->
+    <el-dialog title="取消方案"
+      :visible.sync="cancleDialog.show"
+      width="568px"
+      class="my-dialog"
+    >
+      <p>确认是否取消投放方案 <span class="color-main">【{{cancleDialog.data.name}}】？</span></p>
+      <span slot="footer">
+        <el-button @click="cancleDialog.show = false" class="btn1">取 消</el-button>
+        <el-button type="primary" class="btn1" @click="cancleProject(cancleDialog.data.id); cancleDialog.show = false">确 定</el-button>
+      </span>
+    </el-dialog>
+
+
   </div>
 </template>
 
 <script>
 import { projectConst, projectStatus } from '../../../../../utils/static'
 import detailDialog from './modules/detailDialog'
+
 export default {
   name: "planList",
-
   props: {
     active: {
       type: Boolean,
@@ -210,24 +218,34 @@ export default {
       screenType: projectConst.screenType,
       projectStatus,
 
+      cityList: [],
+
+      detailDialog: {
+        show: false,
+        projectId: '',
+        activeTab: 'project'
+      },
+
+      cancleDialog: {
+        data: {name: '加载失败', id: ''},
+        show: false
+      },
+
       planNameList: {
         loading: true,
         data: []
       },
 
-      projectNameList: {
-        loading: true,
-        data: []
-      },
-
-      cityList: [],
-
       searchParam: {
-        campaignId: '', 
-        projectId: '',
-        status:'',
-        pageIndex: '',
-        pageSize: '',
+        plan: {
+          id: '',
+          status: ''
+        },
+        projectName: '',
+        page: {
+          pageSize: 10,
+          pageIndex: 1,
+        }
       },
 
       tableData: {
@@ -238,25 +256,43 @@ export default {
           totalCount: 0
         }
       },
-
-      detailDialog: {
-        show: false,
-        projectId: '',
-        activeTab: 'project'
-      },
-
     };
   },
 
-  beforeMount() {
-    this.search()
-    this.getAllCity()
+  watch: {
+    '$route': {
+      handler() {
+        this.getAllCity()
+
+        if (this.$route.query.active !== 'project') return;
+
+        if (this.$route.query.planId) {
+          this.getPlanNameList()
+          this.searchParam.plan.id = this.$route.query.planId;
+        }
+
+        else if (this.$route.query.status) {
+          this.getPlanNameList()
+          this.searchParam.plan.status = this.$route.query.status;
+        } 
+
+        else {
+          this.searchParam.plan.id = '';
+          this.searchParam.plan.status = ''
+        }
+        
+        this.search()
+      },
+      immediate: true
+    }
   },
+
   methods: {
 
-    // 计划名称列表
+    // 下拉框数据 计划名字列表
     getPlanNameList() {
-      if (this.planNameList.data.length > 0) return;
+      if (this.planNameList.data.length > 0) return false;
+      this.planNameList.loading = true;
       this.$api.PutPlan.PlanNameList()
         .then(res => {
           this.planNameList = {
@@ -272,25 +308,14 @@ export default {
         })
     },
 
-    // 方案名字列表
-    getProjectNameList() {
-      this.$api.PutProject.ProjectNameList()
-        .then(res => {
-          this.projectNameList = {
-            loading: false,
-            data: res.result,
-          }
-        })
-        .catch(res => {
-          this.projectNameList = {
-            loading: false,
-            data: []
-          }
-        })
+    // change计划
+    changePlan() {
+      this.searchParam.projectName = '';
     },
 
     // 城市列表
     getAllCity() {
+      if (this.cityList.length > 0) return;
       this.$api.CityList.AllList()
         .then(res => {
           this.cityList = res.result;
@@ -303,6 +328,10 @@ export default {
       this.tableData.loading = true;
       this.$api.PutProject.CancelProject({projectId: projectId})
         .then(res => {
+          this.$message({
+            message: '已取消',
+            type: 'success'
+          });
           this.search()
         })
         .catch(res => {
@@ -310,6 +339,7 @@ export default {
         })
     },
 
+    // 支付
     comfirmPay(projectId) {
       this.$router.push({
         path: '/putManage/create/payConfirm',
@@ -322,7 +352,15 @@ export default {
     // 搜索
     search() {
       this.tableData.loading = true;
-      this.$api.PutProject.ProjectList(this.searchParam)
+
+      let param = {
+        "campaignId": this.searchParam.plan.id,
+        "pageIndex": this.searchParam.page.pageIndex,
+        "pageSize": this.searchParam.page.pageSize,
+        "name": this.searchParam.projectName,
+        "status": this.searchParam.plan.status,
+      }
+      this.$api.PutProject.ProjectList(param)
         .then(res => {
           this.tableData = {
             loading: false,
@@ -342,15 +380,20 @@ export default {
         })
     },
 
+    // 重置  翻页为1  重置传入的planid
+    handleSearch() {
+      this.searchParam.page.pageIndex = 1;
+      // this.$router.replace('/putManage?active=project')
+    },
 
     handleSizeChange(val) {
-      this.searchParam.pageSize = val;
-      this.searchParam.pageIndex = 0;
+      this.searchParam.page.pageSize = val;
+      this.searchParam.page.pageIndex = 0;
       this.search()
     },
 
     handleCurrentChange(val) {
-      this.searchParam.pageIndex = val;
+      this.searchParam.page.pageIndex = val;
       this.search()
     }
   }

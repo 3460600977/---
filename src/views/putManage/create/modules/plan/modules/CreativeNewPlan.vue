@@ -1,5 +1,5 @@
 <template>
-  <div class="put-plan" v-loading="edit.loading">
+  <div class="put-plan" v-loading="edit.loading || formData.saving">
     <!-- HI, 请选择投放目的 -->
     <PutMangeCard :title="'HI, 请选择投放目的'" class="form-box put-goal">
       <!-- 目的 -->
@@ -25,23 +25,11 @@
           <label slot="label"><span class="color-red">*</span> 总预算</label>
           <el-input 
             class="budget-value"
+            :maxlength="9"
             placeholder="请输入内容" 
             v-model.number.trim="formData.totalBudget">
             <template slot="append">元</template>
           </el-input>
-        </el-form-item>
-        
-        
-        <el-form-item class="mt-20" prop="putDate" label="投放时间">
-          <el-date-picker
-            v-model="formData.putDate"
-            value-format="yyyy-MM-dd"
-            :picker-options="pickerOptions"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期">
-          </el-date-picker>
         </el-form-item>
       </el-form>
         
@@ -57,7 +45,7 @@
         :label-position="'left'" 
         label-width="112px" class="put-form">
         <el-form-item prop="name" label="投放计划名称">
-          <el-input v-model.trim="formData.name" clearable placeholder="请输入名称"></el-input>
+          <el-input class="width-240" v-model.trim="formData.name" clearable placeholder="请输入名称"></el-input>
         </el-form-item>
       </el-form>
     </PutMangeCard>
@@ -65,7 +53,7 @@
     <!-- 保存 取消 -->
     <PutMangeCard class="save-box">
       <div class="float-right">
-        <el-button :loading='formData.saving' @click="savePlan" style="width: 136px" type="primary">{{edit.isEdit ? '保存并关闭' : '下一步'}}</el-button>
+        <el-button :disabled="!validateFrom()" :loading='formData.saving' @click="savePlan" style="width: 136px" type="primary">{{edit.isEdit ? '保存并关闭' : '下一步'}}</el-button>
       </div>
     </PutMangeCard>
   </div>
@@ -84,9 +72,11 @@ export default {
   data() {
     // 自定义校验 预算    
     let validateBudget = (rules, value, callback) => {
-      if (!value) { return callback(new Error('请输入指定预算!')); }
+      if (!value) { return callback(new Error('请输入总预算!')); }
       if (isNaN(value)) { return callback(new Error('请输入数字!')); }
-      if (value < 1000) { return callback(new Error('指定预算不少于1000元!')); }
+      if (value < 1000) { return callback(new Error('总预算不少于1000元!')); }
+      if (value > 100000000) { return callback(new Error('金额过大!')); }
+      callback()
     }
     return {
       PutGoal,// 投放目的
@@ -104,20 +94,16 @@ export default {
         name: '',
         saving: false,
         totalBudget: '',
-        putDate: '',
         goal: ''
       },
       
       formDataRules: {
         name: [
-          { required: true, message: '请输入计划名称!', trigger: 'blur' },
-          { max: 100, message: '计划名称100字以内!'}
-        ],
-        putDate: [
-          { required: true, message: '请选择投放时间!', trigger: 'blur' }
+          { required: true, message: '请输入计划名称!', trigger: ['blur', 'change'] },
+          { max: 50, message: '计划名称不超过50个字,请正确输入!'}
         ],
         totalBudget: [
-          { validator: validateBudget, trigger: 'blur' }
+          { validator: validateBudget, trigger:  ['blur', 'change'] }
         ],
       },
 
@@ -159,37 +145,41 @@ export default {
       }) 
       
     },
-    // 下一步/保存并关闭
-    savePlan() {
-      let isPassEnptyCheck = true,
-          validateForms = ['planTop', 'planName'],
-          param;
 
-      this.formData.saving = true;
-      validateForms.forEach((item, index) => {
-        if(this.$refs[item]) {
-          this.$refs[item].validate((valid) => {
-            if (!valid) { return isPassEnptyCheck = false; } 
+
+    // 校验表单
+    validateFrom() {
+      let isPassEnptyCheck = true,
+          validateForms = ['planTop', 'planName'];
+
+      for (let i=0; i<validateForms.length; i++) {
+        let item = this.$refs[validateForms[i]];
+        if (item) {
+          item.validate((valid) => {
+            isPassEnptyCheck = valid;
           });
         }
-      })
-      if (!isPassEnptyCheck) {
-        this.formData.saving = false;
-        return this.$notify({
-          title: '警告',
-          message: '还有必填字段未填写',
-          type: 'warning'
-        });
-      } 
+        if (!isPassEnptyCheck) break;
+      }
 
-      param = {
+      return isPassEnptyCheck;
+    },
+
+    // 下一步/保存并关闭
+    savePlan() {
+      
+      if (!this.validateFrom()) return false;
+      
+      this.formData.saving = true;
+      let param = {
         name: this.formData.name,
         campaignType: this.formData.goal,
         totalBudget: this.formData.totalBudget * 100,
         cityList: this.formData.putCity,
-        beginTime: this.formData.putDate[0],
-        endTime: this.formData.putDate[1]
+        // beginTime: this.formData.putDate[0],
+        // endTime: this.formData.putDate[1]
       };
+
 
       // 编辑
       if (this.edit.isEdit) {
@@ -197,8 +187,7 @@ export default {
         this.$api.PutPlan.EditPlan(param)
           .then(res => {
             this.formData.saving = false;
-            this.$notify({
-              title: '成功',
+            this.$message({
               message: '修改投放计划成功',
               type: 'success'
             });
@@ -210,13 +199,13 @@ export default {
             this.formData.saving = false;
           })
       } 
+      
       // 新建
       else {
         this.$api.PutPlan.AddPlan(param)
           .then(res => {
             this.formData.saving = false;
-            this.$notify({
-              title: '成功',
+            this.$message({
               message: '创建投放计划成功',
               type: 'success'
             });

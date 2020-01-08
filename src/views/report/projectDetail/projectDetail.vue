@@ -106,7 +106,7 @@
                       <div v-else-if="col.prop === 'action'">
                         <a
                           class="preview"
-                          href="#"
+                          href="javascript:;"
                           @click="showPreviewPlayList(scope.row['deviceCode'])"
                           :deviceCode="scope.row['deviceCode']"
                         >预览</a>
@@ -147,6 +147,7 @@
         deviceCode: null,
         projectId: null,
         premiseId: null,
+        premiseName: null,
         dialogVisible: false,
         dialogPreviewVisible: false,
         putProject: {
@@ -332,78 +333,82 @@
         Object.assign(queryParam, param);
         this.putProject.loading = true;
         this.reportSelectCard.loading = true;
-        this.$api.Report.getProjectPremiseList(queryParam)
-            .then(res => {
-              this.reportSelectCard.loading = false;
-              this.putProject.loading = false;
-              let premiseList = res.result;
-              this.reportSelectCard.data.forEach(item => {
-                let property = item.field;
-                if (premiseList.hasOwnProperty(property)) {
-                  if (
-                    premiseList[property] === "" ||
-                    premiseList[property] === null
-                  ) {
-                    item.value = 0;
-                  } else if (property === "cost") {
-                    let costValue = premiseList[property];
-                    costValue = this.$tools.formatCentToYuan(costValue);
-                    item.value = '¥ ' +this.$tools.toThousands(costValue);
-                  } else {
-                    item.value = this.$tools.toThousands(
-                      premiseList[property],
-                      false
-                    );
-                  }
-                }
-              });
-              this.putProject.data.forEach(item => {
-                let property = item.field;
-                if (premiseList.hasOwnProperty(property)) {
-                  if (premiseList[property] === "") {
-                    item.value = 0;
-                  } else if (property === "startTime") {
-                    item.value =
-                      premiseList["startTime"] + "~" + premiseList["endTime"];
-                  } else {
-                    item.value = premiseList[property];
-                  }
-                }
-                this.premiseList.deviceNum.value = 0;
-                this.premiseList.premiseId.value = 0;
-              });
-              //楼板列表数据
-              if (premiseList.premiseList.length === 0) {
-                this.premiseList.default.forEach(item => {
-                  item.title = "数据暂无";
-                });
+        this.$api.Report.getProjectPremiseList(queryParam).then(res => {
+          this.reportSelectCard.loading = false;
+          this.putProject.loading = false;
+          let premiseList = res.result;
+          this.reportSelectCard.data.forEach(item => {
+            let property = item.field;
+            if (premiseList.hasOwnProperty(property)) {
+              if (
+                premiseList[property] === "" ||
+                premiseList[property] === null
+              ) {
+                item.value = 0;
+              } else if (property === "cost") {
+                let costValue = premiseList[property];
+                costValue = this.$tools.formatCentToYuan(costValue);
+                item.value = '¥ ' + this.$tools.toThousands(costValue);
               } else {
-                let showPremise = premiseList.premiseList[0]; //默认数据
-                this.premiseList.default.forEach(item => {
-                  let property = item.field;
-                  if (showPremise.hasOwnProperty(property)) {
-                    if (
-                      showPremise[property] === "" ||
-                      showPremise[property] === null
-                    ) {
-                      item.title = "数据暂无";
-                    } else {
-                      item.title = showPremise[property];
-                    }
-                  }
-                });
-                this.premiseList.deviceNum.value = showPremise.deviceNum;
-                this.premiseList.premiseId.value = showPremise.premiseId;
-                this.premiseId = showPremise.premiseId;
-                //所有楼盘数据
-                this.premiseList.data = premiseList.premiseList;
+                item.value = this.$tools.toThousands(
+                  premiseList[property],
+                  false
+                );
               }
-            })
-            .catch(res => {
-              this.putProject.loading = false;
-              this.reportSelectCard.loading = false;
-              return this.handleErrorPremiseList()
+            }
+          });
+          this.putProject.data.forEach(item => {
+            let property = item.field;
+            if (premiseList.hasOwnProperty(property)) {
+              if (premiseList[property] === "") {
+                item.value = 0;
+              } else if (property === "startTime") {
+                item.value =
+                  premiseList["startTime"] + "~" + premiseList["endTime"];
+              } else {
+                item.value = premiseList[property];
+              }
+            }
+            this.premiseList.deviceNum.value = 0;
+            this.premiseList.premiseId.value = 0;
+          });
+          //楼板列表数据
+          if (premiseList.premiseList.length === 0) {
+            this.premiseList.default.forEach(item => {
+              item.title = "数据暂无";
             });
+          } else {
+            let showPremise = premiseList.premiseList[0]; //默认数据
+            this.premiseList.default.forEach(item => {
+              let property = item.field;
+              if (showPremise.hasOwnProperty(property)) {
+                if (
+                  showPremise[property] === "" ||
+                  showPremise[property] === null
+                ) {
+                  item.title = "数据暂无";
+                } else {
+                  if (property === 'premiseShowTimes') {
+                    item.title = this.$tools.toThousands(showPremise[property], false);
+                  } else {
+                    item.title = showPremise[property];
+                  }
+                }
+              }
+            });
+            console.log('showPremise', showPremise);
+            this.premiseList.deviceNum.value = showPremise.deviceNum;
+            this.premiseList.premiseId.value = showPremise.premiseId;
+            this.premiseId = showPremise.premiseId;
+            this.premiseName = showPremise.premiseName;
+            //所有楼盘数据
+            this.premiseList.data = premiseList.premiseList;
+          }
+        }).catch(res => {
+          this.putProject.loading = false;
+          this.reportSelectCard.loading = false;
+          return this.handleErrorPremiseList()
+        });
       },
       //查询方案数据，错误处理
       handleErrorPremiseList() {
@@ -427,42 +432,41 @@
         }
         let queryParam = {
           projectId: this.projectId,
-          premiseId: this.premiseId
+          premiseId: this.premiseId,
+          premiseName: this.premiseName
         };
         //合并查询参数
         Object.assign(queryParam, param);
         this.loading = true;
-        this.$api.Report.getProjectDeviceList(queryParam)
-            .then(res => {
-              this.resultData = res.result.devices;
-              this.deviceInfo.time.forEach(item => {
-                let property = item.field;
-                if (res.result[property] === "" || res.result[property] === null) {
-                  item.value = "暂无数据";
-                } else if (property === "startTime") {
-                  this.projectList.endTime = res.result["endTime"];
-                  item.value =
-                    res.result["startTime"] + "~" + res.result["endTime"];
-                } else {
-                  item.value = res.result[property];
-                }
-              });
-              this.resultData.forEach((item, index) => {
-                if (item['deviceCode'] === null) {
-                  this.resultData.splice(index, 1);
-                }
-                item['allTime'] = item['totalTimes'] + '/' + item['avgTimes'] + '/' + item['times']
-              });
-              this.deviceInfo.name.value = res.result.name;
-              this.loading = false;
-            })
-            .catch(res => {
-              this.resultData = []
-              this.deviceInfo.time.forEach(item => {
-                item.value = 0
-              })
-              this.loading = false;
-            });
+        this.$api.Report.getProjectDeviceList(queryParam).then(res => {
+          this.resultData = res.result.devices;
+          this.deviceInfo.time.forEach(item => {
+            let property = item.field;
+            if (res.result[property] === "" || res.result[property] === null) {
+              item.value = "暂无数据";
+            } else if (property === "startTime") {
+              this.projectList.endTime = res.result["endTime"];
+              item.value =
+                res.result["startTime"] + "~" + res.result["endTime"];
+            } else {
+              item.value = res.result[property];
+            }
+          });
+          this.resultData.forEach((item, index) => {
+            if (item['deviceCode'] === null) {
+              this.resultData.splice(index, 1);
+            }
+            item['allTime'] = item['totalTimes'] + '/' + item['avgTimes'] + '/' + item['times']
+          });
+          this.deviceInfo.name.value = res.result.name;
+          this.loading = false;
+        }).catch(res => {
+          this.resultData = []
+          this.deviceInfo.time.forEach(item => {
+            item.value = 0
+          })
+          this.loading = false;
+        });
       },
       //查询方案楼盘设备播放列表
       getProjectPlayList: async function () {
@@ -472,15 +476,13 @@
             date: this.projectList.endTime
           };
           this.playList.loading = true;
-          this.$api.Report.getProjectPlayList(queryParam)
-              .then(res => {
-                this.playList.loading = false;
-                let playList = res.result
-                resolve(res.result);
-              })
-              .catch(res => {
-                this.playList.loading = false;
-              });
+          this.$api.Report.getProjectPlayList(queryParam).then(res => {
+            this.playList.loading = false;
+            let playList = res.result
+            resolve(res.result);
+          }).catch(res => {
+            this.playList.loading = false;
+          });
         });
       },
 

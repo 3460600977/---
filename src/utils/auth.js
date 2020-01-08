@@ -31,5 +31,21 @@ export function getToken() {
   return '';
 }
 
+export function getMenuList() {
+  let menuList = Cookies.get('menuList')
+  if (menuList) {
+    return JSON.parse(Cookies.get('menuList'))
+  }
+  return ''
+}
+
+export function setMenuList(menuList) {
+  return Cookies.set('menuList', JSON.stringify(menuList));
+}
+
+export function removeMenuList() {
+  return Cookies.remove('menuList')
+}
+
 
 

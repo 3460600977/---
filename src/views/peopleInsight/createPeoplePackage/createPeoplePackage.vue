@@ -32,9 +32,9 @@
         </div>
       </div>
     </div>
-    <div class="flex-shrink">
+    <!--<div class="flex-shrink">
       <back @handleBack="handleBack"></back>
-    </div>
+    </div>-->
   </div>
 </template>
 
@@ -91,10 +91,6 @@
       changeTab(item) {
         this.activeTab = item[seriesValue]
       },
-      //回到之前的页面
-      handleBack() {
-        this.$router.push("/peopleInsight")
-      },
     },
   }
 </script>
@@ -140,5 +136,23 @@
     width: 200px;
     height: 100%;
   }
+}
+
+html {
+  overflow-y: scroll; //这是为了兼容ie8，不支持:root, vw
+}
+
+:root {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+:root body {
+  position: absolute;
+}
+
+body {
+  width: 100vw;
+  overflow: hidden;
 }
 </style>

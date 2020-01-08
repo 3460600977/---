@@ -2,15 +2,15 @@
   <div class="container">
     <el-tabs @tab-click="changeTab" v-model="activeName" class="my-tabs" type="border-card">
 
-      <el-tab-pane label="投放计划" name="plan">
+      <el-tab-pane :lazy="true" label="投放计划" name="plan">
         <planList :active="activeName === 'plan'" />
       </el-tab-pane>
 
-      <el-tab-pane label="投放方案" name="project">
+      <el-tab-pane :lazy="true" label="投放方案" name="project">
         <projectList :active="activeName === 'project'" />
       </el-tab-pane>
 
-      <el-tab-pane label="广告创意" name="creative">
+      <el-tab-pane :lazy="true" label="广告创意" name="creative">
         <creativeList :active="activeName === 'project'" />
       </el-tab-pane>
 
@@ -36,8 +36,16 @@ export default {
     };
   },
 
-  beforeMount() {
-    this.activeName = this.$route.query.active || "plan";
+  watch: {
+    '$route': {
+      handler: function(val) {
+        this.activeName = val.query.active || "plan";
+        if (!val.query.active) {
+          this.$router.replace('/putManage?active=plan')
+        }
+      },
+      immediate: true
+    } 
   },
 
   methods: {

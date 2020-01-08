@@ -278,12 +278,12 @@
     -ms-flex-pack: center;
     justify-content: center; }
   .el-alert--success.is-light {
-    background-color: #feeded;
-    color: #F44A4A; }
+    background-color: #e9faf1;
+    color: #1ecf77; }
     .el-alert--success.is-light .el-alert__description {
-      color: #F44A4A; }
+      color: #1ecf77; }
   .el-alert--success.is-dark {
-    background-color: #F44A4A;
+    background-color: #1ecf77;
     color: #FFFFFF; }
   .el-alert--info.is-light {
     background-color: whitesmoke;

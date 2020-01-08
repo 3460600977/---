@@ -14,6 +14,7 @@
               :isClear="false"
               firstLabel="premisesName"
               secondLabel="address"
+              noData="无楼盘信息，请确认楼盘名称是否正确"
               @querySearchAsync="querySearchAsync"
               @selectLocation="selectLocation"
             ></search-input>

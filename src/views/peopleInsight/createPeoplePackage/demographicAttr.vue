@@ -59,7 +59,7 @@
       }
     },
     methods:{
-      ...mapMutations(["setTagNamesWithUpdate","removeTagNamesByName","setTagTid"]),
+      ...mapMutations(["setTagNamesWithUpdate","removeTagNamesByName"]),
 
       getChildren(){
         this.$api.peopleInsight.getChildTags(this.$parent.activeTab)
@@ -71,7 +71,6 @@
               }else{
                 this.other.push(item)
               }
-              //this.$set(this.obj, item.tid, []);
               this.$set(this.crowdProject.tagNamesObj, item.tid, []);
               item.childTags.pname = item.name;
               this.$set(this.everyObj, item.tid, item.childTags);
@@ -82,28 +81,21 @@
           })
       },
       changeSelect(tid,items){
-        let tagNames = [];
-        let tagTid = "";
-        let tagTidAry = [];
-        let tagValues = [];
+        let tags = [];
+        let tagArray = [];
         let tagObj = {'name':this.everyObj[tid].pname,'tid':tid};
         if (items.length > 0){
           this.everyObj[tid].forEach((childTag)=>{
             items.forEach((item,index)=>{
               if (childTag.tid === item){
-                tagTidAry.push(item);
-                tagValues.push(childTag.name);
+                tags.push(childTag);
               }
-
             })
           });
-          tagTid = "(" + tagTidAry.join("|") + ")";
-          tagObj.value = tagValues;
-          tagNames.push(tagObj);
+          tagObj.tags = tags;
+          tagArray.push(tagObj);
           //set方式不一样  这里是tag组只能有一个
-          this.setTagNamesWithUpdate(tagNames);
-          //TODO 先用push  后期优化
-          this.setTagTid(tagTid);
+          this.setTagNamesWithUpdate(tagArray);
         }else {
           //移除当前tag组
           this.removeTagNamesByName({'name':this.everyObj[tid].pname});
@@ -130,10 +122,9 @@
   .flex1 {
     & /deep/ .el-checkbox  {
       color: $color-text;
-      margin-bottom: 20px;
     }
   }
   .mid-start {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
   }
 </style>

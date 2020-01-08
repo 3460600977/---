@@ -3,7 +3,7 @@
     <div class="box-top">
       <div class="search-box mid">
         <el-input class="search-text" clearable v-model.trim="param.name" placeholder="输入投放计划名称"></el-input>
-        <el-button @click="getExistPlanList" type="primary" plain>查询</el-button>
+        <el-button @click="handleSearch" type="primary" plain>查询</el-button>
       </div>
 
       <div class="list-box">
@@ -29,13 +29,6 @@
       </div>
     </div>
 
-    
-    <!-- 保存 取消 -->
-    <!-- <PutMangeCard class="save-box clearfix">
-      <div class="float-right">
-        <el-button @click="nextStep" style="width: 136px" type="primary">下一步</el-button>
-      </div>
-    </PutMangeCard> -->
   </div>
 </template>
 
@@ -75,6 +68,11 @@ export default {
   },
 
   methods: {
+    handleSearch() {
+      this.param.pageIndex = 1;
+      this.getExistPlanList()
+    },
+
     getExistPlanList() {
       this.list.loading = true;
       this.$api.PutPlan.PlanList(this.param)

@@ -16,7 +16,7 @@
           <p class="font-16 color-text-1 font-number">{{buildDetail.unitNum}}个</p>
         </div>
         <div class="mid-start margin-top-20">
-          <p class="name">可售点位数</p>
+          <p class="name">点位数</p>
           <p class="font-16 color-text-1 font-number">{{buildDetail.signDeviceNum}}个</p>
         </div>
       </div>
@@ -27,14 +27,15 @@
         </div>
         <div class="mid-start margin-top-20">
           <p class="name">入住时间</p>
-          <p class="color-text-1">{{formatDate(buildDetail.inTime, 'yyyy-MM-dd')}}</p>
+<!--          <p>{{// formatDate("YYYY-mm-dd", buildDetail.inTime)}}</p>-->
+          <p class="color-text-1">{{formatDate(buildDetail.inTime * 1000, 'yyyy-MM-dd')}}</p>
         </div>
         <div class="mid-start margin-top-20">
           <p class="name">入住率</p>
           <p class="color-text-1">{{buildDetail.inHouseRate}}%</p>
         </div>
         <div class="mid-start margin-top-20">
-          <p class="name">约覆盖人数</p>
+          <p class="name">覆盖人数</p>
           <p class="color-text-1">{{buildDetail.totalPeople}}人</p>
         </div>
         <div class="mid-start margin-top-20">
@@ -182,7 +183,7 @@
           </div>
         </div>
         <div v-if="hotSearch" class="box3 box border-bottom">
-          <p class="title">行业热搜指数</p>
+          <p class="title">社区行业热搜指数</p>
           <div class="fullContainer">
             <histogram
               width="100%"
@@ -327,16 +328,32 @@
       renderImg(src) {
         return require(`@/assets/images/icon_${src}.png`)
       },
+      resetChat() {
+        this.sexArr = null
+        this.ageArr = null
+        this.consumptionDist = null
+        this.marriageDist = null
+        this.privateCarDist = null
+        this.hotSearch = null
+        this.incomeDist = null
+        this.educationDist = null
+      },
       loadData(id) {
         this.loading = true
         this.$api.cityInsight.getBuildingDetail({pid: id}).then((data) => {
           this.buildDetail = data.result
           this.loading = false
-          if (!this.buildDetail || (this.buildDetail && !this.buildDetail.chat)) {
+          if (!this.buildDetail) {
+            this.buildDetail = null
+            return;
+          }
+          if (!this.buildDetail.chat) {
+            this.resetChat()
             return
           }
           if (!this.buildDetail.chat.cityAverage) {
-            return;
+            this.resetChat()
+            return
           }
           this.sexArr = this.renderSexChart(data.result.chat.genderDist)
           this.ageArr = this.renderHistogramChart(data.result.chat.ageDist, data.result.chat.cityAverage.ageAverageDist)
@@ -353,6 +370,7 @@
         })
       },
       renderSexChart(arr) {
+        if (!arr.length) return null
         let result = []
         result = arr.map((item, i) => {
           if (item.tag === '女') {
@@ -364,6 +382,7 @@
         return result
       },
       renderHistogramChart(arr1, arr2) {
+        if (!arr1) return null
         let result = {
           xAxis: [],
           yAxis: []

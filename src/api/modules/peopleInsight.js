@@ -36,12 +36,34 @@ export const peopleInsight = {
       data
     });
   },
-
+  // 媒体资源 加载人群洞察包
+  getPeopleInsightList:(data) => {
+    return request({
+      url: "/dpapi/cityInsight/query",
+      method: "post",
+      data,
+    });
+  },
   // 加载人群洞察包list数据
   getPeopleInsightHotMap:(data) => {
     return request({
-      url: `/dpapi/cityInsight/hot/${data.id}`,
+      url: `/dpapi/cityInsight/hot`,
+      method: "POST",
+      data
+    });
+  },
+// 加载人群洞察包明细数据
+  getPeopleInsightDetail:(data) => {
+    return request({
+      url: `/dpapi/crowd/detail/${data}`,
       method: "GET"
     });
   },
+  //获取人群分析数据
+  getPeopleAlalysis:(data) => {
+    return request({
+      url: `/dpapi/crowd/poi/${data.id}`,
+      method: "get",
+    });
+  }
 }

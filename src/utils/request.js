@@ -15,7 +15,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // Do something before request is sent
-    
+
     if (store.state.token.userToken) {
       // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
       config.headers['token'] = store.state.token.userToken;
@@ -56,14 +56,13 @@ service.interceptors.response.use(
           type: 'warning'
         }).then(() => {
           removeUserInfo()
-          this.$store.commit('setToken', '')
-          this.$router.replace('/login');
+          store.commit('setToken', '')
+          window.location.href = "/login";
         })
       }
-      Notification({
-        title: '警告',
+      Message({
         message: res.msg || '网络异常, 请稍后再试',
-        type: 'warning'
+        type: 'error'
       });
       return Promise.reject(res)
     } else {
@@ -75,8 +74,7 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err' + error) // for debug
-    Notification({
-      title: '错误',
+    Message({
       message: error.msg || '网络异常, 请稍后再试',
       type: 'error',
     })

@@ -1,5 +1,5 @@
 <template>
-    <div class="container cityInsight" v-loading="loading">
+    <div class="container cityInsight" v-loading="loading || hotLoading">
       <div class="left-info mid">
         <left-info
           :isShow="isShow"
@@ -19,6 +19,7 @@
             title="城市列表"
             :selectDatas="cityDatas"
             :filters="cityFilter"
+            :currentItem="cityFilter"
             @hide="() => hide(0)"
             @returnResult="(val) => returnResult(val, 0)"
           ></singleSelect-popup>
@@ -38,6 +39,7 @@
                 @hide="hide(1)"
                 v-if="leftShow[0]"
                 ref="peopleInsight"
+                :city="cityFilter"
                 v-show="activeTab === 0"
                 @switchChange="switchChange"
                 @returnResult="(val) => returnResult(val, 2)"
@@ -80,7 +82,6 @@
           :currentSelectType="currentSelectType"
         ></mouseMove-text>
       </div>
-<!--      <div class="right-info">-->
         <slide-container
           ref="slideCon"
         >
@@ -97,7 +98,6 @@
             ref="buildingDetail"
           ></building-detail>
         </slide-container>
-<!--      </div>-->
       <div class="map container">
         <db-map
           ref="dbmap"
@@ -105,6 +105,7 @@
           :budget="budget"
           :city="cityFilter"
           :currentSelectType="currentSelectType"
+          @hidePopup="hidePopup"
           @buildingClick="buildingClick"
           @pathArrChange="pathArrChange"
           @activePathChange="activePathChange"
@@ -124,7 +125,7 @@
       <div class="add-dialog">
         <add-dialog
           ref="addDialog"
-          cityCode="cityFilter.cityCode"
+          :cityCode="cityFilter.cityCode"
           @selectLocation="addLocation"
         ></add-dialog>
       </div>
@@ -181,6 +182,7 @@
     },
     data() {
       return {
+        // isInit: true,
         buildingDatas: { // 楼宇标签
           title: '楼宇标签',
           options: [
@@ -261,8 +263,9 @@
         },
         cityFilter: { // 当前城市信息
           cityCode: null,
-          name: null
+          name: '没有定位到城市！'
         },
+        hotLoading: false,
         loading: false,
         rightShow: 0, // 空控制右边面板显示点位信息还是楼盘详情
         showPathCopy: null, // 当前显示的path
@@ -299,10 +302,6 @@
       this.bindEvent()
     },
     watch: {
-      cityFilter(val) {
-        this.$refs.dbmap.setCity(val)
-        this.$refs.dbmap.clearMap()
-      },
     },
     computed: {
       mapLocation() { // 当前显示弹窗得path
@@ -324,10 +323,14 @@
       document.documentElement.removeEventListener('keydown', this.cancleCircleDrawType)
     },
     methods: {
+      // 隐藏弹出框
+      hidePopup() {
+        this.hideAll()
+        this.$refs.drawType.hide()
+      },
       // 添加资源包成功后触发事件
       createSuc() {
         this.$refs.dbmap.clearPathArr()
-        this.$refs.dbmap.drawDevicePoints()
       },
       // 查找选点按钮点击
       searchDrawTypeClick() {
@@ -350,12 +353,14 @@
         this.activeTab = val.value
       },
       loadHotMap(id) {
-        this.$api.peopleInsight.getPeopleInsightHotMap({id: id}).then((data) => {
+        this.hotLoading = true
+        this.$api.peopleInsight.getPeopleInsightHotMap({crowdInsightId: id, max: 100, min: 0}).then((data) => {
           if (data.result) {
             this.$refs.dbmap.drawHotMap(data.result)
           } else {
             this.switchChange(false)
           }
+          this.hotLoading = false
         })
       },
       // 隐藏热力图
@@ -366,39 +371,51 @@
         this.switchChange(false)
         this.$refs.peopleInsight.resetSelect()
       },
-      resetTags() {
-        if (this.buildingFilterSelected) { // 如果标签选择过，则清空标签选择结果
-          this.$refs.dbmap.clearMap()
-          this.$refs.tagsSelect.operate(0)
-        } else {
-          this.createSuc()
+      resetTagsAndLoad() {
+        this.buildingFilter = {
+          buildType: [],
+          premiseAvgFee: [],
+          occupancyRate: [],
+          buildingAge: [],
+          parkingNum: [],
+          propertyRent: []
         }
+        if (this.$refs.tagsSelect) {
+          this.$refs.tagsSelect.clear()
+        }
+        this.buildingFilterSelected = false
+        this.loadData()
       },
+
       resetLeftPopup(index) {
         if (index === 0) {
-          this.buildingFilter = {
-            buildType: [],
-            premiseAvgFee: [],
-            occupancyRate: [],
-            buildingAge: [],
-            parkingNum: [],
-            propertyRent: []
-          }
-          this.buildingFilterSelected = false
           this.rightShow = 0
           this.activeTab = 0
           this.leftShow = new Array(this.leftShow.length).fill(false)
-          this.loadData()
+          this.resetTagsAndLoad()
         } else if (index === 1) {
           this.resetHotMap()
         } else if (index === 2) {
-          this.resetTags()
+          if (this.buildingFilterSelected) { // 如果标签选择过，则清空标签选择结果
+            this.$refs.dbmap.clearMap()
+            this.resetTagsAndLoad()
+          } else {
+            this.createSuc()
+          }
         }
       },
       // 各种弹窗返回数据触发方法 type表示楼盘标签是 0清空还是2选择
       returnResult(val, index, type) {
         if (index === 0) { // 城市切换
-          this.cityFilter = val
+          this.$confirm('切换城市后，系统将清空当前城市的操作数据，是否切换？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.cityFilter = val
+            this.resetLeftPopup(index, type)
+          }).catch(() => {
+          });
         } else if (index === 1) { // 楼盘标签选择
           if (type === 0) {
             this.buildingFilterSelected = false
@@ -409,10 +426,29 @@
           this.buildingFilter = val
           this.loadData()
           this.hide(1)
+          this.resetLeftPopup(index, type)
         } else if (index === 2) { // 热力图选择
-          this.loadHotMap(val)
-          this.hide(1)
+          if (!Object.keys(this.pathArr).length) {
+            // this.switchChange(true)
+            this.$refs.peopleInsight.setSwitchValue(true)
+            this.getHotMap(val, index, type)
+            return
+          }
+          this.$confirm('系统加载人群包，将自动清空之前的操作数据，是否清空？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$refs.peopleInsight.setSwitchValue(true)
+            // this.switchChange(true)
+            this.getHotMap(val, index, type)
+          }).catch(() => {
+          });
         }
+      },
+      getHotMap(val, index, type) {
+        this.loadHotMap(val)
+        this.hide(1)
         this.resetLeftPopup(index, type)
       },
       hideAll() {
@@ -443,10 +479,40 @@
       hide(val) {
         this.isShow[val] = false
       },
+      findItem(val, arr) {
+        let arrTotal = this.$tools.operation(arr, 'values')
+        let result =  arrTotal.find((item) => {
+          return item.name == val.name
+        })
+        return result
+      },
       getCityFilter() {
         this.$refs.dbmap.location().then((data) => {
-          // this.cityFilter = Object.assign({}, this.cityFilter, {name: '北京市'})
-          this.cityFilter = Object.assign({}, this.cityFilter, {name: data.name})
+          // data.name = '南充市'
+          if (!data || (data && data.name === '全国')) {
+            this.$confirm('定位失败，将自动将城市设置为成都！', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              let result = Object.assign({}, this.cityFilter, {name: '成都市'})
+              this.cityFilter = this.findItem(result, this.cityDatas)
+              this.loadData()
+            }).catch(() => {
+            });
+            return
+          }
+          let result = Object.assign({}, this.cityFilter, {name: data.name})
+          let result1 = this.findItem(result, this.cityDatas)
+          if (result1) {
+            this.cityFilter = result1
+            this.loadData()
+          } else {
+            this.cityFilter = result
+            this.$message.error('当前城市尚未开通，我们已在快马加鞭，敬请期待！');
+            this.loading = false
+            return
+          }
         })
       },
       loadCitys() {
@@ -483,6 +549,7 @@
       },
       // 初始化
       init() {
+        console.log(this.$route.query)
         this.loadCitys()
       },
       // 楼盘详情窗口点击返回按钮
@@ -497,7 +564,7 @@
       },
       // 添加媒体资源弹窗选择添加的楼盘
       addLocation(val) {
-        let isExist = this.$refs.dbmap.addItem(val)
+        let isExist = this.$refs.dbmap.addBatchItem([val])
         this.$refs.addDialog.selectCallBack(isExist)
       },
       // 右边弹出框点击添加按钮
@@ -506,7 +573,7 @@
       },
       // 右边弹出框点击删除某个楼盘
       deleteItem(item) {
-        this.$refs.dbmap.deleteItem(item)
+        this.$refs.dbmap.deleteBathItem([item])
       },
       // 右边弹出框点击创建资源包
       createPackage() {
@@ -546,6 +613,7 @@
       * */
       returnSelectedBuildings(val) {
         this.selectedBuildings = val
+        this.rightShow = 0
       },
       // mapPopup里面点击删除(0)和确定按钮(1)
       operate(val, item) {

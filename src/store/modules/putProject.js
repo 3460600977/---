@@ -5,12 +5,17 @@
 export const putProject = {
   state: {
     list: [], // 楼盘列表
+    statistics: '', // 楼盘数据未寻量统计
   },
 
   mutations: {
     setBuildsList(state, data) {
       state.list = data;
-    }
+    },
+
+    setStatistics(state, data) {
+      state.statistics = data;
+    },
   },
 
   getters: {
@@ -58,6 +63,17 @@ export const putProject = {
         })
       })
       return result;
-    }
+    },
+
+    // 设备id数组
+    premiseIds: state => {
+      let result = [];
+      state.list.forEach(item => {
+        result.push(item.premisesId)
+      })
+      result = result.join(',')
+      return result;
+    },
+
   }
 }
