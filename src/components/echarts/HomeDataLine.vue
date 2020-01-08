@@ -1,5 +1,5 @@
 <template>
-  <div ref="lineBox" class="lineBox" style="width:1150px;height:450px;"></div>
+  <div ref="lineBox" class="lineBox" style="width:1150px;height:480px;"></div>
 </template>
 <script>
   import echarts from "echarts";
@@ -62,13 +62,13 @@
         if (chartParam.selectLine.checked) {
           option = {
             //1、 格式化提示信息
-            animation:false,
+            animation: false,
             grid: {
               width: "95%",
-              height: "80%",
+              height: "90%",
               left: "2%",
               right: "3%",
-              bottom: "8%",
+              bottom: "7%",
               containLabel: true
             },
             tooltip: {
@@ -92,10 +92,14 @@
             },
             xAxis: [
               {
+                boundaryGap: false,
                 type: "category",
                 data: chartParam.xdata,
                 axisPointer: {
                   type: "shadow"
+                },
+                axisLabel: {
+                  showMaxLabel: true,
                 },
                 axisLine: {
                   lineStyle: {
@@ -158,7 +162,7 @@
                 type: "line",
                 smooth: true,
                 yAxisIndex: 0,
-                animationDuration: 2800,
+                animationDuration: 1800,
                 animationEasing: "cubicInOut",
                 data: appregnum,
                 itemStyle: {
@@ -166,7 +170,7 @@
                     color: "#2d5aff",
                     lineStyle: {
                       color: "#2d5aff",
-                      width: 2
+                      width: 1
                     }
                     // label : {show: true}
                   }
@@ -199,7 +203,7 @@
                 type: "line",
                 yAxisIndex: 1,
                 smooth: true,
-                animationDuration: 2800,
+                animationDuration: 1800,
                 animationEasing: "cubicInOut",
                 data: activenum,
                 itemStyle: {
@@ -207,7 +211,7 @@
                     color: "#f44a4a",
                     lineStyle: {
                       color: "#f44a4a",
-                      width: 2
+                      width: 1
                     }
                     // label : {show: true}
                   }
@@ -242,10 +246,10 @@
             //1、 格式化提示信息
             grid: {
               width: "95%",
-              height: "80%",
+              height: "90%",
               left: "2%",
               right: "3%",
-              bottom: "8%",
+              bottom: "7%",
               containLabel: true
             },
             tooltip: {
@@ -271,9 +275,14 @@
               {
                 type: "category",
                 data: chartParam.xdata,
+                boundaryGap: false,
                 axisPointer: {
                   type: "shadow"
                 },
+                axisLabel: {
+                  showMaxLabel: true,
+                },
+                interval: 0,
                 axisLine: {
                   lineStyle: {
                     color: "#999999"
@@ -312,7 +321,7 @@
                 type: "line",
                 smooth: true,
                 yAxisIndex: 0,
-                animationDuration: 2800,
+                animationDuration: 1800,
                 animationEasing: "cubicInOut",
                 data: appregnum,
                 itemStyle: {
@@ -320,7 +329,7 @@
                     color: "#2d5aff",
                     lineStyle: {
                       color: "#2d5aff",
-                      width: 2
+                      width: 1
                     }
                     // label : {show: true}
                   }
@@ -351,7 +360,7 @@
             ]
           };
         }
-        this.myChart.setOption(option,true);
+        this.myChart.setOption(option, true);
 
       }
     },
