@@ -81,6 +81,8 @@
     },
     watch: {
       buildings(val) {
+        this.setCity(this.city)
+        this.clearMap()
         this.initMap(val)
       },
       activePath(val) {
@@ -186,14 +188,13 @@
         this.points = this.normalizePointsAll(val)
         this.pointsOverlayObj.isShow = true
         this.reGetAreaPoint()
-        this.initHotMap()
         this.jugDraw()
       },
       setCity(city) {
         this.map.centerAndZoom(city.name, 12);
       },
       initHotMap() {
-        if (this.heatmapOverlay || !this.buildings.length) return;
+        if (this.heatmapOverlay) return;
         let heatmapOverlay = new BMapLib.HeatmapOverlay({
           "radius":20,
           gradient: {
@@ -402,12 +403,18 @@
         }
         return  true
       },
+      setSvgIndex() {
+        if (this.map.getPanes().mapPane.getElementsByTagName('svg').length) {
+          this.map.getPanes().mapPane.getElementsByTagName('svg')[0].style.zIndex = 1000
+        }
+      },
       /*
        *折线和多边形画线完成回调函数
        */
       drawComplete(drawingManager) {
         drawingManager.addEventListener("overlaycomplete", (e) => {
           if (!this.drawErrorTip(e)) return
+          this.setSvgIndex()
           let location = this.map.pixelToPoint(e.currentTarget._mask._draggingMovePixel)
           let path = {
             type: e.drawingMode,
@@ -732,9 +739,7 @@
       // },
       mapLoad() {
         this.initMouse()
-        if (this.map.getPanes().mapPane.getElementsByTagName('svg').length) {
-          this.map.getPanes().mapPane.getElementsByTagName('svg')[0].style.zIndex = 1000
-        }
+        this.initHotMap()
       },
       mapBindEvent() {
         this.map.addEventListener('dragend', this.drawMarkersByVisual)
@@ -747,6 +752,7 @@
         // this.map.addEventListener('tilesloaded', this.tilesloaded)
       },
       drawCircle(point, info) {
+        this.setSvgIndex()
         let marker = this.addMarkerIcon(point)
         let circle = new BMap.Circle(point, this.defaultRadius, this.styleOptions);
         this.map.addOverlay(circle);
