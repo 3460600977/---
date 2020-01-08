@@ -282,12 +282,6 @@ export default {
     this.bindEvent();
     this.hideAll();
   },
-  watch: {
-    cityFilter(val) {
-      this.$refs.dbmap.setCity(val);
-      this.$refs.dbmap.clearMap();
-    }
-  },
   computed: {
     mapLocation() {
       // 当前显示弹窗得path
