@@ -349,8 +349,8 @@ export default {
         )
       })
       this.fackProvinceTa = this.spliceArr(indexArr, this.fackProvinceTa)
-      data[0] = (data[0].concat(this.fackProvinceTa)).splice(0, 9)
-      data[1] = (data[1].concat(this.fackProvinceTa)).splice(0, 9)
+      data[0] = (data[0].concat(this.fackProvinceTa)).splice(0, 10)
+      data[1] = (data[1].concat(this.fackProvinceTa)).splice(0, 10)
       return data
     },
     spliceArr(arr, data) {
@@ -383,8 +383,8 @@ export default {
         })
       })
       this.fackCityTa = this.spliceArr(indexArr, this.fackCityTa)
-      data[0] = (data[0].concat(this.fackCityTa)).splice(0, 9)
-      data[1] = (data[1].concat(this.fackCityTa)).splice(0, 9)
+      data[0] = (data[0].concat(this.fackCityTa)).splice(0, 10)
+      data[1] = (data[1].concat(this.fackCityTa)).splice(0, 10)
       return data
     },
   },
