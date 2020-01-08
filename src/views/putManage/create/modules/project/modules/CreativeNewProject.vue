@@ -210,6 +210,7 @@
 
       <!-- 楼盘定向->选中列表 -->
       <BuildList
+        @delMapItem="delMapItem"
         :buildingDirectionActiveType="buildingDirection.activeType"
         :loading="buildingDirection.builds.loading"/>
 
@@ -306,8 +307,8 @@
       width="98%"
       class="map-choose-dialog"
       :close-on-press-escape="closeEscTrue">
-      <map-choose-window @hideMapPoint="hideMapPoint"
-                         @submitSelectedBuildPoint="submitSelectedBuildPoint">
+      <map-choose-window ref="mapDialog" @hideMapPoint="hideMapPoint"
+          @submitSelectedBuildPoint="submitSelectedBuildPoint">
       </map-choose-window>
     </el-dialog>
 
@@ -488,6 +489,12 @@
           city: city.cityCode
         }
         this.getBuildsAvalable(param)
+      },
+
+      // 删除列表联动删除地图列表
+      delMapItem(item) {
+        item.premisesId = item.premiseId;
+        this.$refs.mapDialog.deleteItem(item)
       },
 
 
@@ -870,14 +877,27 @@
       pickerOptions() {
         let _this = this;
         let now = new Date();
+        let onDay = 1 * 24 * 60 * 60 * 1000; // 一天毫秒数
         return {
           firstDayOfWeek: 6,
           disabledDate(date) {
-            return date.getTime() < Date.now() ||
-            // 周六六点以后不能选
-            (now.getDate() == date.getDate() && now.getMonth() === date.getMonth() && now.getDay() == 6 && now.getHours() > 18) ||
-            // 按周投放
-            (_this.formData.projectType.value == 0 && date.getDay() != 5 && date.getDay() != 6);
+            return date < now // 今天以前
+                // 21点以后不能选明天
+                ||  (
+                      now.getDate() + 1 == date.getDate() && now.getMonth() === date.getMonth() && now.getFullYear() === date.getFullYear()
+                      && now.getHours() >= 21
+                    )
+                  
+                // 按周投放
+                || _this.formData.projectType.value == 0 && date.getDay() != 5 && date.getDay() != 6 
+                  ||  ( now.getDate() == date.getDate() && now.getMonth() === date.getMonth() && now.getFullYear() === date.getFullYear() // 判断今天
+                          &&  ( 
+                                (  date.getDay() === 5 && date.getHours() > 18 ) // 周五6以后
+                                || date.getDay() === 6 // 周六
+                                || date.getDay() === 0 // 周日
+                              )
+                      )
+                
           }
         };
       },
@@ -902,6 +922,9 @@
 
 <style scoped lang="scss">
   .put-project {
+    .el-tabs__content{
+      overflow: auto;
+    }
     .map-choose-dialog{
       top: -13%;
       /deep/ .el-dialog__header {
