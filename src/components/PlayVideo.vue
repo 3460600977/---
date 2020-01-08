@@ -1,44 +1,48 @@
 <template>
-  <div class="play_modal_con type1">
-    <a href="javascript:void(0);" class="close_btn" @click="closePlayDialog"></a>
-    <div class="dt_box">
-      <div class="small_play_box">
-        <div class="video_box">
-          <video
-            id="playSmallVideo"
-            :src="this.playVideoUrl.video"
-            width="100%"
-            playsinline
-            x-webkit-airplay="true"
-            webkit-playsinline
-            autoplay="autoplay"
-          ></video>
-        </div>
-        <div class="pic">
-          <img id="bscreenpicSmall" :src="this.playVideoUrl.img" alt="合作品牌-新潮传媒集团" />
-        </div>
-      </div>
-    </div>
-    <div class="fr">
-      <div class="play_box">
-        <div class="video_box">
-          <video
-            id="playVideo"
-            :src="this.playVideoUrl.video"
-            width="100%"
-            playsinline
-            x-webkit-airplay="true"
-            webkit-playsinline
-            autoplay="autoplay"
-          ></video>
-        </div>
-        <div class="pic">
-          <img id="bscreenpic" :src="this.playVideoUrl.img" alt="合作品牌-新潮传媒集团" />
+  <el-dialog :before-close="closePlayDialog" center width="900px" :visible.sync="isShow" class="play-dialog-video">
+    <div class="play_modal_con type1">
+      <a href="javascript:void(0);" class="close_btn" @click="closePlayDialog"></a>
+      <div class="dt_box">
+        <div class="small_play_box">
+          <div class="video_box">
+            <video
+              v-if="isShow"
+              id="playSmallVideo"
+              :src="this.playVideoUrl.video"
+              width="100%"
+              playsinline
+              x-webkit-airplay="true"
+              webkit-playsinline
+              autoplay="autoplay"
+            ></video>
+          </div>
+          <div class="pic">
+            <img id="bscreenpicSmall" :src="this.playVideoUrl.img" alt="合作品牌-新潮传媒集团" />
+          </div>
         </div>
       </div>
-      <p>广告投放页面</p>
+      <div class="fr">
+        <div class="play_box">
+          <div class="video_box">
+            <video
+              id="playVideo"
+              v-if="isShow"
+              :src="this.playVideoUrl.video"
+              width="100%"
+              playsinline
+              x-webkit-airplay="true"
+              webkit-playsinline
+              autoplay="autoplay"
+            ></video>
+          </div>
+          <div class="pic">
+            <img id="bscreenpic" :src="this.playVideoUrl.img" alt="合作品牌-新潮传媒集团" />
+          </div>
+        </div>
+        <p>广告投放页面</p>
+      </div>
     </div>
-  </div>
+  </el-dialog>
 </template>
 
 <script>
@@ -47,6 +51,10 @@ export default {
   props: {
     playVideoUrl: {
       type: Object
+    },
+    isShow: {
+      type: Boolean,
+      default: false,
     }
   },
   methods: {
