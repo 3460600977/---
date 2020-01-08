@@ -113,7 +113,7 @@
                 min: 0,
                 max: maxappreg,
                 splitNumber: 5,
-                interval: interval_left,
+                interval: maxappreg === 0 ? 1 : interval_left,
                 axisLine: {
                   lineStyle: {
                     color: "#606266"
@@ -135,7 +135,7 @@
                 min: 0,
                 max: maxactive,
                 splitNumber: 5,
-                interval: interval_right,
+                interval: maxactive === 0 ? 1 : interval_right,
                 axisLine: {
                   lineStyle: {
                     color: "#999999"
@@ -293,7 +293,7 @@
                 min: 0,
                 max: maxappreg,
                 splitNumber: 5,
-                interval: interval_left,
+                interval: maxappreg === 0 ? 1 : interval_left,
                 axisLine: {
                   lineStyle: {
                     color: "#606266"
