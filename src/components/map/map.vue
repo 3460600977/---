@@ -262,7 +262,7 @@
           onSearchComplete: ((results) => {
               // 判断状态是否正确
               if (local.getStatus() == BMAP_STATUS_SUCCESS) {
-                this.$emit('returnSearchResult', results.Sq)
+                this.$emit('returnSearchResult', results.Tq)
                 local = null
               }
             }
