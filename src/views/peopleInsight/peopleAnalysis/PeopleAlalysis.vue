@@ -142,6 +142,7 @@ export default {
   },
   data() {
     return {
+      id:0,
       loading: false,
       result: {},
       peopleType: '',
@@ -456,9 +457,9 @@ export default {
   },
   methods: {
     search() {
-      let id= this.$route.query.id;
+      this.id= this.$route.query.id;
       this.loading = true;
-      this.$api.peopleInsight.getPeopleAlalysis({id:id}).then( res => {
+      this.$api.peopleInsight.getPeopleAlalysis({id:this.id}).then( res => {
         this.loading = false;
         this.result = res.result;
         this.legendName = this.peopleType = res.result.crowdInsightName;
@@ -572,12 +573,12 @@ export default {
       });
       cityFilter.cityCode = Number(this.cityCode);
       cityFilter.name = cityName;
-      crowdInfo.id = this.$router.query.id;
+      crowdInfo.id = this.id;
       crowdInfo.name = this.peopleType;
       this.$router.push({
         path:'/cityInsight/selectPoint',
         query:{cityFilter:JSON.stringify(cityFilter),crowdInfo:JSON.stringify(crowdInfo)}
-      })
+      });
     },
     downSort(data,piVO,wholePiVO) {
       let voArray = [];
