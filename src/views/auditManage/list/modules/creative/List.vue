@@ -1031,7 +1031,7 @@ export default {
           display: inline-block;
           width: 260px;
           height: 212px;
-          background: rgba(248, 248, 248, 1);
+          background: rgb(228, 223, 223);
           border: 1px solid rgba(229, 231, 233, 1);
           border-radius: 2px;
         }

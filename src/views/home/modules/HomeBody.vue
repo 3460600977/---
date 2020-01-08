@@ -625,7 +625,7 @@ export default {
     }
     &.line-echarts {
       width: 1200px;
-      height: 600px;
+      height: 620px;
       .dataLine {
         margin-top: 37px;
       }
