@@ -193,7 +193,7 @@
         this.map.centerAndZoom(city.name, 12);
       },
       initHotMap() {
-        if (this.heatmapOverlay) return;
+        if (this.heatmapOverlay || !this.buildings.length) return;
         let heatmapOverlay = new BMapLib.HeatmapOverlay({
           "radius":20,
           gradient: {

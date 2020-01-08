@@ -16,6 +16,7 @@ export default {
   components: {
     LeftStep
   },
+
 };
 </script>
 

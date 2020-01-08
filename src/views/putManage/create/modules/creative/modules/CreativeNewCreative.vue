@@ -17,7 +17,7 @@
         <!-- 屏幕类型 -->
         <el-form-item 
           v-if="createType === 'single' || (createType === 'edit' && !haveProject)" 
-          style="margin-bottom: 12px;" class="screen-type-preview-box mt-20" 
+          style="margin-bottom: 22px;" class="screen-type-preview-box mt-20" 
           prop="screenType" label="屏幕类型">
           <ScreenType :value="formData.screenType" @changeScreenType="changeScreenType"/>
         </el-form-item>
