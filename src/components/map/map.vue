@@ -107,7 +107,7 @@
       let map = new BMap.Map(this.$refs.container, {enableMapClick: false});
       this.map = map
 
-      // this.setCity({name: '成都市'})
+      this.setCity({name: '成都市'})
       map.enableScrollWheelZoom();
       map.addControl(new BMap.ScaleControl());
       // this.initHotMap()
@@ -188,10 +188,24 @@
         this.points = this.normalizePointsAll(val)
         this.pointsOverlayObj.isShow = true
         this.reGetAreaPoint()
+        console.log('11111')
         this.jugDraw()
       },
       setCity(city) {
         this.map.centerAndZoom(city.name, 12);
+      },
+      initPointOverlaySingle(type) {
+        let str = type === 0 ? 'selected' : 'unSelected'
+        let overlay = `${str}Overlay`
+        let pointsOverlay = new BMap.PointCollection([], this.pointsOptions[type]);
+        this.pointsOverlayObj[overlay] = pointsOverlay
+        this.map.addOverlay(pointsOverlay);
+        pointsOverlay.disableMassClear()
+      },
+      initPointsOverlay() {
+        this.initPointOverlaySingle(0)
+        this.initPointOverlaySingle(1)
+        console.log(this.pointsOverlayObj)
       },
       initHotMap() {
         if (this.heatmapOverlay) return;
@@ -414,7 +428,7 @@
       drawComplete(drawingManager) {
         drawingManager.addEventListener("overlaycomplete", (e) => {
           if (!this.drawErrorTip(e)) return
-          this.setSvgIndex()
+          // this.setSvgIndex()
           let location = this.map.pixelToPoint(e.currentTarget._mask._draggingMovePixel)
           let path = {
             type: e.drawingMode,
@@ -738,9 +752,13 @@
       //   }
       // },
       mapLoad() {
-        this.initMouse()
+        console.log('4444')
+        this.initPointsOverlay()
         this.initHotMap()
+        this.initMouse()
+        this.setSvgIndex()
       },
+
       mapBindEvent() {
         this.map.addEventListener('dragend', this.drawMarkersByVisual)
         this.map.addEventListener('zoomend', this.mapZoomEnd)
@@ -752,7 +770,7 @@
         // this.map.addEventListener('tilesloaded', this.tilesloaded)
       },
       drawCircle(point, info) {
-        this.setSvgIndex()
+        // this.setSvgIndex()
         let marker = this.addMarkerIcon(point)
         let circle = new BMap.Circle(point, this.defaultRadius, this.styleOptions);
         this.map.addOverlay(circle);
@@ -914,6 +932,7 @@
       setDevicePoints(points, type) {
         let str = type === 0 ? 'selected' : 'unSelected'
         let overlay = `${str}Overlay`
+        console.log(this.pointsOverlayObj[overlay])
         if (!this.pointsOverlayObj[overlay]) {
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
