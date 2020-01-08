@@ -56,7 +56,11 @@
     },
     methods: {
       setSearchList(lists) {
-        this.lists = lists
+        if (lists) {
+          this.lists = lists
+        } else {
+          this.lists = []
+        }
       },
       handleSelect(item) {
         this.$emit('selectLocation', item)
