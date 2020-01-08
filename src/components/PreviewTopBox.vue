@@ -9,7 +9,6 @@
         class="top"
         controls
         autoplay
-        loop
         :src="top.url"></video>
 
       <img
