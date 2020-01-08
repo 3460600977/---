@@ -328,41 +328,45 @@ export default {
     },
     normalizeProvinceData(arr) {
       // 0是ta人数的值 1是ta浓度的值
+      let indexArr = []
       let data = {0: [], 1: []}
       arr.forEach((item) => {
         let n = this.getIndex(item, this.fackProvinceTa)
-        if (n !== -1) {
-          this.fackProvinceTa.splice(n, 1)
-        }
-        data[0].push(
-          {
+        indexArr.push(n)
+        data[0].push({
           value: item.count,
           displayName: item.name,
           name: item.name.replace(/省/g,"").replace(/市/,""),
           countPercent: parseInt(item.countPercent, 10) * 100 + '%'
-        },
-          ...this.fackProvinceTa.slice(0, 9)
-        )
+        })
         data[1].push(
           {
           value: (item.density * 100).toFixed(2),
           displayName: item.name,
           name: item.name.replace(/省/g,"").replace(/市/,""),
           countPercent: (item.density * 100).toFixed(2) + '%'
-          },
-          ...this.fackProvinceTa.slice(0, 9)
+          }
         )
+      })
+      this.fackProvinceTa = this.spliceArr(indexArr, this.fackProvinceTa)
+      data[0] = (data[0].concat(this.fackProvinceTa)).splice(0, 9)
+      data[1] = (data[1].concat(this.fackProvinceTa)).splice(0, 9)
+      return data
+    },
+    spliceArr(arr, data) {
+      arr.forEach((item) => {
+        data.splice(item, 1)
       })
       return data
     },
     normalizeCityData(arr) {
       // 0是ta人数的值 1是ta浓度的值
+      let indexArr = []
       let data = {0: [], 1: []}
       arr.forEach((item) => {
         let n = this.getIndex(item, this.fackCityTa, 1)
-        if (n !== -1) {
-          this.fackCityTa.splice(n, 1)
-        }
+        indexArr.push(n)
+
         let val = [Number(item.lng), Number(item.lat)]
         data[0].push({
           value: val.concat(Number(item.count)),
@@ -370,14 +374,17 @@ export default {
           displayName: item.name,
           name: item.name,
           countPercent: parseInt(item.countPercent * 100, 10) + '%'
-        },  ...this.fackCityTa.slice(0, 9))
+        })
         data[1].push({
           displayName: item.name,
           value: val.concat((item.density * 100).toFixed(2)),
           name: item.name,
           countPercent: (item.density * 100).toFixed(2) + '%'
-        }, ...this.fackCityTa.slice(0, 9))
+        })
       })
+      this.fackCityTa = this.spliceArr(indexArr, this.fackCityTa)
+      data[0] = (data[0].concat(this.fackCityTa)).splice(0, 9)
+      data[1] = (data[1].concat(this.fackCityTa)).splice(0, 9)
       return data
     },
   },

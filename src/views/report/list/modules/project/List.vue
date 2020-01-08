@@ -120,11 +120,28 @@
             <span class="report-time">{{scope.row[scope.column.property]}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="cost" label="花费数（元）" sortable="custom"></el-table-column>
-        <el-table-column prop="showTimes" label="曝光数" sortable="custom"></el-table-column>
-        <el-table-column prop="deviceNum" label="设备数" sortable="custom"></el-table-column>
-        <el-table-column prop="totalPeople" label="受众人数" sortable="custom"></el-table-column>
-        <el-table-column prop="watchedTimes" label="受众观看次数" sortable="custom"></el-table-column>
+        <el-table-column prop="cost" label="花费数（元）" sortable="custom">
+        </el-table-column>
+        <el-table-column prop="showTimes" label="曝光数" sortable="custom">
+          <template slot-scope="scope">
+            {{$tools.toThousands(scope.row['showTimes'],false)}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="deviceNum" label="设备数" sortable="custom">
+          <template slot-scope="scope">
+            {{$tools.toThousands(scope.row['deviceNum'],false)}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="totalPeople" label="受众人数" sortable="custom">
+          <template slot-scope="scope">
+            {{$tools.toThousands(scope.row['totalPeople'],false)}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="watchedTimes" label="受众观看次数" sortable="custom">
+          <template slot-scope="scope">
+            {{$tools.toThousands(scope.row['watchedTimes'],false)}}
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <div class="report-page">
@@ -382,7 +399,7 @@ export default {
               this.projectList.selectPlan = item.name;
             }
           });
-        
+
           this.reportPlanList.loading = false;
         })
         .catch(res => {
