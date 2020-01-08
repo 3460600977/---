@@ -64,6 +64,11 @@
   table {
     width: 100%;
     text-align: center;
+    thead {
+      th {
+        padding: 20px;
+      }
+    }
   }
 
   td, th {
