@@ -83,9 +83,7 @@
       buildings(val) {
         this.setCity(this.city)
         this.clearMap()
-        if (val.length) {
-          this.initMap(val)
-        }
+        this.initMap(val)
       },
       activePath(val) {
         this.$emit('activePathChange', val)
