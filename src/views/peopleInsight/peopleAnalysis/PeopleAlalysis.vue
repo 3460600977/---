@@ -436,8 +436,8 @@ export default {
         "consume":"收入水平",
         "privateCar":"车产状况",
         "marriage":"婚姻状况",
-        "offlineConsumption":"社区商品交易指数",
-        "interest":"社区兴趣爱好指数",
+        "offlineConsumption":"社区商品交易排行",
+        "interest":"社区兴趣爱好排行",
       },
       positionType: {
         2: [
