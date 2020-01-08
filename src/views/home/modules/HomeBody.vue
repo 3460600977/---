@@ -19,13 +19,13 @@
         >¥ {{$tools.toThousands(summaryDetailList.accountBalance / 100)}}
         </div>
       </div>
-      <div
-        :style="`background-image:url('${images.xinchaoBin}')`"
-        class="account-money-box color-white"
-      >
-        <div class="accouint-title">奖励金</div>
-        <div class="account-val font-number">{{$tools.toThousands(summaryDetailList.xcMoney / 100)}}</div>
-      </div>
+      <!--      <div-->
+      <!--        :style="`background-image:url('${images.xinchaoBin}')`"-->
+      <!--        class="account-money-box color-white"-->
+      <!--      >-->
+      <!--        <div class="accouint-title">奖励金</div>-->
+      <!--        <div class="account-val font-number">{{$tools.toThousands(summaryDetailList.xcMoney / 100)}}</div>-->
+      <!--      </div>-->
       <el-button class="create-put" type="primary" icon="el-icon-plus" @click="ToPathPlan">创建投放方案</el-button>
     </el-card>
     <el-card class="box-card data_card mid-center shadow">
@@ -119,7 +119,7 @@
         </div>
       </div>
       <!-- <div ref="lineBox" class="lineBox" style="width:1000px;height:450px;"></div> -->
-      <home-data-line :summaryLineData="summaryLineData"></home-data-line>
+      <home-data-line :summaryLineData="summaryLineData" class="dataLine"></home-data-line>
     </el-card>
     <el-card class="box-card cases_broadcast shadow">
       <h2>合作标杆</h2>
@@ -271,7 +271,7 @@
     },
     beforeRouteEnter(to, from, next) {
       next(vm => {
-        vm.getRefresh();
+        vm.changeCompareValue(false);
         vm.getSummaryDetail();
         vm.getSummaryData();
       });
@@ -303,8 +303,25 @@
         this.isShow = false;
       },
       //对比框是否选中的，
-      changeCompareValue() {
-
+      changeCompareValue(checkVal) {
+        if (checkVal) {
+          this.costList.forEach(firstItem => {
+            firstItem.disabled = false;
+            if (firstItem.value === this.selectLine.secondValue) {
+              firstItem.disabled = true;
+            }
+          })
+          this.exposureList.forEach(secondItem => {
+            secondItem.disabled = false;
+            if (secondItem.value === this.selectLine.firstValue) {
+              secondItem.disabled = true;
+            }
+          })
+        } else {
+          this.costList.forEach(firstItem => {
+            firstItem.disabled = false;
+          })
+        }
       },
       //时间改变，对应的数据趋势图发生改变
       changeSelectTime(selectTimeVal) {
@@ -330,6 +347,12 @@
             item.disabled = true;
           }
         });
+        if (this.selectLine.firstValue === this.selectLine.secondValue) {
+          this.selectLine.secondValue = this.selectLine.secondValue + 1;
+          if (this.selectLine.secondValue > 2) {
+            this.selectLine.secondValue = 0;
+          }
+        }
         this.getSummaryDataChange();
       },
       //选择第二个，对应的数据趋势图发生改变
@@ -570,7 +593,10 @@
       }
       &.line-echarts {
         width: 1200px;
-        height: 540px;
+        height: 600px;
+        .dataLine {
+          margin-top: 37px;
+        }
         .line-echarts_change {
           margin-top: 15px;
           display: flex;
