@@ -3,8 +3,7 @@
     <!-- 上屏 -->
     <div class="top-box"
          :style="{width: `${innerWidth}px`,
-        height: `${innerWidth / 1080 * 1920}px`,
-        margin: `${innerWidth / 10}px`}">
+        height: `${innerWidth / 1080 * 1920}px`}">
       <video
         v-if="top.type === 'video/mp4' || top.type === 'mp4'"
         class="top"

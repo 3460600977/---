@@ -1,5 +1,5 @@
 <template>
-  <div ref="lineBox" class="lineBox" style="width:1150px;height:450px;"></div>
+  <div ref="lineBox" class="lineBox" style="width:1150px;height:480px;"></div>
 </template>
 <script>
   import echarts from "echarts";
@@ -44,8 +44,7 @@
           }
         }
         let maxint = Math.ceil(max / 10); // 向上取整
-        let maxval = maxint * 10; // 最终设置的最大值
-        return maxval; // 输出最大值
+        return maxint * 10; // 最终设置的最大值,输出最大值
       },
       initChart(chartParam) {
         let _that = this;
@@ -62,13 +61,13 @@
         if (chartParam.selectLine.checked) {
           option = {
             //1、 格式化提示信息
-            animation:false,
+            animation: false,
             grid: {
               width: "95%",
-              height: "80%",
+              height: "90%",
               left: "2%",
               right: "3%",
-              bottom: "8%",
+              bottom: "7%",
               containLabel: true
             },
             tooltip: {
@@ -77,7 +76,7 @@
                 let str = `<p>${params[0].name}</p>`;
                 params.forEach(item => {
                   if (item.seriesName !== "花费（元）¥ ") {
-                    item.data = _that.$tools.toThousands(item.data, 0);
+                    item.data = _that.$tools.toThousands(item.data, false);
                   }
                   str += `
                         <p>
@@ -92,10 +91,14 @@
             },
             xAxis: [
               {
+                boundaryGap: false,
                 type: "category",
                 data: chartParam.xdata,
                 axisPointer: {
                   type: "shadow"
+                },
+                axisLabel: {
+                  showMaxLabel: true,
                 },
                 axisLine: {
                   lineStyle: {
@@ -110,7 +113,7 @@
                 min: 0,
                 max: maxappreg,
                 splitNumber: 5,
-                interval: interval_left,
+                interval: maxappreg === 0 ? 1 : interval_left,
                 axisLine: {
                   lineStyle: {
                     color: "#606266"
@@ -122,9 +125,8 @@
                     if (chartParam.selectLine.firstValue === 1) {
                       return "¥ " + value.toFixed(2);
                     } else {
-                      return _that.$tools.toThousands(value, 0);
+                      return _that.$tools.toThousands(value, false);
                     }
-                    return value;
                   }
                 }
               },
@@ -133,7 +135,7 @@
                 min: 0,
                 max: maxactive,
                 splitNumber: 5,
-                interval: interval_right,
+                interval: maxactive === 0 ? 1 : interval_right,
                 axisLine: {
                   lineStyle: {
                     color: "#999999"
@@ -145,9 +147,8 @@
                     if (chartParam.selectLine.secondValue === 1) {
                       return "¥ " + value.toFixed(2);
                     } else {
-                      return _that.$tools.toThousands(value, 0);
+                      return _that.$tools.toThousands(value, false);
                     }
-                    return value;
                   }
                 },
               }
@@ -156,9 +157,9 @@
               {
                 name: chartParam.selectLine.selectFirstLabelLine,
                 type: "line",
-                smooth: true,
+                //smooth: true,
                 yAxisIndex: 0,
-                animationDuration: 2800,
+                animationDuration: 1800,
                 animationEasing: "cubicInOut",
                 data: appregnum,
                 itemStyle: {
@@ -166,7 +167,7 @@
                     color: "#2d5aff",
                     lineStyle: {
                       color: "#2d5aff",
-                      width: 2
+                      width: 1
                     }
                     // label : {show: true}
                   }
@@ -198,8 +199,8 @@
                 name: chartParam.selectLine.selectSecondLabelLine,
                 type: "line",
                 yAxisIndex: 1,
-                smooth: true,
-                animationDuration: 2800,
+                //smooth: true,
+                animationDuration: 1800,
                 animationEasing: "cubicInOut",
                 data: activenum,
                 itemStyle: {
@@ -207,7 +208,7 @@
                     color: "#f44a4a",
                     lineStyle: {
                       color: "#f44a4a",
-                      width: 2
+                      width: 1
                     }
                     // label : {show: true}
                   }
@@ -242,10 +243,10 @@
             //1、 格式化提示信息
             grid: {
               width: "95%",
-              height: "80%",
+              height: "90%",
               left: "2%",
               right: "3%",
-              bottom: "8%",
+              bottom: "7%",
               containLabel: true
             },
             tooltip: {
@@ -254,7 +255,7 @@
                 let str = `<p>${params[0].name}</p>`;
                 params.forEach(item => {
                   if (item.seriesName !== "花费（元）¥ ") {
-                    item.data = _that.$tools.toThousands(item.data, 0);
+                    item.data = _that.$tools.toThousands(item.data, false);
                   }
                   str += `
                         <p>
@@ -271,9 +272,14 @@
               {
                 type: "category",
                 data: chartParam.xdata,
+                boundaryGap: false,
                 axisPointer: {
                   type: "shadow"
                 },
+                axisLabel: {
+                  showMaxLabel: true,
+                },
+                interval: 0,
                 axisLine: {
                   lineStyle: {
                     color: "#999999"
@@ -287,7 +293,7 @@
                 min: 0,
                 max: maxappreg,
                 splitNumber: 5,
-                interval: interval_left,
+                interval: maxappreg === 0 ? 1 : interval_left,
                 axisLine: {
                   lineStyle: {
                     color: "#606266"
@@ -299,9 +305,8 @@
                     if (chartParam.selectLine.firstValue === 1) {
                       return "¥ " + value.toFixed(2);
                     } else {
-                      return _that.$tools.toThousands(value, 0);
+                      return _that.$tools.toThousands(value, false);
                     }
-                    return value;
                   }
                 }
               },
@@ -310,9 +315,9 @@
               {
                 name: chartParam.selectLine.selectFirstLabelLine,
                 type: "line",
-                smooth: true,
+                // smooth: true,
                 yAxisIndex: 0,
-                animationDuration: 2800,
+                animationDuration: 1800,
                 animationEasing: "cubicInOut",
                 data: appregnum,
                 itemStyle: {
@@ -320,7 +325,7 @@
                     color: "#2d5aff",
                     lineStyle: {
                       color: "#2d5aff",
-                      width: 2
+                      width: 1
                     }
                     // label : {show: true}
                   }
@@ -351,7 +356,7 @@
             ]
           };
         }
-        this.myChart.setOption(option,true);
+        this.myChart.setOption(option, true);
 
       }
     },
