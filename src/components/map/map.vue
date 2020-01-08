@@ -122,6 +122,7 @@
         this.jugDraw()
       },
       jugDraw() {
+        console.log(this.pointsOverlayObj.isShow)
         this.drawDevicePoints()
         if (!this.pointsOverlayObj.isShow) {
           this.drawMarkers()
@@ -163,6 +164,7 @@
         if (type === 0) {
           this.changePathPointType(null, -1)
           this.jugDraw()
+          console.log('66666')
         }
       },
       clearMap() {

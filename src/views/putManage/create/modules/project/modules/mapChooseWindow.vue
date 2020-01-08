@@ -317,6 +317,13 @@ export default {
     );
   },
   methods: {
+    //清除选点
+    clearChoosePath() {
+      this.$refs.dbmap.clearPathArr();
+      this.hidePopup();
+      this.showPathCopy = null;
+      this.currentSelectType = null;
+    },
     //隐藏地图选点页面
     hideMapPoint() {
       this.$emit("hideMapPoint", false);
@@ -356,17 +363,16 @@ export default {
       this.activeTab = val.value;
     },
     loadHotMap(id) {
-      this.loading = true;
+      this.hotLoading = true;
       this.$api.peopleInsight
         .getPeopleInsightHotMap({ crowdInsightId: id, max: 100, min: 0 })
         .then(data => {
-          // this.$refs.dbmap.setCity(this.cityFilter)
-          this.loading = false;
           if (data.result) {
             this.$refs.dbmap.drawHotMap(data.result);
           } else {
             this.switchChange(false);
           }
+          this.hotLoading = false;
         });
     },
     // 隐藏热力图
@@ -415,11 +421,6 @@ export default {
     returnResult(val, index, type) {
       if (index === 0) {
         // 城市切换
-        // if (this.isInit) {
-        //   this.cityFilter = val
-        //   this.resetLeftPopup(index, type)
-        //   this.isInit = false
-        // } else {
         this.$confirm(
           "切换城市后，系统将清空当前城市的操作数据，是否切换？",
           "提示",
@@ -434,7 +435,6 @@ export default {
             this.resetLeftPopup(index, type);
           })
           .catch(() => {});
-        // }
       } else if (index === 1) {
         // 楼盘标签选择
         if (type === 0) {
@@ -449,10 +449,33 @@ export default {
         this.resetLeftPopup(index, type);
       } else if (index === 2) {
         // 热力图选择
-        this.loadHotMap(val);
-        this.hide(1);
-        this.resetLeftPopup(index, type);
+        if (!Object.keys(this.pathArr).length) {
+          // this.switchChange(true)
+          this.$refs.peopleInsight.setSwitchValue(true);
+          this.getHotMap(val, index, type);
+          return;
+        }
+        this.$confirm(
+          "系统加载人群包，将自动清空之前的操作数据，是否清空？",
+          "提示",
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning"
+          }
+        )
+          .then(() => {
+            this.$refs.peopleInsight.setSwitchValue(true);
+            // this.switchChange(true)
+            this.getHotMap(val, index, type);
+          })
+          .catch(() => {});
       }
+    },
+    getHotMap(val, index, type) {
+      this.loadHotMap(val);
+      this.hide(1);
+      this.resetLeftPopup(index, type);
     },
     hideAll() {
       for (let key in this.isShow) {
@@ -491,16 +514,15 @@ export default {
     },
     getCityFilter() {
       this.$refs.dbmap.location().then(data => {
-        if (data.name === "全国") {
-          this.$confirm("定位失败，将自动将城市设置为北京！", "提示", {
+        if (!data || (data && data.name === "全国")) {
+          this.$confirm("定位失败，将自动将城市设置为成都！", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning"
           })
             .then(() => {
-              data.name = "北京市";
               let result = Object.assign({}, this.cityFilter, {
-                name: data.name
+                name: "成都市"
               });
               this.cityFilter = this.findItem(result, this.cityDatas);
               this.loadData();
