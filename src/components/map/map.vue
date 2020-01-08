@@ -83,7 +83,9 @@
       buildings(val) {
         this.setCity(this.city)
         this.clearMap()
-        this.initMap(val)
+        if (val.length) {
+          this.initMap(val)
+        }
       },
       activePath(val) {
         this.$emit('activePathChange', val)
@@ -107,7 +109,7 @@
       let map = new BMap.Map(this.$refs.container, {enableMapClick: false});
       this.map = map
 
-      // this.setCity({name: '成都市'})
+      this.setCity({name: '成都市'})
       map.enableScrollWheelZoom();
       map.addControl(new BMap.ScaleControl());
       // this.initHotMap()
@@ -122,7 +124,6 @@
         this.jugDraw()
       },
       jugDraw() {
-        console.log(this.pointsOverlayObj.isShow)
         this.drawDevicePoints()
         if (!this.pointsOverlayObj.isShow) {
           this.drawMarkers()
@@ -164,7 +165,6 @@
         if (type === 0) {
           this.changePathPointType(null, -1)
           this.jugDraw()
-          console.log('66666')
         }
       },
       clearMap() {
@@ -192,6 +192,18 @@
       },
       setCity(city) {
         this.map.centerAndZoom(city.name, 12);
+      },
+      initPointOverlaySingle(type) {
+        let str = type === 0 ? 'selected' : 'unSelected'
+        let overlay = `${str}Overlay`
+        let pointsOverlay = new BMap.PointCollection([], this.pointsOptions[type]);
+        this.pointsOverlayObj[overlay] = pointsOverlay
+        this.map.addOverlay(pointsOverlay);
+        pointsOverlay.disableMassClear()
+      },
+      initPointsOverlay() {
+        this.initPointOverlaySingle(0)
+        this.initPointOverlaySingle(1)
       },
       initHotMap() {
         if (this.heatmapOverlay) return;
@@ -414,7 +426,7 @@
       drawComplete(drawingManager) {
         drawingManager.addEventListener("overlaycomplete", (e) => {
           if (!this.drawErrorTip(e)) return
-          this.setSvgIndex()
+          // this.setSvgIndex()
           let location = this.map.pixelToPoint(e.currentTarget._mask._draggingMovePixel)
           let path = {
             type: e.drawingMode,
@@ -738,9 +750,12 @@
       //   }
       // },
       mapLoad() {
-        this.initMouse()
+        this.initPointsOverlay()
         this.initHotMap()
+        this.initMouse()
+        this.setSvgIndex()
       },
+
       mapBindEvent() {
         this.map.addEventListener('dragend', this.drawMarkersByVisual)
         this.map.addEventListener('zoomend', this.mapZoomEnd)
@@ -752,7 +767,7 @@
         // this.map.addEventListener('tilesloaded', this.tilesloaded)
       },
       drawCircle(point, info) {
-        this.setSvgIndex()
+        // this.setSvgIndex()
         let marker = this.addMarkerIcon(point)
         let circle = new BMap.Circle(point, this.defaultRadius, this.styleOptions);
         this.map.addOverlay(circle);
