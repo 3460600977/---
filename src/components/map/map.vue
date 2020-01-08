@@ -83,7 +83,9 @@
       buildings(val) {
         this.setCity(this.city)
         this.clearMap()
-        this.initMap(val)
+        if (val.length) {
+          this.initMap(val)
+        }
       },
       activePath(val) {
         this.$emit('activePathChange', val)
@@ -122,7 +124,6 @@
         this.jugDraw()
       },
       jugDraw() {
-        console.log(this.pointsOverlayObj.isShow)
         this.drawDevicePoints()
         if (!this.pointsOverlayObj.isShow) {
           this.drawMarkers()
@@ -164,7 +165,6 @@
         if (type === 0) {
           this.changePathPointType(null, -1)
           this.jugDraw()
-          console.log('66666')
         }
       },
       clearMap() {
@@ -188,7 +188,6 @@
         this.points = this.normalizePointsAll(val)
         this.pointsOverlayObj.isShow = true
         this.reGetAreaPoint()
-        console.log('11111')
         this.jugDraw()
       },
       setCity(city) {
@@ -205,7 +204,6 @@
       initPointsOverlay() {
         this.initPointOverlaySingle(0)
         this.initPointOverlaySingle(1)
-        console.log(this.pointsOverlayObj)
       },
       initHotMap() {
         if (this.heatmapOverlay) return;
@@ -752,7 +750,6 @@
       //   }
       // },
       mapLoad() {
-        console.log('4444')
         this.initPointsOverlay()
         this.initHotMap()
         this.initMouse()
@@ -932,7 +929,6 @@
       setDevicePoints(points, type) {
         let str = type === 0 ? 'selected' : 'unSelected'
         let overlay = `${str}Overlay`
-        console.log(this.pointsOverlayObj[overlay])
         if (!this.pointsOverlayObj[overlay]) {
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
