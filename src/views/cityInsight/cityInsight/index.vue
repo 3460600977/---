@@ -492,7 +492,6 @@
       },
       getCityFilter() {
         this.$refs.dbmap.location().then((data) => {
-          data = null
           if (!data || (data && data.name === '全国')) {
             this.$confirm('定位失败，将自动将城市设置为成都！', '提示', {
               confirmButtonText: '确定',
