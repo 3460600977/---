@@ -157,7 +157,7 @@
               {
                 name: chartParam.selectLine.selectFirstLabelLine,
                 type: "line",
-                smooth: true,
+                //smooth: true,
                 yAxisIndex: 0,
                 animationDuration: 1800,
                 animationEasing: "cubicInOut",
@@ -199,7 +199,7 @@
                 name: chartParam.selectLine.selectSecondLabelLine,
                 type: "line",
                 yAxisIndex: 1,
-                smooth: true,
+                //smooth: true,
                 animationDuration: 1800,
                 animationEasing: "cubicInOut",
                 data: activenum,
@@ -315,7 +315,7 @@
               {
                 name: chartParam.selectLine.selectFirstLabelLine,
                 type: "line",
-                smooth: true,
+                // smooth: true,
                 yAxisIndex: 0,
                 animationDuration: 1800,
                 animationEasing: "cubicInOut",
