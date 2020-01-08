@@ -75,9 +75,13 @@
     },
     beforeDestroy() {
       this.removeEvent()
+      this.map.clearOverlays()
+      this.map = null
+      this.drawingManager = null
     },
     watch: {
       buildings(val) {
+        console.log('444444')
         this.initMap(val)
       },
       activePath(val) {
@@ -102,7 +106,7 @@
       let map = new BMap.Map(this.$refs.container, {enableMapClick: false});
       this.map = map
 
-      this.setCity({name: '成都市'})
+      // this.setCity({name: '成都市'})
       map.enableScrollWheelZoom();
       map.addControl(new BMap.ScaleControl());
       // this.initHotMap()
@@ -207,7 +211,6 @@
         return new Promise((resolve) => {
           let myCity = new BMap.LocalCity();
           myCity.get((result) => {
-            this.initMouse()
             resolve(result)
           });
         })
@@ -725,12 +728,18 @@
       //     }, 0)
       //   }
       // },
+      mapLoad() {
+        console.log('555555')
+        console.log(this.map.getPanes().mapPane)
+        this.initMouse()
+      },
       mapBindEvent() {
         this.map.addEventListener('dragend', this.drawMarkersByVisual)
         this.map.addEventListener('zoomend', this.mapZoomEnd)
         this.map.addEventListener('click', this.mapLeftClick)
         this.map.addEventListener('mousemove', this.mapMouseMove)
         this.map.addEventListener('rightclick', this.mapRightClick)
+        this.map.addEventListener('load', this.mapLoad)
         // this.map.addEventListener('click', this.mapRightClick)
         // this.map.addEventListener('tilesloaded', this.tilesloaded)
       },
@@ -900,7 +909,6 @@
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
           this.map.addOverlay(pointsOverlay);
-          console.log(pointsOverlay)
           pointsOverlay.disableMassClear()
           pointsOverlay.addEventListener('mouseover',  this.pointEvent);
           pointsOverlay.addEventListener('mouseout',  this.pointEventOut);
