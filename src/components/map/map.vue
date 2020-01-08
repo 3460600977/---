@@ -208,18 +208,22 @@
       },
       location() {
         return new Promise((resolve) => {
-          // let geolocation = new BMap.Geolocation();
-          // geolocation.getCurrentPosition(function(r){
-          //   if(this.getStatus() == BMAP_STATUS_SUCCESS){
-          //     console.log(r)
-          //   } else {
-          //     alert('failed'+this.getStatus());
-          //   }
-          // });
+          let myCity = new BMap.LocalCity();
           myCity.get((result) => {
             resolve(result)
           });
         })
+        // let geolocation = new BMap.Geolocation();
+        // let that = this
+        // geolocation.getCurrentPosition(function(r){
+        //   if(this.getStatus() == BMAP_STATUS_SUCCESS){
+        //     console.log(r)
+        //     that.map.centerAndZoom(r.point, 12);
+        //   }
+        //   else {
+        //     alert('failed'+this.getStatus());
+        //   }
+        // });
       },
 
       // 判断一个点是否在可视区域内
