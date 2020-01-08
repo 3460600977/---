@@ -690,6 +690,7 @@
         this.map.removeEventListener('zoomend', this.mapZoomEnd)
         this.map.removeEventListener('mousemove', this.mapMouseMove)
         this.map.removeEventListener('rightclick', this.mapRightClick)
+        this.map.removeEventListener('load', this.mapLoad)
       },
 
       mapLeftClick(event) {
@@ -725,12 +726,18 @@
       //     }, 0)
       //   }
       // },
+      mapLoad() {
+        if (this.map.getPanes().mapPane.getElementsByTagName('svg').length) {
+          this.map.getPanes().mapPane.getElementsByTagName('svg')[0].style.zIndex = 1000
+        }
+      },
       mapBindEvent() {
         this.map.addEventListener('dragend', this.drawMarkersByVisual)
         this.map.addEventListener('zoomend', this.mapZoomEnd)
         this.map.addEventListener('click', this.mapLeftClick)
         this.map.addEventListener('mousemove', this.mapMouseMove)
         this.map.addEventListener('rightclick', this.mapRightClick)
+        this.map.addEventListener('load', this.mapLoad)
         // this.map.addEventListener('click', this.mapRightClick)
         // this.map.addEventListener('tilesloaded', this.tilesloaded)
       },
@@ -900,7 +907,6 @@
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
           this.map.addOverlay(pointsOverlay);
-          console.log(pointsOverlay)
           pointsOverlay.disableMassClear()
           pointsOverlay.addEventListener('mouseover',  this.pointEvent);
           pointsOverlay.addEventListener('mouseout',  this.pointEventOut);
