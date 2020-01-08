@@ -1,9 +1,9 @@
 <template>
-  <div class="selected-list">
+  <div class="selected-list" v-loading="loading">
 
     <!-- 选择洞察包 统计列表 未寻量 -->
     <template v-if="buildingDirectionActiveType === 'exist' || buildingDirectionActiveType === 'payConfirm'">
-      <ul class="selected-list-data-box" v-loading="loading">
+      <ul class="selected-list-data-box">
         <noData v-if="buildsNumber <= 0 || deviceNumber <= 0">无可售数据</noData>
 
         <li v-else class="item mid" v-for="(item, index) in existList" :key="index">
@@ -19,8 +19,6 @@
         </li>
       </ul>
     </template>
-
-
 
 
 
@@ -46,7 +44,7 @@
           >下载</el-button>
         </div>
 
-        <ul class="selected-list-data-box" v-loading="loading">
+        <ul class="selected-list-data-box">
           <li class="item mid" v-for="(item, index) in localProject.list" :key="index">
             <div class="base">
               <div class="left-info float-left" style="width: 550px;">
@@ -92,7 +90,7 @@
         >下载</el-button>
       </div>
 
-      <ul class="selected-list-data-box" v-loading="loading">
+      <ul class="selected-list-data-box">
         <li class="item" v-for="(item, index) in localProject.list" :key="index">
           <div class="clearfix base">
             <div class="left-info clearfix float-left">
