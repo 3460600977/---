@@ -42,7 +42,7 @@
         <p>{{item.premisesName}}</p>
         <div class="mid-start list-item-2">
           <p class="list-item-1">点位数：{{item.signElevatorNum | toThousands}}</p>
-          <p>约覆盖人数：{{item.totalPeople | toThousands}}</p>
+          <p>覆盖人数：{{item.totalPeople | toThousands}}</p>
         </div>
         <span class="iconfont icon-remove icon-error hand" @click="deleteItem(item)"></span>
       </li>
