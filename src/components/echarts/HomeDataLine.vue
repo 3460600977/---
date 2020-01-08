@@ -159,8 +159,6 @@
                 type: "line",
                 //smooth: true,
                 yAxisIndex: 0,
-                animationDuration: 1800,
-                animationEasing: "cubicInOut",
                 data: appregnum,
                 itemStyle: {
                   normal: {
@@ -200,8 +198,6 @@
                 type: "line",
                 yAxisIndex: 1,
                 //smooth: true,
-                animationDuration: 1800,
-                animationEasing: "cubicInOut",
                 data: activenum,
                 itemStyle: {
                   normal: {
@@ -317,8 +313,6 @@
                 type: "line",
                 // smooth: true,
                 yAxisIndex: 0,
-                animationDuration: 1800,
-                animationEasing: "cubicInOut",
                 data: appregnum,
                 itemStyle: {
                   normal: {

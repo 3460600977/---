@@ -214,7 +214,7 @@ export default {
         if (
           (new Date(value[1]) -
             new Date(value[0])) /
-            oneDay >
+            oneDay >=
           30
         ) {
           callback(new Error("查询时间大于30天，请重新设置!"));
@@ -443,9 +443,6 @@ export default {
       //请求验证码接口
       this.loading = true;
       let userInfo = await this.$tools.refreshUserInfo();
-      if ("-999" === userInfo) {
-        userInfo = getUserInfo();
-      }
       this.accountBalance = userInfo.accountBalance;
       this.company = userInfo.company;
       if (userInfo.avatar) {
@@ -457,8 +454,6 @@ export default {
     getSummaryDetail: async function() {
       this.loading = true;
       let summaryDetail = await this.$tools.getSummaryDetail();
-      if ("-998" === summaryDetail) {
-      }
       this.loading = false;
       this.summaryDetailList = summaryDetail;
     },
