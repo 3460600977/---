@@ -39,9 +39,23 @@
       this.initChart(this.localData)
     },
     methods: {
+      calMax(arr = []) {
+        if (arr.length === 0) return 0;
+        let max = parseFloat(arr[0]);
+        for (let i = 1; i < arr.length; i++) {
+          // 求出一组数组中的最大值
+          if (max < parseFloat(arr[i])) {
+            max = parseFloat(arr[i]);
+          }
+        }
+        let maxint = Math.ceil(max / 10); // 向上取整
+        return maxint * 10; // 最终设置的最大值,输出最大值
+      },
       initChart(chartParam) {
         let that = this
         this.myChart = this.myChart ? this.myChart : echarts.init(this.$refs.chartBox);
+        let maxappreg = this.calMax(chartParam.series.data); //花费Y轴值
+        let interval_left = maxappreg / 5; //左轴间隔
         let option = {
           title: {
             text: chartParam.title,
@@ -61,9 +75,9 @@
                 val = allVal.shift()
                 let showVal = 0;
                 if (chartParam.sortField === 'cost') {
-                  showVal = '¥ ' +that.$tools.toThousands(val.data, 2);
+                  showVal = '¥ ' + that.$tools.toThousands(val.data / 100, 2);
                 } else {
-                  showVal = that.$tools.toThousands(val.data, 0);
+                  showVal = that.$tools.toThousands(val.data, false);
                 }
                 return val.name + '<br/>' +
                   '<div style="width: 12px; height: 12px;background: #F44A4A;border-radius: 50%;border: 1px solid #F44A4A;display: inline-block;margin-right: 20px"></div>'
@@ -95,8 +109,9 @@
           yAxis: {
             axisLine: {show: false},
             type: 'value',
-            max: chartParam.yAxis.max,
-            splitNumber: chartParam.yAxis.splitNumber,
+            max: maxappreg,
+            splitNumber: 5,
+            interval: maxappreg === 0 ? 1 : interval_left,
             axisTick: {show: false},
             axisLabel: {
               color: '#999999',
@@ -104,11 +119,13 @@
               fontWeight: 'normal',
               fontFamily: 'DINMittelschrift',
               margin: 20,
+              showMaxLabel: true,
               formatter: function (value, index) {
                 if (chartParam.sortField === 'cost') {
-                  return '¥ ' + value.toFixed(2);
+                  return '¥ ' + that.$tools.toThousands(value / 100, 2);
+                } else {
+                  return that.$tools.toThousands(value, false);
                 }
-                return value
               }
             },
           },
@@ -130,11 +147,20 @@
             //     },
             // },
             {
-              symbol: 'circle',
               symbolSize: 10,
+              animationDuration: 1800,
+              animationEasing: "cubicInOut",
+              smooth: true,
               type: 'line',
               itemStyle: {
-                normal: {color: 'rgba(244,74,74,1)'}
+                normal: {
+                  color: "rgba(244,74,74,1)",
+                  lineStyle: {
+                    color: "rgba(244,74,74,1)",
+                    width: 1
+                  }
+                  // label : {show: true}
+                }
                 // normal: {label: {show: true}, color: 'rgba(45,90,255,1)'}
               },
               legendHoverLink: false,
@@ -152,11 +178,6 @@
     watch: {
       axisData: {
         handler: function (newVal, oldVal) {
-          if (newVal.sortField === 'cost') {
-            newVal.series.data.forEach((item, index, arr) => {
-              arr[index] = this.$tools.toThousands(item/100)
-            })
-          }
           this.initChart(newVal)
         }
         ,
