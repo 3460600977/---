@@ -142,11 +142,13 @@ export default {
   },
   data() {
     return {
+      id:0,
       loading: false,
       result: {},
       peopleType: '',
       legendName: '',
       headerTags: [],
+      cityCode: '',
       areasList: null,
       isShowTitle: true,
       colorType: {
@@ -381,9 +383,7 @@ export default {
         ]
       },
       privateCarData: [],
-
       nanpvIcon: require('@/assets/images/nannv.png'),
-
       offlineConsumptionData: {  //线下消费
         xAxis: [],
         yAxis: [
@@ -422,9 +422,7 @@ export default {
           }
         ]
       },
-
       genderArr: [],
-
       colors : [
         ['rgba(244, 102, 74, 1)', 'rgba(236, 236, 236, 1)'],
         ['rgba(91, 126, 255, 1)', 'rgba(236, 236, 236, 1)'],
@@ -438,24 +436,20 @@ export default {
         "consume":"收入水平",
         "privateCar":"车产状况",
         "marriage":"婚姻状况",
-        "offlineConsumption":"社区商品交易指数",
-        "interest":"社区兴趣爱好指数",
+        "offlineConsumption":"社区商品交易排行",
+        "interest":"社区兴趣爱好排行",
       },
-
       positionType: {
         2: [
           ['29%', '55%'],
           ['69%', '55%']
         ]
       },
-
       grid:{
         left: '3%',
         right: '3%',
         bottom: 22,
       },
-
-
     };
   },
   created() {
@@ -463,13 +457,14 @@ export default {
   },
   methods: {
     search() {
-      let id= this.$route.query.id;
+      this.id= this.$route.query.id;
       this.loading = true;
-      this.$api.peopleInsight.getPeopleAlalysis({id:id}).then( res => {
+      this.$api.peopleInsight.getPeopleAlalysis({id:this.id}).then( res => {
         this.loading = false;
         this.result = res.result;
         this.legendName = this.peopleType = res.result.crowdInsightName;
         this.headerTags = JSON.parse(res.result.tagName);
+        this.cityCode = res.result.cityCode;
         if(this.legendName.length > 20){
           this.legendName = this.legendName.substring(0,20) + '...';
         }
@@ -568,7 +563,22 @@ export default {
       this.$router.push('/peopleInsight/list')
     },
     toSelectPoint() {
-      this.$router.push('/cityInsight/selectPoint')
+      let cityName = '';
+      let cityFilter = {};
+      let crowdInfo = {};
+      this.headerTags.forEach(tag=>{
+        if (tag.name === "城市"){
+          cityName = tag.tags[0].name;
+        }
+      });
+      cityFilter.cityCode = Number(this.cityCode);
+      cityFilter.name = cityName;
+      crowdInfo.id = this.id;
+      crowdInfo.name = this.peopleType;
+      this.$router.push({
+        path:'/cityInsight/selectPoint',
+        query:{cityFilter:JSON.stringify(cityFilter),crowdInfo:JSON.stringify(crowdInfo)}
+      });
     },
     downSort(data,piVO,wholePiVO) {
       let voArray = [];

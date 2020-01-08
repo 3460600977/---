@@ -157,10 +157,8 @@
               {
                 name: chartParam.selectLine.selectFirstLabelLine,
                 type: "line",
-                smooth: true,
+                //smooth: true,
                 yAxisIndex: 0,
-                animationDuration: 1800,
-                animationEasing: "cubicInOut",
                 data: appregnum,
                 itemStyle: {
                   normal: {
@@ -199,9 +197,7 @@
                 name: chartParam.selectLine.selectSecondLabelLine,
                 type: "line",
                 yAxisIndex: 1,
-                smooth: true,
-                animationDuration: 1800,
-                animationEasing: "cubicInOut",
+                //smooth: true,
                 data: activenum,
                 itemStyle: {
                   normal: {
@@ -315,10 +311,8 @@
               {
                 name: chartParam.selectLine.selectFirstLabelLine,
                 type: "line",
-                smooth: true,
+                // smooth: true,
                 yAxisIndex: 0,
-                animationDuration: 1800,
-                animationEasing: "cubicInOut",
                 data: appregnum,
                 itemStyle: {
                   normal: {

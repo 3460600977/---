@@ -75,6 +75,9 @@
     },
     beforeDestroy() {
       this.removeEvent()
+      this.drawingManager = {}
+      this.map.clearOverlays()
+      this.map = null
     },
     watch: {
       buildings(val) {
@@ -102,7 +105,7 @@
       let map = new BMap.Map(this.$refs.container, {enableMapClick: false});
       this.map = map
 
-      this.setCity({name: '成都市'})
+      // this.setCity({name: '成都市'})
       map.enableScrollWheelZoom();
       map.addControl(new BMap.ScaleControl());
       // this.initHotMap()
@@ -207,7 +210,6 @@
         return new Promise((resolve) => {
           let myCity = new BMap.LocalCity();
           myCity.get((result) => {
-            this.initMouse()
             resolve(result)
           });
         })
@@ -690,6 +692,7 @@
         this.map.removeEventListener('zoomend', this.mapZoomEnd)
         this.map.removeEventListener('mousemove', this.mapMouseMove)
         this.map.removeEventListener('rightclick', this.mapRightClick)
+        this.map.removeEventListener('load', this.mapLoad)
       },
 
       mapLeftClick(event) {
@@ -725,12 +728,19 @@
       //     }, 0)
       //   }
       // },
+      mapLoad() {
+        this.initMouse()
+        if (this.map.getPanes().mapPane.getElementsByTagName('svg').length) {
+          this.map.getPanes().mapPane.getElementsByTagName('svg')[0].style.zIndex = 1000
+        }
+      },
       mapBindEvent() {
         this.map.addEventListener('dragend', this.drawMarkersByVisual)
         this.map.addEventListener('zoomend', this.mapZoomEnd)
         this.map.addEventListener('click', this.mapLeftClick)
         this.map.addEventListener('mousemove', this.mapMouseMove)
         this.map.addEventListener('rightclick', this.mapRightClick)
+        this.map.addEventListener('load', this.mapLoad)
         // this.map.addEventListener('click', this.mapRightClick)
         // this.map.addEventListener('tilesloaded', this.tilesloaded)
       },
@@ -900,7 +910,6 @@
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
           this.map.addOverlay(pointsOverlay);
-          console.log(pointsOverlay)
           pointsOverlay.disableMassClear()
           pointsOverlay.addEventListener('mouseover',  this.pointEvent);
           pointsOverlay.addEventListener('mouseout',  this.pointEventOut);

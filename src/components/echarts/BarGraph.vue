@@ -148,9 +148,6 @@
             // },
             {
               symbolSize: 10,
-              animationDuration: 1800,
-              animationEasing: "cubicInOut",
-              smooth: true,
               type: 'line',
               itemStyle: {
                 normal: {
