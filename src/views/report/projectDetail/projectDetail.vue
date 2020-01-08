@@ -106,7 +106,7 @@
                       <div v-else-if="col.prop === 'action'">
                         <a
                           class="preview"
-                          href="#"
+                          href="javascript:;"
                           @click="showPreviewPlayList(scope.row['deviceCode'])"
                           :deviceCode="scope.row['deviceCode']"
                         >预览</a>
