@@ -198,6 +198,9 @@
         this.pointsOverlayObj[overlay] = pointsOverlay
         this.map.addOverlay(pointsOverlay);
         pointsOverlay.disableMassClear()
+        pointsOverlay.addEventListener('mouseover',  this.pointEvent);
+        pointsOverlay.addEventListener('mouseout',  this.pointEventOut);
+        pointsOverlay.addEventListener('click',  this.pointEventClick);
       },
       initPointsOverlay() {
         this.initPointOverlaySingle(0)
