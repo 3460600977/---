@@ -126,12 +126,10 @@ export default {
 
 <style scoped lang='scss'>
 .right-bottom {
-  padding: 25px 20px 20px 20px;
-  text-align: justify;
-  text-align-last: justify;
-  /deep/.el-button {
-    width: 136px;
-    height: 34px;
+  padding: 25px 10px 20px 20px;
+  /deep/ .el-button {
+    width: 120px;
+    height: 36px;
     border-radius: 2px;
   }
 }

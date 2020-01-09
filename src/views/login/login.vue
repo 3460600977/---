@@ -7,12 +7,10 @@
     <div v-if="(!isSaleLogin && !isAuditorLogin) || !pageLoading" class="login-box">
       <div class="box-center">
         <div class="xinchao-logo" v-bind:style="{ width: imageWidth +'px' }">
-          <el-image
+          <img
             :src="logo_img"
             class="login-image"
-            v-bind:style="{ width: imageWidth +'px'}"
-            fit="cover"
-          ></el-image>
+            v-bind:style="{ width: imageWidth +'px'}">
         </div>
         <div class="logo-form" v-bind:style="{ width: loginFormWidth +'px' }">
           <el-container>
@@ -39,7 +37,7 @@
                       placeholder="请输入密码"
                     ></el-input>
                   </el-form-item>
-                  <el-form-item class="loginCapture" prop="verifyValue">
+                  <el-form-item class="loginCapture mid" prop="verifyValue">
                     <el-input
                       prefix-icon="el-icon-lock"
                       maxlength="4"
@@ -49,11 +47,7 @@
                       @keyup.enter.native="onSubmit('loginForm')"
                     ></el-input>
                     <div class="captureNum">
-                      <el-image :src="login_capture_img" @click="changeCaptureNUm">
-                        <div slot="error" class="image-slot" @click="changeCaptureNUm">
-                          <i class="el-icon-picture-outline"></i>
-                        </div>
-                      </el-image>
+                      <img :src="login_capture_img" @click="changeCaptureNUm" alt="点击刷新"/>
                     </div>
                   </el-form-item>
                   <el-form-item :class="{'submit-login':true,'loading-button':loading}">
@@ -119,9 +113,13 @@
         },
         toolMenu: [
           {code: "1010", selected: true},
-          {code: "1201", selected: true},
           {code: "1101", selected: true},
           {code: "1102", selected: true},
+          {code: "1110", selected: true},
+          {code: "1120", selected: true},
+          {code: "1201", selected: true},
+          {code: "1210", selected: true},
+          {code: "1330", selected: true},
           {code: "1340", selected: true},
           {code: "1421", selected: true}
         ]
@@ -185,7 +183,10 @@
             };
             //请求登录接口
             this.loading = true;
+
             this.$api.Login.LoginIn(param).then(res => {
+              debugger
+              console.log(res.result)
               let info = res.result;
               this.loading = false;
               this.$store.commit("setToken", info.token);
@@ -208,6 +209,7 @@
                 this.$router.push({path: "/home", query: {}});
               }
             }).catch(res => {
+              this.changeCaptureNUm();
               this.loading = false;
             });
           }
@@ -221,7 +223,6 @@
           saleAccessToken: this.$route.query.saleAccessToken
         };
         this.$api.Login.SaleLogin(param).then(res => {
-          debugger
           let info = res.result;
           let menuList = this.$tools.getAllMenuList(info.menu, []);
           this.toolMenu.forEach(item => {
@@ -353,14 +354,23 @@
       .loginCapture {
         margin-bottom: 0;
         display: flex;
-        .el-input,
-        .el-input__inner {
+        .el-input, .el-input__inner {
           display: inline-block;
           width: 220px;
           height: 36px;
         }
+        /deep/ .el-form-item__content {
+          display: -ms-flexbox !important;
+          display: flex !important;
+          display: -webkit-box;
+          display: -webkit-flex;
+          -ms-flex-align: center;
+          align-items: center;
+          -webkit-box-align: center;
+        }
         .captureNum {
           width: 90px;
+          height: 32px;
           display: inline-block;
           margin-left: 12px;
           position: relative;
@@ -370,6 +380,7 @@
           }
           img {
             width: 100%;
+            height: 32px;
             cursor: pointer;
           }
           .image-slot {
