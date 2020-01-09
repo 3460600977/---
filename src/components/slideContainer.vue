@@ -65,7 +65,7 @@
     background-color: #fff;
     width: 40px;
     top: 50%;
-    transform: translateY(23px);
+    transform: translateY(-50%);
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
     height: 60px;
