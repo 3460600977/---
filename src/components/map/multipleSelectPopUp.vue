@@ -12,10 +12,10 @@
           </ul>
         </div>
       </div>
-      <div class="btns padding text-right">
+      <div class="btns padding">
+        <el-button class="btn pl-btn2" @click="operate(1)">取消</el-button>
+        <el-button class="btn pl-btn2" type="primary" @click="operate(2)">保存</el-button>
         <el-button type="text" @click="operate(0)">清空</el-button>
-        <el-button class="btn" size="mini" @click="operate(1)">取消</el-button>
-        <el-button class="btn" type="primary" size="mini" @click="operate(2)" plain>确定</el-button>
       </div>
     </div>
 </template>
@@ -81,8 +81,8 @@
 .selectPopUp {
   background: #ffffff;
   line-height: 1.4;
-  box-shadow:0px 3px 5px 0px rgba(0, 0, 0, 0.1);
-  border-radius:2px;
+  /*box-shadow:0px 3px 5px 0px rgba(0, 0, 0, 0.1);*/
+  /*border-radius:2px;*/
   .active {
     color: $color-main;
   }
@@ -96,16 +96,20 @@
   .title {
     line-height: 40px;
   }
+  .pl-btn2 {
+    width: 100px;
+    height: 34px;
+  }
   .btns {
     padding-bottom: 20px;
-    margin-top: 24px;
+    margin-top: 80px;
     font-size: 0;
     & /deep/ .el-button + .el-button {
-      margin-left: 14px;
+      margin-left: 20px;
     }
   }
   .content {
-    padding-top: 10px;
+    padding-top: 30px;
     .type {
       width: 95px;
       vertical-align: top;

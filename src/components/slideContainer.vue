@@ -50,6 +50,7 @@
   .ab {
     position: absolute;
     height: 100%;
+    box-shadow:0px 4px 16px 0px rgba(118,118,118,0.16);
     right: 0;
     z-index: 99;
     transition: 0.5s;
@@ -61,11 +62,12 @@
   transition: 0.5s;
   .slider-item {
     position: absolute;
-    left: -40px;
+    left: -39px;
+    box-shadow:inset 1px 1px 4px 0px rgba(118,118,118,0.16);
     background-color: #fff;
     width: 40px;
     top: 50%;
-    transform: translateY(23px);
+    transform: translateY(-50%);
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
     height: 60px;

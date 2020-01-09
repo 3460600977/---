@@ -68,7 +68,7 @@
   }
   .icon2 {
     color: #ACACAC;
-    font-size: 12px;
+    font-size: 13px;
   }
   .ul-p {
     line-height: 20px;

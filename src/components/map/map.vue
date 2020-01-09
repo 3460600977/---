@@ -870,8 +870,6 @@
             font-size:14px;
             line-height: 1.15;
             width:170px;
-            border:1px solid rgba(229,231,233,1);
-            box-shadow:0px 3px 5px 0px rgba(0, 0, 0, 0.1);
             border-radius:4px;"
           >
               <div style="padding: 0 15px 14px;border-bottom: 1px solid #FFE5E7E9">

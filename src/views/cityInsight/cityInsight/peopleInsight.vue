@@ -4,15 +4,15 @@
         <div class="mid-column">
           <div class="top mid-start">
             <el-input class="input" v-model="name" clearable placeholder="输入人群包名称"></el-input>
-            <el-button type="primary" class="margin-left-20" plain @click="resetLoad">查询</el-button>
-            <el-button type="primary" class="margin-left-20" @click="toCreate">去创建</el-button>
+            <el-button type="primary" class="margin-left-20 pl-btn" plain @click="resetLoad">查询</el-button>
+            <el-button type="primary" class="margin-left-20 pl-btn" @click="toCreate">去创建</el-button>
           </div>
           <div class="list flex1 margin-top-20 clearfix">
             <div style="height: 205px">
               <div class="list-item hand"
                    v-for="(item, index) in resultData"
                    @click="handleClick(item)"
-                   :class="item.id === activeItem?'active': ''"
+                   :class="activeItem && item.id === activeItem.id?'active': ''"
                    :key="index"
               >{{item.name}}</div>
             </div>
@@ -41,8 +41,8 @@
       </div>
       <div class="mid-between" style="margin-top: 24px;">
         <div style="font-size: 0">
-          <el-button @click="hide">取消</el-button>
-          <el-button type="primary" class="margin-left-20" @click="returnResult">确定</el-button>
+          <el-button @click="hide" class="pl-btn2">取消</el-button>
+          <el-button type="primary" class="margin-left-20 pl-btn2" @click="returnResult">保存</el-button>
         </div>
         <div class="switch" v-if="switchValue !== null">
           <span style="margin-right: 15px">热力图开关</span>
@@ -67,6 +67,10 @@
         type: Object,
         required: true
       },
+      hotMapItem: {
+        type: Object,
+        default: null
+      }
     },
     data() {
       return {
@@ -74,9 +78,14 @@
         tags: null,
         switchValue: null,
         activeItem: null,
-        hotMapItem: null,
         pageSizeSelectable: [5, 10, 15, 20],
         pageSize: 5,
+      }
+    },
+    created() {
+      if (this.hotMapItem) {
+        // this.activeItem = this.hotMapItem
+        this.setSwitchValue(true)
       }
     },
     watch: {
@@ -84,7 +93,7 @@
         if (val === null) {
           this.tags = []
         } else {
-          this.$api.peopleInsight.getPeopleInsightDetail(val).then((data) => {
+          this.$api.peopleInsight.getPeopleInsightDetail(val.id).then((data) => {
             this.tags = JSON.parse(data.result.tagsName)
           })
         }
@@ -101,12 +110,14 @@
         this.activeItem = null
         this.switchValue = null
         this.tags = null
-        this.hotMapItem = null
-        this.pageIndex = 1
-        this.filterData.pageIndex = 1
+        // this.resultData = []
+        this.$emit('update:hotMapItem', null)
+        // this.hotMapItem = null
+        // this.pageIndex = 1
+        // this.filterData.pageIndex = 1
       },
       handleClick(item) {
-        this.activeItem = item.id
+        this.activeItem = item
       },
       change(val) {
         this.$emit('switchChange', val)
@@ -119,10 +130,12 @@
         return new Promise((resolve, reject) => {
           this.$api.peopleInsight.getPeopleInsightList(data).then(res => {
             if (!res.result) this.tags = null
-            let index = this.jug(this.activeItem, res.result)
-            if (index === -1) {
-              this.tags = null
-              this.activeItem = null
+            if (this.activeItem) {
+              let index = this.jug(this.activeItem.id, res.result)
+              if (index === -1) {
+                this.tags = null
+                this.activeItem = null
+              }
             }
             resolve(res);
           }).catch((res) => {
@@ -141,8 +154,9 @@
         //   this.$emit('hide')
         //   return
         // }
-        this.hotMapItem = this.activeItem
-        this.$emit('returnResult', this.hotMapItem)
+        // this.hotMapItem = this.activeItem
+        this.$emit('update:hotMapItem', this.activeItem)
+        this.$emit('returnResult', this.activeItem)
       },
     },
   }
@@ -151,6 +165,14 @@
 <style scoped lang='scss'>
 .p-i-w {
   padding: 30px 20px;
+  .pl-btn {
+    width: 80px;
+    height: 36px;
+  }
+  .pl-btn2 {
+    width: 100px;
+    height: 34px;
+  }
   .pi-tags {
     flex-flow: wrap;
     p {
