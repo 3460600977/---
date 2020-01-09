@@ -6,7 +6,10 @@
 
     <!-- 身子 -->
     <main class="main">
-        <router-view/>
+      <el-scrollbar>
+
+      <router-view/>
+      </el-scrollbar>
     </main>
   </div>
 </template>
@@ -35,6 +38,9 @@ export default {
     width: 100%;
     overflow-y: auto;
     background-color: $color-bg;
+    .el-scrollbar{
+      height: 100%;
+    }
   }
 }
 </style>

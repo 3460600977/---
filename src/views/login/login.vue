@@ -142,8 +142,7 @@
       },
 
       loginBackgroundImage() {
-        let url = (this.isSaleLogin || this.isAuditorLogin
-        ) || '@/assets/iconImg/icon_bg@2x.png';
+        let url = (this.isSaleLogin || this.isAuditorLogin ) || require('@/assets/iconImg/icon_bg@2x.png');
         return url;
       },
     },
