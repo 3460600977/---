@@ -225,16 +225,16 @@
         <div v-loading="buildingDirection.builds.loading">
           <ul class="msg-box color-text-1">
             <li class="item">
-              <label class="name">楼盘数</label><label class="bold">{{$tools.toThousands(buildsNumber, false)}}</label>个
+              <label class="name">楼盘数</label><label class="font-number font-16">{{$tools.toThousands(buildsNumber, false)}}</label>个
             </li>
             <li class="item">
-              <label class="name">单元数</label><label class="bold">{{$tools.toThousands(unitNum, false)}}</label>个
+              <label class="name">单元数</label><label class="font-number font-16">{{$tools.toThousands(unitNum, false)}}</label>个
             </li>
             <li class="item">
-              <label class="name">点位数</label><label class="bold">{{$tools.toThousands(deviceNumber, false)}}</label>个
+              <label class="name">点位数</label><label class="font-number font-16">{{$tools.toThousands(deviceNumber, false)}}</label>个
             </li>
             <li class="item">
-              <label class="name">覆盖人数</label><label class="bold">{{$tools.toThousands(peopleNumber, false)}}</label>人
+              <label class="name">覆盖人数</label><label class="font-number font-16">{{$tools.toThousands(peopleNumber, false)}}</label>人
             </li>
           </ul>
 
@@ -243,12 +243,12 @@
             <li class="item">
               <span>预估费用:&emsp;</span>
               <span class="color-red">¥</span>
-              <span class="color-red font-16 bold">{{$tools.toThousands(buildingDirection.estimatePrice/100)}}</span>
+              <span class="color-red font-20 font-number">{{$tools.toThousands(buildingDirection.estimatePrice/100)}}</span>
             </li>
             <li class="item">
               <span>账户余额:&emsp;</span>
               <span>¥</span>
-              <span class="font-16 bold">{{$tools.toThousands(userInfo.accountBalance/100)}}</span>
+              <span class="font-20 font-number">{{$tools.toThousands(userInfo.accountBalance/100)}}</span>
               <span class="color-red" v-if="buildingDirection.estimatePrice > userInfo.accountBalance">(余额不足)</span>
             </li>
           </ul>

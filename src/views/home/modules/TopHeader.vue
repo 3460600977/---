@@ -348,7 +348,7 @@
     .my-menu {
       height: $headerHeight;
       float: left;
-      color: #d4d4d4;
+      color: #FBB8B7;
       .item {
         position: relative;
         z-index: 2;
