@@ -120,7 +120,7 @@
 
 .el-input__inner{
   &::placeholder{
-    color: $color-text;
+    color: $color-text-1;
   }
   border:1px solid rgba(229,231,233,1);
 }
@@ -140,7 +140,7 @@
 
 .el-date-editor .el-range-input{
   &::placeholder{
-    color: $color-text;
+    color: $color-text-1;
   }
 }
 

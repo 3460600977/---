@@ -52,15 +52,14 @@
               <span class="font-12 color-text-1">{{item.address}}</span>
             </div>
 
-            <div class="account float-left" style="width: 100px;">
+            <div class="account float-left mid" style="width: 100px; height: 40px;">
               <span class="font-16 number font-number">{{$tools.toThousands(item.deviceNum, false)}}</span>
               <span class="font-14">个</span>
             </div>
 
-            <DelCirclrButton
-              @click.native="removeItem(localProject.list, index)"
-              class="float-left"
-            />
+            <div class="float-left mid" style="height: 40px;">
+              <DelCirclrButton @click.native="removeItem(localProject.list, index)"/>
+            </div>
           </div>
         </li>
         <noData v-if="buildsNumber <= 0">无可售数据</noData>
