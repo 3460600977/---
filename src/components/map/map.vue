@@ -81,11 +81,9 @@
     },
     watch: {
       buildings(val) {
-        this.setCity(this.city)
-        this.clearMap()
-        if (val.length) {
+        // if (val.length) {
           this.initMap(val)
-        }
+        // }
       },
       activePath(val) {
         this.$emit('activePathChange', val)
@@ -200,6 +198,9 @@
         this.pointsOverlayObj[overlay] = pointsOverlay
         this.map.addOverlay(pointsOverlay);
         pointsOverlay.disableMassClear()
+        pointsOverlay.addEventListener('mouseover',  this.pointEvent);
+        pointsOverlay.addEventListener('mouseout',  this.pointEventOut);
+        pointsOverlay.addEventListener('click',  this.pointEventClick);
       },
       initPointsOverlay() {
         this.initPointOverlaySingle(0)
@@ -939,9 +940,9 @@
           pointsOverlay.addEventListener('click',  this.pointEventClick);
         } else {
           if (points.length === 0) {
-            this.pointsOverlayObj[overlay].removeEventListener('mouseover',  this.pointEvent);
-            this.pointsOverlayObj[overlay].removeEventListener('mouseout',  this.pointEventOut);
-            this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointEventClick);
+            // this.pointsOverlayObj[overlay].removeEventListener('mouseover',  this.pointEvent);
+            // this.pointsOverlayObj[overlay].removeEventListener('mouseout',  this.pointEventOut);
+            // this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointEventClick);
             this.pointsOverlayObj[overlay].clear()
           } else {
             this.pointsOverlayObj[overlay].clear()
