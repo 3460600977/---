@@ -43,7 +43,7 @@
 
         <el-table-column prop="totalBudget" label="投放预算">
           <template slot-scope="scope">
-            <span v-if="scope.row.totalBudget" class='color-blue'>
+            <span v-if="scope.row.totalBudget" class='color-blue font-number'>
               ¥ {{$tools.toThousands(scope.row.totalBudget / 100)}}
             </span>
             <span v-else>

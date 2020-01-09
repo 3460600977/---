@@ -301,15 +301,13 @@
     </div>
 
     <!-- 地图选点 -->
-    <el-dialog
-      :visible.sync="buildingDirection.mapChooseShow"
-      width="98%"
-      class="map-choose-dialog"
-      :close-on-press-escape="closeEscTrue">
-      <map-choose-window ref="mapDialog" @hideMapPoint="hideMapPoint"
-          @submitSelectedBuildPoint="submitSelectedBuildPoint">
-      </map-choose-window>
-    </el-dialog>
+    <div class="my-dialog" :class="{'show': buildingDirection.mapChooseShow}">
+      <div class="inner-box" :class="{'show': buildingDirection.mapInnerShow}">
+        <map-choose-window ref="mapDialog" @hideMapPoint="hideMapPoint"
+            @submitSelectedBuildPoint="submitSelectedBuildPoint">
+        </map-choose-window>
+      </div>
+    </div>
 
   </div>
 </template>
@@ -390,6 +388,7 @@
         buildingDirection: {
           activeType: 'exist',
           mapChooseShow: false,
+          mapInnerShow: false,
           uploadBuildsFile: '',
           templateFileDownloading: false, // 导入楼盘数据->下载中
           estimatePrice: 0,
@@ -473,7 +472,10 @@
 
       // 隐藏地图选点
       hideMapPoint(val) {
-        this.buildingDirection.mapChooseShow = val
+        this.buildingDirection.mapInnerShow = val;
+        setTimeout(() => {
+          this.buildingDirection.mapChooseShow = val;
+        }, 350);
       },
 
 
@@ -582,6 +584,7 @@
       // 显示地图选点
       showMapChoose() {
         this.buildingDirection.mapChooseShow = true;
+        this.buildingDirection.mapInnerShow = true;
       },
 
 
@@ -910,6 +913,8 @@
         return !!this.$route.query.editProjectId;
       },
 
+      
+
     },
 
 
@@ -918,7 +923,21 @@
         if(val) {
           this.estimatePrice()
         }
-      }
+      },
+
+      // 地图选点弹窗动画
+      // 'buildingDirection.mapChooseShow': function(val) {
+      //   if (val) {
+      //     let offset = -10;
+      //     let interval = setInterval(() => {
+      //       offset += 2;
+      //       this.buildingDirection.mapStyle = `margin-top: ${offset}px`;
+      //     }, 10);
+      //     if (offset >= 0) {
+      //       clearInterval(interval)
+      //     }
+      //   }
+      // }
     }
   }
 </script>
@@ -928,18 +947,18 @@
     .el-tabs__content{
       overflow: auto;
     }
-    .map-choose-dialog{
-      top: -13%;
-      /deep/ .el-dialog__header {
-        display: none;
-      }
-      /deep/ .el-dialog__body {
-        padding: 10px;
-      }
-      /deep/ .el-dialog__footer {
-        padding: 12px 40px 20px 0;
-      }
-    }
+    // .map-choose-dialog{
+    //   top: -13%;
+    //   /deep/ .el-dialog__header {
+    //     display: none;
+    //   }
+    //   /deep/ .el-dialog__body {
+    //     padding: 10px;
+    //   }
+    //   /deep/ .el-dialog__footer {
+    //     padding: 12px 40px 20px 0;
+    //   }
+    // }
     .el-tabs__content {
       overflow: visible;
     }
@@ -1018,6 +1037,32 @@
       }
       .save-box {
         margin-top: 30px;
+      }
+    }
+    .my-dialog{
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.301);
+      z-index: -1;
+      &.show{
+        z-index: 2000;
+      }
+      .inner-box{
+        border-radius: 2px;
+        background: #fff;
+        padding: 10px;
+        transition: 0.3s;
+        margin-top: -30px;
+        transform: translateY(0px); 
+        opacity: 0;
+        &.show{
+          transform: translateY(30px); 
+          opacity: 1;
+        }
       }
     }
   }

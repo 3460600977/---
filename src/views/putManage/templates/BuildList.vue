@@ -12,7 +12,7 @@
           </div>
 
           <div class="account">
-            <span class="font-16 number">&nbsp;{{$tools.toThousands(item.value, false) || 0}}</span>
+            <span class="font-16 font-number number">&nbsp;{{$tools.toThousands(item.value, false) || 0}}</span>
             <span class="font-14" v-if="item.name === '覆盖人次'">人</span>
             <span class="font-14" v-else>个</span>
           </div>
@@ -23,48 +23,49 @@
 
 
     <!-- 地图选点列表 -->
-      <template v-if="buildingDirectionActiveType === 'create'">
-        <div v-if="deviceNumber > 0" class="title clearfix mid-between">
-          <div>
-            <span>
-              已选择楼盘
-              <span class="color-main font-16">{{$tools.toThousands(buildsNumber, false)}}</span> 个
-            </span>
-            <span>
-              , 可售设备
-              <span class="color-main font-16">{{$tools.toThousands(deviceNumber, false)}}</span> 个
-            </span>
-          </div>
-
-          <el-button
-            class="float-right"
-            :loading="exporting"
-            @click="buildsListExport"
-            size="small"
-          >下载</el-button>
+    <template v-if="buildingDirectionActiveType === 'create'">
+      <div v-if="deviceNumber > 0" class="title clearfix mid-between">
+        <div>
+          <span>
+            已选择楼盘
+            <span class="color-main font-number font-16">{{$tools.toThousands(buildsNumber, false)}}</span> 个
+          </span>
+          <span>
+            , 可售设备
+            <span class="color-main font-number font-16">{{$tools.toThousands(deviceNumber, false)}}</span> 个
+          </span>
         </div>
 
-        <ul class="selected-list-data-box">
-          <li class="item mid" v-for="(item, index) in localProject.list" :key="index">
-            <div class="base">
-              <div class="left-info float-left" style="width: 550px;">
-                <p class="name">{{item.premiseName}}</p>
-              </div>
+        <el-button
+          class="download-list"
+          :loading="exporting"
+          @click="buildsListExport"
+          size="small"
+        >下载</el-button>
+      </div>
 
-              <div class="account float-left" style="width: 100px;">
-                <span class="font-16 number">{{$tools.toThousands(item.deviceNum, false)}}</span>
-                <span class="font-14">个</span>
-              </div>
-
-              <DelCirclrButton
-                @click.native="removeItem(localProject.list, index)"
-                class="float-left"
-              />
+      <ul class="selected-list-data-box">
+        <li class="item mid" v-for="(item, index) in localProject.list" :key="index">
+          <div class="base">
+            <div class="left-info float-left" style="width: 550px;">
+              <p class="name font-14">{{item.premiseName}}</p>
+              <span class="font-12 color-text-1">{{item.address}}</span>
             </div>
-          </li>
-          <noData v-if="buildsNumber <= 0">无可售数据</noData>
-        </ul>
-      </template>
+
+            <div class="account float-left" style="width: 100px;">
+              <span class="font-16 number font-number">{{$tools.toThousands(item.deviceNum, false)}}</span>
+              <span class="font-14">个</span>
+            </div>
+
+            <DelCirclrButton
+              @click.native="removeItem(localProject.list, index)"
+              class="float-left"
+            />
+          </div>
+        </li>
+        <noData v-if="buildsNumber <= 0">无可售数据</noData>
+      </ul>
+    </template>
 
 
 
@@ -74,11 +75,11 @@
         <div>
           <span>
             已选择楼盘
-            <span class="color-main font16">{{buildsNumber}}</span> 个
+            <span class="color-main font-number font16">{{buildsNumber}}</span> 个
           </span>
           <span>
             , 可售设备
-            <span class="color-main font16">{{deviceNumber}}</span> 个
+            <span class="color-main font-number font16">{{deviceNumber}}</span> 个
           </span>
         </div>
 
@@ -102,7 +103,7 @@
             </div>
 
             <div class="account float-left">
-              <span class="font-16 number">{{item.deviceNum || 0}}</span>
+              <span class="font-16 number font-number">{{item.deviceNum || 0}}</span>
               <span class="font-14">个</span>
             </div>
           </div>
@@ -265,6 +266,9 @@ export default {
     font-weight: bold;
     background: rgba(249, 252, 255, 1);
     border-bottom: 1px solid rgba(229, 231, 233, 1);
+    // .download-list{
+    //   align-self: flex-end;
+    // }
   }
   .selected-list-data-box {
     max-height: 76px * 6;

@@ -6,7 +6,7 @@
 
     <!-- 身子 -->
     <main class="main">
-        <router-view/>
+      <router-view/>
     </main>
   </div>
 </template>
