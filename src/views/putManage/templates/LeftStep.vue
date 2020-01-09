@@ -1,12 +1,10 @@
 <template>
   <div class="left-steps" :class="{'hide': !isShowSteps}">
     <div style="height: 300px;">
-      <div class="step_arrow">
-        <div @click="isShowSteps = !isShowSteps">
-          <span class="step_arrow_span">
-            <i :class="{'rotate': !isShowSteps}" class="el-icon-d-arrow-left"></i>
-          </span>
-        </div>
+      <div @click="isShowSteps = !isShowSteps" class="step_arrow mid">
+        <span class="step_arrow_span">
+          <i :class="{'rotate': !isShowSteps}" class="iconfont icon-icon-test1 font-16"></i>
+        </span>
       </div>
       <el-steps direction="vertical" :active="leftStep.rootActiveIndex" finish-status="success">
         <el-step v-for="(step_item, rootIndex) in step.content" :key="rootIndex">
@@ -79,16 +77,14 @@
       position: relative;
       height: 31px;
       border-bottom: 1px solid $color-split-line2;
+      cursor: pointer;
     }
     .step_arrow_span {
       position: absolute;
       display: inline-block;
-      top: 15%;
-      right: 0;
+       right: 8px;
       i {
         color: $color-split-line2;
-        font-size: 22px;
-        cursor: pointer;
         transition: 0.3s;
         &.rotate {
           transform: rotate(180deg);
@@ -112,6 +108,7 @@
         .el-step__title {
           font-size: 16px;
           font-weight: 400;
+          white-space: nowrap;
         }
         .el-step__description {
           white-space: nowrap;
