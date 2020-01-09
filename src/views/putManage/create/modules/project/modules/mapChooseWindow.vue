@@ -605,7 +605,7 @@ export default {
     },
     // 右边弹出框点击删除某个楼盘
     deleteItem(item) {
-      this.$refs.dbmap.deleteBathItem([item]);
+      this.$refs.dbmap.deleteBathItem([item], -2);
     },
     // 右边弹出框点击创建资源包
     createPackage() {
