@@ -52,6 +52,7 @@
     background: #ECECEC;
   }
   .active {
+    font-weight: bold;
     border-left: 4px solid $color-main;
     color: $color-main;
     background: #ffffff;

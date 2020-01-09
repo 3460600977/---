@@ -5,28 +5,28 @@
            title="查找选点"
            @click="showSearchPop(0)"
            :class="{'active': activeIndex === 0}">
-          <span class="font-22 iconfont margin2 icon-locating"></span>
+          <span class="icon1 iconfont margin2 icon-locating"></span>
           查找选点
         </p>
         <p class="ul-p selectType border-right"
            title="手动选点"
            :class="{'active': activeIndex === 1}"
            @click="(e) => drawTypeSelect(e, 'circle', 1)">
-          <span class="font-22 iconfont margin2 icon-reconnaissance1"></span>
+          <span class="icon1 iconfont margin2 icon-reconnaissance1"></span>
           手动选点
         </p>
         <p class="ul-p selectType border-right"
            title="折线选点"
            :class="{'active': activeIndex === 2}"
            @click="(e) => drawTypeSelect(e, 'polyline', 2)">
-          <span class="font-22 iconfont margin2 icon-brokenline"></span>
+          <span class="icon1 iconfont margin2 icon-brokenline"></span>
           折线选点
         </p>
         <p class="ul-p selectType"
            title="多边形选点"
            :class="{'active': activeIndex === 3}"
            @click="(e) => drawTypeSelect(e, 'polygon', 3)">
-          <span class="font-22 iconfont margin2 icon-polygon"></span>
+          <span class="icon1 iconfont margin2 icon-polygon"></span>
           多边形选点
         </p>
       </div>
@@ -89,13 +89,17 @@
         this.cancleSelect()
       },
       showSearchPop(index) {
-        if (this.length >= MAX_COUNT) {
-          this.$message.error('最多只能进行五次选点操作！');
-          return
+        if (!this.isShow) {
+          if (this.length >= MAX_COUNT) {
+            this.$message.error('最多只能进行五次选点操作！');
+            return
+          }
+          this.activeIndex = index
+          this.isShow = !this.isShow
+          this.$emit('searchDrawTypeClick')
+        } else {
+          this.isShow = !this.isShow
         }
-        this.activeIndex = index
-        this.isShow = true
-        this.$emit('searchDrawTypeClick')
       },
     }
   }
@@ -124,14 +128,15 @@
   .margin2 {
     margin-right: 8px;
   }
-  .font-22 {
-    font-size: 22px;
+  .icon1 {
+    font-weight: bolder;
+    font-size: 15px;
     color: #8D8D8E;
     vertical-align: middle;
   }
   .active {
     color: $color-main;
-    .font-22 {
+    .icon1 {
       color: $color-main;
     }
   }
