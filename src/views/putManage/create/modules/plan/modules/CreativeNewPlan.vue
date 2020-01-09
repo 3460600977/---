@@ -314,6 +314,9 @@ export default {
       margin-top: 18px;
       .budget-value{
         width: 240px;
+        /deep/ .el-input__inner{
+          font-family: DINMittelschrift;
+        }
       }
     }
   }

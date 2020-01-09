@@ -12,7 +12,7 @@
           </div>
 
           <div class="account">
-            <span class="font-16 number">&nbsp;{{$tools.toThousands(item.value, false) || 0}}</span>
+            <span class="font-16 font-number number">&nbsp;{{$tools.toThousands(item.value, false) || 0}}</span>
             <span class="font-14" v-if="item.name === '覆盖人次'">人</span>
             <span class="font-14" v-else>个</span>
           </div>
@@ -28,11 +28,11 @@
         <div>
           <span>
             已选择楼盘
-            <span class="color-main font-16">{{$tools.toThousands(buildsNumber, false)}}</span> 个
+            <span class="color-main font-number font-16">{{$tools.toThousands(buildsNumber, false)}}</span> 个
           </span>
           <span>
             , 可售设备
-            <span class="color-main font-16">{{$tools.toThousands(deviceNumber, false)}}</span> 个
+            <span class="color-main font-number font-16">{{$tools.toThousands(deviceNumber, false)}}</span> 个
           </span>
         </div>
 
@@ -53,7 +53,7 @@
             </div>
 
             <div class="account float-left" style="width: 100px;">
-              <span class="font-16 number">{{$tools.toThousands(item.deviceNum, false)}}</span>
+              <span class="font-16 number font-number">{{$tools.toThousands(item.deviceNum, false)}}</span>
               <span class="font-14">个</span>
             </div>
 
@@ -75,11 +75,11 @@
         <div>
           <span>
             已选择楼盘
-            <span class="color-main font16">{{buildsNumber}}</span> 个
+            <span class="color-main font-number font16">{{buildsNumber}}</span> 个
           </span>
           <span>
             , 可售设备
-            <span class="color-main font16">{{deviceNumber}}</span> 个
+            <span class="color-main font-number font16">{{deviceNumber}}</span> 个
           </span>
         </div>
 
@@ -103,7 +103,7 @@
             </div>
 
             <div class="account float-left">
-              <span class="font-16 number">{{item.deviceNum || 0}}</span>
+              <span class="font-16 number font-number">{{item.deviceNum || 0}}</span>
               <span class="font-14">个</span>
             </div>
           </div>
