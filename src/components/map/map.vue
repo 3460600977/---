@@ -81,11 +81,9 @@
     },
     watch: {
       buildings(val) {
-        this.setCity(this.city)
-        this.clearMap()
-        if (val.length) {
+        // if (val.length) {
           this.initMap(val)
-        }
+        // }
       },
       activePath(val) {
         this.$emit('activePathChange', val)
