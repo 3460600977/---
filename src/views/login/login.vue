@@ -24,33 +24,36 @@
                 <el-form ref="loginForm" :model="loginForm" class="loginForm" :rules="rules">
                   <el-form-item prop="username">
                     <el-input
-                      prefix-icon="el-icon-user-solid"
                       v-model.trim="loginForm.username"
                       placeholder="请输入账户"
-                    ></el-input>
+                    >
+                      <img slot="prefix" :src="loginImg.user"/>
+                    </el-input>
                   </el-form-item>
-                  <el-form-item prop="password">
+                  <el-form-item prop="password" class="loginPass">
                     <el-input
-                      prefix-icon="el-icon-lock"
+                      :type="passType"
                       v-model.trim="loginForm.password"
-                      show-password
-                      placeholder="请输入密码"
-                    ></el-input>
+                      placeholder="请输入密码">
+                      <img slot="prefix" :src="loginImg.pass"/>
+                      <img slot="suffix" :src="loginImg.passChange" @click="changePassType"/>
+                    </el-input>
                   </el-form-item>
-                  <el-form-item class="loginCapture mid" prop="verifyValue">
+                  <el-form-item class="loginCapture" prop="verifyValue">
                     <el-input
-                      prefix-icon="el-icon-lock"
                       maxlength="4"
                       minlength="4"
                       v-model.trim="loginForm.verifyValue"
                       placeholder="请输入验证码"
                       @keyup.enter.native="onSubmit('loginForm')"
-                    ></el-input>
-                    <div class="captureNum">
+                    >
+                      <img slot="prefix" :src="loginImg.pass"/>
+                    </el-input>
+                    <div class="captureNum mid">
                       <img :src="login_capture_img" @click="changeCaptureNUm" alt="点击刷新"/>
                     </div>
                   </el-form-item>
-                  <el-form-item :class="{'submit-login':true,'loading-button':loading}">
+                  <el-form-item :class="{'submit-login':true}">
                     <el-button
                       type="primary"
                       @click="onSubmit('loginForm')"
@@ -98,6 +101,14 @@
         },
         loading: false,
         pageLoading: true, // 整个页面转圈, 跳转登录用
+        loginImg: {
+          user: require("@/assets/iconImg/icon_user.png"),
+          pass: require("@/assets/iconImg/icon_password.png"),
+          showPass: require("@/assets/iconImg/icon_unpack.png"),
+          hidePass: require("@/assets/iconImg/icon_padlock.png"),
+          passChange: require("@/assets/iconImg/icon_padlock.png"),
+        },
+        passType: "password",//密码框类型
         rules: {
           username: [
             {
@@ -142,7 +153,8 @@
       },
 
       loginBackgroundImage() {
-        let url = (this.isSaleLogin || this.isAuditorLogin ) || require('@/assets/iconImg/icon_bg@2x.png');
+        let url = (this.isSaleLogin || this.isAuditorLogin
+        ) || require('@/assets/iconImg/icon_bg@2x.png');
         return url;
       },
     },
@@ -168,6 +180,17 @@
     },
 
     methods: {
+      //密码的隐藏和展示
+      changePassType() {
+        if (this.passType === "text") {
+          this.passType = "password";
+          //更换图标
+          this.loginImg.passChange = this.loginImg.hidePass;
+        } else {
+          this.passType = "text";
+          this.loginImg.passChange = this.loginImg.showPass;
+        }
+      },
       onSubmit(formName) {
         //登录表框的验证
         this.$refs[formName].validate(valid => {
@@ -184,8 +207,6 @@
             this.loading = true;
 
             this.$api.Login.LoginIn(param).then(res => {
-              debugger
-              console.log(res.result)
               let info = res.result;
               this.loading = false;
               this.$store.commit("setToken", info.token);
@@ -264,7 +285,7 @@
   };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   .login-page {
     width: 100%;
     height: 100%;
@@ -296,10 +317,10 @@
       background: $color-bg-3;
       border-radius: 14px;
       margin-right: 30px;
-      .el-input__inner:hover {
+      /deep/ .el-input__inner:hover {
         border-color: #e5e7e9;
       }
-      .el-form-item {
+      /deep/ .el-form-item {
         margin-bottom: 30px;
       }
       .login-title {
@@ -317,18 +338,30 @@
       }
       .loginForm {
         margin-top: 44px;
+        /deep/ .el-input__prefix {
+          left: 19px;
+          top: 3px;
+          height: 16px;
+        }
+        /deep/ .el-input--prefix .el-input__inner {
+          padding-left: 42px;
+        }
       }
-      .el-input {
+      /deep/ .el-input {
         width: 320px;
         height: 36px;
       }
-      .el-input__inner {
+      /deep/ .el-input__inner {
         width: 320px;
         height: 36px;
         background-color: $color-bg-8;
+        border: none;
         border-radius: 18px;
       }
-      input::-webkit-input-placeholder {
+      /deep/ .is-error .el-input__inner {
+        border: 1px solid $color-main !important;
+      }
+      /deep/ input::-webkit-input-placeholder {
         font-size: 14px;
         font-weight: 300;
         color: $color-text-1;
@@ -336,40 +369,52 @@
       .loading-button button {
         border: none;
       }
-      .el-button {
+      /deep/ .el-button {
         width: 320px;
         height: 40px;
         background: $color-bg-3;
         border-radius: 20px;
         margin: 86px 0 68px 0;
+        span {
+          font-size: 14px !important;
+        }
       }
-      .el-loading-spinner {
+      /deep/ .el-loading-spinner {
         width: 320px;
         height: 40px;
         background: $color-bg-3;
         border: 1px solid $color-blue;
         border-radius: 20px;
       }
+      .loginPass {
+        /deep/ .el-input__suffix i {
+          display: none;
+        }
+        /deep/ .el-input__suffix {
+          cursor: pointer;
+          right: 21px;
+        }
+      }
       .loginCapture {
         margin-bottom: 0;
         display: flex;
-        .el-input, .el-input__inner {
-          display: inline-block;
+        /deep/ .el-input {
+          float: left;
+          width: 220px;
+          height: 36px;
+        }
+        /deep/ .el-input__inner {
           width: 220px;
           height: 36px;
         }
         /deep/ .el-form-item__content {
-          display: -ms-flexbox !important;
-          display: flex !important;
-          display: -webkit-box;
-          display: -webkit-flex;
-          -ms-flex-align: center;
+          display: flex;
           align-items: center;
-          -webkit-box-align: center;
         }
         .captureNum {
+          float: left;
           width: 90px;
-          height: 32px;
+          height: 36px;
           display: inline-block;
           margin-left: 12px;
           position: relative;
