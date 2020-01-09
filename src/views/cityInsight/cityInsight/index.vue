@@ -40,6 +40,7 @@
                 v-if="leftShow[0]"
                 ref="peopleInsight"
                 :city="cityFilter"
+                :hotMapItem.sync="hotMapItem"
                 v-show="activeTab === 0"
                 @switchChange="switchChange"
                 @returnResult="(val) => returnResult(val, 2)"
@@ -182,6 +183,7 @@
     },
     data() {
       return {
+        hotMapItem: null, // hotMap当前显示值
         // isInit: true,
         buildingDatas: { // 楼宇标签
           title: '楼宇标签',
@@ -249,7 +251,6 @@
         },
         activeTab: 0,
         leftShow: [false, false], // 控制筛选弹出框的加载
-        currentPonents: null,
         tabData: [
           {name: '人群洞察', value: 0},
           {name: '楼盘筛选', value: 1},
@@ -285,7 +286,6 @@
           y: 0
         },
         budget: 1, // 投放预算默认值
-        sliderVal: 3000,
         currentSelectType: null,
         popUpHeight: {
           'polyline': 246,
@@ -395,6 +395,7 @@
         if (index === 0) {
           this.rightShow = 0
           this.activeTab = 0
+          this.hotMapItem = null
           this.leftShow = new Array(this.leftShow.length).fill(false)
           this.resetTagsAndLoad()
         } else if (index === 1) {
@@ -451,7 +452,7 @@
         }
       },
       getHotMap(val, index, type) {
-        this.loadHotMap(val)
+        this.loadHotMap(val.id)
         this.hide(1)
         this.resetLeftPopup(index, type)
       },
@@ -520,7 +521,7 @@
         })
       },
       loadCitys() {
-        new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
           this.$api.CityList.TypeList().then((data) => {
             if (data.result) {
               this.cityDatas = data.result.map((item) => {
@@ -529,7 +530,6 @@
             } else {
               this.cityDatas = []
             }
-            this.getCityFilter()
             resolve()
           })
         })
@@ -553,8 +553,17 @@
       },
       // 初始化
       init() {
-        console.log(this.$route.query)
-        this.loadCitys()
+        if (this.$route.query.data) {
+          this.cityFilter = JSON.parse(this.$route.query.data).cityFilter
+          this.hotMapItem = JSON.parse(this.$route.query.data).crowdInfo
+          this.loadCitys()
+          this.loadData()
+          this.loadHotMap(this.hotMapItem.id)
+        } else {
+          this.loadCitys().then(() => {
+            this.getCityFilter()
+          })
+        }
       },
       // 楼盘详情窗口点击返回按钮
       rightBack() {

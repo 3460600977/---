@@ -12,10 +12,10 @@
           </ul>
         </div>
       </div>
-      <div class="btns padding text-right">
+      <div class="btns padding">
+        <el-button class="btn" @click="operate(1)">取消</el-button>
+        <el-button class="btn" type="primary" @click="operate(2)">保存</el-button>
         <el-button type="text" @click="operate(0)">清空</el-button>
-        <el-button class="btn" size="mini" @click="operate(1)">取消</el-button>
-        <el-button class="btn" type="primary" size="mini" @click="operate(2)" plain>确定</el-button>
       </div>
     </div>
 </template>
@@ -98,14 +98,14 @@
   }
   .btns {
     padding-bottom: 20px;
-    margin-top: 24px;
+    margin-top: 80px;
     font-size: 0;
     & /deep/ .el-button + .el-button {
       margin-left: 14px;
     }
   }
   .content {
-    padding-top: 10px;
+    padding-top: 30px;
     .type {
       width: 95px;
       vertical-align: top;
