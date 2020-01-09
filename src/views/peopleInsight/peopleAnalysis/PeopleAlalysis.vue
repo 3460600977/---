@@ -577,7 +577,7 @@ export default {
       crowdInfo.name = this.peopleType;
       this.$router.push({
         path:'/cityInsight/selectPoint',
-        query:{cityFilter:JSON.stringify(cityFilter),crowdInfo:JSON.stringify(crowdInfo)}
+        query:{data: JSON.stringify({cityFilter:cityFilter,crowdInfo:crowdInfo})}
       });
     },
     downSort(data,piVO,wholePiVO) {
