@@ -180,7 +180,8 @@
                   <preview-top-box
                     :innerWidth="324"
                     :top="downloadCreative.data.topList.pre"
-                    class="top-screen-pre" v-if="dialogShowContent"
+                    class="top-screen-pre"
+                    v-if="dialogShowContent&&activeName==='material'"
                   ></preview-top-box>
                   <a
                     :href="downloadCreative.data.topList.downloadUrl"
@@ -984,7 +985,7 @@ export default {
       .top-screen {
         position: relative;
         margin-top: 20px;
-        .top-screen-box{
+        .top-screen-box {
           margin-top: 20px;
         }
         .top-screen-pre {
@@ -1025,7 +1026,7 @@ export default {
       .bottom-screen {
         margin-top: 20px;
         .bottom-screen-box {
-          margin-top: 24px;
+          margin-top: 20px;
         }
         .left-pre {
           display: inline-block;
