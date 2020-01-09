@@ -427,7 +427,7 @@
       drawComplete(drawingManager) {
         drawingManager.addEventListener("overlaycomplete", (e) => {
           if (!this.drawErrorTip(e)) return
-          this.setSvgIndex()
+          // this.setSvgIndex()
           let location = this.map.pixelToPoint(e.currentTarget._mask._draggingMovePixel)
           let path = {
             type: e.drawingMode,
@@ -751,9 +751,10 @@
       //   }
       // },
       mapLoad() {
-        // this.initPointsOverlay()
+        this.initPointsOverlay()
         this.initHotMap()
         this.initMouse()
+        this.setSvgIndex()
       },
 
       mapBindEvent() {
@@ -767,7 +768,7 @@
         // this.map.addEventListener('tilesloaded', this.tilesloaded)
       },
       drawCircle(point, info) {
-        this.setSvgIndex()
+        // this.setSvgIndex()
         let marker = this.addMarkerIcon(point)
         let circle = new BMap.Circle(point, this.defaultRadius, this.styleOptions);
         this.map.addOverlay(circle);
@@ -939,9 +940,9 @@
           pointsOverlay.addEventListener('click',  this.pointEventClick);
         } else {
           if (points.length === 0) {
-            this.pointsOverlayObj[overlay].removeEventListener('mouseover',  this.pointEvent);
-            this.pointsOverlayObj[overlay].removeEventListener('mouseout',  this.pointEventOut);
-            this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointEventClick);
+            // this.pointsOverlayObj[overlay].removeEventListener('mouseover',  this.pointEvent);
+            // this.pointsOverlayObj[overlay].removeEventListener('mouseout',  this.pointEventOut);
+            // this.pointsOverlayObj[overlay].removeEventListener('click',  this.pointEventClick);
             this.pointsOverlayObj[overlay].clear()
           } else {
             this.pointsOverlayObj[overlay].clear()
