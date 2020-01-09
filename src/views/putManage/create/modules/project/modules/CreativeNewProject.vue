@@ -301,15 +301,19 @@
     </div>
 
     <!-- 地图选点 -->
-    <el-dialog
-      :visible.sync="buildingDirection.mapChooseShow"
+    <!-- <el-dialog
+      :style="buildingDirection.mapChooseShow ? 'z-index: 10000' : 'z-index: -1'"
+      :visible="true"
       width="98%"
       class="map-choose-dialog"
       :close-on-press-escape="closeEscTrue">
-      <map-choose-window ref="mapDialog" @hideMapPoint="hideMapPoint"
-          @submitSelectedBuildPoint="submitSelectedBuildPoint">
-      </map-choose-window>
-    </el-dialog>
+    </el-dialog> -->
+      <div :style="buildingDirection.mapChooseShow ? 'z-index: 10000' : 'z-index: -1'">
+
+        <map-choose-window ref="mapDialog" @hideMapPoint="hideMapPoint"
+            @submitSelectedBuildPoint="submitSelectedBuildPoint">
+        </map-choose-window>
+      </div>
 
   </div>
 </template>
