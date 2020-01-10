@@ -31,7 +31,8 @@
 .font-22 {
   font-size: 22px;
 }
-/* 数字字体 */
+
+/* 金钱字体 */
 @font-face {
   font-family: 'DINMittelschrift';
 	src: url('../../fonts/DINMittelschrift.eot');
@@ -42,6 +43,16 @@
 }
 .font-number{
   font-family: DINMittelschrift;
+}
+
+/* 数字字体 */
+@font-face {
+  font-family: 'nflbengals';
+	src: url('../../fonts/nflbengals.ttf');
+}
+
+.font-nflbengals{
+  font-family: nflbengals;
 }
 .bold{
   font-weight: bold;

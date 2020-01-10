@@ -131,7 +131,7 @@
               deleteDialog.show = true"
               v-if="scope.row.statusName != '审核通过'" 
               class="icon-space hand">
-              <i class="iconfont icon-error icon-color"></i>删除
+              <i class="iconfont icon-error icon-color font-17"></i>删除
             </span>
 
           </template>
@@ -242,17 +242,17 @@
             </div>
 
             <div class="bottom-screen">
-              <span v-for="(item, index) in detailDialog.data.materials">
+              <span v-for="(item, index) in detailDialog.data.materials" :key="index * 1000">
                 <p v-if="item.screenType === 2 && item.height === 880" style="margin-bottom: 20px;">下屏</p>
               </span>
 
-              <span v-for="(item, index) in detailDialog.data.materials">
+              <span v-for="(item, index) in detailDialog.data.materials" :key="index * 0.5">
                 <div v-if="item.screenType === 2 && item.height === 880" class="left-pre">
                   <el-image :src="item.srcUrl"/>
                 </div>
               </span>
 
-              <span v-for="(item, index) in detailDialog.data.materials">
+              <span v-for="(item, index) in detailDialog.data.materials" :key="index">
                 <div v-if="item.screenType === 2 && item.height === 720" class="right-pre">
                   <el-image :src="item.srcUrl"/>
                 </div>
@@ -270,12 +270,12 @@
 
     
     <!-- 删除 提示弹窗 -->
-    <el-dialog title="取消方案"
+    <el-dialog title="删除创意"
       :visible.sync="deleteDialog.show"
       width="568px"
       class="my-dialog"
     >
-      <p>确认是否取消投放方案 <span class="color-main">【{{deleteDialog.data.name}}】？</span></p>
+      <p>确认是否删除广告创意 <span class="color-main">【{{deleteDialog.data.name}}】？</span></p>
       <span slot="footer">
         <el-button @click="deleteDialog.show = false" class="btn1">取 消</el-button>
         <el-button type="primary" class="btn1" @click="delCreativeById(deleteDialog.data.id); deleteDialog.show = false">确 定</el-button>

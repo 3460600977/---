@@ -171,7 +171,7 @@
         </el-form-item>
         
         <!-- 资质图片 -->
-        <el-form-item class="mt-12" label="广告创意资质">
+        <el-form-item class="mt-20" label="广告创意资质">
           <div style="width: 1108px">
             <div class="aptitude-img" 
               v-for="(item, index)  in formData.industryImage"

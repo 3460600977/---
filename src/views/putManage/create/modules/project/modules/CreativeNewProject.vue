@@ -219,7 +219,7 @@
 
     <!-- 楼盘预估数面板 -->
     <div class="estimate-box">
-      <div class="font-16 bold">可售投放数</div>
+      <div class="bold">可售投放数</div>
 
       <template v-if="deviceNumber > 0">
         <div v-loading="buildingDirection.builds.loading">
@@ -260,7 +260,7 @@
 
       <el-divider></el-divider>
 
-      <div class="font-16 bold">投放方案名称</div>
+      <div class="bold">投放方案名称</div>
       <el-form
         class="project-name"
         ref="planName"
@@ -421,7 +421,7 @@
 
         formDataRules: {
           name: [
-            {required: true, message: '请输入投放方案名称!', trigger: 'blur'},
+            {required: true, message: '请输入投放方案名称!', trigger: ['blur', 'change']},
             { max: 50, message: '方案名称不超过50个字,请正确输入!'}
           ],
           industry: [
@@ -1018,16 +1018,15 @@
       .msg-box {
         margin-top: 20px;
         > .item {
-          margin-bottom: 20px;
-          font-size: 14px;
+          margin-bottom: 14px;
           .name {
             display: inline-block;
-            width: 160px;
+            width: 78px;
           }
         }
       }
       .money-box {
-        margin-top: 10px;
+        margin-top: 20px;
         .item {
           margin-bottom: 20px;
         }

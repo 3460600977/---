@@ -149,7 +149,7 @@
               cancleDialog.show = true" 
               v-if="scope.row.status == 0 || scope.row.status == 4" 
               class="icon-space hand">
-              <i class="iconfont icon-error1 icon-color"></i>取消
+              <i class="iconfont icon-error1 icon-color font-17"></i>取消
             </span>
 
           </template>
