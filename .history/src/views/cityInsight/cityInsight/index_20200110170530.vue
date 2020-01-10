@@ -47,7 +47,7 @@
               ></people-insight>
               <multiple-selectPopUp
                 v-if="leftShow[1]"
-                ref="tagsSelect"
+                dddref="tagsSelect"
                 v-show="activeTab === 1"
                 :selectDatas="buildingDatas"
                 :filters="buildingFilter"
@@ -723,7 +723,6 @@
     z-index: 3;
     top: 20px;
     left: 36px;
-    box-shadow: 0px 3px 5px 0px rgba(0,0,0,0.1);
     .filter-popup {
       /*height: 490px;*/
       background: #ffffff;

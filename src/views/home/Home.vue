@@ -31,7 +31,7 @@ export default {
   display: flex;
   flex-direction: column;
   .main{
-    flex-grow: 1;
+    flex: 1;
     width: 100%;
     overflow-y: auto;
     background-color: $color-bg;
