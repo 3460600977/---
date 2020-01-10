@@ -205,7 +205,7 @@ export default {
 
           this.$api.Login.LoginIn(param)
             .then(res => {
-              console.log("info.menu", info.menu);
+              debugger
               let info = res.result;
               this.loading = false;
               this.$store.commit("setToken", info.token);
@@ -225,6 +225,7 @@ export default {
                   menuList.push({ code: item.code, selected: item.selected });
                 });
                 setMenuList(menuList);
+
                 this.$router.push({ path: "/home", query: {} });
               }
             })
@@ -324,7 +325,7 @@ export default {
     border-radius: 14px;
     margin-right: 30px;
     /deep/ .el-input__inner {
-      background-color: $color-bg-3;
+      background-color: transparent;
     }
     /deep/ .el-form-item {
       margin-bottom: 30px;
@@ -390,7 +391,6 @@ export default {
     /deep/ .el-loading-spinner {
       width: 320px;
       height: 40px;
-      background: $color-bg-3;
       border: 1px solid $color-blue;
       border-radius: 20px;
     }
