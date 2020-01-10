@@ -205,7 +205,6 @@ export default {
 
           this.$api.Login.LoginIn(param)
             .then(res => {
-              debugger
               let info = res.result;
               this.loading = false;
               this.$store.commit("setToken", info.token);
