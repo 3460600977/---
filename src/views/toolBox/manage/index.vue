@@ -17,7 +17,7 @@
       return {
         leftMenuList: {
           first_name: '账号管理',
-          first_path: '/toolBox/account',
+          first_path: '/home/account',
           menu_index: 0,
           menu_icon_show: true,
           menu_icon: require('../../../assets/iconImg/icon_Management@2x.png'),
@@ -27,7 +27,7 @@
               sub_menu: [
                 {
                   name: '账号信息',
-                  path: '/toolBox/account',
+                  path: '/home/account',
                 },
               ]
             }
