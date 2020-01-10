@@ -43,7 +43,7 @@
 <style scoped lang='scss'>
   .ul {
     background:rgba(255,255,255,1);
-    // box-shadow:0px 3px 5px 0px rgba(0, 0, 0, 0.1);
+    box-shadow:0px 3px 5px 0px rgba(0, 0, 0, 0.1);
     line-height: 50px;
   }
   .active {
