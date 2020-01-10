@@ -38,8 +38,14 @@ export const Login = {
    */
   // 获取图片Base64验证码
   GetVerifyCode: () => {
+    let codeUrl = "/dpapi/verification/base64Image";
+    if (codeUrl.indexOf('?') > -1) {
+      codeUrl = codeUrl + "&timestamp=" + new Date().getTime();
+    } else {
+      codeUrl = codeUrl + "?timestamp=" + new Date().getTime();
+    }
     return request({
-      url: "/dpapi/verification/base64Image",
+      url: codeUrl,
       method: "GET",
     });
   },
