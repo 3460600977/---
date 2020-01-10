@@ -12,7 +12,8 @@
 
 $color-blue:       #F44A4A; // 主色
 $color-main:       $color-blue; // 主色
-$color-main-lighten:  rgba($color-main,.05); // 主色偏淡
+$color-main-lighten: rgba($color-main,.05); // 主色偏淡
+$color-main-darken:#C13130; // 主色偏深
 
 $color-red:        #F44A4A; // 点缀
 $color-split-line: #575E87; // 分割线
@@ -22,6 +23,7 @@ $color-text:       #181819; // 文字主色
 $color-text-1:     #999999; // 文字辅色
 $color-text-2:     #969CBE; // 文字辅助
 $color-text-3:     #606266; // 文字辅助2
+
 $color-shadow-1:   rgba(239,189,38,0.25); // 文字投影1
 $color-shadow-2:   rgba(45,90,255,0.25); // 文字投影2
 $color-shadow-3:   rgba(245,77,77,0.25); // 文字投影3
@@ -30,6 +32,7 @@ $color-shadow-5:   rgba(139,139,139,0.16); // 文字投影5
 $color-shadow-6:   rgba(244,74,74,0.12); // 文字投影6
 $color-shadow-7:   rgba(244,74,74,0.3); // 文字投影7
 $color-shadow-8:   rgba(244,74,74,0.2); // 文字投影8
+
 $color-bg:         #F6F6F6; // 背景
 $color-bg-2:       #FFCC00; // 按钮背景
 $color-bg-3:       #FFFFFF; // 纯色背景

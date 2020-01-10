@@ -131,7 +131,7 @@
               deleteDialog.show = true"
               v-if="scope.row.statusName != '审核通过'" 
               class="icon-space hand">
-              <i class="iconfont icon-error icon-color"></i>删除
+              <i class="iconfont icon-error icon-color font-17"></i>删除
             </span>
 
           </template>
@@ -242,17 +242,17 @@
             </div>
 
             <div class="bottom-screen">
-              <span v-for="(item, index) in detailDialog.data.materials">
+              <span v-for="(item, index) in detailDialog.data.materials" :key="index * 1000">
                 <p v-if="item.screenType === 2 && item.height === 880" style="margin-bottom: 20px;">下屏</p>
               </span>
 
-              <span v-for="(item, index) in detailDialog.data.materials">
+              <span v-for="(item, index) in detailDialog.data.materials" :key="index * 0.5">
                 <div v-if="item.screenType === 2 && item.height === 880" class="left-pre">
                   <el-image :src="item.srcUrl"/>
                 </div>
               </span>
 
-              <span v-for="(item, index) in detailDialog.data.materials">
+              <span v-for="(item, index) in detailDialog.data.materials" :key="index">
                 <div v-if="item.screenType === 2 && item.height === 720" class="right-pre">
                   <el-image :src="item.srcUrl"/>
                 </div>
