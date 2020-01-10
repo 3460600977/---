@@ -79,7 +79,7 @@
     <el-dialog title="删除资源包"
                :visible.sync="dialogShowContent"
                width="568px"
-               class="my-dialog"
+               class="my-dialog dialog-mid"
     >
       <p>是否确认删除人群包 <span class="color-main">【{{currentItem && currentItem.name}}】？</span></p>
       <span slot="footer">

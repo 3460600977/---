@@ -91,7 +91,7 @@
           text:this.title,
           textStyle:{
             fontSize:14,
-            fontWeight:"normal"
+            fontWeight:"bold"
           }
         },
         tooltip: {
@@ -154,7 +154,7 @@
             text:this.title,
             textStyle:{
               fontSize:14,
-              fontWeight:"normal"
+              fontWeight:"bold"
             }
           },
           tooltip: {
