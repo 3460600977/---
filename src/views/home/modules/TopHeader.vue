@@ -352,7 +352,7 @@ export default {
   .my-menu {
     height: $headerHeight;
     width: 1200px;
-    margin: 0 auto;
+    margin-left: 77px;
     color: #fbb8b7;
     li.item {
       position: relative;
@@ -389,9 +389,6 @@ export default {
           }
         }
       }
-    }
-    li.item:first-child {
-      padding-left: 0;
     }
     .hover-move-block {
       position: absolute;
