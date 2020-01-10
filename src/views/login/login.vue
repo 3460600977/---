@@ -377,22 +377,6 @@ export default {
     .loading-button button {
       border: none;
     }
-    /deep/ .el-button {
-      width: 320px;
-      height: 40px;
-      background: $color-bg-3;
-      border-radius: 20px;
-      margin: 86px 0 68px 0;
-      span {
-        font-size: 14px !important;
-      }
-    }
-    /deep/ .el-loading-spinner {
-      width: 320px;
-      height: 40px;
-      border: 1px solid $color-blue;
-      border-radius: 20px;
-    }
     .loginPass {
       /deep/ .el-input__suffix {
         cursor: pointer;
@@ -434,7 +418,16 @@ export default {
       }
     }
     .submit-login {
+      button{
       margin-bottom: 0;
+      width: 320px;
+      height: 40px;
+      border-radius: 20px;
+      margin: 86px 0 68px 0;
+      span {
+        font-size: 14px !important;
+      }
+      }
     }
   }
 }
