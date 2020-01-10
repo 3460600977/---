@@ -89,7 +89,7 @@
 
     <el-dialog
       v-if="tableData.data.length > 0"
-      class="my-dialog"
+      class="my-dialog dialog-mid"
       title="投放计划详情"
       :visible.sync="detailDialog.show"
       width="1000px">

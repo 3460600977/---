@@ -183,7 +183,7 @@
     <el-dialog title="取消方案"
       :visible.sync="cancleDialog.show"
       width="568px"
-      class="my-dialog"
+      class="my-dialog dialog-mid"
     >
       <p>确认是否取消投放方案 <span class="color-main">【{{cancleDialog.data.name}}】？</span></p>
       <span slot="footer">
