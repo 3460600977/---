@@ -16,12 +16,12 @@ const router = new Router({
   routes: [
     {
       path: '/home',
-      meta: {code: '1000'},
+      meta: {code: '1000', name: '首页'},
       component: () => import('@/views/home/Home'),
       children: [
         {
           path: '/',
-          meta: {code: '1000'},
+          meta: {code: '1000', name: '首页'},
           component: () => import('@/views/home/modules/HomeBody'),
         },
         ...putManageRouter,
@@ -48,7 +48,7 @@ const router = new Router({
     {
       path: '/auditorLogin', component: () => import('@/views/login/login'),
       // meta: {white: true},
-      meta: {code: '1003', white: true},
+      meta: {white: true},
     },
     
     {path: '/404', component: () => import('@/views/errorPage/404'), meta: {white: true}},
@@ -67,7 +67,7 @@ router.beforeEach((to, from, next) => {
   NProgress.start();
   let menuList = getMenuList();
   let canEnter = false;
-
+  
   if (menuList) {
     for (let i = 0; i < menuList.length; i++) {
       if (menuList[i].code === to.meta.code && menuList[i].selected) {
@@ -75,7 +75,7 @@ router.beforeEach((to, from, next) => {
       }
     }
   }
-
+  
   // 判断该路由是否需要登录权限
   if (store.state.token.userToken && canEnter) { // 通过vuex state获取当前登录状态
     next()
@@ -89,16 +89,6 @@ router.beforeEach((to, from, next) => {
         // 将跳转的路由path作为参数，登录成功后跳转到该路由
         {path: '/login', query: {}}
       )
-      // return MessageBox.confirm('', '确定重新登录', {
-      //   confirmButtonText: '重新登录',
-      //   cancelButtonText: '取消',
-      //   type: 'warning',
-      // }).then(() => {
-      //   next(
-      //     // 将跳转的路由path作为参数，登录成功后跳转到该路由
-      //     {path: '/login', query: {}}
-      //   )
-      // })
     }
   }
 })

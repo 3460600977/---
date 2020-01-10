@@ -4,8 +4,8 @@
         <div class="mid-column">
           <div class="top mid-start">
             <el-input class="input" v-model="name" clearable placeholder="输入人群包名称"></el-input>
-            <el-button type="primary" class="margin-left-20" plain @click="resetLoad">查询</el-button>
-            <el-button type="primary" class="margin-left-20" @click="toCreate">去创建</el-button>
+            <el-button type="primary" class="margin-left-20 pl-btn" plain @click="resetLoad">查询</el-button>
+            <el-button type="primary" class="margin-left-20 pl-btn" @click="toCreate">去创建</el-button>
           </div>
           <div class="list flex1 margin-top-20 clearfix">
             <div style="height: 205px">
@@ -41,8 +41,8 @@
       </div>
       <div class="mid-between" style="margin-top: 24px;">
         <div style="font-size: 0">
-          <el-button @click="hide">取消</el-button>
-          <el-button type="primary" class="margin-left-20" @click="returnResult">保存</el-button>
+          <el-button @click="hide" class="pl-btn2">取消</el-button>
+          <el-button type="primary" class="margin-left-20 pl-btn2" @click="returnResult">保存</el-button>
         </div>
         <div class="switch" v-if="switchValue !== null">
           <span style="margin-right: 15px">热力图开关</span>
@@ -165,6 +165,14 @@
 <style scoped lang='scss'>
 .p-i-w {
   padding: 30px 20px;
+  .pl-btn {
+    width: 80px;
+    height: 36px;
+  }
+  .pl-btn2 {
+    width: 100px;
+    height: 34px;
+  }
   .pi-tags {
     flex-flow: wrap;
     p {

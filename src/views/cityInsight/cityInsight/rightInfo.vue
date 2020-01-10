@@ -34,17 +34,17 @@
 
         <div class="mid-between margin1">
           <p class="bold">媒体资源</p>
-          <el-button type="primary" plain icon="el-icon-plus" @click="addBtnClick">添加</el-button>
+          <el-button type="primary" class="ri-btn" size="mini" plain icon="el-icon-plus" @click="addBtnClick">添加</el-button>
         </div>
       </div>
       <ul class="list margin2 border-bottom flex1 customScroll">
-        <li class="list-item" v-for="(item, index) in selectedBuildings" :key="item.premisesId">
+        <li class="list-item hand" v-for="(item, index) in selectedBuildings" :key="item.premisesId">
           <p>{{item.premisesName}}</p>
           <div class="mid-start list-item-2">
             <p class="list-item-1">点位数：{{item.signElevatorNum | toThousands}}</p>
             <p>覆盖人数：{{item.totalPeople | toThousands}}</p>
           </div>
-          <span class="iconfont icon-remove icon-error hand" @click="deleteItem(item)"></span>
+          <span class="iconfont icon-remove icon-error" @click="deleteItem(item)"></span>
         </li>
       </ul>
       <div style="margin-top: 14px;text-align: center" class="padding padding2">
@@ -112,6 +112,10 @@
     padding-left: 20px;
     padding-right: 20px;
   }
+  .ri-btn {
+    height: 26px;
+    width: 64px;
+  }
   .padding1 {
     padding-top: 10px;
   }
@@ -169,7 +173,7 @@
       margin-right: 20px;
       padding: 10px 20px 10px 30px;
       margin-bottom: 10px;
-      border: 1px dashed $color-main;
+      border: 1px dashed $color-border;
       background:rgba(255,255,255,1);
       .icon-remove {
         font-size: 18px;
@@ -178,8 +182,15 @@
         top: 50%;
         color: $color-main;
         z-index: 100;
+        display: none;
         transform: translateY(-50%);
         right: -9px;
+      }
+      &:hover {
+        border: 1px dashed $color-main;
+        .icon-remove {
+          display: block;
+        }
       }
     }
   }
