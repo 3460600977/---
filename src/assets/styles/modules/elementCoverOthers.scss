@@ -1,22 +1,64 @@
 // elementUI 主题编辑中无法修改的内容在此处覆盖
-.el-button{
-  &.is-circle{
-    width: auto;
+
+// 按钮
+
+  // &.is-disabled{
+  //   background: $color-disabled;
+  //   border-color: $color-disabled;
+  //   color: #fff;
+  //   &:hover{
+  //     border-color: $color-disabled;
+  //     background: $color-disabled;
+  //     color: #fff;
+  //   }
+  // }
+.el-button--default{
+  &:hover{
+    background: #fff;
+    border-color: $color-border;
+    color: $color-text;
   }
-  &.is-plain{
-    background: transparent !important;
-    &.el-button--primary{
-      border-color: $color-main;
-      color: $color-main;
-      &:hover{
-        color: $color-main;
-      }
-      &:active{
-        color: $color-main;
-      }
-    }
+  &:active{
+    color: $color-main;
+    border-color: $color-main;
+    background: transparent;
   }
 }
+
+.el-button--primary{
+  border-color: $color-main;
+  background: $color-main;
+  color: #fff;
+  &.is-plain{
+    color: $color-main;
+    border-color: $color-main;
+    background: transparent;
+    &:hover{
+      border-color: $color-main;
+      background: transparent;
+      color: $color-main;
+    }
+    &:active{
+      color: #fff;
+      background: $color-main;
+    }
+  }
+  &:hover{
+    border-color: $color-main;
+    background: $color-main;
+    color: #fff;
+  }
+  &:active{
+    color: #fff;
+    background: $color-main-darken;
+  }
+}
+
+.is-circle{
+  width: auto;
+}
+
+
 .el-card__header{
   padding: 20px;
 }
@@ -120,7 +162,7 @@
 
 .el-input__inner{
   &::placeholder{
-    color: $color-text;
+    color: $color-text-1;
   }
   border:1px solid rgba(229,231,233,1);
 }
@@ -140,7 +182,7 @@
 
 .el-date-editor .el-range-input{
   &::placeholder{
-    color: $color-text;
+    color: $color-text-1;
   }
 }
 
@@ -191,5 +233,17 @@
   }
   .el-form-item__content, .el-form-item__label{
     line-height: 1;
+  }
+}
+
+.dialog-mid {
+  .el-dialog{
+    display: flex;
+    flex-direction: column;
+    margin:30px !important;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
   }
 }

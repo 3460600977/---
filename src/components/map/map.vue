@@ -289,7 +289,7 @@
         } else {
           Object.values(this.points).forEach((item) => {
             if (item.type === x) {
-              item.type = y
+              item.type = y9k
             }
           })
         }
