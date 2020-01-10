@@ -617,7 +617,7 @@ export default {
         float: left;
         width:30%;
         height:306px;
-        margin: 20px;
+        margin: 10px 10px 20px 10px;
         border:1px solid rgba(236,236,236,1);
       }
       .text {
@@ -659,6 +659,9 @@ export default {
     //width:100%;
     height:400px;
     //border-radius:4px;
+  }
+  .el-card{
+    margin-top: 15px;
   }
 }
 
