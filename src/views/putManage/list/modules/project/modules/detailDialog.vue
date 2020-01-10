@@ -1,7 +1,7 @@
 <template>
   <!-- 详情 -->
   <el-dialog
-    class="my-dialog dialog-mid"
+    class="my-dialog dialog-mid dialog-height-70"
     title="投放方案详情"
     :before-close="() => { $emit('hideDetial') }"
     :visible.sync="show"

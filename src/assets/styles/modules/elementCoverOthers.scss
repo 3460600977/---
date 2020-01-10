@@ -202,13 +202,15 @@
     }
   }
   .el-dialog__body {
-    padding-left: 30px;
-    padding-right: 30px;
+    padding: 57px 30px 105px;
   }
 }
 .el-dialog {
   .el-dialog__close {
     font-size: 14px;
+  }
+  .el-button{
+    width: 100px;
   }
 }
 .dialog-height-40{
@@ -216,6 +218,15 @@
     .el-dialog__body{
       flex-grow: 1;
       height: 40vh !important;
+      overflow-y: auto;
+    }
+  }
+}
+.dialog-height-70{
+  .el-dialog{
+    .el-dialog__body{
+      flex-grow: 1;
+      height: 70vh !important;
       overflow-y: auto;
     }
   }
@@ -232,7 +243,7 @@
     transform:translate(-50%,-50%);
     .el-dialog__body{
       flex-grow: 1;
-      height: 70vh;
+      max-height: 70vh;
       overflow-y: auto;
     }
   }

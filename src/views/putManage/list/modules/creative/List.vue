@@ -154,7 +154,7 @@
       title="广告创意详情" 
       width="1000px" 
       :visible.sync="detailDialog.show" 
-      class="creative-dialog my-dialog dialog-mid">
+      class="creative-dialog my-dialog dialog-mid dialog-height-70">
       <el-tabs v-model="activeName">
         <el-tab-pane label="创意资质" name="aptitude" class="aptitude">
           <div v-loading="detailDialog.loading">
@@ -273,7 +273,7 @@
     <el-dialog title="删除创意"
       :visible.sync="deleteDialog.show"
       width="568px"
-      class="my-dialog"
+      class="my-dialog dialog-mid"
     >
       <p>确认是否删除广告创意 <span class="color-main">【{{deleteDialog.data.name}}】？</span></p>
       <span slot="footer">

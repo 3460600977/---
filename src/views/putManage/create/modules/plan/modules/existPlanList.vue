@@ -13,12 +13,14 @@
             class="item"
             :class="{'active': list.choosedIndex === index}"
             @click="list.choosedItem = item; list.choosedIndex = index; nextStep()" 
-            v-for="(item, index) in list.data" :key="index">{{item.name}}</li>
+            v-for="(item, index) in list.data" :key="index"
+          >{{item.name}}</li>
+
           <li class="item page-box clearfix">
             <el-pagination
               class="float-right"
               background
-              :pagerCount="5"
+              small="true"
               layout="total, sizes, prev, pager, next"
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
