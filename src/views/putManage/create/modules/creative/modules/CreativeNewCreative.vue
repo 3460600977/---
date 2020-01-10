@@ -278,6 +278,7 @@
 
     <!-- 保存成功提示 -->
     <el-dialog
+      class="dialog-mid"
       title="创意审核"
       :beforeClose="nextPage"
       :visible.sync="successDialog"
