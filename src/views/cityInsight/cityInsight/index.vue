@@ -47,7 +47,7 @@
               ></people-insight>
               <multiple-selectPopUp
                 v-if="leftShow[1]"
-                ref="tagsSelect"
+                dddref="tagsSelect"
                 v-show="activeTab === 1"
                 :selectDatas="buildingDatas"
                 :filters="buildingFilter"
