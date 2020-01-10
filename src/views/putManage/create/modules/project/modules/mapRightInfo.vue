@@ -126,7 +126,8 @@ export default {
 
 <style scoped lang='scss'>
 .right-bottom {
-  padding: 25px 10px 20px 20px;
+  padding: 25px 0px 20px 20px;
+  margin: 0 auto;
   /deep/ .el-button {
     width: 120px;
     height: 36px;
