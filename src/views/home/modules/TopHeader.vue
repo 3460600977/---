@@ -347,6 +347,7 @@ export default {
       height: 15px;
       font-size: 16px;
       font-weight: 400;
+      word-break: keep-all;
     }
   }
   .my-menu {

@@ -44,8 +44,8 @@
                     >
                       <i slot="prefix" class="iconfont icon-suo"></i>
                     </el-input>
-                    <div class="captureNum mid">
-                      <img :src="login_capture_img" @click="changeCaptureNUm" alt="点击刷新" />
+                    <div class="captureNum mid" @click="changeCaptureNUm">
+                      <img :src="login_capture_img" alt="点击刷新" />
                     </div>
                   </el-form-item>
                   <el-form-item :class="{'submit-login':true}">
@@ -280,10 +280,17 @@ export default {
 
     //请求验证码接口
     changeCaptureNUm() {
+      console.log(22222);
       this.$api.Login.GetVerifyCode()
         .then(res => {
-          this.login_capture_img = res.result.image;
+          if (window.ActiveXObject || "ActiveXObject" in window) {
+            this.login_capture_img =
+              res.result.image;
+          } else {
+            this.login_capture_img = res.result.image;
+          }
           this.loginForm.verifyToken = res.result.verifyToken;
+          console.log(res.result);
         })
         .catch(res => {});
     }
@@ -418,15 +425,15 @@ export default {
       }
     }
     .submit-login {
-      button{
-      margin-bottom: 0;
-      width: 320px;
-      height: 40px;
-      border-radius: 20px;
-      margin: 86px 0 68px 0;
-      span {
-        font-size: 14px !important;
-      }
+      button {
+        margin-bottom: 0;
+        width: 320px;
+        height: 40px;
+        border-radius: 20px;
+        margin: 86px 0 68px 0;
+        span {
+          font-size: 14px !important;
+        }
       }
     }
   }

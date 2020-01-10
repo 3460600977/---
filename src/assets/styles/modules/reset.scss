@@ -86,3 +86,15 @@ main{
 .clearfix {
     zoom: 1;
 }
+/*谷歌浏览器 背景色*/
+input:-webkit-autofill { box-shadow: 0 0 0px 1000px white inset !important}
+/*Firefox浏览器 背景色*/
+input {  filter: none !important;  }
+/*ie文本框背景色*/
+input::-ms-clear {
+    display: none;
+}
+/*ie文本输入框眼睛*/
+input::-ms-reveal {
+    display: none;
+}
