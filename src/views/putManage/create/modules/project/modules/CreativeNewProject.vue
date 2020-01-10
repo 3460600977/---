@@ -421,7 +421,7 @@
 
         formDataRules: {
           name: [
-            {required: true, message: '请输入投放方案名称!', trigger: 'blur'},
+            {required: true, message: '请输入投放方案名称!', trigger: ['blur', 'change']},
             { max: 50, message: '方案名称不超过50个字,请正确输入!'}
           ],
           industry: [
