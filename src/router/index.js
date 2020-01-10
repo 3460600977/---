@@ -67,7 +67,6 @@ router.beforeEach((to, from, next) => {
   NProgress.start();
   let menuList = getMenuList();
   let canEnter = false;
-  
   if (menuList) {
     for (let i = 0; i < menuList.length; i++) {
       if (menuList[i].code === to.meta.code && menuList[i].selected) {
