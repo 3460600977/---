@@ -15,7 +15,7 @@
     <el-dialog title="是否创建人群包？"
                :visible.sync="dialogShowContent"
                width="568px"
-               class="my-dialog"
+               class="my-dialog dialog-mid"
     >
       <p>生成人群需要一定的时间，请您耐心等待；</p>
       <p>生成100万以下的人群在<span class="red-text">2个小时</span>之内完成；</p>

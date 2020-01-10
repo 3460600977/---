@@ -126,7 +126,7 @@
           text:this.title,
           textStyle:{
             fontSize:14,
-            fontWeight:"normal"
+            fontWeight:"bold"
           }
         },
         legend: {
@@ -217,7 +217,7 @@
             text:this.title,
             textStyle:{
               fontSize:14,
-              fontWeight:"normal"
+              fontWeight:"bold"
             }
           },
           legend: {
