@@ -76,7 +76,6 @@
     mounted() {
       //请求验证码接口
       let userInfo = getUserInfo()
-      console.log('userInfo',userInfo)
       this.accountInfoList.forEach(function (item) {
         let property = item.field;
         if (userInfo.hasOwnProperty(property)) {

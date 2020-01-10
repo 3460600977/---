@@ -56,7 +56,7 @@
               <div v-show="rightMsg.dropMenuShow" class="drop-box absolute font-14">
                 <ul>
                   <li class="o-item center" @click="handleToAccount" v-if="auditShow">账号管理</li>
-                  <li class="o-item center" @click="handleToPass">修改密码</li>
+                  <li class="o-item center" @click="handleToPass" v-if="auditShow">修改密码</li>
                   <li
                     class="o-item center color-red"
                     @click="handleToLogout"
@@ -165,15 +165,7 @@ export default {
         },
         dropMenuShow: false
       },
-
-      username: "admin",
-      toolMenu: [
-        { code: "1010", selected: true },
-        { code: "1201", selected: true },
-        { code: "1101", selected: true },
-        { code: "1102", selected: true },
-        { code: "1340", selected: true }
-      ]
+      username: "admin"
     };
   },
 
@@ -238,7 +230,7 @@ export default {
     },
 
     handleToAccount() {
-      this.$router.replace("/toolBox/account");
+      this.$router.replace("/home/account");
     },
 
     handleToPass() {
@@ -274,6 +266,12 @@ export default {
     }
   },
   mounted() {
+    if (
+      this.$router.currentRoute.path === "/auditList" ||
+      this.$router.currentRoute.path === "/auditList/creative"
+    ) {
+      this.auditShow = false;
+    }
     //请求验证码接口
     let userInfo = getUserInfo();
     if (userInfo === null || userInfo === "") {
