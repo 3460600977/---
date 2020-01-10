@@ -197,12 +197,44 @@
     padding: 24px 0 21px 30px;
     .el-dialog__title {
       font-size: 16px;
+      line-height: 14px;
       color: $color-text;
     }
   }
   .el-dialog__body {
     padding-left: 30px;
     padding-right: 30px;
+  }
+}
+.el-dialog {
+  .el-dialog__close {
+    font-size: 14px;
+  }
+}
+.dialog-height-40{
+  .el-dialog{
+    .el-dialog__body{
+      flex-grow: 1;
+      height: 40vh !important;
+      overflow-y: auto;
+    }
+  }
+}
+// 垂直居中
+.dialog-mid {
+  .el-dialog{
+    display: flex;
+    flex-direction: column;
+    margin:0px !important;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    .el-dialog__body{
+      flex-grow: 1;
+      height: 70vh;
+      overflow-y: auto;
+    }
   }
 }
 
@@ -236,14 +268,7 @@
   }
 }
 
-.dialog-mid {
-  .el-dialog{
-    display: flex;
-    flex-direction: column;
-    margin:30px !important;
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-  }
+.el-scrollbar{
+  height: 100%;
+  overflow-x: hidden;
 }

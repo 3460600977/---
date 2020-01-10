@@ -168,16 +168,7 @@
 
 
     <!-- 详情 -->
-    <el-dialog
-      class="my-dialog"
-      title="投放方案详情"
-      :visible.sync="detailDialog.show"
-      width="1000px">
-      <detailDialog :activeTab="detailDialog.activeTab" :projectId="detailDialog.projectId"/>
-      <span slot="footer" class="dialog-footer center">
-        <el-button style="width: 136px;" type="primary" @click="detailDialog.show = false">确定</el-button>
-      </span>
-    </el-dialog>
+    <detail-dialog @hideDetial="detailDialog.show = false" :show="detailDialog.show" :projectId="detailDialog.projectId"/>
 
     <!-- 取消 提示弹窗 -->
     <el-dialog title="取消方案"
@@ -202,6 +193,7 @@ import detailDialog from './modules/detailDialog'
 
 export default {
   name: "planList",
+
   props: {
     active: {
       type: Boolean,
