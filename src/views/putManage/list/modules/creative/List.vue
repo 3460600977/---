@@ -154,7 +154,7 @@
       title="广告创意详情" 
       width="1000px" 
       :visible.sync="detailDialog.show" 
-      class="creative-dialog my-dialog">
+      class="creative-dialog my-dialog dialog-mid">
       <el-tabs v-model="activeName">
         <el-tab-pane label="创意资质" name="aptitude" class="aptitude">
           <div v-loading="detailDialog.loading">

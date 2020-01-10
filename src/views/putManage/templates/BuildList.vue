@@ -1,5 +1,5 @@
 <template>
-  <div class="selected-list" v-loading="loading">
+  <div class="selected-list" v-loading="loading" :class="{'big': buildingDirectionActiveType !== 'list'}">
 
     <!-- 选择洞察包 统计列表 未寻量 -->
     <template v-if="buildingDirectionActiveType === 'exist' || buildingDirectionActiveType === 'payConfirm'">
@@ -90,37 +90,44 @@
         >下载</el-button>
       </div>
 
-      <ul class="selected-list-data-box">
-        <li class="item" v-for="(item, index) in localProject.list" :key="index">
-          <div class="clearfix base">
-            <div class="left-info clearfix float-left">
-              <p class="name float-left">{{item.premiseName}}</p>
+        <ul class="selected-list-data-box">
+      <el-scrollbar>
+          <li class="item" v-for="(item, index) in localProject.list" :key="index">
+            <!-- 名字 -->
+            <div class="clearfix base">
+              <div class="left-info clearfix float-left" @click="showDevice(item.premiseId, index)">
+                <p class="name float-left">{{item.premiseName}}</p>
 
-              <div @click="showDevice(item.premiseId, index)" class="show-device-handle float-left">
-                <i :class="{'active': item.active}" class="el-icon-arrow-down"></i>
+
+                <div class="show-device-handle float-left">
+                  <i v-if="deviceLoading.index === index && deviceLoading.status" class="el-icon-loading"></i>
+                  <i v-else :class="{'active': item.active}" class="el-icon-arrow-down"></i>
+                </div>
+              </div>
+
+              <div class="account float-left">
+                <span class="font-16 number font-number">{{item.deviceNum || 0}}</span>
+                <span class="font-14">个</span>
               </div>
             </div>
 
-            <div class="account float-left">
-              <span class="font-16 number font-number">{{item.deviceNum || 0}}</span>
-              <span class="font-14">个</span>
-            </div>
-          </div>
+            <!-- 设备列表 -->
+            <ul :style="item.active ? 'height: auto' : 'height: 0'" :class="{'active': item.active}" class="device-list-box">
+              <li
+                class="color-text-1 font-14 d-item"
+                v-for="(itemInner, index) in item.devices"
+                :key="index"
+              >
+                <span class="code">{{itemInner.code}}</span>
+                <span>{{itemInner.name}}</span>
+              </li>
+            </ul>
 
-          <ul :style="item.active ? 'height: auto' : 'height: 0'" :class="{'active': item.active}" class="device-list-box">
-            <li
-              class="color-text-1 font-14 d-item"
-              v-for="(itemInner, index) in item.devices"
-              :key="index"
-            >
-              <span class="code">{{itemInner.code}}</span>
-              <span>{{itemInner.name}}</span>
-            </li>
-          </ul>
-        </li>
+          </li>
+      </el-scrollbar>
 
-        <noData v-if="buildsNumber <= 0">无可售数据</noData>
-      </ul>
+          <noData v-if="buildsNumber <= 0">无可售数据</noData>
+        </ul>
     </template>
 
 
@@ -156,7 +163,11 @@ export default {
   data() {
     return {
       nodataImg: require("@/assets/images/icon_no_data.png"),
-      exporting: false
+      exporting: false,
+      deviceLoading: {
+        index: 0,
+        status: false
+      },
     };
   },
 
@@ -190,20 +201,30 @@ export default {
         });
     },
 
-    // 显示楼盘列表备
+    // 显示设备列表
     showDevice(premiseId, index) {
       let old = this.localProject.list[index];
       this.localProject.list[index].active = !this.localProject.list[index].active;
+      this.deviceLoading = {
+        index: index,
+        status: true,
+      };
       if (old.devices) {
+        this.deviceLoading.status = false;
         return false;
       }
       let param = {
         projectId: this.projectId,
         premiseId: premiseId
       };
-      this.$api.PutProject.GetBuildDevice(param).then(res => {
-        this.$set(this.localProject.list, index, { ...old, devices: res.result, active: true })
-      });
+      this.$api.PutProject.GetBuildDevice(param)
+        .then(res => {
+          this.deviceLoading.status = false;
+          this.$set(this.localProject.list, index, { ...old, devices: res.result, active: true })
+        })
+        .catch(res => {
+          this.deviceLoading.status = false;
+        })
     },
 
     // 删除地图选点列表
@@ -256,8 +277,11 @@ export default {
 <style lang="scss" scoped>
 .selected-list {
   margin-top: 40px;
-  width: 860px;
+  width: 540px;
   border: 1px solid rgba(229, 231, 233, 1);
+  &.big{
+    width: 860px;
+  }
   .title {
     height: 44px;
     padding: 0 50px 0 20px;
@@ -270,7 +294,7 @@ export default {
     // }
   }
   .selected-list-data-box {
-    max-height: 76px * 6;
+    max-height: 76px * 4;
     overflow-y: auto;
     .item {
       position: relative;
@@ -283,8 +307,9 @@ export default {
         background: #fff;
         z-index: 2;
         .left-info {
-          width: 288px;
+          width: 388px;
           padding-right: 20px;
+          cursor: pointer;
           &.exist {
             .name {
               margin-bottom: 0;
