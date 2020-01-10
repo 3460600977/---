@@ -81,7 +81,7 @@
     <el-dialog
       :beforeClose="backToList"    
       :visible.sync="confirmPayCallBack.show"
-      class="my-confirm-dialog my-dialog"
+      class="my-confirm-dialog my-dialog dialog-mid"
       width="568px">
 
       <div class="confirm-title mid" slot="title">
