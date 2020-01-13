@@ -278,14 +278,14 @@
 
     <!-- 保存成功提示 -->
     <el-dialog
-      class="dialog-mid"
+      class="dialog-mid my-dialog"
       title="创意审核"
       :beforeClose="nextPage"
       :visible.sync="successDialog"
-      width="568px">
-      <span>创意已提交审核，请及时核实审核结果，以免因未按时审核通过，而造成方案取消！</span>
+      width="580px">
+      <p style="line-height: 1.5">创意已提交审核，请及时核实审核结果，以免因未按时审核通过，而造成方案取消！</p>
       <span slot="footer" class="dialog-footer center">
-        <el-button style="width:100px;" type="primary" @click="nextPage">确 定</el-button>
+        <el-button type="primary" @click="nextPage">确 定</el-button>
       </span>
     </el-dialog>
   </div>
