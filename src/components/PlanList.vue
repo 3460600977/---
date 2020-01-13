@@ -29,7 +29,7 @@
           webkit-playsinline="true"
           playsinline="true"
           id="my-player"
-          poster="../assets/top.png"
+          poster="../assets/iconImg/top.png"
           width="208px"
           height="370px"
           data-setup="{videoWidth:208,videoHeight:370}"
@@ -38,7 +38,7 @@
         </video>
       </div>
       <div class="mp4-box-bottom">
-        <img :src="img" alt="../assets/bottom.png" />
+        <img :src="img" alt="../assets/iconImg/bottom.png" />
       </div>
     </div>
     <p class="page" :class="{displayNone:displayNone}">{{num+1}}/{{mp4Data.list.top.length}}</p>
@@ -173,7 +173,7 @@ export default {
 .mp4Box {
   width: 240px;
   height: 535px;
-  background: url("../assets/mp4bg.png") no-repeat;
+  background: url("../assets/iconImg/mp4bg.png") no-repeat;
   background-size: 100% 100%;
   margin-left: 40px;
 
