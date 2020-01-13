@@ -88,6 +88,7 @@
       .el-tabs__item{
         background-color: #EEEEEE;
         color: #181819;
+        padding: 0 20px;
         width: 160px;
         height: 60px;
         line-height: 60px;
@@ -154,6 +155,24 @@
     }
   }
 }
+// tabs分割线
+.el-tabs__nav-wrap::after{
+  height: 1px;
+}
+.el-tabs__active-bar{
+  height: 1px;
+}
+
+.el-tabs__header{
+  margin-bottom: 30px;
+}
+
+.el-tabs__item{
+  padding: 0 50px;
+}
+
+
+
 
 // form-label
 .el-form-item__label{
@@ -202,7 +221,7 @@
     }
   }
   .el-dialog__body {
-    padding: 57px 30px 105px;
+    padding: 30px 30px 50px;
   }
 }
 .el-dialog {
@@ -211,22 +230,35 @@
   }
   .el-button{
     width: 100px;
+    height: 34px;
+    padding: 0;
+    text-align: center;
+    font-size: 14px;
   }
 }
-.dialog-height-40{
+.dialog-height-50{
   .el-dialog{
     .el-dialog__body{
       flex-grow: 1;
-      height: 40vh !important;
+      height: 50vh !important;
       overflow-y: auto;
     }
   }
 }
-.dialog-height-70{
+.dialog-height-80{
   .el-dialog{
     .el-dialog__body{
       flex-grow: 1;
-      height: 70vh !important;
+      height: 80vh !important;
+      overflow-y: auto;
+    }
+  }
+}
+.dialog-height-90{
+  .el-dialog{
+    .el-dialog__body{
+      flex-grow: 1;
+      height: 90vh !important;
       overflow-y: auto;
     }
   }
@@ -272,7 +304,10 @@
 // 展示信息form
 .info-form{
   .el-form-item{
-    margin-bottom: 30px;
+    &+.el-form-item{
+      margin-top: 30px;
+      margin-bottom: 0;
+    }
   }
   .el-form-item__content, .el-form-item__label{
     line-height: 1;
