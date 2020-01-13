@@ -53,7 +53,7 @@
 
     <!-- 点位信息 -->
     <PutMangeCard>
-      <div class="font-16" style="margin-bottom: 30px;">点位信息</div>
+      <div class="font-16">点位信息</div>
        <!-- 楼盘定向->选中列表 -->
       <BuildList
         :buildingDirectionActiveType="'payConfirm'"

@@ -97,7 +97,8 @@
         class="list-page"
       ></el-pagination>
     </div>
-    <el-dialog title="审核拒绝" :visible.sync="dialogDenyVisible" class="deny-dialog">
+    
+    <el-dialog width="1000px" title="审核拒绝" :visible.sync="dialogDenyVisible" class="deny-dialog dialog-mid dialog-height-80">
       <el-form :model="denyFrom" class="deny-from">
         <el-form-item
           :label-width="formLabelWidth"
@@ -140,7 +141,8 @@
         >确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="创意内容" :visible.sync="dialogShowContent" class="creative-dialog">
+
+    <el-dialog width="1000px" title="创意内容" :visible.sync="dialogShowContent" class="creative-dialog dialog-mid dialog-height-80">
       <el-tabs v-model="activeName">
         <div
           class="no-pass"

@@ -66,9 +66,10 @@
 
     </el-form>
 
+    <!-- 表格 分页 -->
     <div class="query_result">
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
-        <el-table-column prop="name" label="投放方案名称">
+        <el-table-column prop="name" min-width="120px" label="投放方案名称">
           <template slot-scope="scope">
             <router-link :to="`/putManage?active=creative&projectId=${scope.row.projectId}`">
               <span class="hand">{{scope.row.name}}</span>
@@ -76,7 +77,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="status" label="投放方案状态">
+        <el-table-column prop="status" min-width="90px" label="投放方案状态">
           <template slot-scope="scope">
             {{$tools.getObjectItemFromArray(projectStatus, 'value', scope.row.status).name}}
           </template>
