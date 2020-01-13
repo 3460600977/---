@@ -41,6 +41,13 @@
       "unicode_decimal": 58933
     },
     {
+      "icon_id": "1309848",
+      "name": "锁",
+      "font_class": "suo",
+      "unicode": "e62a",
+      "unicode_decimal": 58922
+    },
+    {
       "icon_id": "1424269",
       "name": "对勾",
       "font_class": "duigou",
@@ -67,6 +74,13 @@
       "font_class": "daishenhe",
       "unicode": "e61c",
       "unicode_decimal": 58908
+    },
+    {
+      "icon_id": "2154586",
+      "name": "用户",
+      "font_class": "yonghu",
+      "unicode": "e61a",
+      "unicode_decimal": 58906
     },
     {
       "icon_id": "3427841",
@@ -130,13 +144,6 @@
       "font_class": "fenxi",
       "unicode": "e622",
       "unicode_decimal": 58914
-    },
-    {
-      "icon_id": "8311410",
-      "name": "统计报表",
-      "font_class": "tongjibaobiao",
-      "unicode": "e689",
-      "unicode_decimal": 59017
     },
     {
       "icon_id": "8777511",
@@ -242,6 +249,20 @@
       "font_class": "kuaijiezhifu1",
       "unicode": "e630",
       "unicode_decimal": 58928
+    },
+    {
+      "icon_id": "12681079",
+      "name": "baobiaozhongxin1",
+      "font_class": "baobiaozhongxin",
+      "unicode": "e632",
+      "unicode_decimal": 58930
+    },
+    {
+      "icon_id": "12685318",
+      "name": "tongjibaobiao",
+      "font_class": "tongjibaobiao1",
+      "unicode": "e633",
+      "unicode_decimal": 58931
     }
   ]
 }

@@ -66,9 +66,10 @@
 
     </el-form>
 
+    <!-- 表格 分页 -->
     <div class="query_result">
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
-        <el-table-column prop="name" label="投放方案名称">
+        <el-table-column prop="name" min-width="120px" label="投放方案名称">
           <template slot-scope="scope">
             <router-link :to="`/putManage?active=creative&projectId=${scope.row.projectId}`">
               <span class="hand">{{scope.row.name}}</span>
@@ -76,7 +77,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="status" label="投放方案状态">
+        <el-table-column prop="status" min-width="90px" label="投放方案状态">
           <template slot-scope="scope">
             {{$tools.getObjectItemFromArray(projectStatus, 'value', scope.row.status).name}}
           </template>
@@ -149,7 +150,7 @@
               cancleDialog.show = true" 
               v-if="scope.row.status == 0 || scope.row.status == 4" 
               class="icon-space hand">
-              <i class="iconfont icon-error1 icon-color"></i>取消
+              <i class="iconfont icon-error1 icon-color font-17"></i>取消
             </span>
 
           </template>
@@ -168,22 +169,13 @@
 
 
     <!-- 详情 -->
-    <el-dialog
-      class="my-dialog"
-      title="投放方案详情"
-      :visible.sync="detailDialog.show"
-      width="1000px">
-      <detailDialog :activeTab="detailDialog.activeTab" :projectId="detailDialog.projectId"/>
-      <span slot="footer" class="dialog-footer center">
-        <el-button style="width: 136px;" type="primary" @click="detailDialog.show = false">确定</el-button>
-      </span>
-    </el-dialog>
+    <detail-dialog @hideDetial="detailDialog.show = false" :show="detailDialog.show" :projectId="detailDialog.projectId"/>
 
     <!-- 取消 提示弹窗 -->
     <el-dialog title="取消方案"
       :visible.sync="cancleDialog.show"
       width="568px"
-      class="my-dialog"
+      class="my-dialog dialog-mid"
     >
       <p>确认是否取消投放方案 <span class="color-main">【{{cancleDialog.data.name}}】？</span></p>
       <span slot="footer">
@@ -202,6 +194,7 @@ import detailDialog from './modules/detailDialog'
 
 export default {
   name: "planList",
+
   props: {
     active: {
       type: Boolean,

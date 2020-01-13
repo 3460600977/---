@@ -47,7 +47,7 @@
         <span class="iconfont icon-remove icon-error hand" @click="deleteItem(item)"></span>
       </li>
     </ul>
-    <div class="right-bottom">
+    <div class="right-bottom mid-between">
       <el-button class="map-btn" @click="hideMapPoint">取 消</el-button>
       <el-button class="map-btn" type="primary" @click="submitSelectedBuildPoint">保存</el-button>
     </div>
@@ -112,7 +112,7 @@ export default {
     },
     createPackage() {
       if (!this.selectedBuildings.length) {
-        this.$message.error('没有选中的楼盘数据不能创建资源包！');
+        this.$message.error("没有选中的楼盘数据不能创建资源包！");
         return;
       }
       this.$emit("createPackage");
@@ -127,11 +127,9 @@ export default {
 <style scoped lang='scss'>
 .right-bottom {
   padding: 25px 20px 20px 20px;
-  text-align: justify;
-  text-align-last: justify;
-  /deep/.el-button {
-    width: 136px;
-    height: 34px;
+  /deep/ .el-button {
+    width: 120px;
+    height: 36px;
     border-radius: 2px;
   }
 }

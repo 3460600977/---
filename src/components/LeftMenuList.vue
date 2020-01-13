@@ -4,7 +4,7 @@
       <div class="step_arrow">
         <span href="#" @click="handleShow">
           <span class="step_arrow_span">
-            <i :class="{'rotate': !isShowReportRoute}" class="iconfont icon-icon-test2 icon-color"></i>
+            <i :class="{'rotate': !isShowReportRoute}" class="iconfont icon-icon-test1 icon-color"></i>
           </span>
         </span>
       </div>
@@ -21,7 +21,7 @@
         >
           <template slot="title">
             <img :src="leftMenuList.menu_icon" class="menuIcon" v-if="leftMenuList.menu_icon_show" />
-            <i class="iconfont icon-tongjibaobiao menuBiao" v-else></i>
+            <i class="iconfont icon-tongjibaobiao1 menuBiao" v-else></i>
             <span slot="title">{{rootMenu.name}}</span>
           </template>
           <el-menu-item

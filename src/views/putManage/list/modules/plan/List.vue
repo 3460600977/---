@@ -89,7 +89,7 @@
 
     <el-dialog
       v-if="tableData.data.length > 0"
-      class="my-dialog"
+      class="my-dialog dialog-mid dialog-height-50"
       title="投放计划详情"
       :visible.sync="detailDialog.show"
       width="1000px">
@@ -103,7 +103,7 @@
             </span>
           </el-form-item>
           <el-form-item label="总预算">
-            <span class="color-red" v-if="tableData.data[detailDialog.dataIndex].totalBudget">¥ {{$tools.toThousands(tableData.data[detailDialog.dataIndex].totalBudget / 100)}}</span>
+            <span class="color-red font-number" v-if="tableData.data[detailDialog.dataIndex].totalBudget">¥ {{$tools.toThousands(tableData.data[detailDialog.dataIndex].totalBudget / 100)}}</span>
             <span class="color-red" v-else>不限</span>
           </el-form-item>
           <!-- <el-form-item label="投放时间">

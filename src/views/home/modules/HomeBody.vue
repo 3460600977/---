@@ -33,28 +33,28 @@
           <span class="blue">{{summaryDetailList.countCampaign}}</span>
           <p>
             投放计划
-            <i class="el-icon-arrow-right"></i>
+            <i class="iconfont icon-icon-test rotate"></i>
           </p>
         </div>
         <div @click="goToPath('goToProject')" class="goToPath">
           <span>{{summaryDetailList.countProjectUse}}</span>
           <p>
             投放中方案
-            <i class="el-icon-arrow-right"></i>
+            <i class="iconfont icon-icon-test rotate"></i>
           </p>
         </div>
         <div @click="goToPath('goToUnPayProject')" class="goToPath">
           <span class="red">{{summaryDetailList.countProjectNoUse}}</span>
-          <p class="un-pay-p">
+          <p>
             未支付方案
-            <i class="el-icon-arrow-right un-pay-p"></i>
+            <i class="iconfont icon-icon-test rotate"></i>
           </p>
         </div>
         <div @click="goToPath('goToDenyCreative')" class="goToPath">
           <span class="red">{{summaryDetailList.countCreativeNoPass}}</span>
           <p>
             审核拒绝创意
-            <i class="el-icon-arrow-right"></i>
+            <i class="iconfont icon-icon-test rotate"></i>
           </p>
         </div>
       </div>
@@ -111,21 +111,22 @@
                 :clearable="false"
                 v-model="selectLine.selectTime"
                 type="daterange"
-                range-separator="--"
+                range-separator="-"
                 :picker-options="pickerOptions"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 value-format="yyyy-MM-dd"
+                class="dateSelect"
               ></el-date-picker>
             </el-form-item>
           </el-form>
           <div class="line-echarts_tip">
             <span>
-              <i class="blue_bg"></i>
+              <i class="red_bg"></i>
               {{selectLine.selectFirstLabel}}
             </span>
             <span v-if="selectLine.checked">
-              <i class="red_bg"></i>
+              <i class="blue_bg"></i>
               {{selectLine.selectSecondLabel}}
             </span>
           </div>
@@ -139,7 +140,9 @@
       <div class="el-carousel">
         <el-carousel arrow="always">
           <el-carousel-item v-for="(item,imgIndex) in imgList" :key="imgIndex">
-            <img class="imgItem" :src="item" @click="showPlayVideo(imgIndex)" />
+            <div class="imgBorder">
+              <img class="imgItem" :src="item" @click="showPlayVideo(imgIndex)" />
+            </div>
           </el-carousel-item>
         </el-carousel>
       </div>
@@ -209,12 +212,7 @@ export default {
         callback(new Error("请设置查询日期!"));
       } else {
         let oneDay = 24 * 60 * 60 * 1000;
-        if (
-          (new Date(value[1]) -
-            new Date(value[0])) /
-            oneDay >=
-          30
-        ) {
+        if ((new Date(value[1]) - new Date(value[0])) / oneDay >= 30) {
           callback(new Error("查询时间大于30天，请重新设置!"));
         } else {
           callback(this.changeSelectTime(value));
@@ -293,7 +291,7 @@ export default {
         checked: false //是否选中对比
       },
       formDataRules: {
-        selectTime: [{ validator: validateTime, trigger: "blur" }]
+        selectTime: [{ validator: validateTime, trigger: "change" }]
       }
     };
   },
@@ -315,7 +313,7 @@ export default {
     pickerOptions() {
       return {
         disabledDate(date) {
-           return date.getTime() > Date.now() - 3600 * 24 * 1000;
+          return date.getTime() > Date.now() - 3600 * 24 * 1000;
         }
       };
     }
@@ -353,6 +351,12 @@ export default {
     },
     //时间改变，对应的数据趋势图发生改变
     changeSelectTime(selectTimeVal) {
+      if (
+        this.selectLine.startTime === selectTimeVal[0] &&
+        this.selectLine.endTime === selectTimeVal[1]
+      ) {
+        return "";
+      }
       this.selectLine.startTime = selectTimeVal[0];
       this.selectLine.endTime = selectTimeVal[1];
       this.getSummaryDataChange();
@@ -380,6 +384,12 @@ export default {
         if (this.selectLine.secondValue > 2) {
           this.selectLine.secondValue = 0;
         }
+        let obj = {};
+        obj = this.exposureList.find(item => {
+          return item.value === this.selectLine.secondValue;
+        });
+        this.selectLine.selectSecondLabel = obj.label;
+        this.selectLine.selectSecondLabelLine = obj.label;
       }
       this.getSummaryDataChange();
     },
@@ -498,20 +508,28 @@ export default {
       this.$api.Login.GetSummaryData(param)
         .then(res => {
           let summaryData = res.result;
+          let firstData = [];
+          let secondData = [];
+          let xData = [];
           summaryData.first.forEach(fItem => {
             if (this.selectLine.firstValue === 1) {
               fItem.summary = this.$tools.toThousands(fItem.summary / 100, 2);
             }
-            this.summaryLineData.sFirstData.push(fItem.summary);
-            this.summaryLineData.xdata.push(fItem.date);
+            firstData.push(fItem.summary);
+            xData.push(fItem.date);
           });
           summaryData.second.forEach(sItem => {
             if (this.selectLine.secondValue === 1) {
               sItem.summary = this.$tools.toThousands(sItem.summary / 100, 2);
             }
-            this.summaryLineData.sSecondData.push(sItem.summary);
+            secondData.push(sItem.summary);
           });
-          this.summaryLineData.selectLine = this.selectLine;
+          this.summaryLineData = {
+            selectLine: this.selectLine,
+            xdata: xData,
+            sFirstData: firstData,
+            sSecondData: secondData
+          };
         })
         .catch(res => {});
     }
@@ -523,12 +541,7 @@ export default {
 .home-body {
   width: 1200px;
   margin: 0 auto;
-  .goToPath {
-    cursor: pointer;
-  }
-  .un-pay-p {
-    color: $color-main;
-  }
+
   .box-card {
     position: relative;
     .company-msg {
@@ -564,6 +577,7 @@ export default {
         line-height: 26px;
         font-size: 26px;
         font-weight: normal;
+        font-family: DINMittelschrift;
       }
     }
     .create-put {
@@ -588,11 +602,16 @@ export default {
           width: 100%;
           display: flex;
           justify-content: space-around;
-          div {
+          .goToPath {
             text-align: center;
+            cursor: pointer;
+            width: 25%;
+            height: 60px;
+            border-left: 1px solid #e5e7e9;
             span {
               font-size: 26px;
-              font-weight: bold;
+              font-family: DINMittelschrift;
+              font-weight: normal;
             }
             .blue {
               color: $color-origin-blue;
@@ -609,8 +628,26 @@ export default {
                 width: 8px;
                 height: 14px;
                 background-size: cover;
-                vertical-align: middle;
+                position: relative;
+                top: 5px;
               }
+            }
+            p {
+              font-size: 14px;
+              font-weight: 400;
+              color: $color-text-1;
+            }
+            .rotate {
+              transform: rotate(-90deg);
+            }
+          }
+
+          .goToPath:first-child {
+            border: none;
+          }
+          .goToPath:hover {
+            p {
+              color: $color-main;
             }
           }
         }
@@ -626,8 +663,17 @@ export default {
         margin-top: 15px;
         display: flex;
         justify-content: space-between;
+        .dateSelect {
+          width: 240px;
+          height: 36px;
+          background: rgba(255, 255, 255, 1);
+          border: 1px solid rgba(229, 231, 233, 1);
+          border-radius: 2px;
+        }
         /deep/ .el-input {
           width: 114px;
+          height: 36px;
+          border-radius: 2px;
         }
         .select_bar_line {
           width: 114px;
@@ -656,6 +702,7 @@ export default {
           }
         }
         .compareCheck {
+          margin: 0 10px;
           /deep/ .el-checkbox__inner {
             width: 18px;
             height: 18px;
@@ -675,14 +722,38 @@ export default {
       .imgItem {
         cursor: pointer;
       }
+      /deep/ .el-card__body {
+        width: 390px;
+        height: 540px;
+        background: $color-bg-3;
+        box-shadow: 0px 4px 16px 0px $color-shadow-5;
+        border-radius: 8px;
+      }
       /deep/ .el-carousel__arrow {
-        color: $color-main;
+        color: $color-border;
         background-color: transparent;
-        border: 1px solid $color-main;
+        border: 1px solid $color-border;
         margin-top: 55px;
+        width: 34px;
+        height: 34px;
+        border-radius: 17px;
+      }
+      /deep/ .el-carousel__arrow:hover {
+        color: $color-main;
+        border-color: $color-main;
+      }
+      /deep/ .el-carousel__arrow i {
+        font-weight: bolder;
+        font-size: 14px;
+      }
+      /deep/ .el-carousel__arrow--right {
+        right: 0px;
+      }
+      /deep/ .el-carousel__arrow--left {
+        left: 0px;
       }
       .el-carousel {
-        margin-top: 40px;
+        margin-top: 32px;
         height: 460px;
         text-align: center;
         /deep/ .el-carousel__item {
@@ -691,9 +762,9 @@ export default {
         /deep/ .el-carousel__indicators {
           bottom: 5px;
           .el-carousel__button {
-            width: 10px;
-            height: 10px;
-            border-radius: 10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 8px;
             background: #e1e1e1;
           }
           .el-carousel__button:hover {
@@ -722,37 +793,53 @@ export default {
           display: flex;
           cursor: pointer;
           .news_case_time {
-            height: 66px;
             width: 80px;
+            height: 76px;
             padding: 5px 15px;
-            color: #cfcfcf;
-            border: 1px solid rgba(244, 74, 74, 0);
+            color: $color-text-4;
+            font-size: 36px;
+            font-weight: 400;
+            line-height: 18px;
+            border: 1px solid $color-text-4;
             span {
               font-weight: bold;
               font-size: 18px;
             }
             p {
+              width: 46px;
+              height: 14px;
               margin-top: 10px;
+              font-size: 14px;
+              font-weight: 400;
+              line-height: 18px;
             }
           }
           .news_case_content {
             padding-left: 15px;
             // border-left: 3px solid #ddd;
+            h4 {
+              font-size: 14px;
+              font-weight: 400;
+              color: $color-text;
+            }
             p {
               color: #cfcfcf;
               margin: 8px 0 4px 0;
+              font-size: 14px;
+              font-weight: 400;
+              color: $color-text-1;
               line-height: 18px;
             }
           }
         }
         .news_case_item:hover {
           .news_case_time {
-            color: rgba(244, 74, 74, 1);
-            border: 1px solid rgba(244, 74, 74, 1);
+            color: $color-main;
+            border: 1px solid $color-main;
           }
           .news_case_content {
             h4 {
-              color: rgba(244, 74, 74, 1);
+              color: $color-main;
             }
           }
         }

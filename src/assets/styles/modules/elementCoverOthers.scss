@@ -1,22 +1,64 @@
 // elementUI 主题编辑中无法修改的内容在此处覆盖
-.el-button{
-  &.is-circle{
-    width: auto;
+
+// 按钮
+
+  // &.is-disabled{
+  //   background: $color-disabled;
+  //   border-color: $color-disabled;
+  //   color: #fff;
+  //   &:hover{
+  //     border-color: $color-disabled;
+  //     background: $color-disabled;
+  //     color: #fff;
+  //   }
+  // }
+.el-button--default{
+  &:hover{
+    background: #fff;
+    border-color: $color-border;
+    color: $color-text;
   }
-  &.is-plain{
-    background: transparent !important;
-    &.el-button--primary{
-      border-color: $color-main;
-      color: $color-main;
-      &:hover{
-        color: $color-main;
-      }
-      &:active{
-        color: $color-main;
-      }
-    }
+  &:active{
+    color: $color-main;
+    border-color: $color-main;
+    background: transparent;
   }
 }
+
+.el-button--primary{
+  border-color: $color-main;
+  background: $color-main;
+  color: #fff;
+  &.is-plain{
+    color: $color-main;
+    border-color: $color-main;
+    background: transparent;
+    &:hover{
+      border-color: $color-main;
+      background: transparent;
+      color: $color-main;
+    }
+    &:active{
+      color: #fff;
+      background: $color-main;
+    }
+  }
+  &:hover{
+    border-color: $color-main;
+    background: $color-main;
+    color: #fff;
+  }
+  &:active{
+    color: #fff;
+    background: $color-main-darken;
+  }
+}
+
+.is-circle{
+  width: auto;
+}
+
+
 .el-card__header{
   padding: 20px;
 }
@@ -46,6 +88,7 @@
       .el-tabs__item{
         background-color: #EEEEEE;
         color: #181819;
+        padding: 0 20px;
         width: 160px;
         height: 60px;
         line-height: 60px;
@@ -112,6 +155,24 @@
     }
   }
 }
+// tabs分割线
+.el-tabs__nav-wrap::after{
+  height: 1px;
+}
+.el-tabs__active-bar{
+  height: 1px;
+}
+
+.el-tabs__header{
+  margin-bottom: 30px;
+}
+
+.el-tabs__item{
+  padding: 0 50px;
+}
+
+
+
 
 // form-label
 .el-form-item__label{
@@ -120,7 +181,7 @@
 
 .el-input__inner{
   &::placeholder{
-    color: $color-text;
+    color: $color-text-1;
   }
   border:1px solid rgba(229,231,233,1);
 }
@@ -140,7 +201,7 @@
 
 .el-date-editor .el-range-input{
   &::placeholder{
-    color: $color-text;
+    color: $color-text-1;
   }
 }
 
@@ -155,12 +216,68 @@
     padding: 24px 0 21px 30px;
     .el-dialog__title {
       font-size: 16px;
+      line-height: 14px;
       color: $color-text;
     }
   }
   .el-dialog__body {
-    padding-left: 30px;
-    padding-right: 30px;
+    padding: 30px 30px 50px;
+  }
+}
+.el-dialog {
+  .el-dialog__close {
+    font-size: 14px;
+  }
+  .el-button{
+    width: 100px;
+    height: 34px;
+    padding: 0;
+    text-align: center;
+    font-size: 14px;
+  }
+}
+.dialog-height-50{
+  .el-dialog{
+    .el-dialog__body{
+      flex-grow: 1;
+      height: 50vh !important;
+      overflow-y: auto;
+    }
+  }
+}
+.dialog-height-80{
+  .el-dialog{
+    .el-dialog__body{
+      flex-grow: 1;
+      height: 80vh !important;
+      overflow-y: auto;
+    }
+  }
+}
+.dialog-height-90{
+  .el-dialog{
+    .el-dialog__body{
+      flex-grow: 1;
+      height: 90vh !important;
+      overflow-y: auto;
+    }
+  }
+}
+// 垂直居中
+.dialog-mid {
+  .el-dialog{
+    display: flex;
+    flex-direction: column;
+    margin:0px !important;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    .el-dialog__body{
+      flex-grow: 1;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
   }
 }
 
@@ -187,9 +304,17 @@
 // 展示信息form
 .info-form{
   .el-form-item{
-    margin-bottom: 30px;
+    &+.el-form-item{
+      margin-top: 30px;
+      margin-bottom: 0;
+    }
   }
   .el-form-item__content, .el-form-item__label{
     line-height: 1;
   }
+}
+
+.el-scrollbar{
+  height: 100%;
+  overflow-x: hidden;
 }

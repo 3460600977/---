@@ -3,7 +3,7 @@
     <!-- 倒计时30分钟 -->
     <PutMangeCard class="time-box mid">
       <div class="left-info font-16 mid">
-        <i style="font-size: 28px; margin-right: 14px;" class="el-icon-warning color-red"></i>
+        <i style="font-size: 28px; margin-right: 14px;" class="iconfont icon-tishi color-red"></i>
         <template v-if="hasCanceled">
           订单已取消，若想继续投放，请重新创建投放方案~
         </template>
@@ -13,9 +13,9 @@
       </div>
 
       <div class="right-time mid-center">
-        <div class="time mid-center">{{countDown.minute}}</div>
+        <div class="time mid-center font-nflbengals">{{countDown.minute}}</div>
         <div class="split mid-center">:</div>
-        <div class="time mid-center">{{countDown.second}}</div>
+        <div class="time mid-center font-nflbengals">{{countDown.second}}</div>
       </div>
     </PutMangeCard>
 
@@ -53,7 +53,7 @@
 
     <!-- 点位信息 -->
     <PutMangeCard>
-      <div class="font-16" style="margin-bottom: 30px;">点位信息</div>
+      <div class="font-16">点位信息</div>
        <!-- 楼盘定向->选中列表 -->
       <BuildList
         :buildingDirectionActiveType="'payConfirm'"
@@ -64,7 +64,7 @@
     <!-- 总计 取消投放 确认并支付 -->
     <PutMangeCard>
       <div class="mid-between">
-        <div>总计: <span class="color-red">¥ {{this.$tools.toThousands(estimatePriceValue / 100)}}</span></div>
+        <div>总计&nbsp;<span class="color-red font-18 font-number"><span class="font-16">¥ </span>{{this.$tools.toThousands(estimatePriceValue / 100)}}</span></div>
         <div v-if="hasCanceled">
           <router-link to="/putManage?active=project">
             <el-button style="width: 136px;" type="primary">返回列表</el-button>
@@ -81,25 +81,25 @@
     <el-dialog
       :beforeClose="backToList"    
       :visible.sync="confirmPayCallBack.show"
-      class="my-confirm-dialog"
+      class="my-confirm-dialog my-dialog dialog-mid"
       width="568px">
 
       <div class="confirm-title mid" slot="title">
         <i class="icon color-red iconfont icon--zhengque-shiti"></i>
         <div class="info">
           <p class="font-16">支付成功</p>
-          <p class="font-14 color-text-1">提示：请及时上传广告创意，若未及时上传，投放方案将自动取消</p>
+          <p class="font-14 color-text-1 mt-10">提示：请及时上传广告创意，若未及时上传，投放方案将自动取消</p>
         </div>
       </div>
 
       <div class="font-14">
         <span>支付金额：</span>
-        <span class="color-red">¥ {{this.$tools.toThousands(confirmPayCallBack.data.account / 100)}}</span>
+        <span class="color-red">¥ <span class="font-18 font-number">{{this.$tools.toThousands(confirmPayCallBack.data.account / 100)}}</span></span>
       </div>
 
       <div style="margin-top: 23px;" class="font-14">
         <span>账户余额：</span>
-        <span class="color-red">¥ {{this.$tools.toThousands(confirmPayCallBack.data.balance / 100)}}</span>
+        <span class="color-red">¥ <span class="font-18 font-number">{{this.$tools.toThousands(confirmPayCallBack.data.balance / 100)}}</span></span>
       </div>
       <span slot="footer" class="dialog-footer mid-center">
         <el-button style="width: 100px" @click="backToList">返回列表</el-button>
@@ -232,11 +232,11 @@ export default {
       this.project.loading = true;
       this.$api.PutProject.ConfirmPay(this.$route.query.projectId)
         .then(res => {
-          this.project.loading = false;
           this.confirmPayCallBack = {
             show: true,
             data: res.result
           }; 
+          this.project.loading = false;
         })
         .catch(res => {
           this.project.loading = false;
@@ -319,7 +319,6 @@ export default {
           height:28px;
           background:rgba(255,255,255,1);
           border-radius:4px;
-          font-family:NFL Bengals;
           font-weight:400;
           color:rgba(244,74,74,1);
         }
