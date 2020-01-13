@@ -140,7 +140,9 @@
       <div class="el-carousel">
         <el-carousel arrow="always">
           <el-carousel-item v-for="(item,imgIndex) in imgList" :key="imgIndex">
-            <img class="imgItem" :src="item" @click="showPlayVideo(imgIndex)" />
+            <div class="imgBorder">
+              <img class="imgItem" :src="item" @click="showPlayVideo(imgIndex)" />
+            </div>
           </el-carousel-item>
         </el-carousel>
       </div>
@@ -720,14 +722,38 @@ export default {
       .imgItem {
         cursor: pointer;
       }
+      /deep/ .el-card__body {
+        width: 390px;
+        height: 540px;
+        background: $color-bg-3;
+        box-shadow: 0px 4px 16px 0px $color-shadow-5;
+        border-radius: 8px;
+      }
       /deep/ .el-carousel__arrow {
-        color: $color-main;
+        color: $color-border;
         background-color: transparent;
-        border: 1px solid $color-main;
+        border: 1px solid $color-border;
         margin-top: 55px;
+        width: 34px;
+        height: 34px;
+        border-radius: 17px;
+      }
+      /deep/ .el-carousel__arrow:hover {
+        color: $color-main;
+        border-color: $color-main;
+      }
+      /deep/ .el-carousel__arrow i {
+        font-weight: bolder;
+        font-size: 14px;
+      }
+      /deep/ .el-carousel__arrow--right {
+        right: 0px;
+      }
+      /deep/ .el-carousel__arrow--left {
+        left: 0px;
       }
       .el-carousel {
-        margin-top: 40px;
+        margin-top: 32px;
         height: 460px;
         text-align: center;
         /deep/ .el-carousel__item {
@@ -736,9 +762,9 @@ export default {
         /deep/ .el-carousel__indicators {
           bottom: 5px;
           .el-carousel__button {
-            width: 10px;
-            height: 10px;
-            border-radius: 10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 8px;
             background: #e1e1e1;
           }
           .el-carousel__button:hover {
@@ -767,37 +793,53 @@ export default {
           display: flex;
           cursor: pointer;
           .news_case_time {
-            height: 66px;
             width: 80px;
+            height: 76px;
             padding: 5px 15px;
-            color: #cfcfcf;
-            border: 1px solid rgba(244, 74, 74, 0);
+            color: $color-text-4;
+            font-size: 36px;
+            font-weight: 400;
+            line-height: 18px;
+            border: 1px solid $color-text-4;
             span {
               font-weight: bold;
               font-size: 18px;
             }
             p {
+              width: 46px;
+              height: 14px;
               margin-top: 10px;
+              font-size: 14px;
+              font-weight: 400;
+              line-height: 18px;
             }
           }
           .news_case_content {
             padding-left: 15px;
             // border-left: 3px solid #ddd;
+            h4 {
+              font-size: 14px;
+              font-weight: 400;
+              color: $color-text;
+            }
             p {
               color: #cfcfcf;
               margin: 8px 0 4px 0;
+              font-size: 14px;
+              font-weight: 400;
+              color: $color-text-1;
               line-height: 18px;
             }
           }
         }
         .news_case_item:hover {
           .news_case_time {
-            color: rgba(244, 74, 74, 1);
-            border: 1px solid rgba(244, 74, 74, 1);
+            color: $color-main;
+            border: 1px solid $color-main;
           }
           .news_case_content {
             h4 {
-              color: rgba(244, 74, 74, 1);
+              color: $color-main;
             }
           }
         }

@@ -773,12 +773,16 @@ export default {
       th {
         font-size: 14px;
         color: $color-text;
-        text-align: center;
-        padding: 25px 0;
       }
       td {
-        padding: 5px 0;
+        padding: 5px 0 5px 17px;
         border-top: 10px solid $color-bg;
+      }
+      th {
+        padding: 25px 0 25px 17px;
+      }
+      tr {
+        text-align: center;
       }
       tr:first-child td {
         border-top: 0;
