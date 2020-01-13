@@ -160,10 +160,21 @@
 
       <el-tabs v-model="activeName" style="margin-top: -15px;">
         <el-tab-pane v-loading="detailDialog.loading" label="创意资质" name="aptitude" class="aptitude">
+          <!-- 不通过 -->
           <div class="no-pass" v-if="detailDialog.data.status == 1">
             <img class="no-pass-img" :src="noPassImg" alt="" srcset="">
             <div v-if="detailDialog.data.rejectReason">{{JSON.parse(detailDialog.data.rejectReason).join(',')}}</div>
             <div v-else>未知原因</div>
+          </div>
+
+          <!-- 通过 -->
+          <div class="no-pass" v-if="detailDialog.data.status == 2">
+            <img class="no-pass-img" :src="passImg" alt="" srcset="">
+          </div>
+
+          <!-- 通过 -->
+          <div class="no-pass" v-if="detailDialog.data.status == 0">
+            <img class="no-pass-img" :src="waitImg" alt="" srcset="">
           </div>
 
           <el-form class="info-form" label-position='left' label-width="155px">
@@ -297,6 +308,8 @@ export default {
       screenType: projectConst.screenType,
 
       noPassImg: require('@/assets/images/icon_not_passed.png'),
+      passImg: require('@/assets/images/icon_transit.png'),
+      waitImg: require('@/assets/images/icon_wait.png'),
 
       activeName: 'aptitude',
 
@@ -552,6 +565,7 @@ export default {
     padding: 16px 20px;
     background:rgba(83,160,255,0.08);
     line-height: 1.5;
+    margin-bottom: 30px;
     .no-pass-img{
       width: 65px;
       height: 46px;
