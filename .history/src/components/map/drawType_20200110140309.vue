@@ -109,7 +109,6 @@
   .draw-type-c {
     background: #ffffff;
     position: relative;
-    
     line-height: 50px;
   }
   .search-popup {
