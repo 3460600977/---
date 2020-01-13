@@ -78,8 +78,7 @@
       :modal-append-to-body="false"
       width="780px"
       title="修改密码"
-      class="edit-pass-dialog"
-    >
+      class="edit-pass-dialog">
       <edit-pass-index @changeDialogEditPass="changeEditPass"></edit-pass-index>
     </el-dialog>
   </header>
@@ -114,7 +113,7 @@ export default {
         notification: require("../../../assets/images/icons/icon_notification.png"),
         userHead: require("../../../assets/images/icons/icon_tx.png"),
         up: require("../../../assets/images/icons/icon_up.png"),
-        defaultAvatar: require("../../../assets/images/icons/icon_head portrait.png")
+        defaultAvatar: require("../../../assets/iconImg/icon_default_avatar@2x.png")
       },
 
       menu: {
@@ -352,6 +351,7 @@ export default {
     height: $headerHeight;
     width: 1200px;
     margin-left: 77px;
+    margin-right: 120px;
     color: #fbb8b7;
     li.item {
       position: relative;

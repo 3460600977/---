@@ -1,15 +1,15 @@
 <template>
   <!-- 详情 -->
   <el-dialog
-    class="my-dialog dialog-mid"
+    class="my-dialog dialog-mid dialog-height-80"
     title="投放方案详情"
     :before-close="() => { $emit('hideDetial') }"
     :visible.sync="show"
     width="1000px">
-    <el-tabs class="thin-tab small" v-model="activeTab">
+    <el-tabs v-model="activeTab" style="margin-top: -15px;">
       
       <el-tab-pane label="方案信息" name="project">
-        <el-form class="info-form" v-loading="projectDetail.loading" label-position='left' label-width="150px">
+        <el-form class="info-form" v-loading="projectDetail.loading" label-position='left' label-width="155px">
           <el-form-item label="投放方案名称">
             <span class="color-text-1">{{projectDetail.data.name}}</span>
           </el-form-item>

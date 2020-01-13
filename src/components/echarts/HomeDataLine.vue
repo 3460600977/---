@@ -97,10 +97,18 @@ export default {
               type: "category",
               data: chartParam.xdata,
               axisPointer: {
-                type: "shadow"
+                type: "line",
+                lineStyle: {
+                  color: "rgba(244, 74, 74, 0.06)",
+                  width: 65
+                }
               },
               axisLabel: {
-                showMaxLabel: true
+                margin: 20,
+                showMaxLabel: true,
+                fontSize: 14,
+                fontWeight: 400,
+                color: "#999999"
               },
               axisLine: {
                 lineStyle: {
@@ -123,6 +131,9 @@ export default {
                 }
               },
               axisLabel: {
+                color: "#999999",
+                fontSize: 16,
+                fontWeight: "normal",
                 fontFamily: "DINMittelschrift",
                 formatter: function(value, index) {
                   if (chartParam.selectLine.firstValue === 1) {
@@ -146,6 +157,9 @@ export default {
                 }
               },
               axisLabel: {
+                color: "#999999",
+                fontSize: 16,
+                fontWeight: "normal",
                 fontFamily: "DINMittelschrift",
                 formatter: function(value, index) {
                   if (chartParam.selectLine.secondValue === 1) {
@@ -274,10 +288,18 @@ export default {
               data: chartParam.xdata,
               boundaryGap: false,
               axisPointer: {
-                type: "shadow"
+                type: "line",
+                lineStyle: {
+                  color: "rgba(244, 74, 74, 0.06)",
+                  width: 65
+                }
               },
               axisLabel: {
-                showMaxLabel: true
+                margin: 20,
+                showMaxLabel: true,
+                fontSize: 14,
+                fontWeight: 400,
+                color: "#999999"
               },
               interval: 0,
               axisLine: {
@@ -301,6 +323,9 @@ export default {
                 }
               },
               axisLabel: {
+                color: "#999999",
+                fontSize: 16,
+                fontWeight: "normal",
                 fontFamily: "DINMittelschrift",
                 formatter: function(value, index) {
                   if (chartParam.selectLine.firstValue === 1) {

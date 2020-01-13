@@ -85,9 +85,10 @@
 
     </el-form>
 
+    <!-- 表格 分页 -->
     <div class="query_result">
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
-        <el-table-column prop="name" label="广告创意名称">
+        <el-table-column prop="name" min-width="130px" label="广告创意名称">
           <template slot-scope="scope">
             <span class="hand">{{scope.row.name}}</span>
           </template>
@@ -137,6 +138,7 @@
           </template>
         </el-table-column>
       </el-table>
+
       <el-pagination
         background
         layout="total, sizes, prev, pager, next, jumper"
@@ -154,28 +156,38 @@
       title="广告创意详情" 
       width="1000px" 
       :visible.sync="detailDialog.show" 
-      class="creative-dialog my-dialog dialog-mid">
-      <el-tabs v-model="activeName">
-        <el-tab-pane label="创意资质" name="aptitude" class="aptitude">
-          <div v-loading="detailDialog.loading">
-            <div class="no-pass" v-if="detailDialog.data.status == 1">
-              <img class="no-pass-img" :src="noPassImg" alt="" srcset="">
-              <div v-if="detailDialog.data.rejectReason">{{JSON.parse(detailDialog.data.rejectReason).join(',')}}</div>
-              <div v-else>未知原因</div>
-            </div>
-            
-            <div class="text-col">
-              <span class="text-title">广告创意名称</span>
-              <label class="text-info">{{detailDialog.data.name}}</label>
-            </div>
+      class="creative-dialog my-dialog dialog-mid dialog-height-80">
 
-            <div  class="text-col">
-              <span class="text-title">广告创意行业</span>
-              <label class="text-info">{{detailDialog.data.industryName}}</label>
-            </div>
+      <el-tabs v-model="activeName" style="margin-top: -15px;">
+        <el-tab-pane v-loading="detailDialog.loading" label="创意资质" name="aptitude" class="aptitude">
+          <!-- 不通过 -->
+          <div class="no-pass" v-if="detailDialog.data.status == 1">
+            <img class="no-pass-img" :src="noPassImg" alt="" srcset="">
+            <div v-if="detailDialog.data.rejectReason">{{JSON.parse(detailDialog.data.rejectReason).join(',')}}</div>
+            <div v-else>未知原因</div>
+          </div>
 
-            <div  class="text-col">
-              <span class="text-title">广告创意资质</span>
+          <!-- 通过 -->
+          <div class="no-pass" v-if="detailDialog.data.status == 2">
+            <img class="no-pass-img" :src="passImg" alt="" srcset="">
+          </div>
+
+          <!-- 通过 -->
+          <div class="no-pass" v-if="detailDialog.data.status == 0">
+            <img class="no-pass-img" :src="waitImg" alt="" srcset="">
+          </div>
+
+          <el-form class="info-form" label-position='left' label-width="155px">
+
+            <el-form-item label="广告创意名称">
+              <span class="color-text-1">{{detailDialog.data.name}}}</span>
+            </el-form-item>
+
+            <el-form-item label="广告创意行业">
+              <span class="color-text-1">{{detailDialog.data.industryName}}</span>
+            </el-form-item>
+
+            <el-form-item label="广告创意资质">
               <div v-if="detailDialog.data.industryIdentify" class="demo-image__preview">
                 <el-image
                   fit="cover"
@@ -184,45 +196,36 @@
                   style="width: 100px; height: 158px;border-radius: 2px; margin-right: 10px;">
                 </el-image>
               </div>
-              <label v-else class="text-info">未上传</label>
-            </div>
+              <label v-else class="color-text-1">未上传</label>
+            </el-form-item>
 
             <template v-if="detailDialog.data.monitor">
-              <div v-for="(item, index) in detailDialog.data.monitor" :key="index">
-                <div  class="text-col">
-                  <span class="text-title">监测模式</span>
-                  <label class="text-info">{{item.mode || '无'}}</label>
-                </div>
-
-                <div  class="text-col">
-                  <span class="text-title">第三方监测</span>
-                  <label class="text-info">{{$tools.getObjectItemFromArray(MonitorData.thirdPartyMonitor, 'value', item.thirdPartyMonitor).name || '无'}}</label>
-                </div>
-
-                <div  class="text-col" v-if="item.thirdPartyMonitor != 'ky'">
-                  <span class="text-title">监测地址</span>
-                  <label class="text-info">{{item.thirdPartyMonitorUrl || '无'}}</label>
-                </div>
-              </div>
+              <template v-for="(item, index) in detailDialog.data.monitor">
+                <el-form-item :key="index" label="监测模式">
+                  <span class="color-text-1">{{item.mode || '无'}}</span>
+                </el-form-item>
+                <el-form-item :key="index" label="第三方监测">
+                  <span class="color-text-1">{{$tools.getObjectItemFromArray(MonitorData.thirdPartyMonitor, 'value', item.thirdPartyMonitor).name || '无'}}</span>
+                </el-form-item>
+                <el-form-item :key="index" label="监测地址" v-if="item.thirdPartyMonitor != 'ky'">
+                  <span class="color-text-1">{{item.thirdPartyMonitorUrl || '无'}}</span>
+                </el-form-item>
+              </template>
             </template>
 
             <template v-else>
-              <div  class="text-col">
-                <span class="text-title">监测模式</span>
-                <label class="text-info">{{'无'}}</label>
-              </div>
-
-              <div  class="text-col">
-                <span class="text-title">第三方监测</span>
-                <label class="text-info">{{'无'}}</label>
-              </div>
-
-              <div  class="text-col">
-                <span class="text-title">监测地址</span>
-                <label class="text-info">{{'无'}}</label>
-              </div>
+              <el-form-item label="监测模式">
+                <span class="color-text-1">无</span>
+              </el-form-item>
+              <el-form-item label="第三方监测">
+                <span class="color-text-1">无</span>
+              </el-form-item>
+              <el-form-item label="监测地址">
+                <span class="color-text-1">无</span>
+              </el-form-item>
             </template>
-          </div>
+          </el-form>
+        
         </el-tab-pane>
         
         <el-tab-pane label="创意素材" name="material" class="material">
@@ -262,6 +265,7 @@
           </div>
         </el-tab-pane>
       </el-tabs>
+      
       <span slot="footer" class="dialog-footer center">
         <el-button style="width: 136px;" type="primary" @click="detailDialog.show = false">确 定</el-button>
       </span>
@@ -273,7 +277,7 @@
     <el-dialog title="删除创意"
       :visible.sync="deleteDialog.show"
       width="568px"
-      class="my-dialog"
+      class="my-dialog dialog-mid"
     >
       <p>确认是否删除广告创意 <span class="color-main">【{{deleteDialog.data.name}}】？</span></p>
       <span slot="footer">
@@ -304,6 +308,8 @@ export default {
       screenType: projectConst.screenType,
 
       noPassImg: require('@/assets/images/icon_not_passed.png'),
+      passImg: require('@/assets/images/icon_transit.png'),
+      waitImg: require('@/assets/images/icon_wait.png'),
 
       activeName: 'aptitude',
 
@@ -559,6 +565,7 @@ export default {
     padding: 16px 20px;
     background:rgba(83,160,255,0.08);
     line-height: 1.5;
+    margin-bottom: 30px;
     .no-pass-img{
       width: 65px;
       height: 46px;
@@ -589,19 +596,12 @@ export default {
     .text-col {
       font-size: 14px;
       font-weight: 400;
-      margin-top: 31px;
+      margin-bottom: 30px;
       display: flex;
     }
     .text-title {
       width: 90px;
       color: $color-table-title;
-    }
-    .text-info {
-      color: $color-text-1;
-      margin-left: 90px;
-    }
-    .demo-image__preview {
-      margin-left: 90px;
     }
   }
 

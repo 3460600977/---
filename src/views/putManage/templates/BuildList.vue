@@ -276,7 +276,7 @@ export default {
 
 <style lang="scss" scoped>
 .selected-list {
-  margin-top: 40px;
+  // margin-top: 30px;
   width: 540px;
   border: 1px solid rgba(229, 231, 233, 1);
   &.big{
@@ -294,7 +294,7 @@ export default {
     // }
   }
   .selected-list-data-box {
-    max-height: 76px * 4;
+    max-height: 76px * 4.2;
     overflow-y: auto;
     .item {
       position: relative;

@@ -188,6 +188,7 @@ export default {
         this.classObject["icon-icon-eye"] = true;
       }
     },
+
     onSubmit(formName) {
       //登录表框的验证
       this.$refs[formName].validate(valid => {
@@ -293,6 +294,16 @@ export default {
           console.log(res.result);
         })
         .catch(res => {});
+    },
+
+    // 审核人员菜单权限验证
+    checkAuditorMenu() {
+      
+    },
+
+    // 销售人员菜单权限验证
+    checkAuditorMenu() {
+
     }
   }
 };
