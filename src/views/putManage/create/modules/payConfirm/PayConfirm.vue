@@ -250,6 +250,7 @@ export default {
     // 发送邮件给广告主
     sendMain() {
       this.project.loading = true;
+      // process.env.BASE_API
       this.mailContent = `<!doctype html>
                             <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
                               xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -1332,7 +1333,7 @@ export default {
                                                                 <tr>
                                                                   <td align="center" valign="middle" class="mcnButtonContent"
                                                                     style="font-family: Merriweather Sans, Helvetica Neue, Helvetica, Arial, sans-serif; font-size: 16px; padding: 20px;">
-                                                                    <a class="mcnButton " title="确认支付" href="/dpapi/project/confirmMail/${mailNo}" target="_blank"
+                                                                    <a class="mcnButton " title="确认支付" href="${process.env.BASE_API}/#/mailPayCallBack?mailNum=${this.project.data.mailNo}" target="_blank"
                                                                       style="font-weight: normal;letter-spacing: 5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">确认支付</a>
                                                                   </td>
                                                                 </tr>
@@ -1427,7 +1428,7 @@ export default {
       let param = {
         content: this.mailContent,
         payAmount: this.estimatePriceValue,
-        title: '测试'
+        title: '扣款确认'
       }
 
       this.$api.PutProject.ProjectMail(param)
@@ -1476,7 +1477,7 @@ export default {
 
     hasCanceled() {
       let res = false;
-      if (this.countDown.minute === 0 && this.countDown.second === 0) {
+      if (+this.countDown.minute == 0 && +this.countDown.second == 0) {
         res = true;
       }
       return res;
