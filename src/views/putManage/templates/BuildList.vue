@@ -1,7 +1,7 @@
 <template>
   <div class="selected-list" v-loading="loading" :class="{'big': buildingDirectionActiveType !== 'list'}">
 
-    <!-- 选择洞察包 统计列表 未寻量 -->
+    <!-- 选择洞察包 确认支付 -->
     <template v-if="buildingDirectionActiveType === 'exist' || buildingDirectionActiveType === 'payConfirm'">
       <ul class="selected-list-data-box">
         <noData v-if="buildsNumber <= 0 || deviceNumber <= 0">无可售数据</noData>
@@ -24,7 +24,7 @@
 
     <!-- 地图选点列表 -->
     <template v-if="buildingDirectionActiveType === 'create'">
-      <div v-if="deviceNumber > 0" class="title clearfix mid-between">
+      <div v-if="deviceNumber > 0" class="title mid-between">
         <div>
           <span>
             已选择楼盘

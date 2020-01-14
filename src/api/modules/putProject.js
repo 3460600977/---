@@ -129,5 +129,13 @@ export const PutProject = {
     });
   },
 
+  ProjectMail: (data) => {
+    return request({
+      url: "/dpapi/project/mail",
+      method: "post",
+      data
+    });
+  }
+
 
 }

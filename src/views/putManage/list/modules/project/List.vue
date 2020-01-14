@@ -215,7 +215,7 @@ export default {
 
       detailDialog: {
         show: false,
-        projectId: '',
+        projectId: 0,
         activeTab: 'project'
       },
 
