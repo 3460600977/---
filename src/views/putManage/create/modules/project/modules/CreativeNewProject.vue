@@ -814,7 +814,7 @@
                  * 创意状态 0未审核，1审核不通过，2审核通过
                  */
                 if (this.formData.creativeStatus === 0 || this.formData.creativeStatus === 2) {
-                  this.$router.push({
+                  this.$router.replace({
                     path: '/putManage',
                     query: {
                       active: 'project'
@@ -822,7 +822,7 @@
                   })
                 } else {
                   if (this.projectDetail.status === 0) {
-                    this.$router.push({
+                    this.$router.replace({
                       path: '/putManage/create/creative',
                       query: {
                         projectId: this.$route.query.editProjectId,
@@ -830,7 +830,7 @@
                       }
                     })
                   } else {
-                    this.$router.push({
+                    this.$router.replace({
                       path: '/putManage/create/payConfirm',
                       query: {
                         projectId: this.$route.query.editProjectId,
@@ -854,7 +854,7 @@
                   message: '创建方案成功',
                   type: 'success'
                 });
-                this.$router.push({
+                this.$router.replace({
                   path: '/putManage/create/payConfirm',
                   query: {
                     projectId: res.result.projectId,

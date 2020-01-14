@@ -86,14 +86,14 @@ export default {
   box-shadow:0px 6px 9px 1px rgba(19,18,18,0.14);
   border-radius:6px;
   .top-box{
-    background:rgb(0, 0, 0);
+    background:rgb(255, 255, 255);
     overflow: hidden;
     .top{
       height:100%;
     }
   }
   .bottom-box{
-    background:rgb(0, 0, 0);
+    background:rgb(255, 255, 255);
     overflow: hidden;
     .bottom{
       display: block;

@@ -17,15 +17,21 @@
 
 * 测试环境
 
-  + 访问域名: qa-ads.xinchao.com
-  + 接口地址: 
+  + 访问域名: https://qa-ads.xinchao.com
+  + 接口地址: https://qa-ads.xinchao.com
   + 编译命令: `npm run build:dev`
 
 * 生产环境
 
-  + 访问域名: ads.xinchao.com
-  + 接口地址: 
+  + 访问域名: https://ads.xinchao.com
+  + 接口地址: https://ads.xinchao.com
   + 编译命令: `npm run build:prod`
+
+* 演示环境
+
+  + 访问域名: https://demo-ads.xinchao.com
+  + 接口地址: https://demo-ads.xinchao.com
+  + 编译命令: `npm run build:demo`
 
 ---
 
