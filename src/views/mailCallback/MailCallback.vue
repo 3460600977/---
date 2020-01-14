@@ -4,12 +4,12 @@
     <div class="mail-callback-box">
       <div class="title center font-20 bold">
         <template v-if="callbackData.success">支付成功</template>
-        <template v-if="!callbackData.success">失败</template>
+        <template v-if="!callbackData.success">支付失败</template>
       </div>
 
       <el-divider></el-divider>
 
-      <div class="message">
+      <div class="message center">
         {{callbackData.data.msg}}
       </div>
     </div>
@@ -62,6 +62,7 @@ export default {
       border-radius: 2px;
       box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
       padding: 30px;
+      width: 500px;
       >.message{
         padding: 50px;
       }
