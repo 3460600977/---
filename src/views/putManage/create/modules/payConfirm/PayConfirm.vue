@@ -56,6 +56,7 @@
       <div class="font-16">点位信息</div>
        <!-- 楼盘定向->选中列表 -->
       <BuildList
+        class="margin-top-20"
         :buildingDirectionActiveType="'payConfirm'"
         :loading="false"/>
     </PutMangeCard>
