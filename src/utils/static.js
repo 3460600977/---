@@ -267,5 +267,29 @@ export const MenuList =
         }]
     }
   ]
+// 普通用户需要的菜单栏展示
+export const normalMenuList = [
+  { "code": "1000", "selected": true },
+  { "code": "1010", "selected": true },
+  { "code": "1100", "selected": true },
+  { "code": "1110", "selected": true },
+  { "code": "1120", "selected": true },
+  { "code": "1200", "selected": true },
+  { "code": "1210", "selected": true },
+  { "code": "1300", "selected": true },
+  { "code": "1310", "selected": true },
+  { "code": "1320", "selected": true },
+  { "code": "1330", "selected": true },
+  { "code": "1340", "selected": true },
+  { "code": "1400", "selected": true },
+  { "code": "1410", "selected": true },
+  { "code": "1420", "selected": true },
+  { "code": "1421", "selected": true },
+  { "code": "1500", "selected": true },
+  { "code": "1510", "selected": true },
+  { "code": "1600", "selected": false },
+  { "code": "1610", "selected": false },
+  { "code": "9999", "selected": true },
+]
 
 

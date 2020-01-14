@@ -126,8 +126,17 @@ export default {
               minInterval: 5,
               interval: maxappreg === 0 ? 100 : interval_left,
               axisLine: {
+                show: false,
                 lineStyle: {
                   color: "#606266"
+                }
+              },
+              axisTick: {
+                show: false
+              },
+              splitLine: {
+                lineStyle: {
+                  color: "#f5f6f8"
                 }
               },
               axisLabel: {
@@ -152,8 +161,17 @@ export default {
               minInterval: 5,
               interval: maxactive === 0 ? 100 : interval_right,
               axisLine: {
+                show: false,
                 lineStyle: {
                   color: "#999999"
+                }
+              },
+              axisTick: {
+                show: false
+              },
+              splitLine: {
+                lineStyle: {
+                  color: "#f5f6f8"
                 }
               },
               axisLabel: {
@@ -318,8 +336,17 @@ export default {
               minInterval: 5,
               interval: maxappreg === 0 ? 100 : interval_left,
               axisLine: {
+                show: false,
                 lineStyle: {
                   color: "#606266"
+                }
+              },
+              axisTick: {
+                show: false
+              },
+              splitLine: {
+                lineStyle: {
+                  color: "#f5f6f8"
                 }
               },
               axisLabel: {

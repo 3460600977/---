@@ -21,7 +21,11 @@
         >
           <template slot="title">
             <img :src="leftMenuList.menu_icon" class="menuIcon" v-if="leftMenuList.menu_icon_show" />
-            <i class="iconfont icon-tongjibaobiao1 menuBiao" v-else></i>
+            <i
+              class="iconfont menuBiao"
+              :class="{'icon-caiwuguanli':leftMenuList.menu_icon_finance_show,'icon-tongjibaobiao1':leftMenuList.menu_icon_bao_show}"
+              v-else
+            ></i>
             <span slot="title">{{rootMenu.name}}</span>
           </template>
           <el-menu-item
@@ -52,6 +56,8 @@ export default {
         first_path: "/toolBox/account",
         menu_index: 0,
         menu_icon_show: true,
+        menu_icon_finance_show: false,
+        menu_icon_bao_show: true,
         menu_icon: require("../assets/iconImg/icon_Management@2x.png"),
         menu: [
           {
@@ -75,6 +81,7 @@ export default {
   },
   computed: {
     onRoutes() {
+      console.log(this.leftMenuList);
       // 当前激活菜单的 index
       return this.$route.path;
     }
@@ -126,7 +133,7 @@ export default {
   .is-active,
   .item_active {
     background-color: $color-bg;
-    color: $color-main
+    color: $color-main;
   }
   /deep/ .el-submenu {
     background-color: $color-bg-3;
@@ -197,7 +204,7 @@ export default {
     color: $color-main;
     background-color: $color-bg;
   }
-  .item_active a{
+  .item_active a {
     color: $color-main;
   }
 }

@@ -23,6 +23,8 @@ export default {
         first_path: "/reportList",
         menu_index: 0,
         menu_icon_show: false,
+        menu_icon_finance_show: false,
+        menu_icon_bao_show: true,
         menu_icon: require("../../../assets/iconImg/icon_Management@2x.png"),
         menu: [
           {
@@ -177,7 +179,12 @@ export default {
         border-radius: 2px;
         padding: 8px 0;
       }
-      .download-data:hover {
+      .download-data:hover,
+      .download-data:active,
+      .download-data:link,
+      .download-data:focus,
+      .download-data-loading,
+      /deep/ .is-loading {
         color: $color-bg-3;
         background-color: $color-main;
       }

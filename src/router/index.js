@@ -9,6 +9,7 @@ import { reportCenterRouter } from './modules/reportCenter'//报表中心
 import { auditManageRouter } from './modules/auditManage'//审核管理
 import { toolBoxRouter } from './modules/toolBox'//工具箱
 import { peopleInsightRouter } from './modules/peopleInsight' // 人群洞察
+import { financeRouter } from './modules/finance' // 财务管理
 import { getMenuList } from '@/utils/auth';
 
 const router = new Router({
@@ -29,7 +30,8 @@ const router = new Router({
         ...reportCenterRouter,
         ...auditManageRouter,
         ...toolBoxRouter,
-        ...peopleInsightRouter
+        ...peopleInsightRouter,
+        ...financeRouter
       ],
     },
     

@@ -97,8 +97,13 @@
         class="list-page"
       ></el-pagination>
     </div>
-    
-    <el-dialog width="1000px" title="审核拒绝" :visible.sync="dialogDenyVisible" class="deny-dialog dialog-mid dialog-height-80">
+
+    <el-dialog
+      width="1000px"
+      title="审核拒绝"
+      :visible.sync="dialogDenyVisible"
+      class="deny-dialog dialog-mid dialog-height-80"
+    >
       <el-form :model="denyFrom" class="deny-from">
         <el-form-item
           :label-width="formLabelWidth"
@@ -142,7 +147,12 @@
       </div>
     </el-dialog>
 
-    <el-dialog width="1000px" title="创意内容" :visible.sync="dialogShowContent" class="creative-dialog dialog-mid dialog-height-80">
+    <el-dialog
+      width="1000px"
+      title="创意内容"
+      :visible.sync="dialogShowContent"
+      class="creative-dialog dialog-mid dialog-height-80"
+    >
       <el-tabs v-model="activeName">
         <div
           class="no-pass"
@@ -185,12 +195,14 @@
                     class="top-screen-pre"
                     v-if="dialogShowContent&&activeName==='material'"
                   ></preview-top-box>
+                </div>
+                <p>
                   <a
                     :href="downloadCreative.data.topList.downloadUrl"
                     :download="downloadCreative.data.topList.downloadUrl"
                     class="topDownVideo"
                   >下载视频</a>
-                </div>
+                </p>
               </div>
             </el-col>
             <el-col :span="12">
@@ -884,6 +896,7 @@ export default {
             border-radius: 12px;
             border: 1px solid $color-bg-7;
             background-color: $color-bg-7;
+            padding: 6px 20px;
           }
           .is-checked {
             .el-checkbox-button__inner {
@@ -949,7 +962,10 @@ export default {
       }
       .showTag {
         display: inline-block;
-        margin: 0 40px 10px 0;
+        margin: 0 20px 10px 0;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
       }
     }
   }

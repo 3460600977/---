@@ -133,21 +133,6 @@ export default {
             path: "/login",
             children: []
           },
-          {
-            code: "1500",
-            name: "财务管理",
-            selected: false,
-            path: "/finance",
-            children: [
-              {
-                code: "1510",
-                name: "财务流水",
-                selected: false,
-                path: "/finance/flow",
-                children: []
-              }
-            ]
-          }
         ],
         money: false,
         notification: false
