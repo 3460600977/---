@@ -129,13 +129,22 @@ export const PutProject = {
     });
   },
 
+  // 转广告主邮件
   ProjectMail: (data) => {
     return request({
       url: "/dpapi/project/mail",
       method: "post",
       data
     });
-  }
+  },
+
+  // 广告主确认邮件
+  ConfirmMail: (data) => {
+    return request({
+      url: "/dpapi/project/confirmMail/" + data,
+      method: "get",
+    });
+  },
 
 
 }
