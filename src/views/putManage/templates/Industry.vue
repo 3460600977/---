@@ -92,7 +92,8 @@ export default {
 
     // 选中
     changeData() {
-      this.industryList.checkedData.name = this.$refs.industryList.getCheckedNodes()[0] ? this.$refs.industryList.getCheckedNodes()[0].label : '行业';
+      this.industryList.checkedData.name 
+        = this.$refs.industryList.getCheckedNodes()[0] ? this.$refs.industryList.getCheckedNodes()[0].label : '行业';
       this.$emit('changeIndustry', this.industryList.checkedData)
     }
   },

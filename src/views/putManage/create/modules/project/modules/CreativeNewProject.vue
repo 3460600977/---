@@ -209,11 +209,12 @@
 
       <!-- 楼盘定向->选中列表 -->
       <BuildList
+        class="margin-top-20"
         @delMapItem="delMapItem"
         :buildingDirectionActiveType="buildingDirection.activeType"
         :loading="buildingDirection.builds.loading"/>
 
-      <div style="margin-top: 10px;" v-if="buildingDirection.activeType === 'exist'"><i class="color-red">*&nbsp;</i>可售投放数详见浮窗, 实际投放数据以支付成功为准。</div>
+      <div class="margin-top-20" v-if="buildingDirection.activeType === 'exist'"><i class="color-red">*&nbsp;</i>可售投放数详见浮窗, 实际投放数据以支付成功为准。</div>
 
     </PutMangeCard>
 
@@ -813,7 +814,7 @@
                  * 创意状态 0未审核，1审核不通过，2审核通过
                  */
                 if (this.formData.creativeStatus === 0 || this.formData.creativeStatus === 2) {
-                  this.$router.push({
+                  this.$router.replace({
                     path: '/putManage',
                     query: {
                       active: 'project'
@@ -821,7 +822,7 @@
                   })
                 } else {
                   if (this.projectDetail.status === 0) {
-                    this.$router.push({
+                    this.$router.replace({
                       path: '/putManage/create/creative',
                       query: {
                         projectId: this.$route.query.editProjectId,
@@ -829,7 +830,7 @@
                       }
                     })
                   } else {
-                    this.$router.push({
+                    this.$router.replace({
                       path: '/putManage/create/payConfirm',
                       query: {
                         projectId: this.$route.query.editProjectId,
@@ -853,7 +854,7 @@
                   message: '创建方案成功',
                   type: 'success'
                 });
-                this.$router.push({
+                this.$router.replace({
                   path: '/putManage/create/payConfirm',
                   query: {
                     projectId: res.result.projectId,

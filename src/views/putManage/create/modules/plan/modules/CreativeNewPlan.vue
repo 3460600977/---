@@ -191,7 +191,7 @@ export default {
               message: '修改投放计划成功',
               type: 'success'
             });
-            this.$router.push({
+            this.$router.replace({
               path: '/putManage',
             })
           })

@@ -17,12 +17,12 @@ const router = new Router({
   routes: [
     {
       path: '/home',
-      meta: {code: '1000', name: '首页'},
+      meta: { code: '1000', name: '首页' },
       component: () => import('@/views/home/Home'),
       children: [
         {
           path: '/',
-          meta: {code: '1000', name: '首页'},
+          meta: { code: '1000', name: '首页' },
           component: () => import('@/views/home/modules/HomeBody'),
         },
         ...putManageRouter,
@@ -37,20 +37,25 @@ const router = new Router({
     
     {
       path: '/login', component: () => import('@/views/login/login'),
-      meta: {white: true}
+      meta: { white: true }
     },
     
     // 销售人员跳转登陆
     {
       path: '/tokenLogin', component: () => import('@/views/login/login'),
-      meta: {white: true}
+      meta: { white: true }
     },
     
     // 审核人员跳转登录
     {
       path: '/auditorLogin', component: () => import('@/views/login/login'),
-      // meta: {white: true},
-      meta: {white: true},
+      meta: { white: true }
+    },
+    
+    // 广告主邮件确认支付回调
+    {
+      path: '/mailPayCallBack', component: () => import('@/views/mailCallback/MailCallback'),
+      meta: { white: true }
     },
     
     {path: '/404', component: () => import('@/views/errorPage/404'), meta: {white: true}},

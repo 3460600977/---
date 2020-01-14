@@ -334,8 +334,6 @@ export default {
             callback(new Error('图片尺寸不符合!'))
           }
         }
-       
-
       }
       
       callback()
@@ -396,9 +394,7 @@ export default {
       MonitorData,
       projectConst,
       fileType,
-      
 
-      test: '',
       createType: 'single', // single 联动,  top 上,  bottom 下屏
       haveProject: false, // 编辑时后端返回的是否绑定创意, 判断是否可以选择上下屏类型
       pageLoading: true, // 页面加载中 数据保存中
@@ -759,7 +755,7 @@ export default {
 
     // 保存取消按钮下一个跳转页面
     nextPage() {
-      this.$router.push({
+      this.$router.replace({
         path: '/putManage',
         query: {
           active: 'creative'

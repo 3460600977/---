@@ -69,6 +69,7 @@ export default {
   props: {
     projectId: {
       type: Number,
+      default: 0,
       required: true
     },
 

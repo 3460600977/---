@@ -1,7 +1,7 @@
 <template>
   <div class="selected-list" v-loading="loading" :class="{'big': buildingDirectionActiveType !== 'list'}">
 
-    <!-- 选择洞察包 统计列表 未寻量 -->
+    <!-- 选择洞察包 确认支付 -->
     <template v-if="buildingDirectionActiveType === 'exist' || buildingDirectionActiveType === 'payConfirm'">
       <ul class="selected-list-data-box">
         <noData v-if="buildsNumber <= 0 || deviceNumber <= 0">无可售数据</noData>
@@ -24,7 +24,7 @@
 
     <!-- 地图选点列表 -->
     <template v-if="buildingDirectionActiveType === 'create'">
-      <div v-if="deviceNumber > 0" class="title clearfix mid-between">
+      <div v-if="deviceNumber > 0" class="title mid-between">
         <div>
           <span>
             已选择楼盘
@@ -68,7 +68,7 @@
 
 
 
-    <!-- 方案点位信息列表 -->
+    <!-- 方案 点位信息 -->
     <template v-if="buildingDirectionActiveType === 'list'">
       <div class="title mid-between">
         <div>
@@ -91,7 +91,6 @@
       </div>
 
         <ul class="selected-list-data-box">
-      <el-scrollbar>
           <li class="item" v-for="(item, index) in localProject.list" :key="index">
             <!-- 名字 -->
             <div class="clearfix base">
@@ -124,7 +123,6 @@
             </ul>
 
           </li>
-      </el-scrollbar>
 
           <noData v-if="buildsNumber <= 0">无可售数据</noData>
         </ul>
@@ -294,7 +292,7 @@ export default {
     // }
   }
   .selected-list-data-box {
-    max-height: 76px * 4.2;
+    max-height: 46vh;
     overflow-y: auto;
     .item {
       position: relative;

@@ -44,7 +44,7 @@
           <el-button @click="hide" class="pl-btn2">取消</el-button>
           <el-button type="primary" class="margin-left-20 pl-btn2" @click="returnResult">保存</el-button>
         </div>
-        <div class="switch" v-if="switchValue !== null">
+        <!-- <div class="switch" v-if="switchValue !== null">
           <span style="margin-right: 15px">热力图开关</span>
           <el-switch
             v-model="switchValue"
@@ -52,7 +52,7 @@
             @change="change"
             >
           </el-switch>
-        </div>
+        </div> -->
       </div>
     </div>
 </template>
@@ -155,6 +155,11 @@
         //   return
         // }
         // this.hotMapItem = this.activeItem
+        console.log(this.activeItem)
+        if (this.hotMapItem && this.activeItem.id === this.hotMapItem.id) {
+          this.$message.error('所选人群包与当前人群包完全相同，请选择其他人群包进行定制推荐！');
+          return
+        }
         this.$emit('update:hotMapItem', this.activeItem)
         this.$emit('returnResult', this.activeItem)
       },
@@ -190,19 +195,6 @@
   .p-i-c {
     display: flex;
     justify-content: flex-start;
-  }
-  .switch /deep/ {
-    .el-switch__core:after {
-      height: 14px;
-      width: 14px;
-      top: 0;
-    }
-    .el-switch__core {
-      height: 16px;
-    }
-    .el-switch.is-checked .el-switch__core::after {
-      margin-left: -14px;
-    }
   }
   .input {
     width: 240px;
