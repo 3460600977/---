@@ -1,7 +1,7 @@
 <template>
   <div style="margin-bottom: 40px">
     <template v-for="(tagObj,parentIndex) in crowdProject.tagNames">
-      <div class="wrapper">
+      <div class="wrapper" :key='parentIndex'>
         <div class="font-0 mid-start">
           <p class="label">{{tagObj.name}}</p>
           <div class="flex1 tags">

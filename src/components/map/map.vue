@@ -44,7 +44,7 @@
           fillColor: "red",      //填充颜色。当参数为空时，圆形将没有填充效果。
           strokeWeight: 3,       //边线的宽度，以像素为单位。
           strokeOpacity: 1,    //边线透明度，取值范围0 - 1。
-          fillOpacity: 0.5,      //填充的透明度，取值范围0 - 1。
+          fillOpacity: 0.15,      //填充的透明度，取值范围0 - 1。
           strokeStyle: 'solid' //边线的样式，solid或dashed。
         }
       }
@@ -62,10 +62,6 @@
         type: Number,
         default: 3000
       },
-      budget: {
-        type: Number,
-        required: true
-      },
       currentSelectType: {
         type: Object,
         default: function () {
@@ -80,19 +76,13 @@
       this.map = null
     },
     watch: {
-      buildings(val) {
+      buildings(val, old) {
         // if (val.length) {
           this.initMap(val)
         // }
       },
       activePath(val) {
         this.$emit('activePathChange', val)
-      },
-      budget() {
-        this.drawDevicePoints()
-        if (this.activePath !== null) {
-          this.$emit('activePathChange', this.activePath)
-        }
       },
       selectedBuildings(val) {
         this.$emit('returnSelectedBuildings', val)
@@ -114,6 +104,16 @@
       this.mapBindEvent()
     },
     methods: {
+      // 获取特色点（type 为 -3 和 100 的点）
+      getSpecialPoints() {
+        let obj = {}
+        for (let key in this.points) {
+          if (!this.judgePointType(this.points[key])) {
+            obj[key] = this.points[key]
+          }
+        }
+        return obj
+      },
       //批量永久删除楼盘数据
       deleteBathItem(allList, type = -3) {
         allList.forEach((item) => {
@@ -172,7 +172,7 @@
         this.selectedBuildings = [] //当前选中楼盘
         this.indexArr = []
         this.hideHotMap()
-        this.clearPathArr(1)
+        this.clearPathArr()
         this.pointsOverlayObj.isShow = false
       },
       reGetAreaPoint() {
@@ -183,7 +183,8 @@
         }
       },
       initMap(val) {
-        this.points = this.normalizePointsAll(val)
+        let obj = this.getSpecialPoints()
+        this.points = {...this.normalizePointsAll(val), ...obj}
         this.pointsOverlayObj.isShow = true
         this.reGetAreaPoint()
         this.jugDraw()
@@ -417,9 +418,11 @@
         return  true
       },
       setSvgIndex() {
-        if (this.map.getPanes().mapPane.getElementsByTagName('svg').length) {
-          this.map.getPanes().mapPane.getElementsByTagName('svg')[0].style.zIndex = 1000
-        }
+        setTimeout(() => {
+          if (this.map.getPanes().mapPane.getElementsByTagName('svg').length) {
+            this.map.getPanes().mapPane.getElementsByTagName('svg')[0].style.zIndex = 1000
+          }
+        })
       },
       /*
        *折线和多边形画线完成回调函数
@@ -427,7 +430,6 @@
       drawComplete(drawingManager) {
         drawingManager.addEventListener("overlaycomplete", (e) => {
           if (!this.drawErrorTip(e)) return
-          // this.setSvgIndex()
           let location = this.map.pixelToPoint(e.currentTarget._mask._draggingMovePixel)
           let path = {
             type: e.drawingMode,
@@ -444,6 +446,7 @@
             this.overlayBindEvent(path)
           }
           this.$emit('drawCancle')
+          this.setSvgIndex()
         });
       },
       /*
@@ -751,12 +754,26 @@
       //   }
       // },
       mapLoad() {
-        this.initPointsOverlay()
+        this.map.getPanes().mapPane.innerHTML = ''
         this.initHotMap()
+        this.initPointsOverlay()
         this.initMouse()
-        this.setSvgIndex()
+        // this.setSvgIndex()
+        setTimeout(() => {
+          this.setPaneIndex()
+        })
       },
-
+      // 设置画点的canvas层级高些 避免被hotmap层所覆盖
+      setPaneIndex() {
+        let domArr = this.map.getPanes().mapPane.getElementsByTagName('canvas')
+        if (domArr.length) {
+          for (let i = 0; i < domArr.length; i++) {
+            if (domArr[i].getAttribute('id') === 'myCanvasElement') {
+              domArr[i].style.zIndex = 999
+            }
+          }
+        }
+      },
       mapBindEvent() {
         this.map.addEventListener('dragend', this.drawMarkersByVisual)
         this.map.addEventListener('zoomend', this.mapZoomEnd)
@@ -768,7 +785,6 @@
         // this.map.addEventListener('tilesloaded', this.tilesloaded)
       },
       drawCircle(point, info) {
-        // this.setSvgIndex()
         let marker = this.addMarkerIcon(point)
         let circle = new BMap.Circle(point, this.defaultRadius, this.styleOptions);
         this.map.addOverlay(circle);
@@ -791,6 +807,7 @@
         }
         this.getPopUpData(path)
         this.overlayBindEvent(path)
+        this.setSvgIndex()
       },
       addMarkerIcon(point) {  // 创建图标对象
         var myIcon = new BMap.Icon(require('@/assets/images/icon_location.png'), new BMap.Size(12, 22), {});
@@ -810,8 +827,10 @@
       },
       // 热力图
       drawHotMap(arr) {
-        this.heatmapOverlay.setDataSet({data:arr, max:100});
-        this.showHotMap()
+        setTimeout(() => {
+          this.heatmapOverlay.setDataSet({data:arr, max:100});
+          this.showHotMap()
+        }, 0)
       },
       showHotMap() {
         if (this.heatmapOverlay) {
