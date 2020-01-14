@@ -89,6 +89,11 @@
           <right-info
             v-show="rightShow === 0"
             :selectedBuildings="selectedBuildings"
+            :budget='budget'
+            :hotMapItem='hotMapItem'
+            @switchChange="switchChange"
+            @setHotMapItemNull='setHotMapItemNull'
+            @budgetChange='budgetChange'
             @addBtnClick="addBtnClick"
             @createPackage="createPackage"
             @deleteItem="deleteItem"
@@ -103,7 +108,6 @@
         <db-map
           ref="dbmap"
           :buildings="points"
-          :budget="budget"
           :city="cityFilter"
           :currentSelectType="currentSelectType"
           @hidePopup="hidePopup"
@@ -139,6 +143,7 @@
     2: '二线城市:',
     3: '三线城市:'
   }
+  const INIT_BUDGET = 80
 
   import dbMap from '../../../components/map/map.vue'
   import mapPopup from "../../../components/map/mapPopup";
@@ -285,7 +290,7 @@
           x: 0,
           y: 0
         },
-        budget: 1, // 投放预算默认值
+        budget: INIT_BUDGET, // 智能推荐投放力度值
         currentSelectType: null,
         popUpHeight: {
           'polyline': 246,
@@ -305,7 +310,7 @@
       cityFilter(val) {
         this.$refs.dbmap.setCity(val)
         this.$refs.dbmap.clearMap()
-      },
+      }
     },
     computed: {
       mapLocation() { // 当前显示弹窗得path
@@ -327,6 +332,30 @@
       document.documentElement.removeEventListener('keydown', this.cancleCircleDrawType)
     },
     methods: {
+      // 获取推荐智能点位
+      getRecommendPoints() {
+        this.loading = true
+        let param = {
+          crowdInsightId: this.hotMapItem.id,
+          pre: this.budget
+        }
+        this.$api.cityInsight.getRecommendPoints(param).then((data) => {
+          this.points = data.result
+          this.loading = false
+        })
+      },
+      setHotMapItemNull() {
+        this.hotMapItem = null
+        this.resetHotMap()
+        this.loadData()
+      },
+      resetBudget() {
+        this.budget = INIT_BUDGET
+      },
+      budgetChange(val) {
+        this.budget = val
+        this.getRecommendPoints()
+      },
       // 隐藏弹出框
       hidePopup() {
         this.hideAll()
@@ -359,23 +388,22 @@
       loadHotMap(id) {
         this.hotLoading = true
         this.$api.peopleInsight.getPeopleInsightHotMap({crowdInsightId: id, max: 100, min: 0}).then((data) => {
+          this.hotLoading = false
           if (data.result) {
             this.$refs.dbmap.drawHotMap(data.result)
+            this.getRecommendPoints()
           } else {
-            this.switchChange(false)
+            this.resetHotMap()
           }
-          this.hotLoading = false
         })
-      },
-      // 隐藏热力图
-      hideHotMap() {
-        this.$refs.dbmap.hideHotMap()
       },
       resetHotMap() {
         this.switchChange(false)
-        this.$refs.peopleInsight.resetSelect()
+        if (this.$refs.peopleInsight) {
+          this.$refs.peopleInsight.resetSelect()
+        }
       },
-      resetTagsAndLoad() {
+      resetTags() {
         this.buildingFilter = {
           buildType: [],
           premiseAvgFee: [],
@@ -387,6 +415,9 @@
         if (this.$refs.tagsSelect) {
           this.$refs.tagsSelect.clear()
         }
+      },
+      resetTagsAndLoad() {
+        this.resetTags()
         this.buildingFilterSelected = false
         this.loadData()
       },
@@ -402,11 +433,10 @@
           this.resetHotMap()
         } else if (index === 2) {
           if (this.buildingFilterSelected) { // 如果标签选择过，则清空标签选择结果
-            this.$refs.dbmap.clearMap()
-            this.resetTagsAndLoad()
-          } else {
-            this.createSuc()
+            this.resetTags()
           }
+          this.resetBudget()
+          this.$refs.dbmap.clearMap()
         }
       },
       // 各种弹窗返回数据触发方法 type表示楼盘标签是 0清空还是2选择
@@ -452,9 +482,9 @@
         }
       },
       getHotMap(val, index, type) {
-        this.loadHotMap(val.id)
         this.hide(1)
         this.resetLeftPopup(index, type)
+        this.loadHotMap(val.id)
       },
       hideAll() {
         for (let key in this.isShow) {
@@ -557,7 +587,7 @@
           this.cityFilter = JSON.parse(this.$route.query.data).cityFilter
           this.hotMapItem = JSON.parse(this.$route.query.data).crowdInfo
           this.loadCitys()
-          this.loadData()
+          // this.loadData()
           this.loadHotMap(this.hotMapItem.id)
         } else {
           this.loadCitys().then(() => {

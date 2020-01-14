@@ -43,4 +43,13 @@ export const cityInsight = {
       data
     });
   },
+
+  // 获取智能推荐点位
+  getRecommendPoints:(data) => {
+    return request({
+      url: `/dpapi/cityInsight/recommend`,
+      method: "POST",
+      data
+    });
+  }
 }
