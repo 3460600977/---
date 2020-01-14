@@ -209,11 +209,12 @@
 
       <!-- 楼盘定向->选中列表 -->
       <BuildList
+        class="margin-top-20"
         @delMapItem="delMapItem"
         :buildingDirectionActiveType="buildingDirection.activeType"
         :loading="buildingDirection.builds.loading"/>
 
-      <div style="margin-top: 10px;" v-if="buildingDirection.activeType === 'exist'"><i class="color-red">*&nbsp;</i>可售投放数详见浮窗, 实际投放数据以支付成功为准。</div>
+      <div class="margin-top-20" v-if="buildingDirection.activeType === 'exist'"><i class="color-red">*&nbsp;</i>可售投放数详见浮窗, 实际投放数据以支付成功为准。</div>
 
     </PutMangeCard>
 
