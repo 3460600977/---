@@ -117,6 +117,9 @@
           this.switchValue = true
         }
       },
+      budget(val) {
+        this.val = val
+      },
     },
     methods: {
       change(val) {
