@@ -34,6 +34,20 @@
       "unicode_decimal": 58891
     },
     {
+      "icon_id": "827647",
+      "name": "男",
+      "font_class": "nan",
+      "unicode": "e661",
+      "unicode_decimal": 58977
+    },
+    {
+      "icon_id": "1026165",
+      "name": "女",
+      "font_class": "nv",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
       "icon_id": "1127415",
       "name": "错误",
       "font_class": "error",
@@ -81,6 +95,13 @@
       "font_class": "yonghu",
       "unicode": "e61a",
       "unicode_decimal": 58906
+    },
+    {
+      "icon_id": "2462839",
+      "name": "应收款分析",
+      "font_class": "yingshoukuanfenxi",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
     },
     {
       "icon_id": "3427841",
@@ -144,6 +165,13 @@
       "font_class": "fenxi",
       "unicode": "e622",
       "unicode_decimal": 58914
+    },
+    {
+      "icon_id": "8508297",
+      "name": "财务管理",
+      "font_class": "caiwuguanli",
+      "unicode": "e699",
+      "unicode_decimal": 59033
     },
     {
       "icon_id": "8777511",

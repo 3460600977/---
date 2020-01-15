@@ -31,43 +31,43 @@
           {
             name: '公司全称',
             label: '',
-            icon: require('../../../../../assets/iconImg/icon_company@2x.png'),
+            icon: require('@/assets/images/icons/icon_company@2x.png'),
             field: 'company'
           },
           {
             name: '品牌名称',
             label: '',
-            icon: require('../../../../../assets/iconImg/icon_trademark@2x.png'),
+            icon: require('@/assets/images/icons/icon_trademark@2x.png'),
             field: 'brandName'
           },
           {
             name: '公司行业',
             label: '',
-            icon: require('../../../../../assets/iconImg/icon_industry@2x.png'),
+            icon: require('@/assets/images/icons/icon_industry@2x.png'),
             field: 'industryName'
           },
           {
             name: '联系人',
             label: '',
-            icon: require('../../../../../assets/iconImg/icon_Contact@2x.png'),
+            icon: require('@/assets/images/icons/icon_Contact@2x.png'),
             field: 'contacts'
           },
           {
             name: '联系电话',
             label: '',
-            icon: require('../../../../../assets/iconImg/icon_phone@2x.png'),
+            icon: require('@/assets/images/icons/icon_phone@2x.png'),
             field: 'contactNumber'
           },
           {
             name: '联系邮箱',
             label: '',
-            icon: require('../../../../../assets/iconImg/icon_mailbox@2x.png'),
+            icon: require('@/assets/images/icons/icon_mailbox@2x.png'),
             field: 'mail'
           },
           {
             name: '公司地址',
             label: '',
-            icon: require('../../../../../assets/iconImg/icon_site@2x.png'),
+            icon: require('@/assets/images/icons/icon_site@2x.png'),
             field: 'address'
           },
         ],

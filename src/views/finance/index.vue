@@ -1,5 +1,5 @@
 <template>
-  <div class="audit-manage">
+  <div class="finance-manage">
     <left-menu-list :leftMenuList="leftMenuList"></left-menu-list>
     <div class="right-content">
       <!-- 审核管理 列表内容 -->
@@ -9,27 +9,35 @@
 </template>
 
 <script>
-import LeftMenuList from "../../../components/LeftMenuList";
+import LeftMenuList from "../../components/LeftMenuList";
 export default {
-  name: "auditIndex",
+  name: "financeIndex",
   components: {
     LeftMenuList
   },
   data() {
     return {
       leftMenuList: {
-        first_name: "审核管理",
-        first_path: "/auditList",
+        first_name: "财务管理",
+        first_path: "/finance",
         menu_index: 0,
-        menu_icon_show: true,
-        menu_icon: require("../../../assets/images/icons/icon_audit@2x.png"),
+        menu_icon_show: false,
+        menu_icon_list: {
+          "icon-caiwuguanli": true,
+          "icon-tongjibaobiao1": false
+        },
+        menu_icon_arrow: {
+          "icon-icon-test1": true,
+          "icon-icon-test2": false
+        },
+        menu_icon: require("../../assets/images/icons/icon_audit@2x.png"),
         menu: [
           {
-            name: "审核管理",
+            name: "财务管理",
             sub_menu: [
               {
-                name: "创意审核",
-                path: "/auditList/creative"
+                name: "账户流水",
+                path: "/finance/flow"
               }
             ]
           }
@@ -41,7 +49,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.audit-manage {
+.finance-manage {
   height: 100%;
   display: flex;
   flex-direction: row;
