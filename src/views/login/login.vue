@@ -85,8 +85,8 @@ export default {
     return {
       normalMenuList,
       imageWidth: 442,
-      logo_img: require("@/assets/iconImg/icon_red@2x.png"),
-      logo_back_img: require("@/assets/iconImg/icon_bg@2x.png"),
+      logo_img: require("@/assets/images/icon_red@2x.png"),
+      logo_back_img: require("@/assets/images/icon_bg@2x.png"),
       login_capture_img: "",
       loginForm: {
         username: "",
@@ -150,7 +150,7 @@ export default {
       let url =
         this.isSaleLogin ||
         this.isAuditorLogin ||
-        require("@/assets/iconImg/icon_bg@2x.png");
+        require("@/assets/images/icons/icon_bg@2x.png");
       return url;
     }
   },

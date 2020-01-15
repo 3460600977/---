@@ -113,7 +113,7 @@ export default {
         notification: require("../../../assets/images/icons/icon_notification.png"),
         userHead: require("../../../assets/images/icons/icon_tx.png"),
         up: require("../../../assets/images/icons/icon_up.png"),
-        defaultAvatar: require("../../../assets/iconImg/icon_default_avatar@2x.png")
+        defaultAvatar: require("../../../assets/images/icons/icon_default_avatar@2x.png")
       },
 
       menu: {

@@ -22,9 +22,15 @@ export default {
         first_path: "/finance",
         menu_index: 0,
         menu_icon_show: false,
-        menu_icon_finance_show: true,
-        menu_icon_bao_show: false,
-        menu_icon: require("../../assets/iconImg/icon_audit@2x.png"),
+        menu_icon_list: {
+          "icon-caiwuguanli": true,
+          "icon-tongjibaobiao1": false
+        },
+        menu_icon_arrow: {
+          "icon-icon-test1": true,
+          "icon-icon-test2": false
+        },
+        menu_icon: require("../../assets/images/icons/icon_audit@2x.png"),
         menu: [
           {
             name: "财务管理",
@@ -38,24 +44,6 @@ export default {
         ]
       }
     };
-  },
-  computed: {
-    onRoutes() {
-      // 当前激活菜单的 index
-      return this.$route.path;
-    }
-  },
-  methods: {
-    /**
-     * 手动跳转
-     */
-    handleTo(path, index) {
-      this.$router.push(path);
-    },
-    handleShow() {
-      this.menuCollapse = !this.menuCollapse;
-      this.isShowReportRoute = !this.isShowReportRoute;
-    }
   }
 };
 </script>

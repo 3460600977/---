@@ -22,7 +22,7 @@ export default {
         first_path: "/auditList",
         menu_index: 0,
         menu_icon_show: true,
-        menu_icon: require("../../../assets/iconImg/icon_audit@2x.png"),
+        menu_icon: require("../../../assets/images/icons/icon_audit@2x.png"),
         menu: [
           {
             name: "审核管理",
@@ -36,24 +36,6 @@ export default {
         ]
       }
     };
-  },
-  computed: {
-    onRoutes() {
-      // 当前激活菜单的 index
-      return this.$route.path.replace("/", "").replace("/", "");
-    }
-  },
-  methods: {
-    /**
-     * 手动跳转
-     */
-    handleTo(path, index) {
-      this.$router.push(path);
-    },
-    handleShow() {
-      this.menuCollapse = !this.menuCollapse;
-      this.isShowReportRoute = !this.isShowReportRoute;
-    }
   }
 };
 </script>

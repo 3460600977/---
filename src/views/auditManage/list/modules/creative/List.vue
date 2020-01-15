@@ -775,6 +775,10 @@ export default {
     }
     .list_table {
       background-color: $color-bg;
+      /deep/ .el-table__body {
+        margin-bottom: 20px;
+      }
+      margin-bottom: 20px;
       .cell {
         padding-left: 1px;
         padding-right: 1px;

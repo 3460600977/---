@@ -23,9 +23,15 @@ export default {
         first_path: "/reportList",
         menu_index: 0,
         menu_icon_show: false,
-        menu_icon_finance_show: false,
-        menu_icon_bao_show: true,
-        menu_icon: require("../../../assets/iconImg/icon_Management@2x.png"),
+        menu_icon_list: {
+          "icon-caiwuguanli": false,
+          "icon-tongjibaobiao1": true
+        },
+        menu_icon_arrow: {
+          "icon-icon-test1": true,
+          "icon-icon-test2": false
+        },
+        menu_icon: require("../../../assets/images/icons/icon_Management@2x.png"),
         menu: [
           {
             name: "投放报表",
@@ -93,9 +99,6 @@ export default {
       }
       .item-space-end {
         margin: 2px 20px 0 0;
-      }
-      .el-select .el-input .el-select__caret {
-        color: $color-main;
       }
     }
   }
@@ -194,6 +197,9 @@ export default {
         color: $color-table-title;
       }
     }
+    /deep/ .el-table .cell {
+      padding-left: 30px;
+    }
     .report-table {
       margin: 0;
       margin-bottom: 37px;
@@ -220,6 +226,7 @@ export default {
       tr:first-child td {
         border-top: 0;
       }
+
       .project-id {
         font-size: 14px;
         font-weight: 400;
