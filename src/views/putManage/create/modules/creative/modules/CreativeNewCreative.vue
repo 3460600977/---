@@ -270,7 +270,7 @@
     <PutMangeCard class="save-box clearfix">
       <div class="float-right">
         <el-button  style="width: 136px" @click="nextPage()">取消</el-button>
-        <el-button  style="width: 136px" :disabled="!validateForm()" @click="saveCreative" type="primary">
+        <el-button  style="width: 136px" @click="saveCreative" type="primary">
           {{createType === 'edit' ? '确认并关闭' : '新建并关闭'}}
         </el-button>
       </div>

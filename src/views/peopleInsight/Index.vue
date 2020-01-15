@@ -10,7 +10,7 @@
     </div>
     <div class="query_result" v-if="resultData !== null">
       <el-table :data="resultData" class="list_table">
-        <el-table-column prop="name" label="人群包名称"></el-table-column>
+        <el-table-column prop="name" min-width="120px" label="人群包名称"></el-table-column>
         <el-table-column prop="description" label="人群包描述">
         </el-table-column>
         <el-table-column prop="city" label="城市">
@@ -36,12 +36,12 @@
           </template>
         </el-table-column>
         <el-table-column prop="createName" label="创建人"></el-table-column>
-        <el-table-column prop="createTime" label="创建时间">
+        <el-table-column min-width="120px" prop="createTime" label="创建时间">
           <template slot-scope="scope">
             <span>{{formate(scope.row.createTime, 'yyyy-MM-dd hh:mm:ss')}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="action" label="操作" fixed="right" width="400">
+        <el-table-column prop="action" label="操作" fixed="right" width="300">
           <template slot-scope="scope">
               <el-tooltip
                 class="item"
