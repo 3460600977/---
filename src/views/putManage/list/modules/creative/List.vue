@@ -47,7 +47,7 @@
 
       <!-- 广告创意名称 -->
       <el-form-item  class="line-space" label="广告创意名称">
-        <el-input clearable v-model="searchParam.creative.name" placeholder="请输入"></el-input>
+        <el-input clearable v-model.trim="searchParam.creative.name" placeholder="请输入"></el-input>
       </el-form-item>
 
 

@@ -20,7 +20,7 @@
             <el-pagination
               class="float-right"
               background
-              small="true"
+              :small="true"
               layout="total, sizes, prev, pager, next"
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
