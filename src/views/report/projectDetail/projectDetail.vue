@@ -41,7 +41,7 @@
             v-for="(itemLabel,index_label) in premiseList.default"
             :key="index_label"
           >
-            <i :class="itemLabel.icon"></i>
+            <img :src="itemLabel.icon" class="imgIcon" />
             <span class="detail-list-label">{{itemLabel.label}}</span>
             <span class="detail-list-title">{{itemLabel.title}}</span>
           </div>
@@ -98,9 +98,7 @@
                   >
                     <template slot-scope="scope">
                       <div v-if="col.prop === 'status'">
-                        <span
-                          v-if="parseInt(scope.row[scope.column.property]) === 1"
-                        >正常</span>
+                        <span v-if="parseInt(scope.row[scope.column.property]) === 1">正常</span>
                         <span v-else class="stop info-status">正在维护中</span>
                       </div>
                       <div v-else-if="col.prop === 'action'">
@@ -133,207 +131,207 @@
 </template>
 
 <script>
-  //import {tableMixin} from '../../../mixins/tableMixin'
-  import ponitMap from "../../../components/ponitMap";
-  import PlanList from "../../../components/PlanList";
-  import bottomBack from "../../../components/Back";
+//import {tableMixin} from '../../../mixins/tableMixin'
+import ponitMap from "../../../components/ponitMap";
+import PlanList from "../../../components/PlanList";
+import bottomBack from "../../../components/Back";
 
-  const PAGE_SIZE = [10, 20, 30, 40, 50];
-  export default {
-    name: "projectDetail",
-    components: {PlanList, ponitMap, bottomBack},
-    data() {
-      return {
-        deviceCode: null,
-        projectId: null,
-        premiseId: null,
-        premiseName: null,
-        dialogVisible: false,
-        dialogPreviewVisible: false,
-        putProject: {
-          loading: false,
-          data: [
-            {label: "投放方案", value: "投放方案1", field: "name"},
-            {
-              label: "投放时间",
-              value: "2019-11-08~2019-11-15",
-              field: "startTime"
-            },
-            {label: "投放城市", value: "重庆", field: "cityName"},
-            {
-              label: "数据截止时间",
-              value: "2019-11-08 17:00:00",
-              field: "dataEndTime"
-            }
-          ]
-        },
-        reportSelectCard: {
-          loading: false,
-          data: [
-            {
-              id: 0,
-              name: "花费总数（元）",
-              value: "0",
-              field: "cost",
-              title: "花费总数"
-            },
-            {
-              id: 1,
-              name: "曝光总数（次）",
-              value: "0",
-              field: "showTimes",
-              title: "曝光总数"
-            },
-            {
-              id: 2,
-              name: "设备总数（个）",
-              value: "0",
-              field: "deviceNum",
-              title: "设备总数"
-            },
-            {
-              id: 3,
-              name: "受众总人数（人）",
-              value: "0",
-              field: "totalPeople",
-              title: "受众总人数"
-            },
-            {
-              id: 4,
-              name: "受众观看总次数（次）",
-              value: "0",
-              field: "watchedTimes",
-              title: "受众观看总次数"
-            }
-          ]
-        },
-        premiseList: {
-          loading: false,
-          deviceNum: {label: "投放点位数:", value: 288, field: "deviceNum"},
-          premiseId: {label: "楼盘id", value: 288, field: "premiseId"},
-          default: [
-            {
-              label: "楼盘名称:",
-              title: "新潮小区",
-              icon: "el-icon-office-building",
-              field: "premiseName"
-            },
-            {
-              label: "详细地址:",
-              title: "成都市武侯区茂业大厦",
-              icon: "el-icon-location-outline",
-              field: "premiseAddress"
-            },
-            {
-              label: "曝光次数:",
-              title: 89895,
-              icon: "el-icon-video-camera",
-              field: "premiseShowTimes"
-            }
-          ],
-          data: []
-        },
-        deviceInfo: {
-          time: [
-            {
-              value: "",
-              field: "startTime",
-              title: "方案投放周期"
-            },
-            {
-              value: "",
-              field: "dataEndTime",
-              title: "数据截止时间"
-            }
-          ],
-          name: {
-            value: "",
-            field: "name",
-            title: "楼盘名称"
-          }
-        },
-        map_img: require("../../../assets/images/report_map.png"),
-        totalCount: 0, // 总共条数
-        pageSizeSelectable: PAGE_SIZE,
-        resultData: null,
-        resultCol: [
-          {prop: "deviceCode", label: "点位编码"},
-          {prop: "buildName", label: "楼栋"},
-          {prop: "unitName", label: "单元"},
-          {prop: "elevatorName", label: "电梯名"},
-          {prop: "allTime", label: "总次数/平均日次/今日次数"},
-          {prop: "status", label: "状态"},
-          {prop: "action", label: "操作"}
-        ],
-        pageIndex: 1,
-        pageSize: 10,
+const PAGE_SIZE = [10, 20, 30, 40, 50];
+export default {
+  name: "projectDetail",
+  components: { PlanList, ponitMap, bottomBack },
+  data() {
+    return {
+      deviceCode: null,
+      projectId: null,
+      premiseId: null,
+      premiseName: null,
+      dialogVisible: false,
+      dialogPreviewVisible: false,
+      putProject: {
         loading: false,
-        projectList: {
-          startTime: "", //开始时间
-          endTime: "", //结束时间
-          campaignId: "", //计划id
-          id: "" //方案id
-        },
-        playList: {
-          data: {list: null, title: ""},
-          typeList: ["video/mp4", "image/jpeg"],
-          loading: false
-        }
-      };
-    },
-    mounted() {
-      this.projectId = this.$route.query.projectId;
-      this.getProjectPremiseList();
-    },
-    methods: {
-      showTableBuildDetail() {
-        this.dialogVisible = true;
-        this.getProjectDeviceList();
-      },
-      //回到之前的页面
-      handleBack() {
-        this.$router.back()
-      },
-      //预览展示
-      showPreviewPlayList: async function (deviceCode) {
-        this.playList.loading = true;
-        this.deviceCode = deviceCode;
-        let deviceShowPlayList = [];
-        deviceShowPlayList = await this.getProjectPlayList();
-        this.playList.data.list = deviceShowPlayList;
-        this.playList.data.title = this.deviceCode;
-        this.playList.loading = false;
-        this.dialogPreviewVisible = true;
-      },
-      changeTablePreVis() {
-        this.dialogVisible = false;
-      },
-      changePlanPreVis(val) {
-        this.dialogPreviewVisible = val;
-      },
-      //地图插件，改变选择的楼盘
-      changeShowBuild(val) {
-        this.premiseId = val.premiseId
-        this.premiseList.default.forEach(item => {
-          let prop = item.field;
-          if (val.hasOwnProperty(prop)) {
-            item.title = val[prop];
+        data: [
+          { label: "投放方案", value: "投放方案1", field: "name" },
+          {
+            label: "投放时间",
+            value: "2019-11-08~2019-11-15",
+            field: "startTime"
+          },
+          { label: "投放城市", value: "重庆", field: "cityName" },
+          {
+            label: "数据截止时间",
+            value: "2019-11-08 17:00:00",
+            field: "dataEndTime"
           }
-        });
+        ]
       },
-      //查询方案楼盘列表
-      getProjectPremiseList(param) {
-        if (this.projectId === null || this.projectId === 0 || !this.projectId) {
-          return this.handleErrorPremiseList()
+      reportSelectCard: {
+        loading: false,
+        data: [
+          {
+            id: 0,
+            name: "花费总数（元）",
+            value: "0",
+            field: "cost",
+            title: "花费总数"
+          },
+          {
+            id: 1,
+            name: "曝光总数（次）",
+            value: "0",
+            field: "showTimes",
+            title: "曝光总数"
+          },
+          {
+            id: 2,
+            name: "设备总数（个）",
+            value: "0",
+            field: "deviceNum",
+            title: "设备总数"
+          },
+          {
+            id: 3,
+            name: "受众总人数（人）",
+            value: "0",
+            field: "totalPeople",
+            title: "受众总人数"
+          },
+          {
+            id: 4,
+            name: "受众观看总次数（次）",
+            value: "0",
+            field: "watchedTimes",
+            title: "受众观看总次数"
+          }
+        ]
+      },
+      premiseList: {
+        loading: false,
+        deviceNum: { label: "投放点位数:", value: 288, field: "deviceNum" },
+        premiseId: { label: "楼盘id", value: 288, field: "premiseId" },
+        default: [
+          {
+            label: "楼盘名称:",
+            title: "新潮小区",
+            icon: require("@/assets/images/icons/icon_company@2x.png"),
+            field: "premiseName"
+          },
+          {
+            label: "详细地址:",
+            title: "成都市武侯区茂业大厦",
+            icon: require("@/assets/images/icons/icon_orientation@2x.png"),
+            field: "premiseAddress"
+          },
+          {
+            label: "曝光次数:",
+            title: 89895,
+            icon: require("@/assets/images/icons/icon_exposure@2x.png"),
+            field: "premiseShowTimes"
+          }
+        ],
+        data: []
+      },
+      deviceInfo: {
+        time: [
+          {
+            value: "",
+            field: "startTime",
+            title: "方案投放周期"
+          },
+          {
+            value: "",
+            field: "dataEndTime",
+            title: "数据截止时间"
+          }
+        ],
+        name: {
+          value: "",
+          field: "name",
+          title: "楼盘名称"
         }
-        let queryParam = {
-          projectId: this.projectId
-        };
-        //合并查询参数
-        Object.assign(queryParam, param);
-        this.putProject.loading = true;
-        this.reportSelectCard.loading = true;
-        this.$api.Report.getProjectPremiseList(queryParam).then(res => {
+      },
+      totalCount: 0, // 总共条数
+      pageSizeSelectable: PAGE_SIZE,
+      resultData: null,
+      resultCol: [
+        { prop: "deviceCode", label: "点位编码" },
+        { prop: "buildName", label: "楼栋" },
+        { prop: "unitName", label: "单元" },
+        { prop: "elevatorName", label: "电梯名" },
+        { prop: "allTime", label: "总次数/平均日次/今日次数" },
+        { prop: "status", label: "状态" },
+        { prop: "action", label: "操作" }
+      ],
+      pageIndex: 1,
+      pageSize: 10,
+      loading: false,
+      projectList: {
+        startTime: "", //开始时间
+        endTime: "", //结束时间
+        campaignId: "", //计划id
+        id: "" //方案id
+      },
+      playList: {
+        data: { list: null, title: "" },
+        typeList: ["video/mp4", "image/jpeg"],
+        loading: false
+      }
+    };
+  },
+  mounted() {
+    this.projectId = this.$route.query.projectId;
+    this.getProjectPremiseList();
+  },
+  methods: {
+    showTableBuildDetail() {
+      this.dialogVisible = true;
+      this.getProjectDeviceList();
+    },
+    //回到之前的页面
+    handleBack() {
+      this.$router.back();
+    },
+    //预览展示
+    showPreviewPlayList: async function(deviceCode) {
+      this.playList.loading = true;
+      this.deviceCode = deviceCode;
+      let deviceShowPlayList = [];
+      deviceShowPlayList = await this.getProjectPlayList();
+      this.playList.data.list = deviceShowPlayList;
+      this.playList.data.title = this.deviceCode;
+      this.playList.loading = false;
+      this.dialogPreviewVisible = true;
+    },
+    changeTablePreVis() {
+      this.dialogVisible = false;
+    },
+    changePlanPreVis(val) {
+      this.dialogPreviewVisible = val;
+    },
+    //地图插件，改变选择的楼盘
+    changeShowBuild(val) {
+      this.premiseId = val.premiseId;
+      this.premiseList.default.forEach(item => {
+        let prop = item.field;
+        if (val.hasOwnProperty(prop)) {
+          item.title = val[prop];
+        }
+      });
+    },
+    //查询方案楼盘列表
+    getProjectPremiseList(param) {
+      if (this.projectId === null || this.projectId === 0 || !this.projectId) {
+        return this.handleErrorPremiseList();
+      }
+      let queryParam = {
+        projectId: this.projectId
+      };
+      //合并查询参数
+      Object.assign(queryParam, param);
+      this.putProject.loading = true;
+      this.reportSelectCard.loading = true;
+      this.$api.Report.getProjectPremiseList(queryParam)
+        .then(res => {
           this.reportSelectCard.loading = false;
           this.putProject.loading = false;
           let premiseList = res.result;
@@ -348,7 +346,7 @@
               } else if (property === "cost") {
                 let costValue = premiseList[property];
                 costValue = this.$tools.formatCentToYuan(costValue);
-                item.value = '¥ ' + this.$tools.toThousands(costValue);
+                item.value = "¥ " + this.$tools.toThousands(costValue);
               } else {
                 item.value = this.$tools.toThousands(
                   premiseList[property],
@@ -388,15 +386,18 @@
                 ) {
                   item.title = "数据暂无";
                 } else {
-                  if (property === 'premiseShowTimes') {
-                    item.title = this.$tools.toThousands(showPremise[property], false);
+                  if (property === "premiseShowTimes") {
+                    item.title = this.$tools.toThousands(
+                      showPremise[property],
+                      false
+                    );
                   } else {
                     item.title = showPremise[property];
                   }
                 }
               }
             });
-            console.log('showPremise', showPremise);
+            console.log("showPremise", showPremise);
             this.premiseList.deviceNum.value = showPremise.deviceNum;
             this.premiseList.premiseId.value = showPremise.premiseId;
             this.premiseId = showPremise.premiseId;
@@ -404,41 +405,47 @@
             //所有楼盘数据
             this.premiseList.data = premiseList.premiseList;
           }
-        }).catch(res => {
+        })
+        .catch(res => {
           this.putProject.loading = false;
           this.reportSelectCard.loading = false;
-          return this.handleErrorPremiseList()
+          return this.handleErrorPremiseList();
         });
-      },
-      //查询方案数据，错误处理
-      handleErrorPremiseList() {
-        this.putProject.data.forEach(item => {
-          item.value = '暂无数据'
-        })
-        this.reportSelectCard.data.forEach(item => {
-          item.value = '暂无数据'
-        })
-      },
+    },
+    //查询方案数据，错误处理
+    handleErrorPremiseList() {
+      this.putProject.data.forEach(item => {
+        item.value = "暂无数据";
+      });
+      this.reportSelectCard.data.forEach(item => {
+        item.value = "暂无数据";
+      });
+    },
 
-      //查询方案楼盘设备信息
-      getProjectDeviceList(param) {
-        if (this.premiseId === undefined || this.premiseId === null || this.premiseId === 0) {
-          if (this.premiseList.data.length > 0) {
-            let showPremise = this.premiseList.data[0]; //默认数据
-            this.premiseId = showPremise.premiseId;
-          } else {
-            this.premiseId = 0
-          }
+    //查询方案楼盘设备信息
+    getProjectDeviceList(param) {
+      if (
+        this.premiseId === undefined ||
+        this.premiseId === null ||
+        this.premiseId === 0
+      ) {
+        if (this.premiseList.data.length > 0) {
+          let showPremise = this.premiseList.data[0]; //默认数据
+          this.premiseId = showPremise.premiseId;
+        } else {
+          this.premiseId = 0;
         }
-        let queryParam = {
-          projectId: this.projectId,
-          premiseId: this.premiseId,
-          premiseName: this.premiseName
-        };
-        //合并查询参数
-        Object.assign(queryParam, param);
-        this.loading = true;
-        this.$api.Report.getProjectDeviceList(queryParam).then(res => {
+      }
+      let queryParam = {
+        projectId: this.projectId,
+        premiseId: this.premiseId,
+        premiseName: this.premiseName
+      };
+      //合并查询参数
+      Object.assign(queryParam, param);
+      this.loading = true;
+      this.$api.Report.getProjectDeviceList(queryParam)
+        .then(res => {
           this.resultData = res.result.devices;
           this.deviceInfo.time.forEach(item => {
             let property = item.field;
@@ -453,270 +460,282 @@
             }
           });
           this.resultData.forEach((item, index) => {
-            if (item['deviceCode'] === null) {
+            if (item["deviceCode"] === null) {
               this.resultData.splice(index, 1);
             }
-            item['allTime'] = item['totalTimes'] + '/' + item['avgTimes'] + '/' + item['times']
+            item["allTime"] =
+              item["totalTimes"] + "/" + item["avgTimes"] + "/" + item["times"];
           });
           this.deviceInfo.name.value = res.result.name;
           this.loading = false;
-        }).catch(res => {
-          this.resultData = []
+        })
+        .catch(res => {
+          this.resultData = [];
           this.deviceInfo.time.forEach(item => {
-            item.value = 0
-          })
+            item.value = 0;
+          });
           this.loading = false;
         });
-      },
-      //查询方案楼盘设备播放列表
-      getProjectPlayList: async function () {
-        return new Promise((resolve, reject) => {
-          let queryParam = {
-            deviceCode: this.deviceCode,
-            date: this.projectList.endTime
-          };
-          this.playList.loading = true;
-          this.$api.Report.getProjectPlayList(queryParam).then(res => {
+    },
+    //查询方案楼盘设备播放列表
+    getProjectPlayList: async function() {
+      return new Promise((resolve, reject) => {
+        let queryParam = {
+          deviceCode: this.deviceCode,
+          date: this.projectList.endTime
+        };
+        this.playList.loading = true;
+        this.$api.Report.getProjectPlayList(queryParam)
+          .then(res => {
             this.playList.loading = false;
-            let playList = res.result
+            let playList = res.result;
             resolve(res.result);
-          }).catch(res => {
+          })
+          .catch(res => {
             this.playList.loading = false;
           });
-        });
-      },
+      });
+    },
 
-      getColumnWidth(index) {
-        let width;
-        switch (index) {
-          case 4:
-            width = 200;
-            break;
-          default:
-            width = 130;
-            break;
-        }
-        return width;
+    getColumnWidth(index) {
+      let width;
+      switch (index) {
+        case 4:
+          width = 200;
+          break;
+        default:
+          width = 130;
+          break;
       }
+      return width;
     }
-  };
+  }
+};
 </script>
 
-<style lang='scss'>
-  .project-detail {
-    height: 100%;
-    flex-direction: row;
-    background-color: $color-bg;
-    overflow-x: hidden;
-    padding: 20px 20px;
-    .detail-top-form {
+<style scoped lang='scss'>
+.project-detail {
+  height: 100%;
+  flex-direction: row;
+  background-color: $color-bg;
+  overflow-x: hidden;
+  padding: 20px 20px;
+  .detail-top-form {
+    width: 100%;
+    background-color: $color-bg-3;
+    padding: 30px 35px;
+    /deep/  .el-divider {
+      background-color: $color-blue;
+      border-radius: 2px;
+      width: 3px;
+      margin: 0 5px 0 0;
+    }
+    .detail-query-form {
+      margin-top: 30px;
+    }
+    .report-form-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: $color-text;
+    }
+    .detail-query-form {
+      width: calc(100% - 200px);
+    }
+    .label-for-detail {
+      display: inline-block;
+      font-size: 14px;
+      font-weight: 400;
+      color: $color-text;
+      margin-left: 40px;
+      &:first-child {
+        margin-left: 0;
+      }
+      label {
+        margin-right: 20px;
+      }
+      span {
+        color: $color-text-1;
+      }
+    }
+    .report-select-card {
+      overflow: hidden;
+      white-space: nowrap;
       width: 100%;
-      background-color: $color-bg-3;
-      padding: 30px 35px;
-      .el-divider {
-        background-color: $color-blue;
-        border-radius: 2px;
-        width: 3px;
-        margin: 0 5px 0 0;
-      }
-      .detail-query-form {
-        margin-top: 30px;
-      }
-      .report-form-title {
-        font-size: 16px;
-        font-weight: bold;
-        color: $color-text;
-      }
-      .detail-query-form {
-        width: calc(100% - 200px);
-      }
-      .label-for-detail {
+      margin-top: 30px;
+      .box-card {
+        width: calc(20% - 20px);
+        height: 120px;
+        border-radius: 4px;
+        background-color: $color-bg-6;
         display: inline-block;
-        font-size: 14px;
-        font-weight: 400;
+        margin-left: 25px;
         color: $color-text;
-        margin-left: 40px;
+        margin-top: 0;
         &:first-child {
           margin-left: 0;
         }
-        label {
-          margin-right: 20px;
+        /deep/ .el-card__body {
+          display: table;
+          height: 100%;
+          padding: 0;
+          .card-center {
+            display: table-cell;
+            vertical-align: middle;
+            padding-left: 20%;
+          }
         }
-        span {
-          color: $color-text-1;
+        .card_name {
+          font-size: 14px;
+          font-weight: 400;
+          margin-bottom: 14px;
         }
-      }
-      .report-select-card {
-        overflow: hidden;
-        white-space: nowrap;
-        width: 100%;
-        margin-top: 30px;
-        .box-card {
-          width: calc(20% - 20px);
-          height: 120px;
-          border-radius: 4px;
-          background-color: $color-bg-6;
-          display: inline-block;
-          margin-left: 25px;
-          color: $color-text;
-          margin-top: 0;
-          &:first-child {
-            margin-left: 0;
-          }
-          .el-card__body {
-            display: table;
-            height: 100%;
-            padding: 0;
-            .card-center {
-              display: table-cell;
-              vertical-align: middle;
-              padding-left: 20%;
-            }
-          }
-          .card_name {
-            font-size: 14px;
-            font-weight: 400;
-            margin-bottom: 14px;
-          }
-          .card_value {
-            font-size: 26px;
-            font-weight: normal;
-            font-family: DINMittelschrift;
-          }
+        .card_value {
+          font-size: 26px;
+          font-weight: normal;
+          font-family: DINMittelschrift;
         }
       }
     }
   }
-  .detail-bottom-map {
-    margin-top: 20px;
-    padding: 26px;
-    background-color: $color-bg-3;
-    position: relative;
-    .left-map {
-      display: inline-block;
-      width: calc(50% - 10px);
-      height: 604px;
-      .map_img {
-        width: 100%;
+}
+.detail-bottom-map {
+  margin-top: 20px;
+  padding: 26px;
+  background-color: $color-bg-3;
+  position: relative;
+  .left-map {
+    display: inline-block;
+    width: calc(50% - 10px);
+    height: 604px;
+    .map_img {
+      width: 100%;
+    }
+  }
+  .right-list {
+    position: absolute;
+    margin: 95px 0 0 60px;
+    display: inline-block;
+    width: calc(50% - 10px);
+    .detail-list {
+      margin-top: 43px;
+      font-size: 14px;
+      font-weight: 400;
+      .imgIcon {
+        width: 30px;
+        height: 30px;
+        display: inline-block;
+        margin-right: 11px;
+        position: relative;
+        top: 10px;
+      }
+      &:first-child {
+        margin-top: 0;
+      }
+      .detail-list-label {
+        color: $color-text;
+      }
+      .detail-list-title {
+        display: inline-block;
+        margin-left: 30px;
+        color: $color-text-1;
+      }
+      i {
+        margin-right: 2px;
+        padding: 7px;
+        background-color: $color-bg-4;
+        color: $color-blue;
       }
     }
-    .right-list {
-      position: absolute;
-      margin: 95px 0 0 60px;
-      display: inline-block;
-      width: calc(50% - 10px);
-      .detail-list {
-        margin-top: 43px;
-        font-size: 14px;
-        font-weight: 400;
-        &:first-child {
-          margin-top: 0;
-        }
-        .detail-list-label {
-          color: $color-text;
-        }
-        .detail-list-title {
-          display: inline-block;
-          margin-left: 30px;
-          color: $color-text-1;
-        }
-        i {
-          margin-right: 2px;
-          padding: 7px;
-          background-color: $color-bg-4;
-          color: $color-blue;
+    .show-build-list {
+      width: 360px;
+      height: 40px;
+      background: $color-bg-3;
+      box-shadow: 0px 3px 7px 0px $color-shadow-4;
+      border-radius: 4px;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 400;
+      color: $color-text;
+      border-color: $color-blue;
+      margin: 117px 0 0 0;
+      cursor: default;
+      .show-build {
+        display: inline-block;
+      }
+      .show-click {
+        display: inline-block;
+        float: right;
+        color: $color-text-1;
+        padding: 0 10px 0 60px;
+        cursor: pointer;
+      }
+    }
+    .dialog-build-list {
+      /deep/ .el-dialog {
+        margin-top: 8vh !important;
+      }
+      /deep/ .el-dialog__header {
+        border-bottom: 1px solid $color-border;
+        padding: 24px 0 21px 30px;
+      }
+      .info-time {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-content: flex-start;
+        color: $color-text;
+        .info-space {
+          margin-right: 12px;
         }
       }
-      .show-build-list {
-        width: 360px;
-        height: 40px;
-        background: $color-bg-3;
-        box-shadow: 0px 3px 7px 0px $color-shadow-4;
-        border-radius: 4px;
-        text-align: left;
+      .info-table {
+        margin: 31px 0 10px 0;
         font-size: 14px;
         font-weight: 400;
         color: $color-text;
-        border-color: $color-blue;
-        margin: 117px 0 0 0;
-        cursor: default;
-        .show-build {
-          display: inline-block;
+        tr:hover > td {
+          background-color: $color-bg-3 !important;
         }
-        .show-click {
-          display: inline-block;
-          float: right;
-          color: $color-text-1;
-          padding: 0 10px 0 60px;
-          cursor: pointer;
+        tr > td {
+          background-color: $color-bg-3 !important;
+          text-align: center;
+          word-break: keep-all;
+          white-space: nowrap;
         }
-      }
-      .dialog-build-list {
-        .el-dialog {
-          margin-top: 10vh !important;
+        .info-el-table {
+          border: 1px solid $color-border;
         }
-        .el-dialog__header {
-          border-bottom: 1px solid $color-border;
-          padding: 24px 0 21px 30px;
-        }
-        .info-time {
-          display: flex;
-          flex-flow: row nowrap;
-          justify-content: space-between;
-          align-content: flex-start;
-          color: $color-text;
-          .info-space {
-            margin-right: 12px;
-          }
-        }
-        .info-table {
-          margin: 31px 0 10px 0;
+        .has-gutter > tr,
+        th {
           font-size: 14px;
+          color: $color-text-1;
+          background-color: $color-bg;
+          text-align: center;
+        }
+        .el-table {
+          background-color: $color-bg;
+        }
+        .info-status {
+          display: inline-block;
+          border-radius: 4px;
           font-weight: 400;
-          color: $color-text;
-          tr:hover > td {
-            background-color: $color-bg-3 !important;
+          color: $color-bg-3;
+          padding: 6px 21px;
+          &.normal {
+            background: $color-blue;
+            box-shadow: 0px 2px 4px 0px $color-shadow-2;
           }
-          tr > td {
-            background-color: $color-bg-3 !important;
-            text-align: center;
-            word-break: keep-all;
-            white-space: nowrap;
+          &.stop {
+            background: $color-red;
+            box-shadow: 0px 2px 4px 0px $color-shadow-3;
           }
-          .info-el-table {
-            border: 1px solid $color-border;
-          }
-          .has-gutter > tr,
-          th {
-            font-size: 14px;
-            color: $color-text-1;
-            background-color: $color-bg;
-            text-align: center;
-          }
-          .el-table {
-            background-color: $color-bg;
-          }
-          .info-status {
-            display: inline-block;
-            border-radius: 4px;
-            font-weight: 400;
-            color: $color-bg-3;
-            padding: 6px 21px;
-            &.normal {
-              background: $color-blue;
-              box-shadow: 0px 2px 4px 0px $color-shadow-2;
-            }
-            &.stop {
-              background: $color-red;
-              box-shadow: 0px 2px 4px 0px $color-shadow-3;
-            }
-          }
-          .preview {
-            text-decoration: none;
-            color: $color-blue;
-          }
+        }
+        .preview {
+          text-decoration: none;
+          color: $color-blue;
         }
       }
     }
   }
+}
 </style>

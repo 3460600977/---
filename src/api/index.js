@@ -8,7 +8,8 @@ import { CreateCreative } from './modules/createCreative'
 import { toolBox } from './modules/toolBox'
 import { Login } from './modules/login'
 import { AuditCreative } from './modules/auditCreative'
-import {peopleInsight} from "./modules/peopleInsight";
+import { peopleInsight } from "./modules/peopleInsight";
+import { Finance } from "./modules/finance";
 
 const api = {
   cityInsight,  // 城市洞察
@@ -20,8 +21,9 @@ const api = {
   Report,        // 报表
   CreateCreative,// 创建创意
   toolBox,       // 工具箱
-  Login,         //登录，登出
-  AuditCreative, //审核创意
+  Login,         // 登录，登出
+  AuditCreative, // 审核创意
+  Finance,       // 账户管理
 }
 
 export default api;

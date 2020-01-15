@@ -214,7 +214,6 @@ export default {
     
 
     handleCurrentChange(val) {
-      debugger
       this.searchParam.page.pageIndex = val;
       this.search()
     }

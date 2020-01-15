@@ -137,6 +137,10 @@ export default {
   padding-left: 20px;
   padding-right: 20px;
 }
+.ri-btn {
+  height: 26px;
+  width: 64px;
+}
 .padding1 {
   padding-top: 10px;
 }
@@ -194,7 +198,7 @@ export default {
       margin-right: 20px;
       padding: 10px 20px 10px 30px;
       margin-bottom: 10px;
-      border: 1px dashed $color-main;
+      border: 1px dashed $color-border;
       background: rgba(255, 255, 255, 1);
       .icon-remove {
         font-size: 18px;
@@ -203,8 +207,15 @@ export default {
         top: 50%;
         color: $color-main;
         z-index: 100;
+        display: none;
         transform: translateY(-50%);
         right: -9px;
+      }
+      &:hover {
+        border: 1px dashed $color-main;
+        .icon-remove {
+          display: block;
+        }
       }
     }
   }

@@ -113,7 +113,7 @@ export default {
         notification: require("../../../assets/images/icons/icon_notification.png"),
         userHead: require("../../../assets/images/icons/icon_tx.png"),
         up: require("../../../assets/images/icons/icon_up.png"),
-        defaultAvatar: require("../../../assets/iconImg/icon_default_avatar@2x.png")
+        defaultAvatar: require("../../../assets/images/icons/icon_default_avatar@2x.png")
       },
 
       menu: {
@@ -133,21 +133,6 @@ export default {
             path: "/login",
             children: []
           },
-          {
-            code: "1500",
-            name: "财务管理",
-            selected: false,
-            path: "/finance",
-            children: [
-              {
-                code: "1510",
-                name: "财务流水",
-                selected: false,
-                path: "/finance/flow",
-                children: []
-              }
-            ]
-          }
         ],
         money: false,
         notification: false

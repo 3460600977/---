@@ -625,11 +625,7 @@ export default {
               i {
                 display: inline-block;
                 margin-left: 10px;
-                width: 8px;
-                height: 14px;
-                background-size: cover;
-                position: relative;
-                top: 5px;
+                font-size: 14px;
               }
             }
             p {
@@ -789,7 +785,7 @@ export default {
       float: right;
       .news_case_list {
         .news_case_item {
-          margin-top: 45px;
+          margin-bottom: 38px;
           display: flex;
           cursor: pointer;
           .news_case_time {
@@ -842,6 +838,9 @@ export default {
               color: $color-main;
             }
           }
+        }
+        .news_case_item:first-child {
+          margin-top: 34px
         }
       }
     }
