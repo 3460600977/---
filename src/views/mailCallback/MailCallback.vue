@@ -10,7 +10,7 @@
       <el-divider></el-divider>
 
       <div class="message center">
-        {{callbackData.data.msg}}
+        {{callbackData.msg}}
       </div>
     </div>
   </div>
@@ -22,7 +22,10 @@ export default {
     return {
       loading: true,
 
-      callbackData: null
+      callbackData: {
+        success: false,
+        msg: null
+      }
     }
   },
 
@@ -34,18 +37,19 @@ export default {
     mailConfirm() {
       let mailNum = this.$route.query.mailNum;
       if (!mailNum) return;
+
       this.$api.PutProject.ConfirmMail(mailNum)
         .then(res => {
-          this.loading = false;
           this.callbackData = {
             success: true,
-            data: res
+            msg: res.msg
           };
+          this.loading = false;
         })
         .catch(err => {
           this.callbackData = {
             success: false,
-            data: err
+            msg: err.msg
           };
           this.loading = false;
         })

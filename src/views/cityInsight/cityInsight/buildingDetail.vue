@@ -106,6 +106,7 @@
               v-if="ageArr.xAxis.length"
               width="100%"
               height="100%"
+              :isShowLine="true"
               :grid="positionType"
               :color="colorType[1]"
               :data="ageArr"
@@ -236,10 +237,10 @@
         educationDist: null,
         formatDate: this.$tools.formatDate,
         sexArrStyle: [
-          {style: 'background:linear-gradient(270deg,rgba(95,129,255,1),rgba(45,90,255,1));' +
-              'box-shadow:0px 10px 17px 3px rgba(45,90,255,0.2);', color: 'rgba(45,90,255,1)'},
-          {style: 'background:linear-gradient(-90deg,rgba(244,74,74,1),rgba(244,102,74,1));' +
-              'box-shadow:0px 10px 17px 3px rgba(242,126,86,0.2);', color: 'rgba(244,102,74,1)'},
+          {style: 'background:linear-gradient(270deg,rgba(95,129,255,1),rgba(45,90,255,1));', 
+            color: 'rgba(45,90,255,1)'},
+          {style: 'background:linear-gradient(-90deg,rgba(244,74,74,1),rgba(244,102,74,1));', 
+            color: 'rgba(244,102,74,1)'},
         ],
         colorType: {
           1: [
