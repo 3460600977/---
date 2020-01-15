@@ -1,6 +1,6 @@
 # digital-broadcast-vue
 
-> 数字化刊播平台
+> 生活圈智投平台
 
 ---
 
