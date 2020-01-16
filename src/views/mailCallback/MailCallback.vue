@@ -4,14 +4,8 @@
     <transition name="to-top">
       <div v-show="!loading" class="mail-callback-box">
         <div class="title font-14 bold mid-center">
-          <template v-if="callbackData.success">
-            <i class="iconfont icon--zhengque-shiti color-main"></i>
-            支付成功
-          </template>
-          <template v-if="!callbackData.success">
-            <i class="iconfont icon-error color-main"></i>
-            支付失败
-          </template>
+          <i class="iconfont color-main" :class="callbackData.success ? 'icon--zhengque-shiti' : 'icon-error'"></i>
+          {{callbackData.title}}
         </div>
 
 
@@ -45,7 +39,8 @@ export default {
       loading: true,
 
       callbackData: {
-        success: true,
+        title: '',
+        success: false,
         data: null,
         msg: null
       }
@@ -59,18 +54,77 @@ export default {
   methods: {
     mailConfirm() {
       let mailNum = this.$route.query.mailNum;
-      if (!mailNum) return;
+      if (!mailNum) {
+        this.callbackData = {
+          title: '链接已失效',
+          success: false,
+          msg: '邮件出现异常, 请联系管理员!'
+        };
+        this.loading = false;
+        return;
+      }
 
       this.$api.PutProject.ConfirmMail(mailNum)
         .then(res => {
-          this.callbackData = {
-            success: true,
-            data: res.result
-          };
+          /**
+           * 广告主邮件支付状态码过滤
+           * 100002 支付失败
+           * 100204 失效
+           * 100103 过期
+           * 100106 已支付
+           */
+          console.log(res.result)
+          switch (res.code) {
+            case 100002:
+              this.callbackData = {
+                title: '支付失败',
+                success: false,
+                msg: res.msg
+              };
+              break;
+
+
+            case 100204:
+              this.callbackData = {
+                title: '链接已失效',
+                success: false,
+                msg: res.msg
+              };
+              break;
+
+
+            case 100103:
+              this.callbackData = {
+                title: '方案已过期',
+                success: false,
+                msg: res.msg
+              };
+              break;
+
+
+            case 100106:
+              this.callbackData = {
+                title: '重复支付',
+                success: false,
+                msg: res.msg
+              };
+              break;
+          
+
+            default:
+              this.callbackData = {
+                title: '支付成功',
+                success: true,
+                data: res.result
+              };
+              break;
+          }
+          console.log(this.callbackData)
           this.loading = false;
         })
         .catch(err => {
           this.callbackData = {
+            title: '支付失败',
             success: false,
             msg: err.msg
           };
