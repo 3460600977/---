@@ -77,7 +77,10 @@
     },
     watch: {
       buildings(val, old) {
-        if (val.length) {
+        let obj = this.getSpecialPoints()
+        this.points = {...this.normalizePointsAll(val), ...obj}
+        if (Object.keys(this.points).length) {
+          this.pointsOverlayObj.isShow = true
           this.initMap(val)
         } else {
           this.clearMap()
@@ -180,7 +183,13 @@
         this.indexArr = []
         this.hideHotMap()
         this.clearPathArr(1)
+        this.clearBgPoints()
+      },
+      // 清楚背景点
+      clearBgPoints() {
         this.pointsOverlayObj.isShow = false
+        this.pointsOverlayObj.selectedOverlay.clear()
+        this.pointsOverlayObj.unSelectedOverlay.clear()
       },
       reGetAreaPoint() {
         if (Object.keys(this.pathArr).length) {
@@ -190,9 +199,6 @@
         }
       },
       initMap(val) {
-        let obj = this.getSpecialPoints()
-        this.points = {...this.normalizePointsAll(val), ...obj}
-        this.pointsOverlayObj.isShow = true
         this.reGetAreaPoint()
         this.jugDraw()
       },
@@ -205,7 +211,7 @@
         let pointsOverlay = new BMap.PointCollection([], this.pointsOptions[type]);
         this.pointsOverlayObj[overlay] = pointsOverlay
         this.map.addOverlay(pointsOverlay);
-        pointsOverlay.disableMassClear()
+        // pointsOverlay.disableMassClear()
         pointsOverlay.addEventListener('mouseover',  this.pointEvent);
         pointsOverlay.addEventListener('mouseout',  this.pointEventOut);
         pointsOverlay.addEventListener('click',  this.pointEventClick);
@@ -958,7 +964,7 @@
           let pointsOverlay = new BMap.PointCollection(points, this.pointsOptions[type]);
           this.pointsOverlayObj[overlay] = pointsOverlay
           this.map.addOverlay(pointsOverlay);
-          pointsOverlay.disableMassClear()
+          // pointsOverlay.disableMassClear()
           pointsOverlay.addEventListener('mouseover',  this.pointEvent);
           pointsOverlay.addEventListener('mouseout',  this.pointEventOut);
           pointsOverlay.addEventListener('click',  this.pointEventClick);
