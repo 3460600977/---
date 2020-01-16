@@ -1429,7 +1429,7 @@ export default {
         payAmount: this.estimatePriceValue,
         title: '扣款确认'
       }
-return
+
       this.$api.PutProject.ProjectMail(param)
         .then(res => {
           this.emailCallBack = {
