@@ -109,11 +109,12 @@
             padding:"0px 4px 0 4px",
             // left: '50%',
             lineHeight: '26px',
-            boxShadow: '0px 3px 7px 0px rgba(45, 90, 255, 0.2)'
+            boxShadow:'0px 3px 7px 0px rgba(244,74,74,0.2)'
           };
+          //  boxShadow: '0px 3px 7px 0px rgba(45, 90, 255, 0.2)'
           //用于设置样式
           let label = new BMap.Label(content, {
-            offset: new BMap.Size(29, 0)
+            offset: new BMap.Size(35, 3)
           });
           label.setStyle(labelStyle);
           label.addEventListener('click', () => {
@@ -122,12 +123,12 @@
           return label;
         },
       addMarker(point, index){  // 创建图标对象
-        var myIcon = new BMap.Icon(require('@/assets/images/icon_seat.png'), new BMap.Size(29, 26), {
+        var myIcon = new BMap.Icon(require('@/assets/images/icon_seat.png'), new BMap.Size(41, 38), {
         });
         // 创建标注对象并添加到地图
         let marker = new BMap.Marker(point.point, {
           icon: myIcon,
-          offset: new BMap.Size(14, -13),
+          offset: new BMap.Size(0, -19),
         });
         if (this.map.getZoom() > HIDE_LABEL_ZOOM) {
           marker.setLabel(this.setLabelStyle(point.premiseName, index));
