@@ -5,7 +5,7 @@
     <el-form :inline="true" class="list-form-inline clearfix">
       <!-- 投放计划名称 -->
       <el-form-item class="line-space" label="投放计划名称">
-        <el-input clearable v-model="searchParam.planName" placeholder="请输入"></el-input>
+        <el-input clearable v-model.trim="searchParam.planName" placeholder="请输入"></el-input>
       </el-form-item>
 
       <!-- 查询 -->
@@ -214,7 +214,6 @@ export default {
     
 
     handleCurrentChange(val) {
-      debugger
       this.searchParam.page.pageIndex = val;
       this.search()
     }

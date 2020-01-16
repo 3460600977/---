@@ -68,7 +68,7 @@
 
 <script>
 import { setUserInfo, setMenuList } from "@/utils/auth";
-
+import { normalMenuList } from "@/utils/static";
 export default {
   name: "login",
   data() {
@@ -83,9 +83,10 @@ export default {
     };
 
     return {
+      normalMenuList,
       imageWidth: 442,
-      logo_img: require("@/assets/iconImg/icon_red@2x.png"),
-      logo_back_img: require("@/assets/iconImg/icon_bg@2x.png"),
+      logo_img: require("@/assets/images/icon_red@2x.png"),
+      logo_back_img: require("@/assets/images/icon_bg@2x.png"),
       login_capture_img: "",
       loginForm: {
         username: "",
@@ -149,7 +150,7 @@ export default {
       let url =
         this.isSaleLogin ||
         this.isAuditorLogin ||
-        require("@/assets/iconImg/icon_bg@2x.png");
+        require("@/assets/images/icons/icon_bg@2x.png");
       return url;
     }
   },
@@ -247,6 +248,12 @@ export default {
         .then(res => {
           let info = res.result;
           let menuList = this.$tools.getAllMenuList(info.menu, []);
+          let result = this.checkSaleMenu(menuList);
+          if (result) {
+          } else {
+            this.$message.error("当前销售人员权限不足，请联系管理员");
+            return false;
+          }
           this.toolMenu.forEach(item => {
             menuList.push({ code: item.code, selected: item.selected });
           });
@@ -269,6 +276,12 @@ export default {
         .then(res => {
           let info = res.result;
           let menuList = this.$tools.getAllMenuList(info.menu, []);
+          let result = this.checkAuditorMenu(menuList);
+          if (result) {
+          } else {
+            this.$message.error("当前审核人员没有审核权限，请联系管理员");
+            return false;
+          }
           setMenuList(menuList);
           this.$store.commit("setToken", info.token);
           setUserInfo(info);
@@ -281,29 +294,41 @@ export default {
 
     //请求验证码接口
     changeCaptureNUm() {
-      console.log(22222);
       this.$api.Login.GetVerifyCode()
         .then(res => {
           if (window.ActiveXObject || "ActiveXObject" in window) {
-            this.login_capture_img =
-              res.result.image;
+            this.login_capture_img = res.result.image;
           } else {
             this.login_capture_img = res.result.image;
           }
           this.loginForm.verifyToken = res.result.verifyToken;
-          console.log(res.result);
         })
         .catch(res => {});
     },
 
     // 审核人员菜单权限验证
-    checkAuditorMenu() {
-      
+    checkAuditorMenu(menuList) {
+      let result = menuList.find(item => {
+        return +item.code === 1600 && item.selected;
+      });
+      return result;
     },
 
     // 销售人员菜单权限验证
-    checkAuditorMenu() {
-
+    checkSaleMenu(menuList) {
+      let result = true;
+      for (let i = 0; i < menuList.length; i++) {
+        //判断除了审核，其他菜单是否有权限
+        if (
+          +menuList[i].code !== 1600 &&
+          +menuList[i].code !== 1610 &&
+          !menuList[i].selected
+        ) {
+          result = false;
+          break;
+        }
+      }
+      return result;
     }
   }
 };

@@ -1,18 +1,33 @@
 <!-- 广告主邮件支付回调 -->
 <template>
   <div v-loading="loading" element-loading-text="请稍候" class="mail-callback mid-center">
-    <div class="mail-callback-box">
-      <div class="title center font-20 bold">
-        <template v-if="callbackData.success">支付成功</template>
-        <template v-if="!callbackData.success">支付失败</template>
-      </div>
+    <transition name="to-top">
+      <div v-show="!loading" class="mail-callback-box">
+        <div class="title center font-20 bold">
+          <template v-if="callbackData.success">支付成功</template>
+          <template v-if="!callbackData.success">支付失败</template>
+        </div>
 
-      <el-divider></el-divider>
+        <el-divider></el-divider>
 
-      <div class="message center">
-        {{callbackData.msg}}
+        <div class="message">
+          <!-- 成功 -->
+          <template v-if="callbackData.success">
+            <div class="success-box">
+              <p class="account">支付金额: ¥ <span class="font-number">{{$tools.toThousands(callbackData.data.account / 100)}}</span></p>
+              <p class="balance">账户余额: ¥ <span class="font-number">{{$tools.toThousands(callbackData.data.balance / 100)}}</span></p>
+            </div>
+          </template>
+
+          <!-- 失败 -->
+          <template v-if="!callbackData.success">
+            <div class="fail-box text-center">
+              {{callbackData.msg}}
+            </div>
+          </template>
+        </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -24,6 +39,7 @@ export default {
 
       callbackData: {
         success: false,
+        data: null,
         msg: null
       }
     }
@@ -42,7 +58,7 @@ export default {
         .then(res => {
           this.callbackData = {
             success: true,
-            msg: res.msg
+            data: res.result
           };
           this.loading = false;
         })
@@ -68,7 +84,12 @@ export default {
       padding: 30px;
       width: 500px;
       >.message{
-        padding: 50px;
+        padding: 30px 70px 50px;
+        .success-box{
+          .account,.balance{
+            line-height: 20px;
+          }
+        }
       }
     }
   }

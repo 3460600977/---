@@ -1,10 +1,10 @@
 <template>
   <div class="left-menu clearfix" :class="{'hide': !isShowReportRoute}">
     <div style="height: 300px;">
-      <div class="step_arrow">
-        <span href="#" @click="handleShow">
+      <div class="step_arrow" @click="handleShow">
+        <span>
           <span class="step_arrow_span">
-            <i :class="{'rotate': !isShowReportRoute}" class="iconfont icon-icon-test1 icon-color"></i>
+            <i :class="leftMenuList.menu_icon_arrow" class="iconfont icon-color"></i>
           </span>
         </span>
       </div>
@@ -21,7 +21,7 @@
         >
           <template slot="title">
             <img :src="leftMenuList.menu_icon" class="menuIcon" v-if="leftMenuList.menu_icon_show" />
-            <i class="iconfont icon-tongjibaobiao1 menuBiao" v-else></i>
+            <i class="iconfont menuBiao" :class="leftMenuList.menu_icon_list" v-else></i>
             <span slot="title">{{rootMenu.name}}</span>
           </template>
           <el-menu-item
@@ -52,7 +52,15 @@ export default {
         first_path: "/toolBox/account",
         menu_index: 0,
         menu_icon_show: true,
-        menu_icon: require("../assets/iconImg/icon_Management@2x.png"),
+        menu_icon_list: {
+          "icon-caiwuguanli": false,
+          "icon-tongjibaobiao1": true
+        },
+        menu_icon_arrow: {
+          "icon-icon-test1": true,
+          "icon-icon-test2": false
+        },
+        menu_icon: require("../assets/images/icons/icon_Management@2x.png"),
         menu: [
           {
             name: "账号管理",
@@ -89,6 +97,12 @@ export default {
     handleShow() {
       this.menuCollapse = !this.menuCollapse;
       this.isShowReportRoute = !this.isShowReportRoute;
+      this.leftMenuList.menu_icon_arrow = {
+        "icon-icon-test1": !this.leftMenuList.menu_icon_arrow[
+          "icon-icon-test1"
+        ],
+        "icon-icon-test2": !this.leftMenuList.menu_icon_arrow["icon-icon-test2"]
+      };
     }
   }
 };
@@ -126,7 +140,7 @@ export default {
   .is-active,
   .item_active {
     background-color: $color-bg;
-    color: $color-main
+    color: $color-main;
   }
   /deep/ .el-submenu {
     background-color: $color-bg-3;
@@ -157,6 +171,7 @@ export default {
     position: relative;
     height: 31px;
     border-bottom: 1px solid $color-split-line2;
+    cursor: pointer;
     .step_arrow_span {
       position: absolute;
       display: inline-block;
@@ -165,11 +180,10 @@ export default {
       i {
         color: $color-split-line2;
         font-size: 14px;
-        cursor: pointer;
         transition: 0.3s;
         margin-top: 5px;
         &.rotate {
-          transform: rotate(180deg);
+          transform: (180deg);
         }
       }
     }
@@ -197,7 +211,7 @@ export default {
     color: $color-main;
     background-color: $color-bg;
   }
-  .item_active a{
+  .item_active a {
     color: $color-main;
   }
 }

@@ -26,7 +26,7 @@
 
       <!-- 投放方案名称 -->
       <el-form-item class="line-space" label="投放方案名称">
-        <el-input clearable v-model="searchParam.projectName" placeholder="请输入"></el-input>
+        <el-input clearable v-model.trim="searchParam.projectName" placeholder="请输入"></el-input>
       </el-form-item>
 
 
