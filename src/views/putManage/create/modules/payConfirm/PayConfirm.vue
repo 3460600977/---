@@ -249,8 +249,7 @@ export default {
 
     // 发送邮件给广告主
     sendMain() {
-      this.project.loading = true;
-      // process.env.BASE_API
+      // this.project.loading = true;
       this.mailContent = `<!doctype html>
                             <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
                               xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -1246,7 +1245,7 @@ export default {
                                                                     <div style="width: 100%; height: 1px; background: #E0E0E0; margin: 30px 0;"></div>
                                                                     <span style="font-size:14px">&nbsp;费用总计：</span><span
                                                                       style="font-size:18px"><strong><span
-                                                                          style="color:#FF0000">￥9,888.00</span></strong></span><br>
+                                                                          style="color:#FF0000">￥${this.$tools.toThousands(this.estimatePriceValue / 100)}</span></strong></span><br>
                                                                     &nbsp;
                                                                     <p>&nbsp;</p>
 
@@ -1332,9 +1331,9 @@ export default {
                                                               <tbody>
                                                                 <tr>
                                                                   <td align="center" valign="middle" class="mcnButtonContent"
-                                                                    style="font-family: Merriweather Sans, Helvetica Neue, Helvetica, Arial, sans-serif; font-size: 16px; padding: 20px;">
+                                                                    style="font-family: Merriweather Sans, Helvetica Neue, Helvetica, Arial, sans-serif; font-size: 16px;">
                                                                     <a class="mcnButton " title="确认支付" href="${process.env.BASE_API}/#/mailPayCallBack?mailNum=${this.project.data.mailNo}" target="_blank"
-                                                                      style="font-weight: normal;letter-spacing: 5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">确认支付</a>
+                                                                      style="font-weight: normal;letter-spacing: 5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF; padding: 20px">确认支付</a>
                                                                   </td>
                                                                 </tr>
                                                               </tbody>
