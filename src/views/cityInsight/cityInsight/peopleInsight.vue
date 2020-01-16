@@ -155,12 +155,11 @@
         //   return
         // }
         // this.hotMapItem = this.activeItem
-        console.log(this.activeItem)
         if (this.hotMapItem && this.activeItem.id === this.hotMapItem.id) {
           this.$message.error('所选人群包与当前人群包完全相同，请选择其他人群包进行定制推荐！');
           return
         }
-        this.$emit('update:hotMapItem', this.activeItem)
+        // this.$emit('update:hotMapItem', this.activeItem)
         this.$emit('returnResult', this.activeItem)
       },
     },
