@@ -53,7 +53,7 @@
     <!-- 保存 取消 -->
     <PutMangeCard class="save-box">
       <div class="float-right">
-        <el-button :disabled="!validateFrom()" :loading='formData.saving' @click="savePlan" style="width: 136px" type="primary">{{edit.isEdit ? '保存并关闭' : '下一步'}}</el-button>
+        <el-button :loading='formData.saving' @click="savePlan" style="width: 136px" type="primary">{{edit.isEdit ? '保存并关闭' : '下一步'}}</el-button>
       </div>
     </PutMangeCard>
   </div>

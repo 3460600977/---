@@ -162,7 +162,10 @@
   .creative-list {
     padding: 20px;
     & /deep/ .actions {
-      margin-left: 50px;
+      margin-left: 10px;
+      .el-button+.el-button{
+        margin-left: 40px;
+      }
     }
     .report-top-form {
       /*height: 160px;*/
