@@ -45,6 +45,7 @@ export default {
       loading: true,
 
       callbackData: {
+        title: '',
         success: true,
         data: null,
         msg: null
@@ -63,17 +64,68 @@ export default {
 
       this.$api.PutProject.ConfirmMail(mailNum)
         .then(res => {
-          this.callbackData = {
-            success: true,
-            data: res.result
-          };
+          /**
+           * 广告主邮件支付状态码过滤
+           * 100002 支付失败
+           * 100204 失效
+           * 100103 过期
+           * 100106 已支付
+           */
+          switch (res.code) {
+            case 100001:
+              this.callbackData = {
+                title: '支付成功',
+                success: true,
+                msg: res.result
+              };
+              break;
+
+
+            case 100002:
+              this.callbackData = {
+                title: '支付失败',
+                success: false,
+                msg: res.msg
+              };
+              break;
+
+
+            case 100204:
+              this.callbackData = {
+                success: false,
+                msg: res.msg
+              };
+              break;
+
+
+            case 100103:
+              this.callbackData = {
+                success: false,
+                msg: res.msg
+              };
+              break;
+
+
+            case 100106:
+              this.callbackData = {
+                success: false,
+                msg: res.msg
+              };
+              break;
+          
+
+            default:
+              break;
+          }
+          console.log(this.callbackData)
           this.loading = false;
         })
         .catch(err => {
-          this.callbackData = {
-            success: false,
-            msg: err.msg
-          };
+          // console.log(2)
+          // this.callbackData = {
+          //   success: false,
+          //   msg: err.msg
+          // };
           this.loading = false;
         })
     }
