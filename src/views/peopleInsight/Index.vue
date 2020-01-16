@@ -197,7 +197,7 @@
     & /deep/ .actions {
       margin-left: 10px;
       .el-button + .el-button {
-        margin-left: 40px;
+        margin-left: 20px;
       }
     }
     .report-top-form {
