@@ -1,6 +1,12 @@
 .el-table--group::after, .el-table--border::after, .el-table::before {
   background-color: $color-bg-3;
 }
+.el-table::before {
+  height: 0;
+}
+.el-table__fixed::before, .el-table__fixed-right::before {
+  height: 0;
+}
 
 .list_table {
   a {

@@ -60,7 +60,7 @@
 
             <span class="icon-space hand"
                   @click="showDialog(scope.row)">
-                <i class="iconfont icon-error icon-color"></i>删除
+                <i class="iconfont icon-error icon-color icon1"></i>删除
             </span>
           </template>
         </el-table-column>
@@ -191,6 +191,9 @@
   }
   .btn1 {
     width: 100px;
+  }
+  .icon1 {
+    font-size: 17px;
   }
   .creative-list {
     padding: 20px;
