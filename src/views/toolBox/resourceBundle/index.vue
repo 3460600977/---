@@ -9,7 +9,7 @@
       </query-item>
     </div>
     <div class="query_result" v-if="resultData !== null">
-      <el-table :data="[]" class="list_table">
+      <el-table :data="resultData" class="list_table">
         <el-table-column prop="name" label="资源包名称"></el-table-column>
         <el-table-column prop="description" label="资源包描述">
         </el-table-column>
