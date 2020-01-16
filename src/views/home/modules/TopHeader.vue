@@ -256,7 +256,7 @@ export default {
     ) {
       this.auditShow = false;
     }
-    //请求验证码接口
+    //获取用户头像，姓名
     let userInfo = getUserInfo();
     if (userInfo === null || userInfo === "") {
       return false;
