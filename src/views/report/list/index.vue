@@ -197,9 +197,6 @@ export default {
         color: $color-table-title;
       }
     }
-    /deep/ .el-table .cell {
-      padding-left: 30px;
-    }
     .report-table {
       margin: 0;
       margin-bottom: 37px;
@@ -214,6 +211,7 @@ export default {
         color: $color-table-title;
         background-color: $color-bg;
         border-bottom: 0;
+        padding: 20px;
       }
       td {
         border-top: 10px solid $color-bg;
@@ -222,6 +220,7 @@ export default {
         font-family: DINMittelschrift;
         color: $color-text;
         border-bottom: 0;
+        padding: 17px 0 14px 20px;
       }
       tr:first-child td {
         border-top: 0;

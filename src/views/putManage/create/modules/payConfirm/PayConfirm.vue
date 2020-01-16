@@ -79,7 +79,7 @@
       </div>
     </PutMangeCard>
 
-    <div v-html="mailContent"></div>
+    <!-- <div v-html="mailContent"></div> -->
 
     <!-- 确认回调弹窗 -->
     <PaySuccessWindow

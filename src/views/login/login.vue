@@ -97,7 +97,7 @@ export default {
       loading: false,
       pageLoading: true, // 整个页面转圈, 跳转登录用
       classObject: {
-        iconfont: true,
+        "iconfont": true,
         "icon-yanjing": true,
         "icon-icon-eye": false
       },
@@ -283,6 +283,7 @@ export default {
             return false;
           }
           setMenuList(menuList);
+
           this.$store.commit("setToken", info.token);
           setUserInfo(info);
           this.$router.replace("/auditList");
@@ -346,7 +347,8 @@ export default {
     .box-center {
       position: relative;
       margin: 0 auto;
-      top: 16%;
+      top: 17vh;
+      left: -5%;
       width: 800px;
       height: 520px;
       background: $color-bg-3;
