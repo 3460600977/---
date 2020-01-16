@@ -134,7 +134,18 @@ export default {
     color: $color-text-1;
     padding-left: 55px !important;
     &.item_active {
-      border-right: 3px solid $color-main;
+      width: 220px;
+      height: 46px;
+      position: relative;
+    }
+    &.item_active::before {
+      content: "";
+      width: 4px;
+      height: 46px;
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: $color-main;
     }
   }
   .is-active,

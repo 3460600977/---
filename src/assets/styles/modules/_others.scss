@@ -98,13 +98,25 @@
 }
 // 页面标题样式
 .db-title {
+  height: 15px;
+  width: 100px;
   font-size: 14px;
   font-weight: bold;
   padding-left: 9px;
-  line-height: 1.15;
   margin-bottom: 40px;
-  border-left: 3px solid $color-main;
+  position: relative;
 }
+.db-title::before {
+  content: "";
+  width: 3px;
+  height:15px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: $color-main;
+  border-radius: 2px;
+}
+
 // 分页样式
 .my-list-page {
   background-color: $color-bg-3;
