@@ -309,7 +309,7 @@ export default {
     // 审核人员菜单权限验证
     checkAuditorMenu(menuList) {
       let result = menuList.find(item => {
-        return item.code === 1600 && item.selected;
+        return +item.code === 1600 && item.selected;
       });
       return result;
     },
@@ -318,26 +318,15 @@ export default {
     checkSaleMenu(menuList) {
       let result = true;
       for (let i = 0; i < menuList.length; i++) {
-        //判断审核是否有权限
-        if (menuList[i].code === 1600 && menuList[i].selected) {
-          result = false;
-          break;
-        }
         //判断除了审核，其他菜单是否有权限
         if (
-          (menuList[i].code !== 1600 || menuList[i].code !== 1610) &&
+          +menuList[i].code !== 1600 &&
+          +menuList[i].code !== 1610 &&
           !menuList[i].selected
         ) {
           result = false;
           break;
         }
-      }
-      //判断其他菜单跟需要的菜单是否一致
-      menuList.sort(function(x, y) {
-        return x.code - y.code;
-      });
-      if (menuList.toString() !== normalMenuList.toString()) {
-        result = false;
       }
       return result;
     }
