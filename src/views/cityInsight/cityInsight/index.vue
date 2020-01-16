@@ -751,7 +751,7 @@
   }
   .left-info {
     position: absolute;
-    z-index: 3;
+    z-index: 4;
     top: 20px;
     left: 36px;
     box-shadow: 0px 3px 5px 0px rgba(0,0,0,0.1);
