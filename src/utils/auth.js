@@ -1,25 +1,23 @@
-import Cookies from 'js-cookie'
-
 // 用户信息操作
 export function setUserInfo(info) {
-  return Cookies.set('userinfo', JSON.stringify(info));
+  return localStorage.setItem('userinfo', JSON.stringify(info));
 }
 
 export function getUserInfo() {
-  let userInfoStr = Cookies.get('userinfo')
+  let userInfoStr = localStorage.getItem('userinfo')
   if (userInfoStr) {
-    return JSON.parse(Cookies.get('userinfo'))
+    return JSON.parse(localStorage.getItem('userinfo'))
   }
   return ''
 }
 
 export function removeUserInfo() {
-  return Cookies.remove('userinfo')
+  return localStorage.removeItem('userinfo')
 }
 
 //token操作
 export function getToken() {
-  let userInfoStr = Cookies.get('userinfo')
+  let userInfoStr = localStorage.getItem('userinfo')
   if (userInfoStr) {
     let userInfo = JSON.parse(userInfoStr)
     if (userInfo.hasOwnProperty('token')) {
@@ -32,19 +30,19 @@ export function getToken() {
 }
 
 export function getMenuList() {
-  let menuList = Cookies.get('menuList')
+  let menuList = localStorage.getItem('menuList')
   if (menuList) {
-    return JSON.parse(Cookies.get('menuList'))
+    return JSON.parse(localStorage.getItem('menuList'))
   }
   return ''
 }
 
 export function setMenuList(menuList) {
-  return Cookies.set('menuList', JSON.stringify(menuList));
+  return localStorage.setItem('menuList', JSON.stringify(menuList));
 }
 
 export function removeMenuList() {
-  return Cookies.remove('menuList')
+  return localStorage.removeItem('menuList')
 }
 
 

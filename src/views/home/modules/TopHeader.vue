@@ -265,7 +265,7 @@ export default {
     for (let i = 0; i < this.MenuList.length; i++) {
       for (let j = 0; j < userInfo.menu.length; j++) {
         if (
-          this.MenuList[i].code === userInfo.menu[j].code &&
+          +this.MenuList[i].code === +userInfo.menu[j].code &&
           userInfo.menu[j].selected
         ) {
           userInfo.menu[j].path = this.MenuList[i].path;
@@ -276,7 +276,7 @@ export default {
     }
     for (let i = 0; i < this.menu.content.length; i++) {
       for (let j = 0; j < this.menu.notExist.length; j++) {
-        if (this.menu.content[i].code === this.menu.notExist[j].code) {
+        if (+this.menu.content[i].code === +this.menu.notExist[j].code) {
           this.menu.content.splice(i, 1);
           break;
         }
