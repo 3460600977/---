@@ -97,7 +97,7 @@ export default {
               this.callbackData = {
                 title: '方案已过期',
                 success: false,
-                msg: res.msg
+                msg: '如想重新投放，请联系销售代理'
               };
               break;
 
@@ -106,7 +106,7 @@ export default {
               this.callbackData = {
                 title: '重复支付',
                 success: false,
-                msg: res.msg
+                msg: '方案已完成支付'
               };
               break;
           
