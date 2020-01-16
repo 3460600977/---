@@ -14,9 +14,10 @@
         class="account-money-box color-white"
       >
         <div class="accouint-title">资金账户</div>
-        <div
-          class="account-val font-number"
-        >¥ {{$tools.toThousands(summaryDetailList.accountBalance / 100)}}</div>
+        <div class="account-val font-number">
+          <span class="title-icon">¥</span>
+          {{$tools.toThousands(summaryDetailList.accountBalance / 100)}}
+        </div>
       </div>
       <!--      <div-->
       <!--        :style="`background-image:url('${images.xinchaoBin}')`"-->
@@ -573,11 +574,15 @@ export default {
       background-size: cover;
       .account-val {
         margin-top: 19px;
-        height: 26px;
-        line-height: 26px;
+        height: 21px;
+        line-height: 21px;
         font-size: 26px;
         font-weight: normal;
         font-family: DINMittelschrift;
+        .title-icon {
+          font-size: 20px;
+          font-family: "Microsoft YaHei";
+        }
       }
     }
     .create-put {
@@ -840,7 +845,7 @@ export default {
           }
         }
         .news_case_item:first-child {
-          margin-top: 34px
+          margin-top: 34px;
         }
       }
     }

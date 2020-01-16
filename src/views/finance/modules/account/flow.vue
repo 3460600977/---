@@ -1,5 +1,5 @@
 <template>
-  <div class="finance-account-list" v-loading.fullscreen.lock="tableData.loading">
+  <div class="finance-account-list" v-loading.fullscreen.lock="loading">
     <!-- 查询表单 -->
     <div class="report-top-form">
       <p class="db-title">账户流水</p>
@@ -9,7 +9,10 @@
         </div>
         <div class="finance-title">
           <span class="title-text">资金账户可用余额</span>
-          <div class="title-num">¥ {{$tools.toThousands(accountBalance / 100)}}</div>
+          <div class="title-num">
+            <span class="title-icon">¥</span>
+            {{$tools.toThousands(accountBalance / 100)}}
+          </div>
         </div>
       </div>
       <el-form :inline="true" :model="flowForm" class="report-query-form">
@@ -52,13 +55,19 @@
     <div class="query_result">
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
         <el-table-column prop="operationDate" label="交易日期"></el-table-column>
-        <el-table-column prop="tradeType" label="交易类型"></el-table-column>
+        <el-table-column prop="tradeType" label="交易类型">
+          <template slot-scope="scope">
+            <span v-if="scope.row.tradeType===1">充值</span>
+            <span v-if="scope.row.tradeType===2">扣款</span>
+            <span v-if="scope.row.tradeType===3">返还</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="money" label="资金账户">
           <template slot-scope="scope">
             <span
-              v-if="scope.row.money<0"
+              v-if="scope.row.tradeType===2"
               class="text-danger"
-            >¥ {{ $tools.toThousands(scope.row.money/ 100)}}</span>
+            >¥ -{{ $tools.toThousands(scope.row.money/ 100)}}</span>
             <span v-else class="money-text">¥ +{{ $tools.toThousands(scope.row.money/ 100)}}</span>
           </template>
         </el-table-column>
@@ -113,6 +122,7 @@ export default {
         loading: false,
         data: null
       },
+      loading: false,
       page: {
         pageIndex: 1,
         pageSize: 10,
@@ -136,7 +146,6 @@ export default {
   methods: {
     onSubmit() {
       this.tableData.loading = true;
-
       let param = {
         pageIndex: this.page.pageIndex,
         pageSize: this.page.pageSize,
@@ -159,17 +168,13 @@ export default {
             data: []
           };
         });
-      this.tableData = {
-        loading: false,
-        data: []
-      };
     },
 
     //刷新首页 概况详情=》统计计划，方案，未支付方案，审核拒绝创意数
     getSummaryDetail: async function() {
-      this.tableData.loading = true;
+      this.loading = true;
       let summaryDetail = await this.$tools.getSummaryDetail();
-      this.tableData.loading = false;
+      this.loading = false;
       this.accountBalance = summaryDetail.accountBalance;
     },
 
@@ -196,11 +201,17 @@ export default {
 
 <style lang="scss" scoped>
 .finance-account-list {
+  .db-title {
+    margin-bottom: 30px;
+  }
   .report-top-form {
     /*height: 160px;*/
     border-radius: 4px;
     background-color: $color-bg-3;
-    padding: 30px 0 37px 38px;
+    padding: 30px 0 35px 38px;
+    /deep/ .el-form-item {
+      margin-bottom: 0px;
+    }
   }
   .item-space {
     margin-right: 50px;
@@ -266,10 +277,16 @@ export default {
         margin-bottom: 24px;
       }
       .title-num {
-        font-size: 20px;
+        height: 21px;
+        line-height: 21px;
+        font-size: 26px;
         font-family: DINMittelschrift;
         font-weight: 400;
         color: $color-table-title;
+        .title-icon {
+          font-size: 20px;
+          font-family: "Microsoft YaHei";
+        }
       }
     }
   }
