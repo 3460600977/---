@@ -97,11 +97,11 @@
     .wrapper {
       padding: 0 14px;
     }
-    .btn {
-      /*height: 24px;*/
-      /*width: 46px;*/
-      /*line-height: 24px;*/
-    }
+    // .btn {
+    //   /*height: 24px;*/
+    //   /*width: 46px;*/
+    //   /*line-height: 24px;*/
+    // }
     .btn-wrapper {
       padding: 11px 14px;
     }
