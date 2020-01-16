@@ -12,19 +12,19 @@
 
         <div class="message">
           <!-- 成功 -->
-          <template v-if="!callbackData.success">
+          <template v-if="callbackData.success">
             <div class="success-box">
-              <p class="account">支付金额: ¥ <span class="font-number">{{10000 | toThousands}}</span></p>
-              <p class="balance">账户余额: ¥ <span class="font-number">{{1000000 | toThousands}}</span></p>
+              <p class="account">支付金额: ¥ <span class="font-number">{{$tools.toThousands(callbackData.data.account / 100)}}</span></p>
+              <p class="balance">账户余额: ¥ <span class="font-number">{{$tools.toThousands(callbackData.data.balance / 100)}}</span></p>
             </div>
           </template>
 
           <!-- 失败 -->
-          <!-- <template v-if="!callbackData.success">
+          <template v-if="!callbackData.success">
             <div class="fail-box text-center">
               {{callbackData.msg}}
             </div>
-          </template> -->
+          </template>
         </div>
       </div>
     </transition>
@@ -58,7 +58,7 @@ export default {
         .then(res => {
           this.callbackData = {
             success: true,
-            msg: res.msg
+            data: res.result
           };
           this.loading = false;
         })
@@ -84,7 +84,7 @@ export default {
       padding: 30px;
       width: 500px;
       >.message{
-        padding: 20px 70px 50px;
+        padding: 30px 70px 50px;
         .success-box{
           .account,.balance{
             line-height: 20px;
