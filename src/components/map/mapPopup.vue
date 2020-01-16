@@ -15,7 +15,7 @@
 <!--          </div>-->
 <!--          <p class="color-text-1 predict">预估覆盖人次 <span class="color-text font-number font-16">{{coveredPeople}}</span></p>-->
 <!--        </div>-->
-        <div class="location margin-top-20">
+        <div class="location margin-top-20"> 
           <p class="location-name" v-if="item.name">{{item.name}}</p>
           <p class="color-text-1" v-if="item.address">{{item.address}}</p>
         </div>
@@ -97,11 +97,11 @@
     .wrapper {
       padding: 0 14px;
     }
-    .btn {
-      /*height: 24px;*/
-      /*width: 46px;*/
-      /*line-height: 24px;*/
-    }
+    // .btn {
+    //   /*height: 24px;*/
+    //   /*width: 46px;*/
+    //   /*line-height: 24px;*/
+    // }
     .btn-wrapper {
       padding: 11px 14px;
     }

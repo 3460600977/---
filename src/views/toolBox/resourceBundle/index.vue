@@ -48,7 +48,7 @@
 <!--              <i class="el-icon-edit icon-color"></i>编辑-->
 <!--            </span>-->
             <span class="icon-space" @click="showDialog(scope.row)">
-              <i class="el-icon-error icon-color"></i>删除
+              <i class="el-icon-error icon-color icon1"></i>删除
             </span>
           </template>
         </el-table-column>
@@ -155,6 +155,9 @@
     .el-button + .el-button {
       margin-left: 60px;
     }
+  }
+  .icon1 {
+    font-size: 17px;
   }
   .btn1 {
     width: 100px;
