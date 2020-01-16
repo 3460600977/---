@@ -188,8 +188,12 @@
       // 清楚背景点
       clearBgPoints() {
         this.pointsOverlayObj.isShow = false
-        this.pointsOverlayObj.selectedOverlay.clear()
-        this.pointsOverlayObj.unSelectedOverlay.clear()
+        if (this.pointsOptions.selectedOverlay) {
+           this.pointsOverlayObj.selectedOverlay.clear()
+        }
+        if (this.pointsOverlayObj.unSelectedOverlay) {
+          this.pointsOverlayObj.unSelectedOverlay.clear()
+        }
       },
       reGetAreaPoint() {
         if (Object.keys(this.pathArr).length) {

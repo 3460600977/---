@@ -22,7 +22,7 @@
         <div class="mid-between slider" v-if="item.type !== 'polygon'">
           <span class="color-text-1 text">半径</span>
           <div class="flex1">
-            <el-slider v-model="value" :min="0" :max="5000" @change="sliderChange"></el-slider>
+            <el-slider v-model="value" :min="1000" :max="5000" @change="sliderChange"></el-slider>
             <ul class="font-number mid-between">
               <li :class="{'active': value === 1000}">1km</li>
               <li :class="{'active': value === 3000}" class="flex1 text-center">3km</li>
