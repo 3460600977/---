@@ -133,6 +133,7 @@ export default {
   /deep/ .el-menu-item {
     color: $color-text-1;
     padding-left: 55px !important;
+    line-height: 46px;
     &.item_active {
       width: 220px;
       height: 46px;
