@@ -109,7 +109,15 @@
 
       this.setCity({name: '成都市'})
       map.enableScrollWheelZoom();
+
+      let opts = {
+        anchor: BMAP_ANCHOR_BOTTOM_LEFT,
+        offset: new BMap.Size(36, 100),
+        type: BMAP_NAVIGATION_CONTROL_ZOOM
+      }
+      map.addControl(new BMap.NavigationControl(opts));  
       map.addControl(new BMap.ScaleControl());
+
       // this.initHotMap()
       this.mapBindEvent()
     },
@@ -771,7 +779,7 @@
       //   }
       // },
       mapLoad() {
-        this.map.getPanes().mapPane.innerHTML = ''
+        // this.map.getPanes().mapPane.innerHTML = ''
         this.initHotMap()
         this.initPointsOverlay()
         this.initMouse()
