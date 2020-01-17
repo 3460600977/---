@@ -131,7 +131,9 @@
         placeholder="审核意见"
         required="required"
         v-model="submit.rejectReason"
+        @input="changeDenyArea"
       ></textarea>
+      <p v-if="showTextArea" class="rejectError">请输入拒绝原因</p>
       <p class="rejectLength">
         还可输入
         <span>{{100 - submit.rejectReason.length}}</span>个字
@@ -248,6 +250,7 @@ export default {
   },
   data() {
     return {
+      showTextArea: false,
       DenyDialogReason,
       checkReason: [],
       checkReasonHistory: [],
@@ -582,9 +585,18 @@ export default {
         });
       });
     },
+    //文本输入框，输入了文字
+    changeDenyArea(val) {
+      if (this.showTextArea) {
+        this.showTextArea = false;
+      }
+    },
 
     //用户选择拒绝原因按钮
     chooseButton(denyIndex, reasonIndex) {
+      if (this.showTextArea) {
+        this.showTextArea = false;
+      }
       if (this.submit.rejectReason === "") {
         this.submit.rejectReason = this.DenyDialogReason[denyIndex].reasons[
           reasonIndex
@@ -602,8 +614,12 @@ export default {
     },
     //用户选择完拒绝原因，点击提交按钮
     submitDenyCreative() {
-      this.submit.rejectReason = JSON.stringify([this.submit.rejectReason]);
-      this.submitAuditCreative(this.submit.name);
+      if (this.submit.rejectReason.length <= 0) {
+        this.showTextArea = true;
+      } else {
+        this.submit.rejectReason = JSON.stringify([this.submit.rejectReason]);
+        this.submitAuditCreative(this.submit.name);
+      }
     },
     //创意审核提交
     submitAuditCreative(creativeName) {
@@ -961,6 +977,10 @@ export default {
       margin-top: 10px;
       font-size: 14px;
       font-weight: 400;
+    }
+    .rejectError {
+      margin-top: 10px;
+      color: $color-main;
     }
     .choose-deny-list {
       min-height: 160px;
