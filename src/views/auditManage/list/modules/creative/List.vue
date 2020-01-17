@@ -125,6 +125,7 @@
       </el-form>
 
       <textarea
+        maxlength="100"
         name="remarks"
         class="choose-deny-list"
         placeholder="审核意见"

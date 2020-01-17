@@ -267,8 +267,6 @@ export const MenuList =
         }]
     }
   ]
-
-
 // 普通用户需要的菜单栏展示
 export const normalMenuList = [
   { "code": "1000", "selected": true },
@@ -293,6 +291,5 @@ export const normalMenuList = [
   { "code": "1610", "selected": false },
   { "code": "9999", "selected": true },
 ]
-
 
 
