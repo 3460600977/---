@@ -68,14 +68,13 @@ export default {
         .then(res => {
           /**
            * 广告主邮件支付状态码过滤
-           * 100002 支付失败
-           * 100204 失效
-           * 100103 过期
-           * 100106 已支付
+           * 100801 支付失败
+           * 100802 链接失效
+           * 100803 方案已过期
+           * 100804 方案已支付
            */
-          console.log(res.result)
           switch (res.code) {
-            case 100002:
+            case 100801:
               this.callbackData = {
                 title: '支付失败',
                 success: false,
@@ -84,7 +83,7 @@ export default {
               break;
 
 
-            case 100204:
+            case 100802:
               this.callbackData = {
                 title: '链接已失效',
                 success: false,
@@ -93,7 +92,7 @@ export default {
               break;
 
 
-            case 100103:
+            case 100803:
               this.callbackData = {
                 title: '方案已过期',
                 success: false,
@@ -102,7 +101,7 @@ export default {
               break;
 
 
-            case 100106:
+            case 100804:
               this.callbackData = {
                 title: '重复支付',
                 success: false,
@@ -119,7 +118,6 @@ export default {
               };
               break;
           }
-          console.log(this.callbackData)
           this.loading = false;
         })
         .catch(err => {

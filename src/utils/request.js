@@ -50,15 +50,15 @@ service.interceptors.response.use(
 
     /**
      * 广告主邮件支付状态码过滤
-     * 100002 支付失败
-     * 100204 失效
-     * 100103 过期
-     * 100106 已支付
+     * 100801 支付失败
+     * 100802 链接失效
+     * 100803 方案已过期
+     * 100804 方案已支付
      */
-    if (res.code === 100002 
-      || res.code === 100204 
-      || res.code === 100103 
-      || res.code === 100106) 
+    if (res.code === 100801 
+      || res.code === 100802 
+      || res.code === 100803 
+      || res.code === 100804) 
     {
       return response.data;
     }
