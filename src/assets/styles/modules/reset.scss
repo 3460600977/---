@@ -98,3 +98,7 @@ input::-ms-clear {
 input::-ms-reveal {
     display: none;
 }
+/*textarea的边框，hover变为蓝色，取消掉*/
+textarea{
+    outline: none;
+}
