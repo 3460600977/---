@@ -79,7 +79,7 @@
       </div>
     </PutMangeCard>
 
-    <!-- <div v-html="mailContent"></div> -->
+    <div v-html="mailContent"></div>
 
     <!-- 确认回调弹窗 -->
     <PaySuccessWindow
@@ -505,7 +505,7 @@ export default {
                                     /*@editable*/
                                     background-color: #f7d4d4;
                                     /*@editable*/
-                                    background-image: url("https://gallery.mailchimp.com/38194040000d7d15a22d18ac5/images/0fd76a4a-771b-48bb-9446-867d640c41bc.png");
+                                    background-image: url("${process.env.BASE_API}/static/eamil_logo.png");
                                     /*@editable*/
                                     background-repeat: no-repeat;
                                     /*@editable*/
@@ -1429,6 +1429,8 @@ export default {
         payAmount: this.estimatePriceValue,
         title: '【生活圈智投平台】投放方案确认'
       }
+
+      return
 
       this.$api.PutProject.ProjectMail(param)
         .then(res => {
