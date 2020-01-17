@@ -245,6 +245,10 @@ export default {
           })
           .catch(res => {
             this.loading = false;
+            removeUserInfo();
+            removeMenuList();
+            this.$store.commit("setToken", "");
+            this.$router.replace("/login");
           });
       });
     },
