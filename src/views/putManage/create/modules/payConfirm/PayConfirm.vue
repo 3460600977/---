@@ -1427,7 +1427,7 @@ export default {
       let param = {
         content: this.mailContent,
         payAmount: this.estimatePriceValue,
-        title: '扣款确认'
+        title: '【生活圈智投平台】投放方案确认'
       }
 
       this.$api.PutProject.ProjectMail(param)
