@@ -131,7 +131,10 @@
         required="required"
         v-model="submit.rejectReason"
       ></textarea>
-
+      <p class="rejectLength">
+        还可输入
+        <span>{{100 - submit.rejectReason.length}}</span>个字
+      </p>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDenyVisible = false">取 消</el-button>
         <el-button
@@ -156,7 +159,6 @@
           <img class="no-pass-img" :src="noPassImg" alt srcset />
           <div>{{JSON.parse(detailDialogMsg.rejectReason).join(',')}}</div>
         </div>
-
         <el-tab-pane label="创意资质" name="aptitude" class="aptitude">
           <div v-for="(aItem,aIndex) in reviewCreativeDetail.data" :key="aIndex" class="text-col">
             <span class="text-title">{{aItem.label}}</span>
@@ -422,7 +424,11 @@ export default {
       changeObj = this.creativeStatus.find(item => {
         return item.value === status;
       });
-      this.auditList.statusName = changeObj.label;
+      if (changeObj) {
+        this.auditList.statusName = changeObj.label;
+      } else {
+        this.auditList.statusName = "";
+      }
     },
     //获取审核创意列表
     getAuditCreativeList() {
@@ -506,7 +512,6 @@ export default {
                 videoList.down[1].previewUrl;
             }
           }
-          console.log("this.downloadCreative.data", this.downloadCreative.data);
           this.downloadCreative.data.screenType = videoList.screenType;
         })
         .catch(res => {
@@ -569,6 +574,7 @@ export default {
       this.dialogDenyVisible = true;
       this.checkReason = [];
       this.checkReasonHistory = [];
+      this.submit.rejectReason = "";
       this.DenyDialogReason.forEach(reasonsList => {
         reasonsList.reasons.forEach(item => {
           item.select = false;
@@ -579,20 +585,22 @@ export default {
     //用户选择拒绝原因按钮
     chooseButton(denyIndex, reasonIndex) {
       this.DenyDialogReason[denyIndex].reasons[reasonIndex].select = true;
-      this.submit.rejectReason =
-        this.submit.rejectReason +
-        "，" +
-        this.DenyDialogReason[denyIndex].reasons[reasonIndex].value;
+      if (this.submit.rejectReason === "") {
+        this.submit.rejectReason = this.DenyDialogReason[denyIndex].reasons[
+          reasonIndex
+        ].value;
+      } else {
+        let tmp =
+          this.submit.rejectReason +
+          "，" +
+          this.DenyDialogReason[denyIndex].reasons[reasonIndex].value;
+        if (tmp.length > 100) return false;
+        this.submit.rejectReason = tmp;
+      }
     },
     //用户选择完拒绝原因，点击提交按钮
     submitDenyCreative() {
-      this.submit.rejectReason = [];
-      this.denyDialogReasonList.forEach(item => {
-        if (item.select === true) {
-          this.submit.rejectReason.push(item.name);
-        }
-      });
-      this.submit.rejectReason = JSON.stringify(this.submit.rejectReason);
+      this.submit.rejectReason = JSON.stringify([this.submit.rejectReason]);
       this.submitAuditCreative(this.submit.name);
     },
     //创意审核提交
@@ -944,6 +952,9 @@ export default {
     .text-danger {
       background: $color-main;
       color: $color-bg-3;
+    }
+    .rejectLength {
+      margin-top: 10px;
     }
     .choose-deny-list {
       min-height: 160px;
