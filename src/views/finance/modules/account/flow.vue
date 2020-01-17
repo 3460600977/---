@@ -54,7 +54,11 @@
     <!-- 账户流水table -->
     <div class="query_result">
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
-        <el-table-column prop="operationDate" label="交易日期"></el-table-column>
+        <el-table-column prop="operationDate" label="交易日期">
+          <template slot-scope="scope">
+            <span>{{$tools.getFormatDate('YYYY-mm-dd',scope.row.operationDate)}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="tradeType" label="交易类型">
           <template slot-scope="scope">
             <span v-if="scope.row.tradeType===1">充值</span>
@@ -101,9 +105,12 @@ export default {
       return {
         disabledDate(date) {
           return (
-            date.getTime() > Date.now() ||
-            date.getTime() <
-              new Date(systemOnlineTime).getTime() - 24 * 3600 * 1000
+            date.getTime() > Date.now()
+            // date.getTime() <
+            //   new Date(_that.$tools.getMonthFirstDay()).getTime() -
+            //     24 * 3600 * 1000
+            // date.getTime() <
+            //   new Date(systemOnlineTime).getTime() - 24 * 3600 * 1000
           );
         }
       };
@@ -138,7 +145,10 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      vm.flowForm.operationDate = [systemOnlineTime, vm.$tools.getYesterday()];
+      vm.flowForm.operationDate = [
+        vm.$tools.getMonthFirstDay(),
+        vm.$tools.getFormatDate("YYYY-mm-dd", new Date())
+      ];
       vm.getSummaryDetail();
       vm.onSubmit();
     });

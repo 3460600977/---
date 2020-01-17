@@ -112,31 +112,26 @@
           :denyIndex="denyIndex"
         >
           <h3 class="deny-title">{{denyIndex+1+'、'+denyItem.title}}</h3>
-          <el-checkbox-group
-            v-model="checkReason"
-            class="deny-reason-group"
-            :min="0"
-            @change="handleCheckedChange"
+          <div
+            class="deny-reson"
+            :class="{'text-danger':reason.select}"
+            @click="chooseButton(denyIndex,reasonIndex)"
+            v-for="(reason,reasonIndex) in denyItem.reasons"
+            :key="reasonIndex"
           >
-            <el-checkbox-button
-              v-for="(reason,reasonIndex) in denyItem.reasons"
-              :key="reasonIndex"
-              :label="denyIndex +'-'+ reasonIndex"
-            >{{reason.value}}</el-checkbox-button>
-          </el-checkbox-group>
+            <div :label="denyIndex +'-'+ reasonIndex" :checked="reason.select">{{reason.value}}</div>
+          </div>
         </el-form-item>
       </el-form>
-      <div class="choose-deny-list">
-        <el-tag
-          closable
-          :class="{'showTag': item.select,'displayTag':true}"
-          :disable-transitions="false"
-          @close="handleClose(item.index)"
-          v-for="(item,reasonIndex) in denyDialogReasonList"
-          :key="reasonIndex"
-          :index="item.index"
-        >{{item.name}}</el-tag>
-      </div>
+
+      <textarea
+        name="remarks"
+        class="choose-deny-list"
+        placeholder="审核意见"
+        required="required"
+        v-model="submit.rejectReason"
+      ></textarea>
+
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDenyVisible = false">取 消</el-button>
         <el-button
@@ -572,20 +567,22 @@ export default {
       this.submit.status = 1;
       this.submit.name = name;
       this.dialogDenyVisible = true;
-      if (this.submit.id in this.checkReasonHistory) {
-        this.checkReason = this.checkReasonHistory[this.submit.id];
-      } else {
-        this.checkReason = [];
-      }
+      this.checkReason = [];
+      this.checkReasonHistory = [];
+      this.DenyDialogReason.forEach(reasonsList => {
+        reasonsList.reasons.forEach(item => {
+          item.select = false;
+        });
+      });
     },
-    //用户选择拒绝原因
-    handleCheckedChange() {
-      this.checkReasonHistory.splice(this.submit.id, 1, this.checkReason);
-    },
-    //拒绝原因，删除
-    handleClose(closeIndex) {
-      let index = this.checkReason.indexOf(closeIndex);
-      this.checkReason.splice(index, 1);
+
+    //用户选择拒绝原因按钮
+    chooseButton(denyIndex, reasonIndex) {
+      this.DenyDialogReason[denyIndex].reasons[reasonIndex].select = true;
+      this.submit.rejectReason =
+        this.submit.rejectReason +
+        "，" +
+        this.DenyDialogReason[denyIndex].reasons[reasonIndex].value;
     },
     //用户选择完拒绝原因，点击提交按钮
     submitDenyCreative() {
@@ -932,11 +929,28 @@ export default {
         }
       }
     }
+    .deny-reson {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 400;
+      color: $color-text-1;
+      background: $color-bg-7;
+      border-radius: 12px;
+      padding: 0 5px;
+      margin-top: 10px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    .text-danger {
+      background: $color-main;
+      color: $color-bg-3;
+    }
     .choose-deny-list {
       min-height: 160px;
       background: $color-bg-7;
       border-radius: 4px;
       padding: 20px;
+      width: 100%;
       .el-tag {
         background: $color-blue;
         border-radius: 12px;

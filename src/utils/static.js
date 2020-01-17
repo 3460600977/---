@@ -120,21 +120,21 @@ export const DenyDialogReason = [
     title: '效果承诺',
     reasons: [
       {
-        value: '不得含有对未来效果、收益或者与其相关的情况作出保证性承诺，明示或者暗示保本、无风险或者保收益等内容'
+        value: '不得含有对未来效果、收益或者与其相关的情况作出保证性承诺，明示或者暗示保本、无风险或者保收益等内容',select:true
       },
       {
 
-        value: '不得涉及前后效果对比'
+        value: '不得涉及前后效果对比',select:false
       },
       {
 
-        value: '不得对升学，提高成绩，拿证或培训效果作出保证性承诺'
+        value: '不得对升学，提高成绩，拿证或培训效果作出保证性承诺',select:false
       },
       {
-        value: '不得以受益人，专家学者等机构的名义推广'
+        value: '不得以受益人，专家学者等机构的名义推广',select:false
       },
       {
-        value: '涉及虚假误导宣传'
+        value: '涉及虚假误导宣传',select:false
       },
     ]
   },
@@ -142,22 +142,22 @@ export const DenyDialogReason = [
     title: '政治面貌敏感，极端词语类',
     reasons: [
       {
-        value: '不得使用或者变相使用中华人民共和国的国旗、国歌、国徽、军旗、军歌、军徽'
+        value: '不得使用或者变相使用中华人民共和国的国旗、国歌、国徽、军旗、军歌、军徽',select:false
       },
       {
-        value: '不得使用”国家级””最高级””最佳”等极端用语'
+        value: '不得使用”国家级””最高级””最佳”等极端用语',select:false
       },
       {
-        value: '不得含有污秽、色情、赌博、迷信、恐怖、暴力的内容'
+        value: '不得含有污秽、色情、赌博、迷信、恐怖、暴力的内容',select:false
       },
       {
-        value: '含有名族、种族、宗教、性别歧视的内容'
+        value: '含有名族、种族、宗教、性别歧视的内容',select:false
       },
       {
-        value: '不得涉及时事热点政治敏感内容'
+        value: '不得涉及时事热点政治敏感内容',select:false
       },
       {
-        value: '不得使用国家机关或国家机关工作人员的形象名义作为推广'
+        value: '不得使用国家机关或国家机关工作人员的形象名义作为推广',select:false
       },
     ]
   },
@@ -166,14 +166,14 @@ export const DenyDialogReason = [
     title: '风险提示类',
     reasons: [
       {
-        value: '请在画面添加备注预售号'
+        value: '请在画面添加备注预售号',select:false
       },
       {
 
-        value: '涉及招商加盟，请备注风险提示语：“投资有风险，加盟需谨慎”'
+        value: '涉及招商加盟，请备注风险提示语：“投资有风险，加盟需谨慎”',select:false
       },
       {
-        value: '画面请备注风险提示语“投资有风险”'
+        value: '画面请备注风险提示语“投资有风险”',select:false
       },
     ]
   },
@@ -181,13 +181,13 @@ export const DenyDialogReason = [
     title: '素材质量类',
     reasons: [
       {
-        value: '素材画面整体质量较低'
+        value: '素材画面整体质量较低',select:false
       },
       {
-        value: '画面内容容易引起不适，易引起投诉'
+        value: '画面内容容易引起不适，易引起投诉',select:false
       },
       {
-        value: '请合理规范使用标点符号'
+        value: '请合理规范使用标点符号',select:false
       },
     ]
   },
@@ -195,13 +195,13 @@ export const DenyDialogReason = [
     title: '医疗行业类',
     reasons: [
       {
-        value: '不得涉及真人医患形象，真人代言，医疗器械，手术直播过程'
+        value: '不得涉及真人医患形象，真人代言，医疗器械，手术直播过程',select:false
       },
       {
-        value: '非医疗行业不得涉及医疗相关描述'
+        value: '非医疗行业不得涉及医疗相关描述',select:false
       },
       {
-        value: '请在画面添加备注医广号'
+        value: '请在画面添加备注医广号',select:false
       },
     ]
   },
@@ -209,7 +209,7 @@ export const DenyDialogReason = [
     title: '暂不接受投放类',
     reasons: [
       {
-        value: '暂不接受该行业投放，请知悉'
+        value: '暂不接受该行业投放，请知悉',select:false
       },
     ]
   },
