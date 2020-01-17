@@ -13,16 +13,18 @@
           <!-- 成功 -->
           <template v-if="callbackData.success">
             <div class="success-box">
-              <p class="account">支付金额：<span class="color-main">¥ <span class="font-number font-18">{{$tools.toThousands(callbackData.data.account / 100)}}</span>
-                </span>
-              </p>
-              <p class="balance">账户余额：¥ <span class="font-number font-18">{{$tools.toThousands(callbackData.data.balance / 100)}}</span></p>
+              <span class="success-content">
+                <p class="account">支付金额：<span class="color-main">¥ <span class="font-number font-18">{{$tools.toThousands(callbackData.data.account / 100)}}</span>
+                  </span>
+                </p>
+                <p class="balance">账户余额：¥ <span class="font-number font-18">{{$tools.toThousands(callbackData.data.balance / 100)}}</span></p>
+              </span>
             </div>
           </template>
 
           <!-- 失败 -->
           <template v-if="!callbackData.success">
-            <div class="message-box color-text-1">
+            <div class="message-box color-text-1 text-center">
               {{callbackData.msg}}
             </div>
           </template>
@@ -147,6 +149,9 @@ export default {
       width:568px;
       height:280px;
       background-color: #fff;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
       >.title{
         >.iconfont{
           font-size: 30px;
@@ -154,18 +159,25 @@ export default {
         }
       }
       >.message{
-        position: absolute;
         left: 50%;
-        transform: translateX(-50%);
         margin-top: 60px;
         .message-box{
-          position: relative;
           color: $color-table-title;
           line-height: 20px;
         }
         .success-box{
-          .account,.balance{
-            margin-bottom: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          .success-content{
+            display: inline-flex;
+            flex-direction: column;
+            flex-grow: 0;
+            .account,.balance{
+              margin-bottom: 20px;
+              line-height: 20px;
+            }
           }
         }
       }
