@@ -249,7 +249,7 @@ export default {
 
     // 发送邮件给广告主
     sendMain() {
-      // this.project.loading = true;
+      this.project.loading = true;
       this.mailContent = `<!doctype html>
                             <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
                               xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -1430,7 +1430,7 @@ export default {
         title: '【生活圈智投平台】投放方案确认'
       }
 
-      return
+      // return
 
       this.$api.PutProject.ProjectMail(param)
         .then(res => {
