@@ -66,7 +66,7 @@
         <noData v-if="buildsNumber <= 0">无可售数据</noData>
       </ul>
       
-      <el-pagination
+      <!-- <el-pagination
         class="float-right margin-top-10"
         background
         layout="total, sizes, prev, pager, next, jumper"
@@ -74,7 +74,7 @@
         @current-change="handleCurrentChange"
         :small="true"
         :total="1000">
-      </el-pagination>
+      </el-pagination> -->
 
     </template>
 
