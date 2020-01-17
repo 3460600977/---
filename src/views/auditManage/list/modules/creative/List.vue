@@ -585,11 +585,11 @@ export default {
 
     //用户选择拒绝原因按钮
     chooseButton(denyIndex, reasonIndex) {
-      this.DenyDialogReason[denyIndex].reasons[reasonIndex].select = true;
       if (this.submit.rejectReason === "") {
         this.submit.rejectReason = this.DenyDialogReason[denyIndex].reasons[
           reasonIndex
         ].value;
+        this.DenyDialogReason[denyIndex].reasons[reasonIndex].select = true;
       } else {
         let tmp =
           this.submit.rejectReason +
@@ -597,6 +597,7 @@ export default {
           this.DenyDialogReason[denyIndex].reasons[reasonIndex].value;
         if (tmp.length > 100) return false;
         this.submit.rejectReason = tmp;
+        this.DenyDialogReason[denyIndex].reasons[reasonIndex].select = true;
       }
     },
     //用户选择完拒绝原因，点击提交按钮
