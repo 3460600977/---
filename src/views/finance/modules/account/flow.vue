@@ -27,7 +27,7 @@
             :picker-options="pickerOptions"
           ></el-date-picker>
         </el-form-item>
-        <el-form-item class="item-space" label="交易号">
+        <el-form-item class="item-space" label="订单号">
           <el-input
             v-model.trim="flowForm.tradeNo"
             clearable
@@ -71,7 +71,7 @@
             <span v-else class="money-text">¥ +{{ $tools.toThousands(scope.row.money/ 100)}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="tradeNo" label="流水号"></el-table-column>
+        <el-table-column prop="tradeNo" label="订单号"></el-table-column>
         <el-table-column prop="projectName" label="投放方案"></el-table-column>
       </el-table>
       <!-- 账户流水table 分页 -->
