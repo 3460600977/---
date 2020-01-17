@@ -79,7 +79,7 @@
       </div>
     </PutMangeCard>
 
-    <!-- <div v-html="mailContent"></div> -->
+    <div v-html="mailContent"></div>
 
     <!-- 确认回调弹窗 -->
     <PaySuccessWindow
@@ -249,7 +249,7 @@ export default {
 
     // 发送邮件给广告主
     sendMain() {
-      // this.project.loading = true;
+      this.project.loading = true;
       this.mailContent = `<!doctype html>
                             <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
                               xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -505,7 +505,7 @@ export default {
                                     /*@editable*/
                                     background-color: #f7d4d4;
                                     /*@editable*/
-                                    background-image: url("https://gallery.mailchimp.com/38194040000d7d15a22d18ac5/images/0fd76a4a-771b-48bb-9446-867d640c41bc.png");
+                                    background-image: url("${process.env.BASE_API}/static/eamil_logo.png");
                                     /*@editable*/
                                     background-repeat: no-repeat;
                                     /*@editable*/
@@ -1427,8 +1427,10 @@ export default {
       let param = {
         content: this.mailContent,
         payAmount: this.estimatePriceValue,
-        title: '扣款确认'
+        title: '【生活圈智投平台】投放方案确认'
       }
+
+      // return
 
       this.$api.PutProject.ProjectMail(param)
         .then(res => {

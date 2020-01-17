@@ -48,12 +48,12 @@
         for (let key in this.filters) {
           this.filtersCopy[key] = []
         }
-        this.setFiltersOld()
+        // this.setFiltersOld()
       },
       operate(val) {
         if (val === 0) {
           this.clear()
-          this.$emit('returnResult', this.filtersCopy, 0)
+          // this.$emit('returnResult', this.filtersCopy, 0)
         } else if (val === 1) {
           this.filtersCopy = this.$tools.deepCopy(this.filtersOld)
           this.$emit('hide')
