@@ -164,6 +164,10 @@ export default {
         tradeNo: this.flowForm.tradeNo,
         tradeType: this.flowForm.tradeType
       };
+      if (this.flowForm.operationDate.length > 0) {
+        param.beginTime = this.flowForm.operationDate[0];
+        param.endTime = this.flowForm.operationDate[1];
+      }
       this.$api.Finance.getFinanceAccountList(param)
         .then(res => {
           this.tableData = {
