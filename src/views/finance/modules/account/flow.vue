@@ -56,7 +56,7 @@
       <el-table v-loading="tableData.loading" :data="tableData.data" class="list_table">
         <el-table-column prop="operationDate" label="交易日期">
           <template slot-scope="scope">
-            <span>{{$tools.getFormatDate('YYYY-mm-dd',scope.row.operationDate)}}</span>
+            <span>{{$tools.getFormatDate('YYYY-mm-dd HH:MM:SS',scope.row.operationDate)}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="tradeType" label="交易类型">
@@ -159,12 +159,10 @@ export default {
       let param = {
         pageIndex: this.page.pageIndex,
         pageSize: this.page.pageSize,
-        beginTime: this.flowForm.operationDate[0],
-        endTime: this.flowForm.operationDate[1],
         tradeNo: this.flowForm.tradeNo,
         tradeType: this.flowForm.tradeType
       };
-      if (this.flowForm.operationDate.length > 0) {
+      if (this.flowForm.operationDate) {
         param.beginTime = this.flowForm.operationDate[0];
         param.endTime = this.flowForm.operationDate[1];
       }
