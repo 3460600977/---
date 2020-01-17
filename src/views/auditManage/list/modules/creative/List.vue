@@ -949,6 +949,8 @@ export default {
       margin-top: 10px;
       margin-right: 10px;
       cursor: pointer;
+      height: 24px;
+      line-height: 24px;
     }
     .text-danger {
       background: $color-main;
@@ -956,6 +958,8 @@ export default {
     }
     .rejectLength {
       margin-top: 10px;
+      font-size: 14px;
+      font-weight: 400;
     }
     .choose-deny-list {
       min-height: 160px;
@@ -963,6 +967,8 @@ export default {
       border-radius: 4px;
       padding: 20px;
       width: 100%;
+      font-size: 12px;
+      font-weight: 400;
       .el-tag {
         background: $color-blue;
         border-radius: 12px;
