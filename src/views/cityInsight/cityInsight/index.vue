@@ -439,6 +439,18 @@
           this.$refs.dbmap.clearMap()
         }
       },
+      changeTags(val, index, type) {
+        if (type === 0) {
+            this.buildingFilterSelected = false
+          } else {
+            this.buildingFilterSelected = true
+          }
+          this.$refs.dbmap.setCity(this.cityFilter)
+          this.buildingFilter = val
+          this.loadData()
+          this.hide(1)
+          this.resetLeftPopup(index, type)
+      },
       // 各种弹窗返回数据触发方法 type表示楼盘标签是 0清空还是2选择
       returnResult(val, index, type) {
         if (index === 0) { // 城市切换
@@ -452,16 +464,20 @@
           }).catch(() => {
           });
         } else if (index === 1) { // 楼盘标签选择
-          if (type === 0) {
-            this.buildingFilterSelected = false
-          } else {
-            this.buildingFilterSelected = true
+          if (!Object.keys(this.pathArr).length) {
+            this.$refs.dbmap.clearPathArr(1)
+            this.changeTags(val, index, type)
+            return
           }
-          this.$refs.dbmap.setCity(this.cityFilter)
-          this.buildingFilter = val
-          this.loadData()
-          this.hide(1)
-          this.resetLeftPopup(index, type)
+          this.$confirm('筛选楼盘，将自动清空之前的操作数据，是否清空？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$refs.dbmap.clearPathArr(1)
+            this.changeTags(val, index, type)
+          }).catch(() => {
+          });
         } else if (index === 2) { // 热力图选择
           if (!Object.keys(this.pathArr).length) {
             // this.switchChange(true)
