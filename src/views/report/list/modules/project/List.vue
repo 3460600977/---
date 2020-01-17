@@ -101,7 +101,7 @@
         >下载</el-button>
       </div>
       <el-table
-        :loading="loading"
+        v-loading="loading"
         :data="resultData"
         @sort-change="tableSort"
         :default-sort="{prop: 'costNum', order: 'ascending'}"

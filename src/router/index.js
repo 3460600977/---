@@ -100,6 +100,7 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach(() => {
+  // debugger;
   NProgress.done()
   NProgress.remove()
 })

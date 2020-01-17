@@ -14,7 +14,7 @@
         :class="{'active': index === menu.activeIndex}"
         @mouseenter="hoverMenu(menu.content, index)"
         @mouseleave="leaveMenu"
-        @click="menu.activeIndex = index; handleTo(mitem.path)"
+        @click="handleTo(mitem.path, index)"
         v-for="(mitem, index) in menu.content"
         :key="index"
       >
@@ -197,7 +197,11 @@ export default {
     /**
      * 手动跳转
      */
-    handleTo(path) {
+    handleTo(path, index) {
+      if (this.$route.path === path) {
+        return;
+      }
+      this.menu.activeIndex = index; 
       this.$router.push(path);
     },
 
@@ -256,7 +260,7 @@ export default {
     ) {
       this.auditShow = false;
     }
-    //请求验证码接口
+    //获取用户头像，姓名
     let userInfo = getUserInfo();
     if (userInfo === null || userInfo === "") {
       return false;

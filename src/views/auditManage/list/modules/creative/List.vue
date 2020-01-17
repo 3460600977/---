@@ -31,7 +31,7 @@
     <div class="query_result">
       <el-table
         :data="reviewCreativeList.data"
-        :loading="reviewCreativeList.loading"
+        v-loading="reviewCreativeList.loading"
         class="list_table"
       >
         <el-table-column
