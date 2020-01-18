@@ -94,7 +94,7 @@ export default {
   /deep/ .el-steps {
     margin-top: 20px;
     margin-left: 26px;
-    height: 460px;
+    height: 580px;
     .el-step__title {
       color: $color-text;
     }
@@ -115,7 +115,7 @@ export default {
         font-size: 14px;
       }
       .step_des {
-        margin-top: 10px;
+        margin-top: 8px;
       }
     }
     .el-step__main:first-child {

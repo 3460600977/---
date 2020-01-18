@@ -112,31 +112,32 @@
           :denyIndex="denyIndex"
         >
           <h3 class="deny-title">{{denyIndex+1+'、'+denyItem.title}}</h3>
-          <el-checkbox-group
-            v-model="checkReason"
-            class="deny-reason-group"
-            :min="0"
-            @change="handleCheckedChange"
+          <div
+            class="deny-reson"
+            :class="{'text-danger':reason.select}"
+            @click="chooseButton(denyIndex,reasonIndex)"
+            v-for="(reason,reasonIndex) in denyItem.reasons"
+            :key="reasonIndex"
           >
-            <el-checkbox-button
-              v-for="(reason,reasonIndex) in denyItem.reasons"
-              :key="reasonIndex"
-              :label="denyIndex +'-'+ reasonIndex"
-            >{{reason.value}}</el-checkbox-button>
-          </el-checkbox-group>
+            <div :label="denyIndex +'-'+ reasonIndex" :checked="reason.select">{{reason.value}}</div>
+          </div>
         </el-form-item>
       </el-form>
-      <div class="choose-deny-list">
-        <el-tag
-          closable
-          :class="{'showTag': item.select,'displayTag':true}"
-          :disable-transitions="false"
-          @close="handleClose(item.index)"
-          v-for="(item,reasonIndex) in denyDialogReasonList"
-          :key="reasonIndex"
-          :index="item.index"
-        >{{item.name}}</el-tag>
-      </div>
+
+      <textarea
+        maxlength="100"
+        name="remarks"
+        class="choose-deny-list"
+        placeholder="审核意见"
+        required="required"
+        v-model="submit.rejectReason"
+        @input="changeDenyArea"
+      ></textarea>
+      <p v-if="showTextArea" class="rejectError">请输入拒绝原因</p>
+      <p class="rejectLength">
+        还可输入
+        <span>{{100 - submit.rejectReason.length}}</span>个字
+      </p>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogDenyVisible = false">取 消</el-button>
         <el-button
@@ -161,7 +162,6 @@
           <img class="no-pass-img" :src="noPassImg" alt srcset />
           <div>{{JSON.parse(detailDialogMsg.rejectReason).join(',')}}</div>
         </div>
-
         <el-tab-pane label="创意资质" name="aptitude" class="aptitude">
           <div v-for="(aItem,aIndex) in reviewCreativeDetail.data" :key="aIndex" class="text-col">
             <span class="text-title">{{aItem.label}}</span>
@@ -250,6 +250,7 @@ export default {
   },
   data() {
     return {
+      showTextArea: false,
       DenyDialogReason,
       checkReason: [],
       checkReasonHistory: [],
@@ -427,7 +428,11 @@ export default {
       changeObj = this.creativeStatus.find(item => {
         return item.value === status;
       });
-      this.auditList.statusName = changeObj.label;
+      if (changeObj) {
+        this.auditList.statusName = changeObj.label;
+      } else {
+        this.auditList.statusName = "";
+      }
     },
     //获取审核创意列表
     getAuditCreativeList() {
@@ -511,7 +516,6 @@ export default {
                 videoList.down[1].previewUrl;
             }
           }
-          console.log("this.downloadCreative.data", this.downloadCreative.data);
           this.downloadCreative.data.screenType = videoList.screenType;
         })
         .catch(res => {
@@ -572,31 +576,50 @@ export default {
       this.submit.status = 1;
       this.submit.name = name;
       this.dialogDenyVisible = true;
-      if (this.submit.id in this.checkReasonHistory) {
-        this.checkReason = this.checkReasonHistory[this.submit.id];
-      } else {
-        this.checkReason = [];
+      this.checkReason = [];
+      this.checkReasonHistory = [];
+      this.submit.rejectReason = "";
+      this.DenyDialogReason.forEach(reasonsList => {
+        reasonsList.reasons.forEach(item => {
+          item.select = false;
+        });
+      });
+    },
+    //文本输入框，输入了文字
+    changeDenyArea(val) {
+      if (this.showTextArea) {
+        this.showTextArea = false;
       }
     },
-    //用户选择拒绝原因
-    handleCheckedChange() {
-      this.checkReasonHistory.splice(this.submit.id, 1, this.checkReason);
-    },
-    //拒绝原因，删除
-    handleClose(closeIndex) {
-      let index = this.checkReason.indexOf(closeIndex);
-      this.checkReason.splice(index, 1);
+
+    //用户选择拒绝原因按钮
+    chooseButton(denyIndex, reasonIndex) {
+      if (this.showTextArea) {
+        this.showTextArea = false;
+      }
+      if (this.submit.rejectReason === "") {
+        this.submit.rejectReason = this.DenyDialogReason[denyIndex].reasons[
+          reasonIndex
+        ].value;
+        this.DenyDialogReason[denyIndex].reasons[reasonIndex].select = true;
+      } else {
+        let tmp =
+          this.submit.rejectReason +
+          "，" +
+          this.DenyDialogReason[denyIndex].reasons[reasonIndex].value;
+        if (tmp.length > 100) return false;
+        this.submit.rejectReason = tmp;
+        this.DenyDialogReason[denyIndex].reasons[reasonIndex].select = true;
+      }
     },
     //用户选择完拒绝原因，点击提交按钮
     submitDenyCreative() {
-      this.submit.rejectReason = [];
-      this.denyDialogReasonList.forEach(item => {
-        if (item.select === true) {
-          this.submit.rejectReason.push(item.name);
-        }
-      });
-      this.submit.rejectReason = JSON.stringify(this.submit.rejectReason);
-      this.submitAuditCreative(this.submit.name);
+      if (this.submit.rejectReason.length <= 0) {
+        this.showTextArea = true;
+      } else {
+        this.submit.rejectReason = JSON.stringify([this.submit.rejectReason]);
+        this.submitAuditCreative(this.submit.name);
+      }
     },
     //创意审核提交
     submitAuditCreative(creativeName) {
@@ -932,11 +955,41 @@ export default {
         }
       }
     }
+    .deny-reson {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 400;
+      color: $color-text-1;
+      background: $color-bg-7;
+      border-radius: 12px;
+      padding: 0 5px;
+      margin-top: 10px;
+      margin-right: 10px;
+      cursor: pointer;
+      height: 24px;
+      line-height: 24px;
+    }
+    .text-danger {
+      background: $color-main;
+      color: $color-bg-3;
+    }
+    .rejectLength {
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: 400;
+    }
+    .rejectError {
+      margin-top: 10px;
+      color: $color-main;
+    }
     .choose-deny-list {
       min-height: 160px;
       background: $color-bg-7;
       border-radius: 4px;
       padding: 20px;
+      width: 100%;
+      font-size: 12px;
+      font-weight: 400;
       .el-tag {
         background: $color-blue;
         border-radius: 12px;

@@ -78,7 +78,8 @@
       :modal-append-to-body="false"
       width="780px"
       title="修改密码"
-      class="edit-pass-dialog">
+      class="edit-pass-dialog"
+    >
       <edit-pass-index @changeDialogEditPass="changeEditPass"></edit-pass-index>
     </el-dialog>
   </header>
@@ -133,6 +134,13 @@ export default {
             path: "/login",
             children: []
           },
+          {
+            code: "1500",
+            name: "财务管理",
+            selected: false,
+            path: "/finance",
+            children: []
+          }
         ],
         money: false,
         notification: false
@@ -201,7 +209,7 @@ export default {
       if (this.$route.path === path) {
         return;
       }
-      this.menu.activeIndex = index; 
+      this.menu.activeIndex = index;
       this.$router.push(path);
     },
 
@@ -245,6 +253,10 @@ export default {
           })
           .catch(res => {
             this.loading = false;
+            removeUserInfo();
+            removeMenuList();
+            this.$store.commit("setToken", "");
+            this.$router.replace("/login");
           });
       });
     },

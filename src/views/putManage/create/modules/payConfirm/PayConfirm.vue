@@ -505,7 +505,7 @@ export default {
                                     /*@editable*/
                                     background-color: #f7d4d4;
                                     /*@editable*/
-                                    background-image: url("${process.env.BASE_API}/static/eamil_logo.png");
+                                    background-image: url("https://qa-ads.xinchao.com/static/eamil_logo.png");
                                     /*@editable*/
                                     background-repeat: no-repeat;
                                     /*@editable*/
@@ -1061,9 +1061,7 @@ export default {
                                                                 <tr>
                                                                   <td class="mcnImageContent" valign="top"
                                                                     style="padding-right: 9px; padding-left: 9px; padding-top: 0; padding-bottom: 0; text-align:center;">
-                                                                    <img align="center" alt="" src="*|BRAND:LOGO|*" width="196"
-                                                                      style="max-width: 196px; padding-bottom: 0px; vertical-align: bottom; display: inline !important; border-radius: 0%;"
-                                                                      class="mcnImage">
+                                  
                                                                   </td>
                                                                 </tr>
                                                               </tbody>
@@ -1085,9 +1083,6 @@ export default {
                                                                     style="padding-right: 9px; padding-left: 9px; padding-top: 0; padding-bottom: 0; text-align:center;">
 
 
-                                                                    <img align="center" alt="" src="*|BRAND:LOGO|*" width="196"
-                                                                      style="max-width: 196px; padding-bottom: 0px; vertical-align: bottom; display: inline !important; border: 1px none;"
-                                                                      class="mcnImage">
 
 
                                                                   </td>
