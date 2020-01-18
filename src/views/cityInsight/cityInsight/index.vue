@@ -345,9 +345,19 @@
         })
       },
       setHotMapItemNull() {
-        this.hotMapItem = null
-        this.resetHotMap()
-        this.loadData()
+        if (this.hotMapItem !== null && Object.keys(this.pathArr).length) {
+            this.$confirm('筛选楼盘，将自动清空之前的操作数据，是否清空？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$refs.dbmap.clearPathArr(1)
+            this.hotMapItem = null
+            this.resetHotMap()
+            this.loadData()
+          }).catch(() => {
+          });
+        }
       },
       resetBudget() {
         this.budget = INIT_BUDGET
@@ -464,20 +474,19 @@
           }).catch(() => {
           });
         } else if (index === 1) { // 楼盘标签选择
-          if (!Object.keys(this.pathArr).length) {
-            this.$refs.dbmap.clearPathArr(1)
-            this.changeTags(val, index, type)
+          if (this.hotMapItem !== null && Object.keys(this.pathArr).length) {
+              this.$confirm('筛选楼盘，将自动清空之前的操作数据，是否清空？', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.$refs.dbmap.clearPathArr(1)
+              this.changeTags(val, index, type)
+            }).catch(() => {
+            });
             return
           }
-          this.$confirm('筛选楼盘，将自动清空之前的操作数据，是否清空？', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.$refs.dbmap.clearPathArr(1)
-            this.changeTags(val, index, type)
-          }).catch(() => {
-          });
+          this.changeTags(val, index, type)
         } else if (index === 2) { // 热力图选择
           if (!Object.keys(this.pathArr).length) {
             // this.switchChange(true)
