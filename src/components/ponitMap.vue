@@ -19,7 +19,7 @@
     },
     data() {
       return {
-        // points: [],
+        ///points: [],
         map: null,
         bounds: [],
         markerArr: [],
