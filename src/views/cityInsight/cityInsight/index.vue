@@ -304,7 +304,7 @@
       this.loading = true
     },
     mounted() {
-      // this.init()
+      this.init()
       this.bindEvent()
     },
     watch: {
@@ -334,7 +334,7 @@
     },
     methods: {
       mapLoad() {
-        this.init()
+        // this.init()
       },
       // 获取推荐智能点位
       getRecommendPoints() {
