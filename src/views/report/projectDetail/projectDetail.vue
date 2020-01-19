@@ -310,13 +310,22 @@ export default {
     },
     //地图插件，改变选择的楼盘
     changeShowBuild(val) {
-      this.premiseId = val.premiseId;
-      this.premiseList.default.forEach(item => {
-        let prop = item.field;
-        if (val.hasOwnProperty(prop)) {
-          item.title = val[prop];
-        }
-      });
+      if (
+        val.premiseName !== undefined &&
+        val.premiseName !== null &&
+        val.premiseName !== ""
+      ) {
+        this.premiseId = val.premiseId;
+        this.premiseList.default.forEach(item => {
+          let prop = item.field;
+          if (val.hasOwnProperty(prop)) {
+            item.title = val[prop];
+          }
+        });
+        this.premiseName = val.premiseName;
+        this.deviceInfo.name.value = val.premiseName;
+        this.premiseList.deviceNum.value = val.deviceNum;
+      }
     },
     //查询方案楼盘列表
     getProjectPremiseList(param) {
@@ -397,13 +406,13 @@ export default {
                 }
               }
             });
-            console.log("showPremise", showPremise);
+
             this.premiseList.deviceNum.value = showPremise.deviceNum;
             this.premiseList.premiseId.value = showPremise.premiseId;
             this.premiseId = showPremise.premiseId;
             this.premiseName = showPremise.premiseName;
             //所有楼盘数据
-            this.premiseList.data = premiseList.premiseList;
+            this.premiseList.data = res.result.premiseList;
           }
         })
         .catch(res => {
@@ -524,7 +533,7 @@ export default {
     width: 100%;
     background-color: $color-bg-3;
     padding: 30px 35px;
-    /deep/  .el-divider {
+    /deep/ .el-divider {
       background-color: $color-blue;
       border-radius: 2px;
       width: 3px;
