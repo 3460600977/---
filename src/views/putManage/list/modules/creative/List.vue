@@ -180,7 +180,7 @@
           <el-form class="info-form" label-position='left' label-width="155px">
 
             <el-form-item label="广告创意名称">
-              <span class="color-text-1">{{detailDialog.data.name}}}</span>
+              <span class="color-text-1">{{detailDialog.data.name}}</span>
             </el-form-item>
 
             <el-form-item label="广告创意行业">
@@ -235,11 +235,15 @@
               <template v-if="item.screenType === 1">
                 <div class="top-screen">
                   <p>上屏</p>
-                  <el-image class="img" v-if="$tools.getSuffix(item.srcUrl) === 'jpg'" :src="item.srcUrl"/>
+                  <el-image class="top-content" v-if="$tools.getSuffix(item.srcUrl) === 'jpg'" :src="item.srcUrl"/>
+                  <template v-else>
+                    <video v-if="item.previewUrl" class="top-content" autoplay controls :src="item.previewUrl"></video>
+                    <div v-else class="top-content color-text-1">转码中</div>
+                  </template>
 
-                  <a v-else target="_black" :href="item.srcUrl">
+                  <!-- <a v-else target="_black" :href="item.srcUrl">
                     <el-button v-if="item.screenType === 1" plain type="primary">下载视频</el-button>
-                  </a>
+                  </a> -->
                 </div>
               </template>
             </div>
@@ -611,7 +615,7 @@ export default {
       .el-button {
         margin-top: 24px;
       }
-      .img{
+      .top-content{
         width: 260px; 
         margin-top: 20px;
       }
