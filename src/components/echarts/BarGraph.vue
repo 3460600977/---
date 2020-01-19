@@ -57,6 +57,7 @@ export default {
         ? this.myChart
         : echarts.init(this.$refs.chartBox);
       let maxappreg = this.calMax(chartParam.series.data); //花费Y轴值
+      if (maxappreg === 0) maxappreg = 100;
       let interval_left = maxappreg / 5; //左轴间隔
       let option = {
         title: {
@@ -151,9 +152,11 @@ export default {
             }
           },
           type: "value",
+          min: 0,
           max: maxappreg,
           splitNumber: 5,
-          interval: maxappreg === 0 ? 1 : interval_left,
+          minInterval: 5,
+          interval: maxappreg === 0 ? 100 : interval_left,
           axisTick: { show: false },
           axisLabel: {
             color: "#999999",

@@ -22,6 +22,10 @@ export default {
         first_path: "/auditList",
         menu_index: 0,
         menu_icon_show: true,
+        menu_icon_arrow: {
+          "icon-icon-test1": true,
+          "icon-icon-test2": false
+        },
         menu_icon: require("../../../assets/images/icons/icon_audit@2x.png"),
         menu: [
           {
