@@ -5,7 +5,7 @@
         <img width="48px" :src="images.grayHead" alt="头像" />
         <div class="msg-box">
           <span class="company-name">{{summaryDetailList.company}}</span>
-          <span class>{{summaryDetailList.brandName}}</span>
+          <span class="brand-name">{{summaryDetailList.brandName}}</span>
         </div>
       </div>
       <!--  -->
@@ -552,11 +552,17 @@ export default {
         display: flex;
         flex-direction: column;
         margin: 0 33px 0 14px;
+        position: relative;
+        top: -1.2px;
         .company-name {
           width: 240px;
           font-size: 14px;
           line-height: 28px;
+          font-weight: 600;
           color: rgba(24, 24, 25, 1);
+        }
+        .brand-name {
+          color: $color-text-1;
         }
       }
     }
@@ -574,8 +580,8 @@ export default {
       background-size: cover;
       .account-val {
         margin-top: 19px;
-        height: 21px;
-        line-height: 21px;
+        height: 26px;
+        line-height: 26px;
         font-size: 26px;
         font-weight: normal;
         font-family: DINMittelschrift;
@@ -630,7 +636,7 @@ export default {
               i {
                 display: inline-block;
                 margin-left: 10px;
-                font-size: 14px;
+                font-size: 13px;
               }
             }
             p {
