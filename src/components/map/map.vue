@@ -786,7 +786,7 @@
         // this.setSvgIndex()
         setTimeout(() => {
           this.setPaneIndex()
-        })
+        }, 0)
         this.$emit('mapLoad')
       },
       // 设置画点的canvas层级高些 避免被hotmap层所覆盖
