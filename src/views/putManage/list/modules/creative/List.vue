@@ -201,13 +201,13 @@
 
             <template v-if="detailDialog.data.monitor">
               <template v-for="(item, index) in detailDialog.data.monitor">
-                <el-form-item :key="index" label="监测模式">
+                <el-form-item :key="index + '监测模式'" label="监测模式">
                   <span class="color-text-1">{{item.mode || '无'}}</span>
                 </el-form-item>
-                <el-form-item :key="index" label="第三方监测">
+                <el-form-item :key="index + '第三方监测'" label="第三方监测">
                   <span class="color-text-1">{{$tools.getObjectItemFromArray(MonitorData.thirdPartyMonitor, 'value', item.thirdPartyMonitor).name || '无'}}</span>
                 </el-form-item>
-                <el-form-item :key="index" label="监测地址" v-if="item.thirdPartyMonitor != 'ky'">
+                <el-form-item :key="index + '监测地址'" label="监测地址" v-if="item.thirdPartyMonitor != 'ky'">
                   <span class="color-text-1">{{item.thirdPartyMonitorUrl || '无'}}</span>
                 </el-form-item>
               </template>
@@ -231,7 +231,7 @@
         <el-tab-pane label="创意素材" name="material" class="material">
           <div v-loading="detailDialog.loading">
 
-            <div v-for="(item, index) in detailDialog.data.materials" :key="index">
+            <div v-for="(item, index) in detailDialog.data.materials" :key="index + 'top'">
               <template v-if="item.screenType === 1">
                 <div class="top-screen">
                   <p>上屏</p>
@@ -249,17 +249,17 @@
             </div>
 
             <div class="bottom-screen">
-              <span v-for="(item, index) in detailDialog.data.materials" :key="index * 1000">
+              <span v-for="(item, index) in detailDialog.data.materials" :key="index  + 'bottom'">
                 <p v-if="item.screenType === 2 && item.height === 880" style="margin-bottom: 20px;">下屏</p>
               </span>
 
-              <span v-for="(item, index) in detailDialog.data.materials" :key="index * 0.5">
+              <span v-for="(item, index) in detailDialog.data.materials" :key="index  + 'bottom1'">
                 <div v-if="item.screenType === 2 && item.height === 880" class="left-pre">
                   <el-image :src="item.srcUrl"/>
                 </div>
               </span>
 
-              <span v-for="(item, index) in detailDialog.data.materials" :key="index">
+              <span v-for="(item, index) in detailDialog.data.materials" :key="index + 'bottom2'">
                 <div v-if="item.screenType === 2 && item.height === 720" class="right-pre">
                   <el-image :src="item.srcUrl"/>
                 </div>
