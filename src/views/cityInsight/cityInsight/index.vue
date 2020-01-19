@@ -345,9 +345,26 @@
         })
       },
       setHotMapItemNull() {
-        this.hotMapItem = null
-        this.resetHotMap()
-        this.loadData()
+        this.cancleAction()
+        if (Object.keys(this.pathArr).length) {
+            this.$confirm('筛选楼盘，将自动清空之前的操作数据，是否清空？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$refs.dbmap.clearPathArr(1)
+            this.hotMapItem = null
+            this.resetHotMap()
+            this.loadData()
+            return;
+          }).catch(() => {
+          });
+        } else {
+          this.$refs.dbmap.clearPathArr(1)
+          this.hotMapItem = null
+          this.resetHotMap()
+          this.loadData()
+        }
       },
       resetBudget() {
         this.budget = INIT_BUDGET
@@ -360,6 +377,11 @@
       hidePopup() {
         this.hideAll()
         this.$refs.drawType.hide()
+      },
+      // 切换的时候取消各种操作
+      cancleAction() {
+        this.cancleDrawType()
+        this.showPathCopy = null
       },
       // 添加资源包成功后触发事件
       createSuc() {
@@ -453,6 +475,7 @@
       },
       // 各种弹窗返回数据触发方法 type表示楼盘标签是 0清空还是2选择
       returnResult(val, index, type) {
+        this.cancleAction()
         if (index === 0) { // 城市切换
           this.$confirm('切换城市后，系统将清空当前城市的操作数据，是否切换？', '提示', {
             confirmButtonText: '确定',
@@ -464,20 +487,19 @@
           }).catch(() => {
           });
         } else if (index === 1) { // 楼盘标签选择
-          if (!Object.keys(this.pathArr).length) {
-            this.$refs.dbmap.clearPathArr(1)
-            this.changeTags(val, index, type)
+          if (this.hotMapItem !== null && Object.keys(this.pathArr).length) {
+              this.$confirm('筛选楼盘，将自动清空之前的操作数据，是否清空？', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.$refs.dbmap.clearPathArr(1)
+              this.changeTags(val, index, type)
+            }).catch(() => {
+            });
             return
           }
-          this.$confirm('筛选楼盘，将自动清空之前的操作数据，是否清空？', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.$refs.dbmap.clearPathArr(1)
-            this.changeTags(val, index, type)
-          }).catch(() => {
-          });
+          this.changeTags(val, index, type)
         } else if (index === 2) { // 热力图选择
           if (!Object.keys(this.pathArr).length) {
             // this.switchChange(true)

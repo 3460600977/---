@@ -1,10 +1,11 @@
 <template>
     <div class="right-info-wrapper mid-column">
      <div class="padding current-people-insight" v-if='hotMapItem !== null'>
-      <p class="bold margin1">人群精准资源推荐</p>
+      <p class="bold margin1">人群洞察推荐资源</p>
       <div class='mid-start'>
-        <span class="color-text-1 label flex-shrink">当前定制人群包</span>
+        <span class="color-text-1 label flex-shrink">当前选择人群包</span>
         <el-tag
+          class='text-ellipsis'
           :key="hotMapItem.id"
           closable
           :disable-transitions="false"
@@ -21,7 +22,7 @@
             >
           </el-switch>
       </div>
-      <p class="color-text-1 margin1">投放力度</p>
+      <p class="color-text-1 margin1">覆盖比例</p>
       <div class="mid-between color-text-1 margin2">
         <span>低</span>
         <el-slider
@@ -189,8 +190,14 @@
       background: transparent;
       color: $color-text;
       border-color: $color-border;
-      white-space: normal;
-      height: auto;
+      position: relative;
+      padding-right: 20px;
+      & /deep/ .el-icon-close {
+        position: absolute;
+        top: 8px;
+        right: 3px;
+        z-index: 10;
+      }
       &:hover {
         color: $color-main;
         border-color: $color-main;

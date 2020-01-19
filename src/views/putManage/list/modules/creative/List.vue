@@ -180,7 +180,7 @@
           <el-form class="info-form" label-position='left' label-width="155px">
 
             <el-form-item label="广告创意名称">
-              <span class="color-text-1">{{detailDialog.data.name}}}</span>
+              <span class="color-text-1">{{detailDialog.data.name}}</span>
             </el-form-item>
 
             <el-form-item label="广告创意行业">
@@ -201,13 +201,13 @@
 
             <template v-if="detailDialog.data.monitor">
               <template v-for="(item, index) in detailDialog.data.monitor">
-                <el-form-item :key="index" label="监测模式">
+                <el-form-item :key="index + '监测模式'" label="监测模式">
                   <span class="color-text-1">{{item.mode || '无'}}</span>
                 </el-form-item>
-                <el-form-item :key="index" label="第三方监测">
+                <el-form-item :key="index + '第三方监测'" label="第三方监测">
                   <span class="color-text-1">{{$tools.getObjectItemFromArray(MonitorData.thirdPartyMonitor, 'value', item.thirdPartyMonitor).name || '无'}}</span>
                 </el-form-item>
-                <el-form-item :key="index" label="监测地址" v-if="item.thirdPartyMonitor != 'ky'">
+                <el-form-item :key="index + '监测地址'" label="监测地址" v-if="item.thirdPartyMonitor != 'ky'">
                   <span class="color-text-1">{{item.thirdPartyMonitorUrl || '无'}}</span>
                 </el-form-item>
               </template>
@@ -231,31 +231,35 @@
         <el-tab-pane label="创意素材" name="material" class="material">
           <div v-loading="detailDialog.loading">
 
-            <div v-for="(item, index) in detailDialog.data.materials" :key="index">
+            <div v-for="(item, index) in detailDialog.data.materials" :key="index + 'top'">
               <template v-if="item.screenType === 1">
                 <div class="top-screen">
                   <p>上屏</p>
-                  <el-image class="img" v-if="$tools.getSuffix(item.srcUrl) === 'jpg'" :src="item.srcUrl"/>
+                  <el-image class="top-content" v-if="$tools.getSuffix(item.srcUrl) === 'jpg'" :src="item.srcUrl"/>
+                  <template v-else>
+                    <video v-if="item.previewUrl" class="top-content" autoplay controls :src="item.previewUrl"></video>
+                    <div v-else class="top-content color-text-1">转码中</div>
+                  </template>
 
-                  <a v-else target="_black" :href="item.srcUrl">
+                  <!-- <a v-else target="_black" :href="item.srcUrl">
                     <el-button v-if="item.screenType === 1" plain type="primary">下载视频</el-button>
-                  </a>
+                  </a> -->
                 </div>
               </template>
             </div>
 
             <div class="bottom-screen">
-              <span v-for="(item, index) in detailDialog.data.materials" :key="index * 1000">
+              <span v-for="(item, index) in detailDialog.data.materials" :key="index  + 'bottom'">
                 <p v-if="item.screenType === 2 && item.height === 880" style="margin-bottom: 20px;">下屏</p>
               </span>
 
-              <span v-for="(item, index) in detailDialog.data.materials" :key="index * 0.5">
+              <span v-for="(item, index) in detailDialog.data.materials" :key="index  + 'bottom1'">
                 <div v-if="item.screenType === 2 && item.height === 880" class="left-pre">
                   <el-image :src="item.srcUrl"/>
                 </div>
               </span>
 
-              <span v-for="(item, index) in detailDialog.data.materials" :key="index">
+              <span v-for="(item, index) in detailDialog.data.materials" :key="index + 'bottom2'">
                 <div v-if="item.screenType === 2 && item.height === 720" class="right-pre">
                   <el-image :src="item.srcUrl"/>
                 </div>
@@ -611,7 +615,7 @@ export default {
       .el-button {
         margin-top: 24px;
       }
-      .img{
+      .top-content{
         width: 260px; 
         margin-top: 20px;
       }
