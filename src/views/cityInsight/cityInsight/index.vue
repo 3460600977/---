@@ -110,6 +110,7 @@
           :buildings="points"
           :city="cityFilter"
           :currentSelectType="currentSelectType"
+          @mapLoad='mapLoad'
           @hidePopup="hidePopup"
           @buildingClick="buildingClick"
           @pathArrChange="pathArrChange"
@@ -303,7 +304,7 @@
       this.loading = true
     },
     mounted() {
-      this.init()
+      // this.init()
       this.bindEvent()
     },
     watch: {
@@ -332,6 +333,9 @@
       document.documentElement.removeEventListener('keydown', this.cancleCircleDrawType)
     },
     methods: {
+      mapLoad() {
+        this.init()
+      },
       // 获取推荐智能点位
       getRecommendPoints() {
         this.loading = true
@@ -623,11 +627,12 @@
       // 初始化
       init() {
         if (this.$route.query.data) {
-          this.cityFilter = JSON.parse(this.$route.query.data).cityFilter
-          this.hotMapItem = JSON.parse(this.$route.query.data).crowdInfo
-          this.loadCitys()
-          // this.loadData()
-          this.loadHotMap(this.hotMapItem.id)
+          this.loadCitys().then(() => {
+            this.cityFilter = JSON.parse(this.$route.query.data).cityFilter
+            this.hotMapItem = JSON.parse(this.$route.query.data).crowdInfo
+            // this.loadData()
+            this.loadHotMap(this.hotMapItem.id)
+          })
         } else {
           this.loadCitys().then(() => {
             this.getCityFilter()
