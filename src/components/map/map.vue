@@ -243,7 +243,7 @@
             .8:'rgb(244, 74, 74)'
           },
           zIndex: 199,
-          opacity: 0.6
+          opacity: 0.5
         });
         this.map.addOverlay(heatmapOverlay);
         this.heatmapOverlay = heatmapOverlay
@@ -255,17 +255,6 @@
             resolve(result)
           });
         })
-        // let geolocation = new BMap.Geolocation();
-        // let that = this
-        // geolocation.getCurrentPosition(function(r){
-        //   if(this.getStatus() == BMAP_STATUS_SUCCESS){
-        //     console.log(r)
-        //     that.map.centerAndZoom(r.point, 12);
-        //   }
-        //   else {
-        //     alert('failed'+this.getStatus());
-        //   }
-        // });
       },
 
       // 判断一个点是否在可视区域内
@@ -780,20 +769,22 @@
       // },
       mapLoad() {
         // this.map.getPanes().mapPane.innerHTML = ''
-        this.initHotMap()
-        this.initPointsOverlay()
+        
+        // this.initPointsOverlay()
         this.initMouse()
         // this.setSvgIndex()
-        setTimeout(() => {
-          this.setPaneIndex()
-        }, 0)
+        // setTimeout(() => {
+          // this.setPaneIndex()
+        // }, 0)
         this.$emit('mapLoad')
       },
       // 设置画点的canvas层级高些 避免被hotmap层所覆盖
       setPaneIndex() {
         let domArr = this.map.getPanes().mapPane.getElementsByTagName('canvas')
+        console.log(domArr.length)
         if (domArr.length) {
           for (let i = 0; i < domArr.length; i++) {
+              console.log(domArr[i])
             if (domArr[i].getAttribute('id') === 'myCanvasElement') {
               domArr[i].style.zIndex = 999
             }
@@ -853,6 +844,9 @@
       },
       // 热力图
       drawHotMap(arr) {
+        if (!this.heatmapOverlay) {
+          this.initHotMap()
+        }
         setTimeout(() => {
           this.heatmapOverlay.setDataSet({data:arr, max:100});
           this.showHotMap()
@@ -981,6 +975,9 @@
           pointsOverlay.addEventListener('mouseover',  this.pointEvent);
           pointsOverlay.addEventListener('mouseout',  this.pointEventOut);
           pointsOverlay.addEventListener('click',  this.pointEventClick);
+          setTimeout(() => {
+            this.setPaneIndex()
+          }, 0)
         } else {
           if (points.length === 0) {
             // this.pointsOverlayObj[overlay].removeEventListener('mouseover',  this.pointEvent);
