@@ -110,14 +110,6 @@
       this.setCity({name: '成都市'})
       map.enableScrollWheelZoom();
 
-      let opts = {
-        anchor: BMAP_ANCHOR_BOTTOM_LEFT,
-        offset: new BMap.Size(36, 100),
-        type: BMAP_NAVIGATION_CONTROL_ZOOM
-      }
-      map.addControl(new BMap.NavigationControl(opts));  
-      map.addControl(new BMap.ScaleControl());
-
       // this.initHotMap()
       this.mapBindEvent()
     },
@@ -772,6 +764,13 @@
         
         // this.initPointsOverlay()
         this.initMouse()
+          let opts = {
+          anchor: BMAP_ANCHOR_BOTTOM_LEFT,
+          offset: new BMap.Size(36, 100),
+          type: BMAP_NAVIGATION_CONTROL_ZOOM
+        }
+        this.map.addControl(new BMap.NavigationControl(opts));  
+        this.map.addControl(new BMap.ScaleControl());
         // this.setSvgIndex()
         // setTimeout(() => {
           // this.setPaneIndex()
@@ -781,10 +780,8 @@
       // 设置画点的canvas层级高些 避免被hotmap层所覆盖
       setPaneIndex() {
         let domArr = this.map.getPanes().mapPane.getElementsByTagName('canvas')
-        console.log(domArr.length)
         if (domArr.length) {
           for (let i = 0; i < domArr.length; i++) {
-              console.log(domArr[i])
             if (domArr[i].getAttribute('id') === 'myCanvasElement') {
               domArr[i].style.zIndex = 999
             }
