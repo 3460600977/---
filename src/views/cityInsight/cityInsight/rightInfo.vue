@@ -6,6 +6,7 @@
         <div class='mid-start'>
           <span class="color-text-1 label flex-shrink">当前选择人群包</span>
           <el-tag
+            :title="hotMapItem.name"
             class='text-ellipsis'
             :key="hotMapItem.id"
             closable
