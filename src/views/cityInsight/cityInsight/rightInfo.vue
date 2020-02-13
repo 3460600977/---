@@ -1,78 +1,80 @@
 <template>
-    <div class="right-info-wrapper mid-column">
-     <div class="padding current-people-insight" v-if='hotMapItem !== null'>
-      <p class="bold margin1">人群洞察推荐资源</p>
-      <div class='mid-start'>
-        <span class="color-text-1 label flex-shrink">当前选择人群包</span>
-        <el-tag
-          class='text-ellipsis'
-          :key="hotMapItem.id"
-          closable
-          :disable-transitions="false"
-          @close="handleClose(hotMapItem)">
-          {{hotMapItem.name}}
-        </el-tag>
+    <div class="mid-column" style="height: 100%">
+      <div class="right-info-wrapper customScroll flex1">
+       <div class="padding current-people-insight" v-if='hotMapItem !== null'>
+        <p class="bold margin1">人群洞察推荐资源</p>
+        <div class='mid-start'>
+          <span class="color-text-1 label flex-shrink">当前选择人群包</span>
+          <el-tag
+            class='text-ellipsis'
+            :key="hotMapItem.id"
+            closable
+            :disable-transitions="false"
+            @close="handleClose(hotMapItem)">
+            {{hotMapItem.name}}
+          </el-tag>
+          </div>
+          <div class="switch margin1">
+            <span class='color-text-1' style="margin-right: 42px">热力图开关</span>
+            <el-switch
+              v-model="switchValue"
+              :width="30"
+              @change="change"
+              >
+            </el-switch>
         </div>
-        <div class="switch margin1">
-          <span class='color-text-1' style="margin-right: 42px">热力图开关</span>
-          <el-switch
-            v-model="switchValue"
-            :width="30"
-            @change="change"
-            >
-          </el-switch>
-      </div>
-      <p class="color-text-1 margin1">覆盖比例</p>
-      <div class="mid-between color-text-1 margin2">
-        <span>低</span>
-        <el-slider
-          class="flex1 slider"
-          v-model="val"
-          :step='10'
-          :min='10'
-          @change="budgetChange"
-          :format-tooltip="formatTooltip"
-        ></el-slider>
-        <span>高</span>
-      </div>
-     </div>
-      <div class="padding">
-        <p class="margin1 bold">投放预估数</p>
-        <ul class="desc">
-          <li class="mid-start">
-            <p class="label">楼盘数</p>
-            <p class="font-number font-16">{{selectedBuildings.length | toThousands}}个</p>
-          </li>
-          <li class="mid-start">
-            <p class="label">单元数</p>
-            <p class="font-number font-16">{{unitNum | toThousands}}个</p>
-          </li>
-          <li class="mid-start">
-            <p class="label">点位数</p>
-            <p class="font-number font-16">{{deviceCount | toThousands}}个</p>
-          </li>
-          <li class="mid-start">
-            <p class="label">覆盖人数</p>
-            <p class="font-number font-16">{{coveredPeople | toThousands}}人</p>
+        <p class="color-text-1 margin1">覆盖比例</p>
+        <div class="mid-between color-text-1 margin2">
+          <span>低</span>
+          <el-slider
+            class="flex1 slider"
+            v-model="val"
+            :step='10'
+            :min='10'
+            @change="budgetChange"
+            :format-tooltip="formatTooltip"
+          ></el-slider>
+          <span>高</span>
+        </div>
+       </div>
+        <div class="padding">
+          <p class="margin1 bold">投放预估数</p>
+          <ul class="desc">
+            <li class="mid-start">
+              <p class="label">楼盘数</p>
+              <p class="font-number font-16">{{selectedBuildings.length | toThousands}}个</p>
+            </li>
+            <li class="mid-start">
+              <p class="label">单元数</p>
+              <p class="font-number font-16">{{unitNum | toThousands}}个</p>
+            </li>
+            <li class="mid-start">
+              <p class="label">点位数</p>
+              <p class="font-number font-16">{{deviceCount | toThousands}}个</p>
+            </li>
+            <li class="mid-start">
+              <p class="label">覆盖人数</p>
+              <p class="font-number font-16">{{coveredPeople | toThousands}}人</p>
+            </li>
+          </ul>
+
+          <div class="mid-between margin1">
+            <p class="bold">媒体资源</p>
+            <el-button type="primary" class="ri-btn" size="mini" plain icon="el-icon-plus" @click="addBtnClick">添加</el-button>
+          </div>
+        </div>
+        <ul class="list margin2 flex1">
+          <li class="list-item hand" v-for="(item) in selectedBuildings" :key="item.premisesId">
+            <p>{{item.premisesName}}</p>
+            <div class="mid-start list-item-2">
+              <p class="list-item-1">点位数：{{item.signElevatorNum | toThousands}}</p>
+              <p>覆盖人数：{{item.totalPeople | toThousands}}</p>
+            </div>
+            <span class="iconfont icon-remove icon-error" @click="deleteItem(item)"></span>
           </li>
         </ul>
-
-        <div class="mid-between margin1">
-          <p class="bold">媒体资源</p>
-          <el-button type="primary" class="ri-btn" size="mini" plain icon="el-icon-plus" @click="addBtnClick">添加</el-button>
-        </div>
       </div>
-      <ul class="list margin2 border-bottom flex1 customScroll">
-        <li class="list-item hand" v-for="(item) in selectedBuildings" :key="item.premisesId">
-          <p>{{item.premisesName}}</p>
-          <div class="mid-start list-item-2">
-            <p class="list-item-1">点位数：{{item.signElevatorNum | toThousands}}</p>
-            <p>覆盖人数：{{item.totalPeople | toThousands}}</p>
-          </div>
-          <span class="iconfont icon-remove icon-error" @click="deleteItem(item)"></span>
-        </li>
-      </ul>
-      <div style="margin-top: 14px;text-align: center" class="padding padding2">
+      <div style="text-align: center;background: #fff;padding-top: 15px;" class="border-top padding padding2">
         <el-button type="primary" class="btn" @click="createPackage">创建资源包</el-button>
       </div>
     </div>
@@ -225,8 +227,8 @@
   }
   .right-info-wrapper {
     width:352px;
+    overflow-y: auto;
     position: relative;
-    height: 100%;
     background: #fff;
     line-height: 1.15;
     /*padding: 20px 20px 15px;*/
@@ -257,7 +259,6 @@
       width: 194px;
     }
     .list {
-      overflow-y: auto;
       position: relative;
       padding-left: 20px;
       padding-bottom: 10px;
