@@ -19,7 +19,7 @@ export const crowdProject = {
 
     setTagNamesWithUpdate(state, data){
       state.tagNames.forEach((tagData,index)=>{
-        if (tagData.name === data[0].name) {
+        if (tagData.tags[0].name[2] === data[0].tags[0].name[2]) {
          state.tagNames.splice(index,1)
         }
       });

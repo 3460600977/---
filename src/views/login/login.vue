@@ -49,12 +49,14 @@
                     </div>
                   </el-form-item>
                   <el-form-item :class="{'submit-login':true}">
+
                     <el-button
                       type="primary"
                       @click="onSubmit('loginForm')"
                       plain
                       :loading="loading"
                     >登录</el-button>
+
                   </el-form-item>
                 </el-form>
               </div>
@@ -88,12 +90,16 @@ export default {
       logo_img: require("@/assets/images/icon_red@2x.png"),
       logo_back_img: require("@/assets/images/icon_bg@2x.png"),
       login_capture_img: "",
+
+
       loginForm: {
         username: "",
         password: "",
         verifyToken: "",
         verifyValue: ""
       },
+
+
       loading: false,
       pageLoading: true, // 整个页面转圈, 跳转登录用
       classObject: {
@@ -209,7 +215,7 @@ export default {
             .then(res => {
               let info = res.result;
               this.loading = false;
-              this.$store.commit("setToken", info.token);
+              this.$store.commit("setToken", info.token);//存入token
               setUserInfo(info);
               let menuList = this.$tools.getAllMenuList(info.menu, []);
               let audit = false;
