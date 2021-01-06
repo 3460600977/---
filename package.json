@@ -12,7 +12,7 @@
     "build:demo": "cross-env NODE_ENV=demo  env_config=demo node build/build.js"
   },
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "babel-polyfill": "^6.26.0",
     "echarts": "^4.5.0",
     "element-ui": "^2.12.0",
